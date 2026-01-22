@@ -1,0 +1,50 @@
+<feed xml:lang="en">
+    <title>xkcd.com</title>
+    <link href="https://xkcd.com/" rel="alternate" />
+    <id>https://xkcd.com/</id>
+    <updated>2026-01-21T00:00:00Z</updated>
+    <entry>
+        <title>Cost Savings</title>
+        <link href="https://xkcd.com/3197/" rel="alternate" />
+        <updated>2026-01-21T00:00:00Z</updated>
+        <id>https://xkcd.com/3197/</id>
+        <summary type="html">
+            <img src="https://imgs.xkcd.com/comics/cost_savings.png"
+                title="Unfortunately, my scheme to trick NASA has now taken over a decade longer than planned and has run way over budget."
+                alt="Unfortunately, my scheme to trick NASA has now taken over a decade longer than planned and has run way over budget." />
+        </summary>
+    </entry>
+    <entry>
+        <title>Aurora Coolness</title>
+        <link href="https://xkcd.com/3196/" rel="alternate" />
+        <updated>2026-01-19T00:00:00Z</updated>
+        <id>https://xkcd.com/3196/</id>
+        <summary type="html">
+            <img src="https://imgs.xkcd.com/comics/aurora_coolness.png"
+                title="I've had countless nights where the line never left the bottom zone of the graph, but the few moments where it's climbed all the way to the top have made up for them all."
+                alt="I've had countless nights where the line never left the bottom zone of the graph, but the few moments where it's climbed all the way to the top have made up for them all." />
+        </summary>
+    </entry>
+    <entry>
+        <title>International Station</title>
+        <link href="https://xkcd.com/3195/" rel="alternate" />
+        <updated>2026-01-16T00:00:00Z</updated>
+        <id>https://xkcd.com/3195/</id>
+        <summary type="html">
+            <img src="https://imgs.xkcd.com/comics/international_station.png"
+                title="Welcome to the International Space Station Exclamation Point!"
+                alt="Welcome to the International Space Station Exclamation Point!" />
+        </summary>
+    </entry>
+    <entry>
+        <title>16-Part Epoxy</title>
+        <link href="https://xkcd.com/3194/" rel="alternate" />
+        <updated>2026-01-14T00:00:00Z</updated>
+        <id>https://xkcd.com/3194/</id>
+        <summary type="html">
+            <img src="https://imgs.xkcd.com/comics/16_part_epoxy.png"
+                title="Some surfaces may seem difficult to glue. But if you research the materials, find tables of what adhesives work on them, and prepare your surfaces carefully, you can fail to glue them in a fun NEW way that fills your house with dangerous vapors."
+                alt="Some surfaces may seem difficult to glue. But if you research the materials, find tables of what adhesives work on them, and prepare your surfaces carefully, you can fail to glue them in a fun NEW way that fills your house with dangerous vapors." />
+        </summary>
+    </entry>
+</feed>

@@ -1,11 +1,79 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
+import Layout from "../layouts/Layout.astro";
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+// src/pages/index.astro
+// This page demonstrates Astro + HTMX
 ---
 
 <Layout>
-	<Welcome />
+  <h1>Astro + HTMX Demo</h1>
+  <p class="subtitle">Interactive examples without writing JavaScript</p>
+
+  <div class="card">
+    <h2>Counter Example</h2>
+    <p>Click the button to increment the counter using HTMX:</p>
+    <div class="counter-display" id="counter">0</div>
+    <button
+      hx-get="/api/increment"
+      hx-target="#counter"
+      hx-swap="innerHTML"
+      hx-vals='js:{count: document.getElementById("counter").textContent}'
+      hx-push-url="true"
+    >
+      Increment
+    </button>
+    <button hx-get="/api/reset" hx-target="#counter" hx-swap="innerHTML">
+      Reset
+    </button>
+  </div>
+
+  <div class="card">
+    <h2>Text Transformation</h2>
+    <p>Enter text to transform it on the server:</p>
+    <form
+      hx-post="/api/transform"
+      hx-target="#transform-result"
+      hx-indicator="#transform-indicator"
+    >
+      <input
+        type="text"
+        name="text"
+        placeholder="Enter text here..."
+        required
+      />
+      <button type="submit">
+        Transform
+        <span id="transform-indicator" class="htmx-indicator">⏳</span>
+      </button>
+    </form>
+    <div id="transform-result"></div>
+  </div>
+
+  <div class="card">
+    <h2>Load Content</h2>
+    <p>Click to load dynamic content from the server:</p>
+    <button
+      hx-get="/api/quote"
+      hx-target="#quote-container"
+      hx-swap="innerHTML"
+    >
+      Get Random Quote
+    </button>
+    <div id="quote-container"></div>
+  </div>
+
+  <div class="card">
+    <h2>How It Works</h2>
+    <p>This page uses HTMX attributes like:</p>
+    <ul style="margin-left: 2rem; margin-top: 0.5rem;">
+      <li>
+        <code>hx-post</code> and <code>hx-get</code> - Make HTTP requests
+      </li>
+      <li><code>hx-target</code> - Specify where to insert the response</li>
+      <li><code>hx-swap</code> - Control how content is swapped</li>
+    </ul>
+    <p style="margin-top: 1rem;">
+      All interactions happen without page reloads or writing JavaScript!
+    </p>
+  </div>
 </Layout>

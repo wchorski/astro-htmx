@@ -9,6 +9,12 @@
     "astro": "astro"
   },
   "dependencies": {
-    "astro": "^5.16.12"
+    "@astrojs/node": "^9.5.2",
+    "astro": "^5.16.12",
+    "fast-xml-parser": "^5.3.3",
+    "htmx.org": "^2.0.8"
+  },
+  "devDependencies": {
+    "@types/node": "^25.0.10"
   }
 }
