@@ -40,6 +40,7 @@ try {
 
     const res = await fetch("https://xkcd.com/atom.xml");
     xml = await res.text();
+    await fs.writeFile(path.join(BASE_DIR, `${filename}.xml`), now.toISOString(), "utf-8");
   } else {
     console.log(
       "fetching cached data | timeDifference is younger than hoursThreshold",

@@ -1,0 +1,834 @@
+{
+  "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#groups('d0dd07fc-dc48-4d16-9439-39f479c9dc05')/calendarView",
+  "value": [
+    {
+      "@odata.etag": "W/\"KpiSXjDFF0SIHGDwb3fgigADOURrfg==\"",
+      "id": "AAMkAGI0ZTYxOTY2LWNhY2QtNGNjZS1iYjZlLWM3ZTc1MGRmMWVhNQBGAAAAAABXJURzwfiZSJVUrChZmnPwBwAqmJJeMMUXRIgcYPBvd_CKAAAAAAENAAAqmJJeMMUXRIgcYPBvd_CKAAM5AiEHAAA=",
+      "createdDateTime": "2026-01-15T22:43:13.1050102Z",
+      "lastModifiedDateTime": "2026-01-15T22:43:20.9889786Z",
+      "changeKey": "KpiSXjDFF0SIHGDwb3fgigADOURrfg==",
+      "categories": [],
+      "transactionId": "FA794AF1-AD5B-3F48-831F-6D90E7ECA41B",
+      "originalStartTimeZone": "UTC",
+      "originalEndTimeZone": "UTC",
+      "iCalUId": "040000008200E00074C5B7101A82E00800000000014BC7547086DC010000000000000000100000000255B1D77D80CB4AB531C0E60419BF52",
+      "uid": "040000008200E00074C5B7101A82E00800000000014BC7547086DC010000000000000000100000000255B1D77D80CB4AB531C0E60419BF52",
+      "reminderMinutesBeforeStart": 30,
+      "isReminderOn": true,
+      "hasAttachments": false,
+      "subject": "Will - OOO",
+      "bodyPreview": "",
+      "importance": "normal",
+      "sensitivity": "normal",
+      "isAllDay": true,
+      "isCancelled": false,
+      "isOrganizer": true,
+      "responseRequested": false,
+      "seriesMasterId": null,
+      "showAs": "free",
+      "type": "singleInstance",
+      "webLink": "https://outlook.office365.com/calendar/deeplink/read/group/moeits.onmicrosoft.com/moeits_staff/AAMkAGI0ZTYxOTY2LWNhY2QtNGNjZS1iYjZlLWM3ZTc1MGRmMWVhNQBGAAAAAABXJURzwfiZSJVUrChZmnPwBwAqmJJeMMUXRIgcYPBvd%2BCKAAAAAAENAAAqmJJeMMUXRIgcYPBvd%2BCKAAM5AiEHAAA%3D",
+      "onlineMeetingUrl": "",
+      "isOnlineMeeting": false,
+      "onlineMeetingProvider": "unknown",
+      "allowNewTimeProposals": true,
+      "occurrenceId": null,
+      "isDraft": false,
+      "hideAttendees": false,
+      "responseStatus": {
+        "response": "organizer",
+        "time": "0001-01-01T00:00:00Z"
+      },
+      "body": {
+        "contentType": "html",
+        "content": "<html><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\r\n<meta name=\"Generator\" content=\"Microsoft Exchange Server\">\r\n<!-- converted from text -->\r\n<style><!-- .EmailQuote { margin-left: 1pt; padding-left: 4pt; border-left: #800000 2px solid; } --></style></head>\r\n<body>\r\n<font size=\"2\"><span style=\"font-size:11pt;\"><div class=\"PlainText\">&nbsp;</div></span></font>\r\n</body>\r\n</html>\r\n"
+      },
+      "start": {
+        "dateTime": "2026-01-16T00:00:00.0000000",
+        "timeZone": "UTC"
+      },
+      "end": {
+        "dateTime": "2026-01-17T00:00:00.0000000",
+        "timeZone": "UTC"
+      },
+      "location": {
+        "displayName": "",
+        "locationType": "default",
+        "uniqueIdType": "unknown",
+        "address": {},
+        "coordinates": {}
+      },
+      "locations": [],
+      "recurrence": null,
+      "attendees": [],
+      "organizer": {
+        "emailAddress": {
+          "name": "MOEITS_Staff",
+          "address": "moeits_staff@moeits.onmicrosoft.com"
+        }
+      },
+      "onlineMeeting": null
+    },
+    {
+      "@odata.etag": "W/\"KpiSXjDFF0SIHGDwb3fgigADOURywg==\"",
+      "id": "AAMkAGI0ZTYxOTY2LWNhY2QtNGNjZS1iYjZlLWM3ZTc1MGRmMWVhNQBGAAAAAABXJURzwfiZSJVUrChZmnPwBwAqmJJeMMUXRIgcYPBvd_CKAAAAAAENAAAqmJJeMMUXRIgcYPBvd_CKAAM5AiEKAAA=",
+      "createdDateTime": "2026-01-16T13:40:08.0354244Z",
+      "lastModifiedDateTime": "2026-01-16T13:41:38.3656419Z",
+      "changeKey": "KpiSXjDFF0SIHGDwb3fgigADOURywg==",
+      "categories": [],
+      "transactionId": "3D79FE56-2633-D849-887F-84B1A7E304D2",
+      "originalStartTimeZone": "UTC",
+      "originalEndTimeZone": "UTC",
+      "iCalUId": "040000008200E00074C5B7101A82E00800000000A60FFAA0ED86DC010000000000000000100000005E65636AFB179C40B45482B0C6B4674B",
+      "uid": "040000008200E00074C5B7101A82E00800000000A60FFAA0ED86DC010000000000000000100000005E65636AFB179C40B45482B0C6B4674B",
+      "reminderMinutesBeforeStart": 1080,
+      "isReminderOn": true,
+      "hasAttachments": false,
+      "subject": "Scott WFH",
+      "bodyPreview": "",
+      "importance": "normal",
+      "sensitivity": "normal",
+      "isAllDay": true,
+      "isCancelled": false,
+      "isOrganizer": true,
+      "responseRequested": true,
+      "seriesMasterId": null,
+      "showAs": "free",
+      "type": "singleInstance",
+      "webLink": "https://outlook.office365.com/calendar/deeplink/read/group/moeits.onmicrosoft.com/moeits_staff/AAMkAGI0ZTYxOTY2LWNhY2QtNGNjZS1iYjZlLWM3ZTc1MGRmMWVhNQBGAAAAAABXJURzwfiZSJVUrChZmnPwBwAqmJJeMMUXRIgcYPBvd%2BCKAAAAAAENAAAqmJJeMMUXRIgcYPBvd%2BCKAAM5AiEKAAA%3D",
+      "onlineMeetingUrl": "",
+      "isOnlineMeeting": false,
+      "onlineMeetingProvider": "unknown",
+      "allowNewTimeProposals": true,
+      "occurrenceId": null,
+      "isDraft": false,
+      "hideAttendees": false,
+      "responseStatus": {
+        "response": "organizer",
+        "time": "0001-01-01T00:00:00Z"
+      },
+      "body": {
+        "contentType": "html",
+        "content": ""
+      },
+      "start": {
+        "dateTime": "2026-01-19T00:00:00.0000000",
+        "timeZone": "UTC"
+      },
+      "end": {
+        "dateTime": "2026-01-20T00:00:00.0000000",
+        "timeZone": "UTC"
+      },
+      "location": {
+        "displayName": "",
+        "locationType": "default",
+        "uniqueIdType": "unknown",
+        "address": {},
+        "coordinates": {}
+      },
+      "locations": [],
+      "recurrence": null,
+      "attendees": [
+        {
+          "type": "required",
+          "status": {
+            "response": "accepted",
+            "time": "2026-01-16T13:41:01.4199903Z"
+          },
+          "emailAddress": {
+            "name": "Scott Crow",
+            "address": "scrow@moeits.com"
+          }
+        }
+      ],
+      "organizer": {
+        "emailAddress": {
+          "name": "MOEITS_Staff",
+          "address": "moeits_staff@moeits.onmicrosoft.com"
+        }
+      },
+      "onlineMeeting": null
+    },
+    {
+      "@odata.etag": "W/\"KpiSXjDFF0SIHGDwb3fgigADPTBvAQ==\"",
+      "id": "AAMkAGI0ZTYxOTY2LWNhY2QtNGNjZS1iYjZlLWM3ZTc1MGRmMWVhNQBGAAAAAABXJURzwfiZSJVUrChZmnPwBwAqmJJeMMUXRIgcYPBvd_CKAAAAAAENAAAqmJJeMMUXRIgcYPBvd_CKAAM87moxAAA=",
+      "createdDateTime": "2026-01-19T12:50:36.8496406Z",
+      "lastModifiedDateTime": "2026-01-19T12:51:29.329496Z",
+      "changeKey": "KpiSXjDFF0SIHGDwb3fgigADPTBvAQ==",
+      "categories": [],
+      "transactionId": null,
+      "originalStartTimeZone": "UTC",
+      "originalEndTimeZone": "UTC",
+      "iCalUId": "040000008200E00074C5B7101A82E00800000000628DCF324289DC0100000000000000001000000075817DDC1FEDDF45A0E4B09F5F49120A",
+      "uid": "040000008200E00074C5B7101A82E00800000000628DCF324289DC0100000000000000001000000075817DDC1FEDDF45A0E4B09F5F49120A",
+      "reminderMinutesBeforeStart": 1440,
+      "isReminderOn": false,
+      "hasAttachments": false,
+      "subject": "Kat WFH",
+      "bodyPreview": "",
+      "importance": "normal",
+      "sensitivity": "normal",
+      "isAllDay": true,
+      "isCancelled": false,
+      "isOrganizer": false,
+      "responseRequested": true,
+      "seriesMasterId": null,
+      "showAs": "free",
+      "type": "singleInstance",
+      "webLink": "https://outlook.office365.com/calendar/deeplink/read/group/moeits.onmicrosoft.com/moeits_staff/AAMkAGI0ZTYxOTY2LWNhY2QtNGNjZS1iYjZlLWM3ZTc1MGRmMWVhNQBGAAAAAABXJURzwfiZSJVUrChZmnPwBwAqmJJeMMUXRIgcYPBvd%2BCKAAAAAAENAAAqmJJeMMUXRIgcYPBvd%2BCKAAM87moxAAA%3D",
+      "onlineMeetingUrl": "",
+      "isOnlineMeeting": false,
+      "onlineMeetingProvider": "unknown",
+      "allowNewTimeProposals": true,
+      "occurrenceId": null,
+      "isDraft": false,
+      "hideAttendees": false,
+      "responseStatus": {
+        "response": "accepted",
+        "time": "2026-01-19T12:50:36.8650019Z"
+      },
+      "body": {
+        "contentType": "html",
+        "content": ""
+      },
+      "start": {
+        "dateTime": "2026-01-19T00:00:00.0000000",
+        "timeZone": "UTC"
+      },
+      "end": {
+        "dateTime": "2026-01-20T00:00:00.0000000",
+        "timeZone": "UTC"
+      },
+      "location": {
+        "displayName": "",
+        "locationType": "default",
+        "uniqueIdType": "unknown",
+        "address": {},
+        "coordinates": {}
+      },
+      "locations": [],
+      "recurrence": null,
+      "attendees": [
+        {
+          "type": "required",
+          "status": {
+            "response": "none",
+            "time": "0001-01-01T00:00:00Z"
+          },
+          "emailAddress": {
+            "name": "Katrina Makdesi-Elias",
+            "address": "kmakdesi-elias@moeits.com"
+          }
+        },
+        {
+          "type": "required",
+          "status": {
+            "response": "accepted",
+            "time": "0001-01-01T00:00:00Z"
+          },
+          "emailAddress": {
+            "name": "MOEITS_Staff",
+            "address": "moeits_staff@moeits.onmicrosoft.com"
+          }
+        }
+      ],
+      "organizer": {
+        "emailAddress": {
+          "name": "Katrina Makdesi-Elias",
+          "address": "kmakdesi-elias@moeits.com"
+        }
+      },
+      "onlineMeeting": null
+    },
+    {
+      "@odata.etag": "W/\"KpiSXjDFF0SIHGDwb3fgigADPTBvMA==\"",
+      "id": "AAMkAGI0ZTYxOTY2LWNhY2QtNGNjZS1iYjZlLWM3ZTc1MGRmMWVhNQBGAAAAAABXJURzwfiZSJVUrChZmnPwBwAqmJJeMMUXRIgcYPBvd_CKAAAAAAENAAAqmJJeMMUXRIgcYPBvd_CKAAM87moyAAA=",
+      "createdDateTime": "2026-01-19T13:49:40.9355439Z",
+      "lastModifiedDateTime": "2026-01-19T13:49:41.0136439Z",
+      "changeKey": "KpiSXjDFF0SIHGDwb3fgigADPTBvMA==",
+      "categories": [],
+      "transactionId": "{DC747D85-7868-4A64-A20C-A112031AA94D}",
+      "originalStartTimeZone": "UTC",
+      "originalEndTimeZone": "UTC",
+      "iCalUId": "040000008200E00074C5B7101A82E00800000000E914B1754A89DC01000000000000000010000000A735E89AC2A1D3439C4A4357EE83220D",
+      "uid": "040000008200E00074C5B7101A82E00800000000E914B1754A89DC01000000000000000010000000A735E89AC2A1D3439C4A4357EE83220D",
+      "reminderMinutesBeforeStart": 1080,
+      "isReminderOn": true,
+      "hasAttachments": false,
+      "subject": "Zach to ASIP - Car Reservation",
+      "bodyPreview": "",
+      "importance": "normal",
+      "sensitivity": "normal",
+      "isAllDay": true,
+      "isCancelled": false,
+      "isOrganizer": true,
+      "responseRequested": true,
+      "seriesMasterId": null,
+      "showAs": "free",
+      "type": "singleInstance",
+      "webLink": "https://outlook.office365.com/calendar/deeplink/read/group/moeits.onmicrosoft.com/moeits_staff/AAMkAGI0ZTYxOTY2LWNhY2QtNGNjZS1iYjZlLWM3ZTc1MGRmMWVhNQBGAAAAAABXJURzwfiZSJVUrChZmnPwBwAqmJJeMMUXRIgcYPBvd%2BCKAAAAAAENAAAqmJJeMMUXRIgcYPBvd%2BCKAAM87moyAAA%3D",
+      "onlineMeetingUrl": null,
+      "isOnlineMeeting": false,
+      "onlineMeetingProvider": "unknown",
+      "allowNewTimeProposals": true,
+      "occurrenceId": null,
+      "isDraft": false,
+      "hideAttendees": false,
+      "responseStatus": {
+        "response": "organizer",
+        "time": "0001-01-01T00:00:00Z"
+      },
+      "body": {
+        "contentType": "html",
+        "content": "<html>\r\n<head>\r\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\r\n<meta name=\"Generator\" content=\"Microsoft Word 15 (filtered medium)\">\r\n<style>\r\n<!--\r\n@font-face\r\n\t{font-family:\"Cambria Math\"}\r\n@font-face\r\n\t{font-family:Aptos}\r\np.MsoNormal, li.MsoNormal, div.MsoNormal\r\n\t{margin:0in;\r\n\tfont-size:12.0pt;\r\n\tfont-family:\"Aptos\",sans-serif}\r\nspan.EmailStyle17\r\n\t{font-family:\"Aptos\",sans-serif;\r\n\tcolor:windowtext}\r\n.MsoChpDefault\r\n\t{}\r\n@page WordSection1\r\n\t{margin:1.0in 1.0in 1.0in 1.0in}\r\ndiv.WordSection1\r\n\t{}\r\n-->\r\n</style>\r\n</head>\r\n<body lang=\"EN-US\" link=\"#467886\" vlink=\"#96607D\" style=\"word-wrap:break-word\">\r\n<div class=\"WordSection1\">\r\n<p class=\"MsoNormal\"><span style=\"font-size:11.0pt\">&nbsp;</span></p>\r\n</div>\r\n</body>\r\n</html>\r\n"
+      },
+      "start": {
+        "dateTime": "2026-01-20T00:00:00.0000000",
+        "timeZone": "UTC"
+      },
+      "end": {
+        "dateTime": "2026-01-21T00:00:00.0000000",
+        "timeZone": "UTC"
+      },
+      "location": {
+        "displayName": "",
+        "locationType": "default",
+        "uniqueIdType": "unknown",
+        "address": {},
+        "coordinates": {}
+      },
+      "locations": [],
+      "recurrence": null,
+      "attendees": [],
+      "organizer": {
+        "emailAddress": {
+          "name": "MOEITS_Staff",
+          "address": "moeits_staff@moeits.onmicrosoft.com"
+        }
+      },
+      "onlineMeeting": null
+    },
+    {
+      "@odata.etag": "W/\"KpiSXjDFF0SIHGDwb3fgigADPTBwFQ==\"",
+      "id": "AAMkAGI0ZTYxOTY2LWNhY2QtNGNjZS1iYjZlLWM3ZTc1MGRmMWVhNQBGAAAAAABXJURzwfiZSJVUrChZmnPwBwAqmJJeMMUXRIgcYPBvd_CKAAAAAAENAAAqmJJeMMUXRIgcYPBvd_CKAAM87mo0AAA=",
+      "createdDateTime": "2026-01-19T15:17:35.761653Z",
+      "lastModifiedDateTime": "2026-01-19T15:27:59.9459067Z",
+      "changeKey": "KpiSXjDFF0SIHGDwb3fgigADPTBwFQ==",
+      "categories": [],
+      "transactionId": "4ACEFD5A-CD8A-7945-986B-1D0E82D31DD7",
+      "originalStartTimeZone": "UTC",
+      "originalEndTimeZone": "UTC",
+      "iCalUId": "040000008200E00074C5B7101A82E0080000000064E4BBBD5689DC01000000000000000010000000084CE7BA3A34554F9B8AEE6F5EDE8AF8",
+      "uid": "040000008200E00074C5B7101A82E0080000000064E4BBBD5689DC01000000000000000010000000084CE7BA3A34554F9B8AEE6F5EDE8AF8",
+      "reminderMinutesBeforeStart": 1080,
+      "isReminderOn": true,
+      "hasAttachments": false,
+      "subject": "Wary WFH",
+      "bodyPreview": "",
+      "importance": "normal",
+      "sensitivity": "normal",
+      "isAllDay": true,
+      "isCancelled": false,
+      "isOrganizer": true,
+      "responseRequested": true,
+      "seriesMasterId": null,
+      "showAs": "free",
+      "type": "singleInstance",
+      "webLink": "https://outlook.office365.com/calendar/deeplink/read/group/moeits.onmicrosoft.com/moeits_staff/AAMkAGI0ZTYxOTY2LWNhY2QtNGNjZS1iYjZlLWM3ZTc1MGRmMWVhNQBGAAAAAABXJURzwfiZSJVUrChZmnPwBwAqmJJeMMUXRIgcYPBvd%2BCKAAAAAAENAAAqmJJeMMUXRIgcYPBvd%2BCKAAM87mo0AAA%3D",
+      "onlineMeetingUrl": "",
+      "isOnlineMeeting": false,
+      "onlineMeetingProvider": "unknown",
+      "allowNewTimeProposals": true,
+      "occurrenceId": null,
+      "isDraft": false,
+      "hideAttendees": false,
+      "responseStatus": {
+        "response": "organizer",
+        "time": "0001-01-01T00:00:00Z"
+      },
+      "body": {
+        "contentType": "html",
+        "content": ""
+      },
+      "start": {
+        "dateTime": "2026-01-23T00:00:00.0000000",
+        "timeZone": "UTC"
+      },
+      "end": {
+        "dateTime": "2026-01-24T00:00:00.0000000",
+        "timeZone": "UTC"
+      },
+      "location": {
+        "displayName": "WFH",
+        "locationType": "default",
+        "uniqueId": "WFH",
+        "uniqueIdType": "private"
+      },
+      "locations": [
+        {
+          "displayName": "WFH",
+          "locationType": "default",
+          "uniqueId": "WFH",
+          "uniqueIdType": "private"
+        }
+      ],
+      "recurrence": null,
+      "attendees": [
+        {
+          "type": "required",
+          "status": {
+            "response": "notResponded",
+            "time": "0001-01-01T00:00:00Z"
+          },
+          "emailAddress": {
+            "name": "MOEITS_Staff",
+            "address": "moeits_staff@moeits.onmicrosoft.com"
+          }
+        },
+        {
+          "type": "optional",
+          "status": {
+            "response": "accepted",
+            "time": "2026-01-19T15:17:38.3253083Z"
+          },
+          "emailAddress": {
+            "name": "Wary Vega",
+            "address": "wvega@moeits.com"
+          }
+        },
+        {
+          "type": "optional",
+          "status": {
+            "response": "accepted",
+            "time": "2026-01-19T15:17:59.9732363Z"
+          },
+          "emailAddress": {
+            "name": "Scott Crow",
+            "address": "scrow@moeits.com"
+          }
+        },
+        {
+          "type": "optional",
+          "status": {
+            "response": "accepted",
+            "time": "2026-01-19T15:27:02.669Z"
+          },
+          "emailAddress": {
+            "name": "Ryne Graf",
+            "address": "rgraf@moeits.com"
+          }
+        }
+      ],
+      "organizer": {
+        "emailAddress": {
+          "name": "MOEITS_Staff",
+          "address": "moeits_staff@moeits.onmicrosoft.com"
+        }
+      },
+      "onlineMeeting": null
+    },
+    {
+      "@odata.etag": "W/\"KpiSXjDFF0SIHGDwb3fgigADOURlSA==\"",
+      "id": "AAMkAGI0ZTYxOTY2LWNhY2QtNGNjZS1iYjZlLWM3ZTc1MGRmMWVhNQBGAAAAAABXJURzwfiZSJVUrChZmnPwBwAqmJJeMMUXRIgcYPBvd_CKAAAAAAENAAAqmJJeMMUXRIgcYPBvd_CKAAM5AiD9AAA=",
+      "createdDateTime": "2026-01-15T15:59:38.6038156Z",
+      "lastModifiedDateTime": "2026-01-15T15:59:38.6490061Z",
+      "changeKey": "KpiSXjDFF0SIHGDwb3fgigADOURlSA==",
+      "categories": [],
+      "transactionId": "localevent:64edd811-8e91-4c60-36d2-7410286c81de",
+      "originalStartTimeZone": "Central Standard Time",
+      "originalEndTimeZone": "Central Standard Time",
+      "iCalUId": "040000008200E00074C5B7101A82E008000000001DE8CFF33786DC010000000000000000100000009BE3A01195EC16449E60C30C78CA68FF",
+      "uid": "040000008200E00074C5B7101A82E008000000001DE8CFF33786DC010000000000000000100000009BE3A01195EC16449E60C30C78CA68FF",
+      "reminderMinutesBeforeStart": 15,
+      "isReminderOn": true,
+      "hasAttachments": false,
+      "subject": "Will OOO",
+      "bodyPreview": "",
+      "importance": "normal",
+      "sensitivity": "normal",
+      "isAllDay": false,
+      "isCancelled": false,
+      "isOrganizer": true,
+      "responseRequested": true,
+      "seriesMasterId": null,
+      "showAs": "busy",
+      "type": "singleInstance",
+      "webLink": "https://outlook.office365.com/calendar/deeplink/read/group/moeits.onmicrosoft.com/moeits_staff/AAMkAGI0ZTYxOTY2LWNhY2QtNGNjZS1iYjZlLWM3ZTc1MGRmMWVhNQBGAAAAAABXJURzwfiZSJVUrChZmnPwBwAqmJJeMMUXRIgcYPBvd%2BCKAAAAAAENAAAqmJJeMMUXRIgcYPBvd%2BCKAAM5AiD9AAA%3D",
+      "onlineMeetingUrl": null,
+      "isOnlineMeeting": false,
+      "onlineMeetingProvider": "unknown",
+      "allowNewTimeProposals": true,
+      "occurrenceId": null,
+      "isDraft": false,
+      "hideAttendees": false,
+      "responseStatus": {
+        "response": "organizer",
+        "time": "0001-01-01T00:00:00Z"
+      },
+      "body": {
+        "contentType": "html",
+        "content": ""
+      },
+      "start": {
+        "dateTime": "2026-01-26T14:00:00.0000000",
+        "timeZone": "UTC"
+      },
+      "end": {
+        "dateTime": "2026-01-26T14:30:00.0000000",
+        "timeZone": "UTC"
+      },
+      "location": {
+        "displayName": "office 1",
+        "locationType": "default",
+        "uniqueId": "office 1",
+        "uniqueIdType": "private"
+      },
+      "locations": [
+        {
+          "displayName": "office 1",
+          "locationType": "default",
+          "uniqueId": "office 1",
+          "uniqueIdType": "private"
+        }
+      ],
+      "recurrence": null,
+      "attendees": [],
+      "organizer": {
+        "emailAddress": {
+          "name": "MOEITS_Staff",
+          "address": "moeits_staff@moeits.onmicrosoft.com"
+        }
+      },
+      "onlineMeeting": null
+    },
+    {
+      "@odata.etag": "W/\"KpiSXjDFF0SIHGDwb3fgigADOURzlQ==\"",
+      "id": "AAMkAGI0ZTYxOTY2LWNhY2QtNGNjZS1iYjZlLWM3ZTc1MGRmMWVhNQBGAAAAAABXJURzwfiZSJVUrChZmnPwBwAqmJJeMMUXRIgcYPBvd_CKAAAAAAENAAAqmJJeMMUXRIgcYPBvd_CKAAM5AiEMAAA=",
+      "createdDateTime": "2026-01-16T14:39:21.4141278Z",
+      "lastModifiedDateTime": "2026-01-16T14:47:08.6391652Z",
+      "changeKey": "KpiSXjDFF0SIHGDwb3fgigADOURzlQ==",
+      "categories": [],
+      "transactionId": "{53075EC2-DA69-45FD-AF64-5CF11AF4D5C0}",
+      "originalStartTimeZone": "UTC",
+      "originalEndTimeZone": "UTC",
+      "iCalUId": "040000008200E00074C5B7101A82E00800000000AE9FF4E6F586DC010000000000000000100000009ADFE70C91075E43888DEC270084A915",
+      "uid": "040000008200E00074C5B7101A82E00800000000AE9FF4E6F586DC010000000000000000100000009ADFE70C91075E43888DEC270084A915",
+      "reminderMinutesBeforeStart": 1080,
+      "isReminderOn": true,
+      "hasAttachments": false,
+      "subject": "Kat WFH",
+      "bodyPreview": "",
+      "importance": "normal",
+      "sensitivity": "normal",
+      "isAllDay": true,
+      "isCancelled": false,
+      "isOrganizer": true,
+      "responseRequested": true,
+      "seriesMasterId": null,
+      "showAs": "free",
+      "type": "singleInstance",
+      "webLink": "https://outlook.office365.com/calendar/deeplink/read/group/moeits.onmicrosoft.com/moeits_staff/AAMkAGI0ZTYxOTY2LWNhY2QtNGNjZS1iYjZlLWM3ZTc1MGRmMWVhNQBGAAAAAABXJURzwfiZSJVUrChZmnPwBwAqmJJeMMUXRIgcYPBvd%2BCKAAAAAAENAAAqmJJeMMUXRIgcYPBvd%2BCKAAM5AiEMAAA%3D",
+      "onlineMeetingUrl": null,
+      "isOnlineMeeting": false,
+      "onlineMeetingProvider": "unknown",
+      "allowNewTimeProposals": true,
+      "occurrenceId": null,
+      "isDraft": false,
+      "hideAttendees": false,
+      "responseStatus": {
+        "response": "organizer",
+        "time": "0001-01-01T00:00:00Z"
+      },
+      "body": {
+        "contentType": "html",
+        "content": "<html>\r\n<head>\r\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\r\n<meta name=\"Generator\" content=\"Microsoft Word 15 (filtered medium)\">\r\n<style>\r\n<!--\r\n@font-face\r\n\t{font-family:\"Cambria Math\"}\r\n@font-face\r\n\t{font-family:Aptos}\r\np.MsoNormal, li.MsoNormal, div.MsoNormal\r\n\t{margin:0in;\r\n\tfont-size:12.0pt;\r\n\tfont-family:\"Aptos\",sans-serif}\r\nspan.EmailStyle17\r\n\t{font-family:\"Aptos\",sans-serif;\r\n\tcolor:windowtext}\r\n.MsoChpDefault\r\n\t{}\r\n@page WordSection1\r\n\t{margin:1.0in 1.0in 1.0in 1.0in}\r\ndiv.WordSection1\r\n\t{}\r\n-->\r\n</style>\r\n</head>\r\n<body lang=\"EN-US\" link=\"#467886\" vlink=\"#96607D\" style=\"word-wrap:break-word\">\r\n<div class=\"WordSection1\">\r\n<p class=\"MsoNormal\"><span style=\"font-size:11.0pt\">&nbsp;</span></p>\r\n</div>\r\n</body>\r\n</html>\r\n"
+      },
+      "start": {
+        "dateTime": "2026-01-30T00:00:00.0000000",
+        "timeZone": "UTC"
+      },
+      "end": {
+        "dateTime": "2026-01-31T00:00:00.0000000",
+        "timeZone": "UTC"
+      },
+      "location": {
+        "displayName": "",
+        "locationType": "default",
+        "uniqueIdType": "unknown",
+        "address": {},
+        "coordinates": {}
+      },
+      "locations": [],
+      "recurrence": null,
+      "attendees": [
+        {
+          "type": "required",
+          "status": {
+            "response": "none",
+            "time": "0001-01-01T00:00:00Z"
+          },
+          "emailAddress": {
+            "name": "MOEITS_Staff",
+            "address": "moeits_staff@moeits.onmicrosoft.com"
+          }
+        },
+        {
+          "type": "required",
+          "status": {
+            "response": "accepted",
+            "time": "2026-01-16T14:39:25.7746822Z"
+          },
+          "emailAddress": {
+            "name": "Katrina Makdesi-Elias",
+            "address": "kmakdesi-elias@moeits.com"
+          }
+        },
+        {
+          "type": "optional",
+          "status": {
+            "response": "accepted",
+            "time": "2026-01-16T14:40:07.878Z"
+          },
+          "emailAddress": {
+            "name": "Ryne Graf",
+            "address": "rgraf@moeits.com"
+          }
+        },
+        {
+          "type": "optional",
+          "status": {
+            "response": "accepted",
+            "time": "2026-01-16T14:44:10.7201995Z"
+          },
+          "emailAddress": {
+            "name": "Wary Vega",
+            "address": "wvega@moeits.com"
+          }
+        },
+        {
+          "type": "optional",
+          "status": {
+            "response": "accepted",
+            "time": "2026-01-16T14:46:18.5792354Z"
+          },
+          "emailAddress": {
+            "name": "Scott Crow",
+            "address": "scrow@moeits.com"
+          }
+        }
+      ],
+      "organizer": {
+        "emailAddress": {
+          "name": "MOEITS_Staff",
+          "address": "moeits_staff@moeits.onmicrosoft.com"
+        }
+      },
+      "onlineMeeting": null
+    },
+    {
+      "@odata.etag": "W/\"KpiSXjDFF0SIHGDwb3fgigADPTBwiw==\"",
+      "id": "AAMkAGI0ZTYxOTY2LWNhY2QtNGNjZS1iYjZlLWM3ZTc1MGRmMWVhNQFRAAgI3lI2se0AAEYAAAAAVyVEc8H4mUiVVKwoWZpz8AcAKpiSXjDFF0SIHGDwb3fgigAAAAABDQAAKpiSXjDFF0SIHGDwb3fgigADOQIhDgAAEA==",
+      "createdDateTime": "2026-01-16T15:11:27.3877895Z",
+      "lastModifiedDateTime": "2026-01-19T16:18:53.6984761Z",
+      "changeKey": "KpiSXjDFF0SIHGDwb3fgigADPTBwiw==",
+      "categories": [],
+      "transactionId": "89D7157B-42E4-E34A-BDEC-7E015A0B5C38",
+      "originalStartTimeZone": "UTC",
+      "originalEndTimeZone": "UTC",
+      "iCalUId": "040000008200E00074C5B7101A82E00807EA010DF8EFEC62FA86DC010000000000000000100000009FA86B3C4F83AB4BB8B176C6CA09ED1D",
+      "uid": "040000008200E00074C5B7101A82E00800000000F8EFEC62FA86DC010000000000000000100000009FA86B3C4F83AB4BB8B176C6CA09ED1D",
+      "reminderMinutesBeforeStart": 15,
+      "isReminderOn": true,
+      "hasAttachments": false,
+      "subject": "Tayyab WFH",
+      "bodyPreview": "",
+      "importance": "normal",
+      "sensitivity": "normal",
+      "isAllDay": true,
+      "isCancelled": false,
+      "isOrganizer": true,
+      "responseRequested": true,
+      "seriesMasterId": "AAMkAGI0ZTYxOTY2LWNhY2QtNGNjZS1iYjZlLWM3ZTc1MGRmMWVhNQBGAAAAAABXJURzwfiZSJVUrChZmnPwBwAqmJJeMMUXRIgcYPBvd_CKAAAAAAENAAAqmJJeMMUXRIgcYPBvd_CKAAM5AiEOAAA=",
+      "showAs": "free",
+      "type": "occurrence",
+      "webLink": "https://outlook.office365.com/calendar/deeplink/read/group/moeits.onmicrosoft.com/moeits_staff/AAMkAGI0ZTYxOTY2LWNhY2QtNGNjZS1iYjZlLWM3ZTc1MGRmMWVhNQFRAAgI3lI2se0AAEYAAAAAVyVEc8H4mUiVVKwoWZpz8AcAKpiSXjDFF0SIHGDwb3fgigAAAAABDQAAKpiSXjDFF0SIHGDwb3fgigADOQIhDgAAEA%3D%3D",
+      "onlineMeetingUrl": "",
+      "isOnlineMeeting": false,
+      "onlineMeetingProvider": "unknown",
+      "allowNewTimeProposals": true,
+      "occurrenceId": "OID.AAMkAGI0ZTYxOTY2LWNhY2QtNGNjZS1iYjZlLWM3ZTc1MGRmMWVhNQBGAAAAAABXJURzwfiZSJVUrChZmnPwBwAqmJJeMMUXRIgcYPBvd_CKAAAAAAENAAAqmJJeMMUXRIgcYPBvd_CKAAM5AiEOAAA=.2026-01-13",
+      "isDraft": false,
+      "hideAttendees": false,
+      "responseStatus": {
+        "response": "organizer",
+        "time": "0001-01-01T00:00:00Z"
+      },
+      "body": {
+        "contentType": "html",
+        "content": ""
+      },
+      "start": {
+        "dateTime": "2026-01-13T00:00:00.0000000",
+        "timeZone": "UTC"
+      },
+      "end": {
+        "dateTime": "2026-01-14T00:00:00.0000000",
+        "timeZone": "UTC"
+      },
+      "location": {
+        "displayName": "",
+        "locationType": "default",
+        "uniqueIdType": "unknown",
+        "address": {},
+        "coordinates": {}
+      },
+      "locations": [],
+      "recurrence": null,
+      "attendees": [],
+      "organizer": {
+        "emailAddress": {
+          "name": "MOEITS_Staff",
+          "address": "moeits_staff@moeits.onmicrosoft.com"
+        }
+      },
+      "onlineMeeting": null
+    },
+    {
+      "@odata.etag": "W/\"KpiSXjDFF0SIHGDwb3fgigADPTBwiw==\"",
+      "id": "AAMkAGI0ZTYxOTY2LWNhY2QtNGNjZS1iYjZlLWM3ZTc1MGRmMWVhNQFRAAgI3lSSMSpAAEYAAAAAVyVEc8H4mUiVVKwoWZpz8AcAKpiSXjDFF0SIHGDwb3fgigAAAAABDQAAKpiSXjDFF0SIHGDwb3fgigADOQIhDgAAEA==",
+      "createdDateTime": "2026-01-16T15:11:27.3877895Z",
+      "lastModifiedDateTime": "2026-01-19T16:18:53.6984761Z",
+      "changeKey": "KpiSXjDFF0SIHGDwb3fgigADPTBwiw==",
+      "categories": [],
+      "transactionId": "89D7157B-42E4-E34A-BDEC-7E015A0B5C38",
+      "originalStartTimeZone": "UTC",
+      "originalEndTimeZone": "UTC",
+      "iCalUId": "040000008200E00074C5B7101A82E00807EA0110F8EFEC62FA86DC010000000000000000100000009FA86B3C4F83AB4BB8B176C6CA09ED1D",
+      "uid": "040000008200E00074C5B7101A82E00800000000F8EFEC62FA86DC010000000000000000100000009FA86B3C4F83AB4BB8B176C6CA09ED1D",
+      "reminderMinutesBeforeStart": 15,
+      "isReminderOn": true,
+      "hasAttachments": false,
+      "subject": "Tayyab WFH",
+      "bodyPreview": "",
+      "importance": "normal",
+      "sensitivity": "normal",
+      "isAllDay": true,
+      "isCancelled": false,
+      "isOrganizer": true,
+      "responseRequested": true,
+      "seriesMasterId": "AAMkAGI0ZTYxOTY2LWNhY2QtNGNjZS1iYjZlLWM3ZTc1MGRmMWVhNQBGAAAAAABXJURzwfiZSJVUrChZmnPwBwAqmJJeMMUXRIgcYPBvd_CKAAAAAAENAAAqmJJeMMUXRIgcYPBvd_CKAAM5AiEOAAA=",
+      "showAs": "free",
+      "type": "occurrence",
+      "webLink": "https://outlook.office365.com/calendar/deeplink/read/group/moeits.onmicrosoft.com/moeits_staff/AAMkAGI0ZTYxOTY2LWNhY2QtNGNjZS1iYjZlLWM3ZTc1MGRmMWVhNQFRAAgI3lSSMSpAAEYAAAAAVyVEc8H4mUiVVKwoWZpz8AcAKpiSXjDFF0SIHGDwb3fgigAAAAABDQAAKpiSXjDFF0SIHGDwb3fgigADOQIhDgAAEA%3D%3D",
+      "onlineMeetingUrl": "",
+      "isOnlineMeeting": false,
+      "onlineMeetingProvider": "unknown",
+      "allowNewTimeProposals": true,
+      "occurrenceId": "OID.AAMkAGI0ZTYxOTY2LWNhY2QtNGNjZS1iYjZlLWM3ZTc1MGRmMWVhNQBGAAAAAABXJURzwfiZSJVUrChZmnPwBwAqmJJeMMUXRIgcYPBvd_CKAAAAAAENAAAqmJJeMMUXRIgcYPBvd_CKAAM5AiEOAAA=.2026-01-16",
+      "isDraft": false,
+      "hideAttendees": false,
+      "responseStatus": {
+        "response": "organizer",
+        "time": "0001-01-01T00:00:00Z"
+      },
+      "body": {
+        "contentType": "html",
+        "content": ""
+      },
+      "start": {
+        "dateTime": "2026-01-16T00:00:00.0000000",
+        "timeZone": "UTC"
+      },
+      "end": {
+        "dateTime": "2026-01-17T00:00:00.0000000",
+        "timeZone": "UTC"
+      },
+      "location": {
+        "displayName": "",
+        "locationType": "default",
+        "uniqueIdType": "unknown",
+        "address": {},
+        "coordinates": {}
+      },
+      "locations": [],
+      "recurrence": null,
+      "attendees": [],
+      "organizer": {
+        "emailAddress": {
+          "name": "MOEITS_Staff",
+          "address": "moeits_staff@moeits.onmicrosoft.com"
+        }
+      },
+      "onlineMeeting": null
+    },
+    {
+      "@odata.etag": "W/\"KpiSXjDFF0SIHGDwb3fgigADPTBwiw==\"",
+      "id": "AAMkAGI0ZTYxOTY2LWNhY2QtNGNjZS1iYjZlLWM3ZTc1MGRmMWVhNQFRAAgI3le22tFAAEYAAAAAVyVEc8H4mUiVVKwoWZpz8AcAKpiSXjDFF0SIHGDwb3fgigAAAAABDQAAKpiSXjDFF0SIHGDwb3fgigADOQIhDgAAEA==",
+      "createdDateTime": "2026-01-16T15:11:27.3877895Z",
+      "lastModifiedDateTime": "2026-01-19T16:18:53.6984761Z",
+      "changeKey": "KpiSXjDFF0SIHGDwb3fgigADPTBwiw==",
+      "categories": [],
+      "transactionId": "89D7157B-42E4-E34A-BDEC-7E015A0B5C38",
+      "originalStartTimeZone": "UTC",
+      "originalEndTimeZone": "UTC",
+      "iCalUId": "040000008200E00074C5B7101A82E00807EA0114F8EFEC62FA86DC010000000000000000100000009FA86B3C4F83AB4BB8B176C6CA09ED1D",
+      "uid": "040000008200E00074C5B7101A82E00800000000F8EFEC62FA86DC010000000000000000100000009FA86B3C4F83AB4BB8B176C6CA09ED1D",
+      "reminderMinutesBeforeStart": 15,
+      "isReminderOn": true,
+      "hasAttachments": false,
+      "subject": "Tayyab WFH",
+      "bodyPreview": "",
+      "importance": "normal",
+      "sensitivity": "normal",
+      "isAllDay": true,
+      "isCancelled": false,
+      "isOrganizer": true,
+      "responseRequested": true,
+      "seriesMasterId": "AAMkAGI0ZTYxOTY2LWNhY2QtNGNjZS1iYjZlLWM3ZTc1MGRmMWVhNQBGAAAAAABXJURzwfiZSJVUrChZmnPwBwAqmJJeMMUXRIgcYPBvd_CKAAAAAAENAAAqmJJeMMUXRIgcYPBvd_CKAAM5AiEOAAA=",
+      "showAs": "free",
+      "type": "occurrence",
+      "webLink": "https://outlook.office365.com/calendar/deeplink/read/group/moeits.onmicrosoft.com/moeits_staff/AAMkAGI0ZTYxOTY2LWNhY2QtNGNjZS1iYjZlLWM3ZTc1MGRmMWVhNQFRAAgI3le22tFAAEYAAAAAVyVEc8H4mUiVVKwoWZpz8AcAKpiSXjDFF0SIHGDwb3fgigAAAAABDQAAKpiSXjDFF0SIHGDwb3fgigADOQIhDgAAEA%3D%3D",
+      "onlineMeetingUrl": "",
+      "isOnlineMeeting": false,
+      "onlineMeetingProvider": "unknown",
+      "allowNewTimeProposals": true,
+      "occurrenceId": "OID.AAMkAGI0ZTYxOTY2LWNhY2QtNGNjZS1iYjZlLWM3ZTc1MGRmMWVhNQBGAAAAAABXJURzwfiZSJVUrChZmnPwBwAqmJJeMMUXRIgcYPBvd_CKAAAAAAENAAAqmJJeMMUXRIgcYPBvd_CKAAM5AiEOAAA=.2026-01-20",
+      "isDraft": false,
+      "hideAttendees": false,
+      "responseStatus": {
+        "response": "organizer",
+        "time": "0001-01-01T00:00:00Z"
+      },
+      "body": {
+        "contentType": "html",
+        "content": ""
+      },
+      "start": {
+        "dateTime": "2026-01-20T00:00:00.0000000",
+        "timeZone": "UTC"
+      },
+      "end": {
+        "dateTime": "2026-01-21T00:00:00.0000000",
+        "timeZone": "UTC"
+      },
+      "location": {
+        "displayName": "",
+        "locationType": "default",
+        "uniqueIdType": "unknown",
+        "address": {},
+        "coordinates": {}
+      },
+      "locations": [],
+      "recurrence": null,
+      "attendees": [],
+      "organizer": {
+        "emailAddress": {
+          "name": "MOEITS_Staff",
+          "address": "moeits_staff@moeits.onmicrosoft.com"
+        }
+      },
+      "onlineMeeting": null
+    }
+  ],
+  "@odata.nextLink": "https://graph.microsoft.com/v1.0/groups/d0dd07fc-dc48-4d16-9439-39f479c9dc05/calendarView?startDateTime=2026-01-01T00%3a00%3a00&endDateTime=2026-02-01T00%3a00%3a00&%24top=10&%24skip=10"
+}
