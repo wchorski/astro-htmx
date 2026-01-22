@@ -44,3 +44,16 @@ All commands are run from the root of the project, from a terminal:
 ## 👀 Want to learn more?
 
 Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+
+#todo
+- [ ] look into using the MS SDK 
+```js
+import { Client } from "@microsoft/microsoft-graph-client";
+```
+- [ ] genrate persistant MS token
+Bottom Line
+Graph Explorer tokens are for testing only. For production or persistent use:
+
+Register your own app in Azure AD.
+Implement OAuth flow with refresh tokens or client credentials.
+Use MSAL or similar libraries to handle token lifecycle automatically.

@@ -32,15 +32,16 @@ try {
     console.log(
       "fetching fresh data | timeDifference is older than hoursThreshold",
     );
-    await fs.writeFile(
-      path.join(BASE_DIR, `last-pull-date.txt`),
-      now.toISOString(),
-      "utf-8",
-    );
 
     const res = await fetch("https://xkcd.com/atom.xml");
     xml = await res.text();
-    await fs.writeFile(path.join(BASE_DIR, `${filename}.xml`), now.toISOString(), "utf-8");
+    await fs.writeFile(path.join(BASE_DIR, `${filename}.xml`), xml, "utf-8");
+
+    await fs.writeFile(
+      path.join(BASE_DIR, `${filename}-last-pull-timestamp.txt`),
+      now.toISOString(),
+      "utf-8",
+    );
   } else {
     console.log(
       "fetching cached data | timeDifference is younger than hoursThreshold",
