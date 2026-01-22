@@ -11,7 +11,7 @@ let events: EventData = null;
 
 try {
   const date = await fs.readFile(
-    path.join(BASE_DIR, `last-pull-date.txt`),
+    path.join(BASE_DIR, `${filename}-last-pull-timestamp.txt`),
     "utf-8",
   );
 
