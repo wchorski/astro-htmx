@@ -104,10 +104,21 @@ for (let day = 1; day <= daysInMonth; day++) {
               {dayEvents.map((event) => (
                 <div class="event" title={event.subject}>
                   <span class="event-text">
-                    {event.type === "occurrence" && (
-                      <span class="recurrence-icon">↻ </span>
+                    {event.isCancelled ? (
+                      <s class="canceled-event">
+                        {event.type === "occurrence" && (
+                          <span class="recurrence-icon">↻ </span>
+                        )}
+                        {event.subject}
+                      </s>
+                    ) : (
+                      <>
+                        {event.type === "occurrence" && (
+                          <span class="recurrence-icon">↻ </span>
+                        )}
+                        {event.subject}
+                      </>
                     )}
-                    {event.subject}
                   </span>
                 </div>
               ))}
@@ -129,7 +140,6 @@ for (let day = 1; day <= daysInMonth; day++) {
       Cantarell, sans-serif;
     background-color: #1a1a1a;
     border-radius: 8px;
-    height: clamp(558px, 200px, 3000px);
   }
 
   .calendar-header {
@@ -203,7 +213,7 @@ for (let day = 1; day <= daysInMonth; day++) {
   }
 
   .event {
-    background-color: #1976d2;
+    background-color: hsl(210, 79%, 46%);
     color: white;
     padding: 4px 6px;
     border-radius: 3px;
@@ -212,6 +222,10 @@ for (let day = 1; day <= daysInMonth; day++) {
     text-overflow: ellipsis;
     white-space: nowrap;
     cursor: default;
+  }
+
+  .event:has(s.canceled-event) {
+    background-color: hsl(210, 19%, 26%);
   }
 
   .event-text {

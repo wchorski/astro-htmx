@@ -47,6 +47,7 @@ const title = "MOEITS_Staff Calendar";
       background-origin: content-box;
       background-size: cover;
       background-position: center bottom;
+      overflow: hidden;
     }
 
     .container {
@@ -57,8 +58,8 @@ const title = "MOEITS_Staff Calendar";
     h1 {
       text-align: center;
       color: white;
-      margin-block: 2rem;
-      font-size: 2.5em;
+      margin-block: 1.5rem;
+      font-size: 2em;
       text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
     }
 
@@ -109,11 +110,11 @@ const title = "MOEITS_Staff Calendar";
     section {
       position: relative;
       width: 100%;
-      height: 100vh;
+      height: 100dvh;
       overflow: hidden;
     }
     section .air {
-      position: absolute;
+      position: fixed;
       bottom: 0;
       left: 0;
       width: 100%;
