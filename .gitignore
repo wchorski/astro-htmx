@@ -1,6 +1,8 @@
 # build output
 dist/
 
+compose*.yml
+
 # generated types
 .astro/
 

@@ -1,5 +1,5 @@
 ---
-interface CalendarEvent {
+type CalendarEvent = {
   subject: string;
   start: {
     dateTime: string;
@@ -14,38 +14,55 @@ interface CalendarEvent {
   isDraft: boolean;
   showAs: string;
   type: string;
-}
+};
 
-interface Props {
+type Props = {
   events: CalendarEvent[];
-}
+  selectedDate: Date;
+};
 
-const { events } = Astro.props;
+const { events, selectedDate } = Astro.props;
 
+const dateTopOfMonth = new Date(
+  selectedDate.getFullYear(),
+  selectedDate.getMonth(),
+  1,
+);
+const yearSelected = dateTopOfMonth.getFullYear();
+const monthSelected = dateTopOfMonth.getMonth();
 const now = new Date();
-const currentYear = now.getFullYear();
-const currentMonth = now.getMonth();
-const today = now.getDate();
+const nowToday = now.getDate();
+const nowMonth = now.getMonth();
 
-const firstDay = new Date(currentYear, currentMonth, 1);
-const lastDay = new Date(currentYear, currentMonth + 1, 0);
+const firstDay = new Date(yearSelected, monthSelected, 1);
+const lastDay = new Date(yearSelected, monthSelected + 1, 0);
 const daysInMonth = lastDay.getDate();
 const startingDayOfWeek = firstDay.getDay();
 
 const monthNames = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December'
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
 ];
 
-const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 // Group events by date
 const eventsByDate = new Map<string, CalendarEvent[]>();
 
-events.forEach(event => {
+events.forEach((event) => {
   const eventDate = new Date(event.start.dateTime);
   const dateKey = `${eventDate.getFullYear()}-${eventDate.getMonth()}-${eventDate.getDate()}`;
-  
+
   if (!eventsByDate.has(dateKey)) {
     eventsByDate.set(dateKey, []);
   }
@@ -64,39 +81,41 @@ for (let day = 1; day <= daysInMonth; day++) {
 
 <div class="calendar-container">
   <div class="calendar-header">
-    <h2>{monthNames[currentMonth]} {currentYear}</h2>
+    <h2>{monthNames[monthSelected]} {yearSelected}</h2>
   </div>
-  
+
   <div class="calendar-grid">
-    {dayNames.map(day => (
-      <div class="day-name">{day}</div>
-    ))}
-    
-    {calendarDays.map(day => {
-      if (day === null) {
-        return <div class="calendar-day empty"></div>;
-      }
-      
-      const dateKey = `${currentYear}-${currentMonth}-${day}`;
-      const dayEvents = eventsByDate.get(dateKey) || [];
-      const isToday = day === today;
-      
-      return (
-        <div class={`calendar-day ${isToday ? 'today' : ''}`}>
-          <div class="day-number">{day}</div>
-          <div class="events">
-            {dayEvents.map(event => (
-              <div class="event" title={event.subject}>
-                <span class="event-text">
-                  {event.type === 'occurrence' && <span class="recurrence-icon">↻ </span>}
-                  {event.subject}
-                </span>
-              </div>
-            ))}
+    {dayNames.map((day) => <div class="day-name">{day}</div>)}
+
+    {
+      calendarDays.map((day) => {
+        if (day === null) {
+          return <div class="calendar-day empty" />;
+        }
+
+        const dateKey = `${yearSelected}-${monthSelected}-${day}`;
+        const dayEvents = eventsByDate.get(dateKey) || [];
+        const isToday = day === nowToday && monthSelected === nowMonth;
+
+        return (
+          <div class={`calendar-day ${isToday ? "today" : ""}`}>
+            <div class="day-number">{day}</div>
+            <div class="events">
+              {dayEvents.map((event) => (
+                <div class="event" title={event.subject}>
+                  <span class="event-text">
+                    {event.type === "occurrence" && (
+                      <span class="recurrence-icon">↻ </span>
+                    )}
+                    {event.subject}
+                  </span>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
-      );
-    })}
+        );
+      })
+    }
   </div>
 </div>
 
@@ -105,9 +124,12 @@ for (let day = 1; day <= daysInMonth; day++) {
     max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    font-family:
+      -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu,
+      Cantarell, sans-serif;
     background-color: #1a1a1a;
     border-radius: 8px;
+    height: clamp(558px, 200px, 3000px);
   }
 
   .calendar-header {
@@ -143,6 +165,8 @@ for (let day = 1; day <= daysInMonth; day++) {
     min-height: 100px;
     padding: 8px;
     position: relative;
+    max-width: 9rem;
+    /* height: clamp(10px, 150px, 1000px); */
   }
 
   .calendar-day.empty {

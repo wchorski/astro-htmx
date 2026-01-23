@@ -8,6 +8,7 @@ const filename = "moeits-staff";
 const groupId = "d0dd07fc-dc48-4d16-9439-39f479c9dc05";
 const hoursThreshold = 3 * 60 * 60 * 1000; // 3 hours
 let events: CalEvent[] = [];
+const now = new Date();
 
 try {
   const date = await fs.readFile(
@@ -16,15 +17,10 @@ try {
   );
 
   const savedDate = new Date(date);
-  const now = new Date();
 
   const timeDifference = now.getTime() - savedDate.getTime();
 
   if (timeDifference >= hoursThreshold) {
-    console.log(
-      "fetching fresh data | timeDifference is older than hoursThreshold",
-    );
-
     function dateFromNow(days: number) {
       // TODO maybe use `now` as to not create another Date obj
       const d = new Date();
@@ -35,7 +31,6 @@ try {
     // TODO set start and end times 1 month before and after current time.
     const start = dateFromNow(-30);
     const end = dateFromNow(65);
-    console.log({ start, end });
 
     let url: string | null =
       `https://graph.microsoft.com/v1.0/groups/${groupId}/calendar/calendarView` +
@@ -87,9 +82,7 @@ try {
       "utf-8",
     );
   } else {
-    console.log(
-      "fetching cached data | timeDifference is younger than hoursThreshold",
-    );
+    // Cached data
     const eventsString = await fs.readFile(
       path.join(BASE_DIR, `${filename}.json`),
       "utf-8",
@@ -132,9 +125,10 @@ const eventItems =
       )
     : null;
 
-console.log("⚠️ num of events: ", eventItems?.length);
-console.log("⚠️ events.subject: ");
-eventItems?.map((ev, i) => console.log(`${++i}: ${ev.subject}`));
+// debug
+// console.log("⚠️ num of events: ", eventItems?.length);
+// console.log("⚠️ events.subject: ");
+// eventItems?.map((ev, i) => console.log(`${++i}: ${ev.subject}`));
 
 // console.log(JSON.stringify(eventItems, null, 2));
 
@@ -142,7 +136,19 @@ eventItems?.map((ev, i) => console.log(`${++i}: ${ev.subject}`));
 // isAllDay, isCancelled, showAs, type, isDraft
 ---
 
-{eventItems ? <EventCalendar events={eventItems} /> : <p>no events found</p>}
+{
+  eventItems ? (
+    <div style={{ display: "flex", gap: "1rem" }}>
+      <EventCalendar events={eventItems} selectedDate={now} />
+      <EventCalendar
+        events={eventItems}
+        selectedDate={new Date(now.getFullYear(), now.getMonth() + 1, 1)}
+      />
+    </div>
+  ) : (
+    <p>no events found</p>
+  )
+}
 
 <!-- <ul>
   {
