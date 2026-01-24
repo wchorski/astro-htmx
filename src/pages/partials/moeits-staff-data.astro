@@ -9,6 +9,10 @@ const groupId = "d0dd07fc-dc48-4d16-9439-39f479c9dc05";
 const hoursThreshold = 3 * 60 * 60 * 1000; // 3 hours
 let events: CalEvent[] = [];
 const now = new Date();
+let error: {
+  type: "fetch" | "cache" | "parse" | "unknown";
+  message: string;
+} | null = null;
 
 try {
   const date = await fs.readFile(
@@ -21,76 +25,101 @@ try {
   const timeDifference = now.getTime() - savedDate.getTime();
 
   if (timeDifference >= hoursThreshold) {
-    function dateFromNow(days: number) {
-      // TODO maybe use `now` as to not create another Date obj
-      const d = new Date();
-      d.setDate(d.getDate() + days);
-      return d.toISOString();
-    }
-
-    // TODO set start and end times 1 month before and after current time.
-    const start = dateFromNow(-30);
-    const end = dateFromNow(65);
-
-    let url: string | null =
-      `https://graph.microsoft.com/v1.0/groups/${groupId}/calendar/calendarView` +
-      `?startDateTime=${start}` +
-      `&endDateTime=${end}` +
-      `&$orderby=start/dateTime&$top=100`;
-
-    // debug @ https://developer.microsoft.com/en-us/graph/graph-explorer
-    // endpoint -> https://graph.microsoft.com/v1.0/groups/d0dd07fc-dc48-4d16-9439-39f479c9dc05/calendar/calendarView?startDateTime=2026-01-01T00:00:00&endDateTime=2026-02-01T00:00:00
-    while (url) {
-      // @ts-ignore
-      const response = await fetch(url, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${import.meta.env.MS_TOKEN}`,
-          "Content-Type": "application/json",
-          Prefer: 'outlook.timezone="UTC"',
-        },
-      });
-
-      if (!response.ok) {
-        // Log full body to diagnose Graph errors
-        const text = await response.text();
-        console.error(
-          `Graph error ${response.status} ${response.statusText}: ${text}`,
-        );
-        throw new Error(`Graph request failed: ${response.status}`);
+    try {
+      function dateFromNow(days: number) {
+        // TODO maybe use `now` as to not create another Date obj
+        const d = new Date();
+        d.setDate(d.getDate() + days);
+        return d.toISOString();
       }
 
-      const json: EventData = await response.json();
-      if (!json) throw new Error("no json");
-      if (Array.isArray(json.value)) {
-        events.push(...json.value);
+      // TODO set start and end times 1 month before and after current time.
+      const start = dateFromNow(-30);
+      const end = dateFromNow(65);
+
+      let url: string | null =
+        `https://graph.microsoft.com/v1.0/groups/${groupId}/calendar/calendarView` +
+        `?startDateTime=${start}` +
+        `&endDateTime=${end}` +
+        `&$orderby=start/dateTime&$top=100`;
+
+      // debug @ https://developer.microsoft.com/en-us/graph/graph-explorer
+      // endpoint -> https://graph.microsoft.com/v1.0/groups/d0dd07fc-dc48-4d16-9439-39f479c9dc05/calendar/calendarView?startDateTime=2026-01-01T00:00:00&endDateTime=2026-02-01T00:00:00
+      while (url) {
+        // @ts-ignore
+        const response = await fetch(url, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${import.meta.env.MS_TOKEN}`,
+            "Content-Type": "application/json",
+            Prefer: 'outlook.timezone="UTC"',
+          },
+        });
+
+        if (!response.ok) {
+          // Log full body to diagnose Graph errors
+          const text = await response.text();
+          error = {
+            type: "fetch",
+            message: `Failed to fetch events from Microsoft Graph API -- ${response.status} ${response.statusText}: ${text}`,
+          };
+          console.error(
+            `Graph error ${response.status} ${response.statusText}: ${text}`,
+          );
+          throw new Error(`Graph request failed: ${response.status}`);
+        }
+
+        const json: EventData = await response.json();
+        if (!json) throw new Error("no json");
+        if (Array.isArray(json.value)) {
+          events.push(...json.value);
+        }
+
+        // Follow pagination
+        url = json["@odata.nextLink"] || null;
       }
 
-      // Follow pagination
-      url = json["@odata.nextLink"] || null;
+      await fs.writeFile(
+        path.join(BASE_DIR, `${filename}.json`),
+        JSON.stringify(events),
+        "utf-8",
+      );
+
+      await fs.writeFile(
+        path.join(BASE_DIR, `${filename}-last-pull-timestamp.txt`),
+        now.toISOString(),
+        "utf-8",
+      );
+    } catch (fetchErr) {
+      error = {
+        type: "fetch",
+        message: "Failed to fetch events from Microsoft Graph API",
+      };
+      throw fetchErr;
     }
-
-    await fs.writeFile(
-      path.join(BASE_DIR, `${filename}.json`),
-      JSON.stringify(events),
-      "utf-8",
-    );
-
-    await fs.writeFile(
-      path.join(BASE_DIR, `${filename}-last-pull-timestamp.txt`),
-      now.toISOString(),
-      "utf-8",
-    );
   } else {
-    // Cached data
-    const eventsString = await fs.readFile(
-      path.join(BASE_DIR, `${filename}.json`),
-      "utf-8",
-    );
-    events = JSON.parse(eventsString);
+    try {
+      // Cached data
+      const eventsString = await fs.readFile(
+        path.join(BASE_DIR, `${filename}.json`),
+        "utf-8",
+      );
+      events = JSON.parse(eventsString);
+    } catch (cacheErr) {
+      error = {
+        type: "cache",
+        message: "Failed to read cached events",
+      };
+      throw cacheErr;
+    }
   }
-} catch (error) {
-  console.log(error);
+} catch (unkError) {
+  console.log(unkError);
+
+  error = {
+    type: "unknown",
+    message: `An unexpected error occurred -- ${unkError}`,
+  };
 }
 
 // function toLocalTime(dateString: string) {
@@ -124,20 +153,15 @@ const eventItems =
         }),
       )
     : null;
-
-// debug
-// console.log("⚠️ num of events: ", eventItems?.length);
-// console.log("⚠️ events.subject: ");
-// eventItems?.map((ev, i) => console.log(`${++i}: ${ev.subject}`));
-
-// console.log(JSON.stringify(eventItems, null, 2));
-
-// other important data points to use
-// isAllDay, isCancelled, showAs, type, isDraft
 ---
 
 {
-  eventItems ? (
+  error ? (
+    <div class="error-message" role="alert">
+      <h2>⚠️ Unable to load calendar events: {error}</h2>
+      <p>{error.message}</p>
+    </div>
+  ) : eventItems ? (
     <div style={{ display: "flex", gap: "1rem" }}>
       <EventCalendar events={eventItems} selectedDate={now} />
       <EventCalendar
@@ -149,27 +173,3 @@ const eventItems =
     <p>no events found</p>
   )
 }
-
-<!-- <ul>
-  {
-    eventItems ? (
-      eventItems.map((item) => (
-        <li>
-          <h3>{item.subject}</h3>
-          <table>
-            <tr>
-              <td>start:</td>
-              <td>{toLocalTime(item.start.dateTime)}</td>
-            </tr>
-            <tr>
-              <td>end:</td>
-              <td>{toLocalTime(item.end.dateTime)}</td>
-            </tr>
-          </table>
-        </li>
-      ))
-    ) : (
-      <li>no events found</li>
-    )
-  }
-</ul> -->
