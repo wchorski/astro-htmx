@@ -1,7 +1,28 @@
 ---
 import fs from "node:fs/promises";
 import path from "node:path";
+import { ConfidentialClientApplication } from "@azure/msal-node";
 import EventCalendar from "./EventCalendar.astro";
+
+const { TENANT_ID, MS_SECRET_VALUE, MS_CLIENT_ID } = import.meta.env;
+
+const cca = new ConfidentialClientApplication({
+  auth: {
+    clientId: MS_CLIENT_ID,
+    authority: `https://login.microsoftonline.com/${TENANT_ID}`,
+    clientSecret: MS_SECRET_VALUE,
+  },
+});
+
+async function getToken() {
+  const result = await cca.acquireTokenByClientCredential({
+    scopes: ["https://graph.microsoft.com/.default"],
+  });
+
+  if (!result?.accessToken) throw new Error("!!! no result.accessToken");
+  console.log("Access Token:", result.accessToken);
+  return result.accessToken;
+}
 
 const BASE_DIR = path.resolve("public/data");
 const filename = "moeits-staff";
@@ -38,6 +59,8 @@ try {
       const start = dateFromNow(-30);
       const end = dateFromNow(65);
 
+      const accessToken = await getToken();
+
       let url: string | null =
         `https://graph.microsoft.com/v1.0/groups/${groupId}/calendar/calendarView` +
         `?startDateTime=${start}` +
@@ -51,7 +74,8 @@ try {
         const response = await fetch(url, {
           method: "GET",
           headers: {
-            Authorization: `Bearer ${import.meta.env.MS_TOKEN}`,
+            Authorization: `Bearer ${accessToken}`,
+            // Authorization: `Bearer ${import.meta.env.MS_TOKEN}`,
             "Content-Type": "application/json",
             Prefer: 'outlook.timezone="UTC"',
           },
@@ -171,17 +195,19 @@ const eventItems =
 }
 {
   eventItems ? (
-    <div>
+    <div class="grid gap-m">
       <header class="title">
         <h2>MOEITS_Staff Calendar</h2>
         {date && (
           <h3 class="sub-text">
-            Last Updated: 
+            Last Updated:
             {new Date(date).toLocaleString("en-US", {
               weekday: "long",
               year: "numeric",
               month: "long",
               day: "numeric",
+              hour: 'numeric',
+              minute: '2-digit'
             })}
           </h3>
         )}

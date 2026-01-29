@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@astrojs/node": "^9.5.2",
+    "@azure/msal-node": "^5.0.3",
     "astro": "^5.16.12",
     "fast-xml-parser": "^5.3.3",
     "htmx.org": "^2.0.8"
