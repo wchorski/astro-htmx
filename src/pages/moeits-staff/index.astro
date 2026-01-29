@@ -14,8 +14,6 @@ const title = "MOEITS_Staff Calendar";
   </head>
   <body class="area duotone">
     <section>
-      <h1>MOEITS_Staff Calendar</h1>
-
       <div class="air air1"></div>
       <div class="air air2"></div>
       <div class="air air3"></div>
@@ -55,10 +53,28 @@ const title = "MOEITS_Staff Calendar";
       width: 100%;
     }
 
+    header.title {
+      text-align: center;
+      display: grid;
+      margin-bottom: 1rem;
+    }
+
+    .sub-text {
+      color: rgb(196, 196, 196);
+    }
+    .error-message {
+      border-left: dashed 8px red;
+      border-right: dashed 8px red;
+      padding: 1rem;
+      padding-left: 1rem;
+      background-color: rgb(109, 60, 60);
+    }
+
     h1 {
       text-align: center;
       color: white;
       margin-block: 1.5rem;
+      margin-bottom: 0;
       font-size: 2em;
       text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
     }

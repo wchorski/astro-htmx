@@ -13,9 +13,10 @@ let error: {
   type: "fetch" | "cache" | "parse" | "unknown";
   message: string;
 } | null = null;
+let date = null;
 
 try {
-  const date = await fs.readFile(
+  date = await fs.readFile(
     path.join(BASE_DIR, `${filename}-last-pull-timestamp.txt`),
     "utf-8",
   );
@@ -98,28 +99,33 @@ try {
       throw fetchErr;
     }
   } else {
-    try {
-      // Cached data
-      const eventsString = await fs.readFile(
-        path.join(BASE_DIR, `${filename}.json`),
-        "utf-8",
-      );
-      events = JSON.parse(eventsString);
-    } catch (cacheErr) {
-      error = {
-        type: "cache",
-        message: "Failed to read cached events",
-      };
-      throw cacheErr;
-    }
+    await fetchCachedData();
   }
 } catch (unkError) {
   console.log(unkError);
+  await fetchCachedData();
 
   error = {
     type: "unknown",
     message: `An unexpected error occurred -- ${unkError}`,
   };
+}
+
+async function fetchCachedData() {
+  try {
+    // Cached data
+    const eventsString = await fs.readFile(
+      path.join(BASE_DIR, `${filename}.json`),
+      "utf-8",
+    );
+    events = JSON.parse(eventsString);
+  } catch (cacheErr) {
+    error = {
+      type: "cache",
+      message: "Failed to read cached events",
+    };
+    throw cacheErr;
+  }
 }
 
 // function toLocalTime(dateString: string) {
@@ -161,13 +167,32 @@ const eventItems =
       <h2>⚠️ Unable to load calendar events: {error}</h2>
       <p>{error.message}</p>
     </div>
-  ) : eventItems ? (
-    <div style={{ display: "flex", gap: "1rem" }}>
-      <EventCalendar events={eventItems} selectedDate={now} />
-      <EventCalendar
-        events={eventItems}
-        selectedDate={new Date(now.getFullYear(), now.getMonth() + 1, 1)}
-      />
+  ) : null
+}
+{
+  eventItems ? (
+    <div>
+      <header class="title">
+        <h2>MOEITS_Staff Calendar</h2>
+        {date && (
+          <h3 class="sub-text">
+            Last Updated: 
+            {new Date(date).toLocaleString("en-US", {
+              weekday: "long",
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            })}
+          </h3>
+        )}
+      </header>
+      <div style={{ display: "flex", gap: "1rem" }}>
+        <EventCalendar events={eventItems} selectedDate={now} />
+        <EventCalendar
+          events={eventItems}
+          selectedDate={new Date(now.getFullYear(), now.getMonth() + 1, 1)}
+        />
+      </div>
     </div>
   ) : (
     <p>no events found</p>

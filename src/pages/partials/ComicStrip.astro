@@ -25,6 +25,7 @@ try {
 
   const savedDate = new Date(date);
   const now = new Date();
+  console.log({ savedDate, now });
 
   const timeDifference = now.getTime() - savedDate.getTime();
 
@@ -35,6 +36,7 @@ try {
 
     const res = await fetch("https://xkcd.com/atom.xml");
     xml = await res.text();
+    console.log({ xml });
     await fs.writeFile(path.join(BASE_DIR, `${filename}.xml`), xml, "utf-8");
 
     await fs.writeFile(
@@ -58,10 +60,10 @@ try {
   };
 }
 
-// function extractImage(html = "") {
-//   const match = html.match(/<img[^>]+src="([^"]+)"/i);
-//   return match?.[1] ?? null;
-// }
+function extractImage(html = "") {
+  const match = html.match(/<img[^>]+src="([^"]+)"/i);
+  return match?.[1] ?? null;
+}
 
 if (xml) {
   const feed = parser.parse(xml);
@@ -71,14 +73,14 @@ if (xml) {
     : [feed.feed.entry];
 
   const randomEntry = entries[Math.floor(Math.random() * entries.length)];
+  const imgSrc = randomEntry.summary?.img?.["@_src"] || extractImage(randomEntry.summary?.["#text"])
 
   comic = {
     id: randomEntry.id,
     title: randomEntry.title,
     link: randomEntry.link["@_href"],
     updated: randomEntry.updated,
-    image: randomEntry.summary?.img["@_src"],
-    // image: extractImage(randomEntry.summary?.["#text"]),
+    image: imgSrc,
   };
 } else {
   console.log("NO XML FOUND");
