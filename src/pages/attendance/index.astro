@@ -1,0 +1,93 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import CreditForm from "../partials/credit-form.astro";
+import CreditsList from "../partials/credits-list.astro";
+// import ClassCreditForm from "./ClassCreditForm.astro";
+---
+
+<Layout>
+  <main>
+    <h1>Attendance</h1>
+    <CreditForm />
+    <CreditsList />
+
+    <!-- <ClassCreditForm /> -->
+
+    <!-- <hr /> -->
+
+    <!-- <form>
+      <legend>Sign-up Form</legend>
+      <fieldset>
+        <label for="asipId">
+          <span>ASIP ID</span>
+          <input type="number" name="asipId" required />
+        </label>
+        <label for="regNum">
+          <span>Registration Number</span>
+          <input type="number" name="regNum" required />
+        </label>
+      </fieldset>
+
+      <fieldset>
+        <label for="first_name">
+          <span>first name</span>
+          <input type="text" name="first_name" required />
+        </label>
+        <label for="last_name">
+          <span>last name</span>
+          <input type="text" name="last_name" required />
+        </label>
+        <label for="middle_initial">
+          <span>middle initial</span>
+          <input type="text" name="middle_initial" />
+        </label>
+        <label for="phone">
+          <span>phone</span>
+          <input type="text" name="phone" required />
+        </label>
+        <label for="email">
+          <span>email</span>
+          <input type="email" name="email" required />
+        </label>
+      </fieldset>
+      <fieldset>
+        <label for="address1">
+          <span>Address</span>
+          <input type="text" name="address1" required />
+        </label>
+        <label for="address2">
+          <span>P.O. Box</span>
+          <input type="text" name="address1" />
+        </label>
+        <label for="city">
+          
+          <span>city</span>
+          <input type="text" name="city" required />
+        </label>
+        <label for="state">
+          <span>state</span>
+          <input list="states" name="state" id="state" />
+          <datalist id="states">
+            <option value="Illinois">Illinois</option>
+            <option value="Indiana">Indiana</option>
+            <option value="Iowa">Iowa</option>
+          </datalist>
+        </label>
+        <label for="zip">
+          <span>zip</span>
+          <input type="number" name="zip" required />
+        </label>
+      </fieldset>
+      <p>TODO: Class: ??? - Date: ???</p>
+      <button type="submit">Sign-up for Class</button>
+    </form> -->
+
+    <!-- <form>
+      <legend>Class Credit & Attendance</legend>
+      <p>
+        TODO: make it simple QR code scan that takes ID of Credit object,
+        confirm member details, and mark as attended
+      </p>
+    </form> -->
+  </main>
+</Layout>

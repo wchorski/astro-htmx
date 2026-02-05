@@ -1,0 +1,124 @@
+---
+const { error, success } = Astro.props;
+---
+
+<form
+  hx-post="/api/confirm-credit"
+  hx-target="#form-container"
+  hx-swap="outerHTML"
+  hx-indicator="#loading"
+  id="form-container"
+  style="display: grid"
+>
+  <legend>Class Credit & Attendance</legend>
+
+  {error && <div class="error-banner">{error}</div>}
+
+  {success && <div class="success-banner">{success}</div>}
+
+  <div id="loading" class="htmx-indicator">Submitting...</div>
+
+  <fieldset>
+    <label for="memberId">
+      <span>TEST: memberId</span>
+      <input type="number" name="memberId" value="1" required />
+    </label>
+    <label for="classId">
+      <span>TEST: classId</span>
+      <input type="number" name="classId" value="1" required />
+    </label>
+  </fieldset>
+
+  <fieldset>
+    <label for="asipId">
+      <span>ASIP ID</span>
+      <input type="number" name="asipId" value="002020" required />
+    </label>
+    <label for="regNum">
+      <span>Registration Number</span>
+      <input type="number" name="regNum" value="002020" required />
+    </label>
+  </fieldset>
+
+  <fieldset>
+    <label for="first_name">
+      <span>first name</span>
+      <input type="text" name="first_name" value="bob" required />
+    </label>
+    <label for="last_name">
+      <span>last name</span>
+      <input type="text" name="last_name" value="bobberson" required />
+    </label>
+    <label for="middle_initial">
+      <span>middle initial</span>
+      <input type="text" name="middle_initial" value="B" />
+    </label>
+    <label for="phone">
+      <span>phone</span>
+      <input type="text" name="phone" value="9233453456" required />
+    </label>
+    <label for="email">
+      <span>email</span>
+      <input type="email" name="email" value="bobby@bob.com" required />
+    </label>
+  </fieldset>
+
+  <fieldset>
+    <label for="address1">
+      <span>Address</span>
+      <input type="text" name="address1" value="808 Bob Boulavard" required />
+    </label>
+    <label for="address2">
+      <span>P.O. Box</span>
+      <input type="text" name="address2" />
+    </label>
+    <label for="city">
+      <span>city</span>
+      <input type="text" name="city" value="Bobville" required />
+    </label>
+    <label for="state">
+      <span>state</span>
+      <input list="states" name="state" id="state" value="Illinois" />
+      <datalist id="states">
+        <option value="Illinois">Illinois</option>
+        <option value="Indiana">Indiana</option>
+        <option value="Iowa">Iowa</option>
+      </datalist>
+    </label>
+    <label for="zip">
+      <span>zip</span>
+      <input type="number" name="zip" value="80808" required />
+    </label>
+  </fieldset>
+
+  <p>TODO: Class: ??? - Date: ???</p>
+  <button type="submit">Confirm Credit</button>
+</form>
+
+<style>
+  .htmx-indicator {
+    display: none;
+    padding: 0.5rem;
+    background: #e3f2fd;
+    border-radius: 4px;
+  }
+  .htmx-request .htmx-indicator {
+    display: block;
+  }
+  .error-banner {
+    background-color: #fee;
+    border: 1px solid #fcc;
+    padding: 1rem;
+    border-radius: 4px;
+    color: #c00;
+    margin-bottom: 1rem;
+  }
+  .success-banner {
+    background-color: #efe;
+    border: 1px solid #cfc;
+    padding: 1rem;
+    border-radius: 4px;
+    color: #0a0;
+    margin-bottom: 1rem;
+  }
+</style>
