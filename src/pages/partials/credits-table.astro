@@ -1,0 +1,97 @@
+---
+interface Props {
+  classId: string;
+}
+
+import { db, eq, Credit, Member } from "astro:db";
+const { classId } = Astro.props;
+if (!classId) throw new Error("no classId found. throw 404");
+const memberCredits = await db
+  .select({
+    credit: Credit,
+    member: Member,
+  })
+  .from(Credit)
+  .innerJoin(Member, eq(Credit.memberId, Member.id))
+  .where(eq(Credit.classId, Number(classId)));
+---
+
+<table class="credits-table">
+  <thead>
+    <tr>
+      <!-- <th>Class ID</th> -->
+      <th>Member ID</th>
+      <th>Name</th>
+      <th>Phone</th>
+      <th>Email</th>
+      <th>Attended</th>
+    </tr>
+  </thead>
+  <tbody>
+    {
+      memberCredits.length > 0 ? (
+        memberCredits.map(({ credit, member }) => (
+          <tr>
+            {/* <td>{credit.classId}</td> */}
+            <td>{credit.memberId}</td>
+            <td>
+              {member.first_name} {member.middle_initial} {member.last_name}
+            </td>
+            <td>{member.phone}</td>
+            <td>{member.email}</td>
+            <td class={`attended-${credit.attended}`}>{credit.attended}</td>
+          </tr>
+        ))
+      ) : (
+        <tr>
+          <td col-span="3">No credits found</td>
+        </tr>
+      )
+    }
+  </tbody>
+</table>
+
+<style>
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  table thead tr {
+    background-color: #f0f0f0;
+    border-bottom: 2px solid #ddd;
+  }
+
+  table th {
+    padding: 12px;
+    text-align: left;
+  }
+
+  table tbody tr {
+    border-bottom: 1px solid #ddd;
+  }
+
+  table tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+
+  table tbody tr:nth-child(odd) {
+    background-color: #ffffff;
+  }
+
+  table td {
+    padding: 12px;
+  }
+
+  table .no-credits {
+    text-align: center;
+  }
+    .attended-true {
+    color: white;
+    background-color: green;
+  }
+  .attended-false {
+    color: white;
+    background-color: red;
+  }
+</style>
