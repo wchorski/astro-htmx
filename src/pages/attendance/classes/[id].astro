@@ -12,7 +12,7 @@ if (!id) throw new Error("no id found. throw 404");
 const courses = await db
   .select()
   .from(Course)
-  .where(eq(Course.id, Number(id)));
+  .where(eq(Course.id, Number(id))).limit(1);
 const foundCourse = courses[0];
 if (!foundCourse) throw new Error("404");
 const { subject, date, description } = foundCourse;

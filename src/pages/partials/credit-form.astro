@@ -1,6 +1,6 @@
 ---
 interface Props {
-  course: Course;
+  course?: Course;
 }
 import { db, Credit } from "astro:db";
 import type { Course } from "../../../types/Course";
@@ -12,8 +12,8 @@ const { course } = Astro.props;
 
 <form
   hx-post="/api/confirm-credit"
-  hx-target="#form-container"
-  hx-swap="outerHTML"
+  hx-target="find .error-banner"
+  hx-swap="innerHTML"
   hx-indicator="#loading"
   id="form-container"
   style="display: grid"
@@ -23,15 +23,15 @@ const { course } = Astro.props;
   <fieldset class="col-3">
     <label for="memberId">
       <span>TEST: memberId</span>
-      <input type="number" name="memberId" value="1" required />
+      <input type="number" name="memberId" value="" />
     </label>
     <label for="courseId">
       <span>TEST: courseId</span>
-      <input type="number" name="courseId" value={course.id} required />
+      <input type="number" name="courseId" value={course?.id} required />
     </label>
   </fieldset>
 
-  <fieldset>
+  <fieldset class="col-3">
     <label for="asipId">
       <span>ASIP ID</span>
       <input type="number" name="asipId" value="002020" required />
@@ -59,8 +59,16 @@ const { course } = Astro.props;
     </div>
     <div class="col-3">
       <label for="phone">
-        <span>phone</span>
-        <input type="text" name="phone" value="9233453456" required />
+        <span>phone (example: 312-132-5537)</span>
+        <input
+          type="text"
+          name="phone"
+          value="312-132-5537"
+          id="phone"
+          placeholder="312-132-5537"
+          maxlength="12"
+          required
+        />
       </label>
       <label for="email">
         <span>email</span>
@@ -99,12 +107,13 @@ const { course } = Astro.props;
     </div>
   </fieldset>
 
-  {error && <div class="error-banner">{decodeURIComponent(error)}</div>}
+  <!-- {error && <div class="error-banner">{decodeURIComponent(error)}</div>} -->
+  <div class="error-banner"></div>
   {success && <div class="success-banner">{decodeURIComponent(success)}</div>}
   <div id="loading" class="htmx-indicator">Submitting...</div>
   <button type="submit" disabled={success}>
-    Confirm Credit for {course.subject} - {
-      course.date.toLocaleString("en-US", {
+    Confirm Credit for {course?.subject} - {
+      course?.date.toLocaleString("en-US", {
         year: "numeric",
         month: "short",
         day: "numeric",
@@ -112,6 +121,31 @@ const { course } = Astro.props;
     }</button
   >
 </form>
+
+<script>
+  document.getElementById("phone")?.addEventListener("input", function (e) {
+    let value = e.target.value.replace(/\D/g, ""); // Remove non-digits
+
+    // Limit to 10 digits
+    if (value.length > 10) {
+      value = value.slice(0, 10);
+    }
+
+    // Format as XXX-XXX-XXXX
+    let formatted = "";
+    if (value.length >= 1) {
+      formatted = value.slice(0, 3);
+    }
+    if (value.length >= 3) {
+      formatted += "-" + value.slice(3, 6);
+    }
+    if (value.length >= 6) {
+      formatted += "-" + value.slice(6, 10);
+    }
+
+    e.target.value = formatted;
+  });
+</script>
 
 <style>
   .htmx-indicator {
@@ -268,5 +302,9 @@ const { course } = Astro.props;
     padding: 1rem;
     background-color: rgb(76, 90, 186);
     color: white;
+  }
+
+  button:active {
+    background-color: blue;
   }
 </style>

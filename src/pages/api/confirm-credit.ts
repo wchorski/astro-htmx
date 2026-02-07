@@ -1,11 +1,12 @@
 // src/pages/api/confirm-credit.ts
+import { PhoneSanitizer } from "@lib/sanatizers";
 import type { APIRoute } from "astro";
 import { db, Credit, Course, Member } from "astro:db";
-import { eq } from "astro:db";
+import { eq, or } from "astro:db";
 import { z } from "zod";
 
 const formSchema = z.object({
-  memberId: z.coerce.number(),
+  memberId: z.coerce.number().optional(),
   courseId: z.coerce.number(),
   asipId: z.coerce.number(),
   regNum: z.coerce.number(),
@@ -17,6 +18,9 @@ const formSchema = z.object({
   address1: z.string().min(1, "Address is required"),
   address2: z.string().optional(),
   city: z.string().min(1, "City is required"),
+  // state: z.enum(["Illinois", "Indiana", "Iowa"], {
+  //   errorMap: () => ({ message: "Please select a valid state" })
+  // }),
   state: z.string().min(1, "State is required"),
   zip: z.coerce.number().min(10000).max(99999, "Invalid ZIP code"),
 });
@@ -41,40 +45,114 @@ export const POST: APIRoute = async ({ request, redirect }) => {
       );
     }
 
-    const { memberId, courseId } = result.data;
+    const {
+      memberId,
+      courseId,
+      asipId,
+      regNum,
+      first_name,
+      last_name,
+      middle_initial,
+      phone,
+      email,
+      address1,
+      address2,
+      city,
+      state,
+      zip,
+    } = result.data;
 
-    const classExists = await db
+    const courseExists = await db
+      // TODO i could combine query for course + credits here
       .select()
       .from(Course)
       .where(eq(Course.id, courseId))
       .limit(1);
 
-    if (classExists.length === 0) {
+    if (courseExists.length === 0) {
       return redirect(
         `/partials/credit-form?error=${encodeURIComponent(`Course with ID ${courseId} does not exist`)}`,
       );
     }
 
-    const memberExists = await db
+    const courseCredits = await db
       .select()
-      .from(Member)
-      .where(eq(Member.id, memberId))
-      .limit(1);
+      .from(Credit)
+      .where(eq(Credit.courseId, courseId));
 
-    if (memberExists.length === 0) {
+    const phoneSanatized: string | null = PhoneSanitizer.sanitize(phone);
+    if (!phoneSanatized) {
       return redirect(
-        `/partials/credit-form?error=${encodeURIComponent(`Member with ID ${memberExists} does not exist`)}`,
+        `/partials/credit-form?error=${encodeURIComponent(`Fix phone formatting`)}`,
       );
     }
 
-    // TODO check if member already has credit created for class?
-    // check if attended === true
+    const memberExists = memberId
+      ? await db.select().from(Member).where(eq(Member.id, memberId)).get()
+      : await db
+          .select()
+          .from(Member)
+          .where(eq(Member.phone, phoneSanatized))
+          .get();
+    // TODO member may not exist yet (if this app doesn't also register them)
+    // if (!memberExists) {
+    //   return redirect(
+    //     `/partials/credit-form?error=${encodeURIComponent(`Member with ID ${memberExists} does not exist`)}`,
+    //   );
+    // }
 
-    // Insert credit
-    const attended = true;
-    await db
-      .insert(Credit)
-      .values({ memberId, courseId, date: new Date(), attended });
+    // let newMember = null;
+
+    // TODO validate inputs
+
+    if (!memberExists) {
+      const [newMember] = await db
+        .insert(Member)
+        .values({
+          asipId,
+          regNum,
+          first_name,
+          last_name,
+          middle_initial,
+          phone,
+          email,
+          address1,
+          address2,
+          city,
+          state,
+          zip,
+        })
+        .returning();
+
+      await db.insert(Credit).values({
+        memberId: newMember.id,
+        courseId,
+        date: new Date(),
+        attended: true,
+      });
+    } else {
+      // member does exist
+      const memberCredit = courseCredits.find(
+        (credit) => credit.memberId === memberExists.id,
+      );
+      console.log({ memberCredit });
+
+      if (memberCredit && memberCredit.attended)
+        return new Response(
+          `
+            Member ${memberExists.id} ${memberExists.first_name}
+            already attended: ${memberCredit.attended}
+          `,
+          { status: 411 },
+        );
+
+      await db.insert(Credit).values({
+        memberId: memberExists.id,
+        courseId,
+        date: new Date(),
+        attended: true,
+      });
+    }
 
     // Redirect to form with success and trigger list update
     return redirect("/partials/credit-form?success=Credit+successfully+added");

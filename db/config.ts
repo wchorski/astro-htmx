@@ -13,10 +13,12 @@ const Member = defineTable({
     address1: column.text(),
     address2: column.text({ optional: true }),
     city: column.text(),
-    state: column.text({ enum: ["Illinois", "Indiana", "Iowa"] }),
+    // TODO validate in `/api/confirm-credit.ts` instead
+    // state: column.text({ enum: ["Illinois", "Indiana", "Iowa"] }),
+    state: column.text(),
     zip: column.number(),
   },
-  indexes: [{ on: ["id", "asipId", "regNum"], unique: true }],
+  indexes: [{ on: ["id", "phone", "asipId", "regNum"], unique: true }],
 });
 
 const Course = defineTable({
