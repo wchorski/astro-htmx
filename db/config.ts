@@ -19,7 +19,7 @@ const Member = defineTable({
   indexes: [{ on: ["id", "asipId", "regNum"], unique: true }],
 });
 
-const Class = defineTable({
+const Course = defineTable({
   columns: {
     id: column.number({ primaryKey: true }),
     subject: column.text(),
@@ -33,7 +33,7 @@ const Credit = defineTable({
   columns: {
     id: column.number({ primaryKey: true }),
     memberId: column.number({ references: () => Member.columns.id }),
-    classId: column.number({ references: () => Class.columns.id }),
+    courseId: column.number({ references: () => Course.columns.id }),
     date: column.date(),
     // date: column.date({ default: NOW }),
     grade: column.text({ optional: true }),
@@ -46,7 +46,7 @@ const Credit = defineTable({
 export default defineDb({
   tables: {
     Member,
-    Class,
+    Course,
     Credit,
   },
 });

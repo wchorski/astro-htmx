@@ -7,7 +7,8 @@
       "@components/*": ["./src/components/*"],
       "@styles/*": ["./src/styles/*"],
       "@partials/*": ["./src/partials/*"],
-      "@lib/*": ["./src/lib/*"]
+      "@lib/*": ["./src/lib/*"],
+      "@types/*": ["./types/*"]
     }
   }
 }

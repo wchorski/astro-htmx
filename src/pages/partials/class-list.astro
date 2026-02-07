@@ -1,13 +1,13 @@
 ---
-import { db, Class } from "astro:db";
+import { db, Course } from "astro:db";
 
-const classes = await db.select().from(Class);
+const courses = await db.select().from(Course);
 ---
 
-<ul id="classes-list">
+<ul id="courses-list">
   {
-    classes.length > 0 ? (
-      classes.map(({ id, subject, description, date }) => (
+    courses.length > 0 ? (
+      courses.map(({ id, subject, description, date }) => (
         <li>
           <article>
             <time datetime={date.toISOString()}>
@@ -18,14 +18,14 @@ const classes = await db.select().from(Class);
               })}
             </time>
             <span>
-              <a href={`/attendance/classes/${id}`}>{subject}</a>
+              <a href={`/attendance/courses/${id}`}>{subject}</a>
             </span>
             <p>{description}</p>
           </article>
         </li>
       ))
     ) : (
-      <p>No classes found</p>
+      <p>No courses found</p>
     )
   }
 </ul>

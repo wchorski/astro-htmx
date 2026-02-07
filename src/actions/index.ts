@@ -1,4 +1,4 @@
-import { db, eq, Credit, Class, Member } from "astro:db";
+import { db, eq, Credit, Course, Member } from "astro:db";
 import { ActionError, defineAction } from "astro:actions";
 import { z } from "astro/zod";
 
@@ -9,7 +9,7 @@ export const server = {
     // to check if typeof {value} === 'string' in your pages
     input: z.object({
       memberId: z.coerce.number(),
-      classId: z.coerce.number(),
+      courseId: z.coerce.number(),
       asipId: z.coerce.number(),
       regNum: z.coerce.number(),
       first_name: z.string(),
@@ -25,19 +25,19 @@ export const server = {
     }),
     handler: async (input) => {
       console.log({ input });
-      const { memberId, classId } = input;
+      const { memberId, courseId } = input;
       // TODO check input for member stuff and check attendance
       // Check if class exists
       const classExists = await db
         .select()
-        .from(Class)
-        .where(eq(Class.id, classId))
+        .from(Course)
+        .where(eq(Course.id, courseId))
         .limit(1);
 
       if (classExists.length === 0) {
         throw new ActionError({
           code: "NOT_FOUND",
-          message: `Class with ID ${classId} does not exist in the database.`,
+          message: `Course with ID ${courseId} does not exist in the database.`,
         });
       }
 
@@ -60,7 +60,7 @@ export const server = {
       try {
         const updatedCredits = await db
           .insert(Credit)
-          .values({ memberId, classId, date: new Date(), attended })
+          .values({ memberId, courseId, date: new Date(), attended })
           .returning(); // Return the updated comments
         return updatedCredits;
       } catch (error) {

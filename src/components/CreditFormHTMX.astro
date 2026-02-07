@@ -10,7 +10,7 @@ const { error, success } = Astro.props;
   id="form-container"
   style="display: grid"
 >
-  <legend>Class Credit & Attendance</legend>
+  <legend>Course Credit & Attendance</legend>
 
   {error && <div class="error-banner">{error}</div>}
 
@@ -23,9 +23,9 @@ const { error, success } = Astro.props;
       <span>TEST: memberId</span>
       <input type="number" name="memberId" value="1" required />
     </label>
-    <label for="classId">
-      <span>TEST: classId</span>
-      <input type="number" name="classId" value="1" required />
+    <label for="courseId">
+      <span>TEST: courseId</span>
+      <input type="number" name="courseId" value="1" required />
     </label>
   </fieldset>
 
@@ -91,7 +91,7 @@ const { error, success } = Astro.props;
     </label>
   </fieldset>
 
-  <p>TODO: Class: ??? - Date: ???</p>
+  <p>TODO: Course: ??? - Date: ???</p>
   <button type="submit">Confirm Credit</button>
 </form>
 

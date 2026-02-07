@@ -1,12 +1,12 @@
 // src/pages/api/confirm-credit.ts
 import type { APIRoute } from "astro";
-import { db, Credit, Class, Member } from "astro:db";
+import { db, Credit, Course, Member } from "astro:db";
 import { eq } from "astro:db";
 import { z } from "zod";
 
 const formSchema = z.object({
   memberId: z.coerce.number(),
-  classId: z.coerce.number(),
+  courseId: z.coerce.number(),
   asipId: z.coerce.number(),
   regNum: z.coerce.number(),
   first_name: z.string().min(1, "First name is required"),
@@ -41,17 +41,17 @@ export const POST: APIRoute = async ({ request, redirect }) => {
       );
     }
 
-    const { memberId, classId } = result.data;
+    const { memberId, courseId } = result.data;
 
     const classExists = await db
       .select()
-      .from(Class)
-      .where(eq(Class.id, classId))
+      .from(Course)
+      .where(eq(Course.id, courseId))
       .limit(1);
 
     if (classExists.length === 0) {
       return redirect(
-        `/partials/credit-form?error=${encodeURIComponent(`Class with ID ${classId} does not exist`)}`,
+        `/partials/credit-form?error=${encodeURIComponent(`Course with ID ${courseId} does not exist`)}`,
       );
     }
 
@@ -74,7 +74,7 @@ export const POST: APIRoute = async ({ request, redirect }) => {
     const attended = true;
     await db
       .insert(Credit)
-      .values({ memberId, classId, date: new Date(), attended });
+      .values({ memberId, courseId, date: new Date(), attended });
 
     // Redirect to form with success and trigger list update
     return redirect("/partials/credit-form?success=Credit+successfully+added");

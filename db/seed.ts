@@ -1,7 +1,7 @@
-import { db, Member, Class, Credit } from "astro:db";
+import { db, Member, Course, Credit } from "astro:db";
 
 export default async function () {
-  await db.insert(Class).values([
+  await db.insert(Course).values([
     { id: 1, subject: "Know Your Union", date: new Date("2025-01-10") },
     { id: 2, subject: "Know Your Union", date: new Date("2025-08-13") },
     { id: 3, subject: "Know Your Union", date: new Date("2025-11-23") },
@@ -14022,7 +14022,7 @@ export default async function () {
     {
       id: 1,
       memberId: 1,
-      classId: 1,
+      courseId: 1,
       date: new Date(),
       grade: null,
       attended: true,
@@ -14030,7 +14030,7 @@ export default async function () {
     {
       id: 2,
       memberId: 1,
-      classId: 2,
+      courseId: 2,
       date: new Date(),
       grade: null,
       attended: true,
@@ -14038,7 +14038,7 @@ export default async function () {
     {
       id: 3,
       memberId: 2,
-      classId: 1,
+      courseId: 1,
       date: new Date(),
       grade: null,
       attended: true,
@@ -14046,7 +14046,7 @@ export default async function () {
     {
       id: 4,
       memberId: 2,
-      classId: 2,
+      courseId: 2,
       date: new Date(),
       grade: null,
       attended: true,

@@ -2,19 +2,20 @@
 interface Params {
   id: string;
 }
-import { db, eq, Class } from "astro:db";
+import { db, eq, Course } from "astro:db";
 import Layout from "../../../layouts/Layout.astro";
 import ClassForm from "../../partials/credit-form.astro";
 import CreditsTable from "../../partials/credits-table.astro";
 export const prerender = false; // Not needed in 'server' mode
 const { id } = Astro.params;
 if (!id) throw new Error("no id found. throw 404");
-const cls = await db
+const courses = await db
   .select()
-  .from(Class)
-  .where(eq(Class.id, Number(id)));
-if (cls.length === 0) throw new Error("404");
-const { subject, date, description } = cls[0];
+  .from(Course)
+  .where(eq(Course.id, Number(id)));
+const foundCourse = courses[0];
+if (!foundCourse) throw new Error("404");
+const { subject, date, description } = foundCourse;
 ---
 
 <Layout>
@@ -38,8 +39,14 @@ const { subject, date, description } = cls[0];
     </header>
 
     <hr />
-    <ClassForm classId={id} />
+    <ClassForm course={foundCourse} />
     <hr />
-    <CreditsTable classId={id} />
+    <CreditsTable courseId={foundCourse.id} />
   </main>
 </Layout>
+
+<style>
+  main {
+    padding: 1rem;
+  }
+</style>

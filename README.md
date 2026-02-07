@@ -1,7 +1,7 @@
 #todo
-- [ ] pull from db all `Class` and display them on page
+- [ ] pull from db all `Course` and display them on page
     - [ ] label with subject and date of class (with clickble link)
-    - [ ] `/classes/[id].astro` reveals attendence form.
+    - [ ] `/courses/[id].astro` reveals attendence form.
     - [ ] user submits member data (creates their member profile and checks them as attended) 
 - [ ] how do i save db data into an csv and save it to sharepoint?
 - [ ] look into using the MS SDK 

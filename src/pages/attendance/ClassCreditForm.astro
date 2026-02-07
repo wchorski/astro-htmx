@@ -8,15 +8,15 @@ const inputErrors = isInputError(result?.error) ? result.error.fields : {};
 ---
 
 <form method="POST" action={actions.confirmClassCredit} style="display: grid">
-  <legend>Class Credit & Attendance</legend>
+  <legend>Course Credit & Attendance</legend>
   <fieldset>
     <label for="memberId">
       <span>TEST: memberId</span>
       <input type="number" name="memberId" value="1" required />
     </label>
-    <label for="classId">
-      <span>TEST: classId</span>
-      <input type="number" name="classId" value="1" required />
+    <label for="courseId">
+      <span>TEST: courseId</span>
+      <input type="number" name="courseId" value="1" required />
     </label>
   </fieldset>
   <fieldset>
@@ -82,7 +82,7 @@ const inputErrors = isInputError(result?.error) ? result.error.fields : {};
       <input type="number" name="zip" value="80808" required />
     </label>
   </fieldset>
-  <p>TODO: Class: ??? - Date: ???</p>
+  <p>TODO: Course: ??? - Date: ???</p>
   {
     result?.error && (
       <pre class="error">
@@ -97,7 +97,7 @@ const inputErrors = isInputError(result?.error) ? result.error.fields : {};
     credits.length > 0 ? (
       credits.map((credit) => (
         <li>
-          credit // {credit.id} | {credit.classId} | {credit.memberId} |
+          credit // {credit.id} | {credit.courseId} | {credit.memberId} |
           {credit.date} | {credit.attended}
         </li>
       ))

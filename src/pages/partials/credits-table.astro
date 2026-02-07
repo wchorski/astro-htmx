@@ -1,11 +1,11 @@
 ---
 interface Props {
-  classId: string;
+  courseId: string;
 }
 
 import { db, eq, Credit, Member } from "astro:db";
-const { classId } = Astro.props;
-if (!classId) throw new Error("no classId found. throw 404");
+const { courseId } = Astro.props;
+if (!courseId) throw new Error("no courseId found. throw 404");
 const memberCredits = await db
   .select({
     credit: Credit,
@@ -13,13 +13,13 @@ const memberCredits = await db
   })
   .from(Credit)
   .innerJoin(Member, eq(Credit.memberId, Member.id))
-  .where(eq(Credit.classId, Number(classId)));
+  .where(eq(Credit.courseId, Number(courseId)));
 ---
 
 <table class="credits-table">
   <thead>
     <tr>
-      <!-- <th>Class ID</th> -->
+      <!-- <th>Course ID</th> -->
       <th>Member ID</th>
       <th>Name</th>
       <th>Phone</th>
@@ -32,7 +32,7 @@ const memberCredits = await db
       memberCredits.length > 0 ? (
         memberCredits.map(({ credit, member }) => (
           <tr>
-            {/* <td>{credit.classId}</td> */}
+            {/* <td>{credit.courseId}</td> */}
             <td>{credit.memberId}</td>
             <td>
               {member.first_name} {member.middle_initial} {member.last_name}
