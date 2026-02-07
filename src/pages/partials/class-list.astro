@@ -1,0 +1,31 @@
+---
+import { db, Class } from "astro:db";
+
+const classes = await db.select().from(Class);
+---
+
+<ul id="classes-list">
+  {
+    classes.length > 0 ? (
+      classes.map(({ id, subject, description, date }) => (
+        <li>
+          <article>
+            <time datetime={date.toISOString()}>
+              {date.toLocaleString("en-US", {
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+              })}
+            </time>
+            <span>
+              <a href={`/classes/${id}`}>{subject}</a>
+            </span>
+            <p>{description}</p>
+          </article>
+        </li>
+      ))
+    ) : (
+      <p>No classes found</p>
+    )
+  }
+</ul>
