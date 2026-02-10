@@ -9,10 +9,11 @@ const errorTargetId = `${formId}-errors`;
 const responseTargetId = `${formId}-response`;
 ---
 
-<div id={responseTargetId}></div>
+<div id={responseTargetId} class="form-response-target"></div>
 
 <form
   id={formId}
+  class="card"
   hx-ext="response-targets"
   hx-post="/partials/members-search-submit"
   hx-target={`#${responseTargetId}`}
@@ -25,6 +26,7 @@ const responseTargetId = `${formId}-response`;
   <caption>Members Search</caption>
   <!-- <div id={errorTargetId}></div> -->
 
+  <!-- TODO make hidden field (or grab it from url in submit.astro partial) -->
   <div class="form-field">
     <label>
       Course ID:
@@ -68,7 +70,7 @@ const responseTargetId = `${formId}-response`;
   </button>
 </form>
 
-<style is:global>
+<style>
   .form-field:has(.field-error:not(:empty)) {
     border-style: dotted;
     border-width: 1px;
@@ -77,17 +79,24 @@ const responseTargetId = `${formId}-response`;
     border-inline-start-style: solid;
   }
 
-  .htmx-indicator {
+  form .htmx-indicator {
     display: none;
     animation: fadeIn 0.1s;
   }
 
-  .htmx-request .htmx-indicator {
-    display: inline;
-    /* Force minimum display time even if request is fast */
-    animation:
-      fadeIn 0.1s,
-      stay 3s;
+  form .htmx-request {
+
+    & .button-text {
+      display: none;
+    }
+
+    & .htmx-indicator {
+      display: inline;
+      /* Force minimum display time even if request is fast */
+      animation:
+        fadeIn 0.1s,
+        stay 3s;
+    }
   }
 
   @keyframes fadeIn {
@@ -106,11 +115,11 @@ const responseTargetId = `${formId}-response`;
     }
   }
 
-  #members-search-form-response:has(.success-state) + form#members-search-form {
-    & .form-field {
+  .form-response-target:has(.success-state) + form {
+    & :global(.form-field) {
       border: none;
     }
-    & .field-error {
+    & :global(.field-error) {
       display: none;
     }
   }

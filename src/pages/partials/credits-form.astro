@@ -28,47 +28,44 @@ const responseTargetId = `${formId}-response`;
 >
   <div id={errorTargetId}></div>
 
-  <div class="form-field">
-    <label>
-      Course ID:
-      <input
-        type="number"
-        name="courseId"
-        id={`${formId}-courseId`}
-        value={course.id}
-        required
-      />
-    </label>
+  <label class="form-field">
+    <span class="text">Course ID:</span>
+    <input
+      type="number"
+      name="courseId"
+      aria-describedby={`${formId}-error-courseId`}
+      id={`${formId}-courseId`}
+      value={course.id}
+      required
+    />
     <span class="field-error" id={`${formId}-error-courseId`}></span>
-  </div>
+  </label>
 
-  <div class="form-field">
-    <label>
-      Email:
-      <input
-        type="email"
-        name="email"
-        id={`${formId}-email`}
-        value="bobby@bob.com"
-        required
-      />
-    </label>
+  <label class="form-field">
+    <span class="text">Email:</span>
+    <input
+      type="email"
+      name="email"
+      aria-describedby={`${formId}-error-courseId`}
+      id={`${formId}-email`}
+      value="bobby@bob.com"
+      required
+    />
     <span class="field-error" id={`${formId}-error-email`}></span>
-  </div>
+  </label>
 
-  <div class="form-field">
-    <label>
-      Phone:
-      <input
-        type="tel"
-        name="phone"
-        id={`${formId}-phone`}
-        value="(123) 123-1234"
-        required
-      />
-    </label>
+  <label class="form-field">
+    <span class="text">Phone:</span>
+    <input
+      type="tel"
+      name="phone"
+      aria-describedby={`${formId}-error-courseId`}
+      id={`${formId}-phone`}
+      value="(123) 123-1234"
+      required
+    />
     <span class="field-error" id={`${formId}-error-phone`}></span>
-  </div>
+  </label>
 
   <button type="submit">
     <span class="button-text">Submit</span>
