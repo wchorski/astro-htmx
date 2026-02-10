@@ -65,7 +65,7 @@ const responseTargetId = `${formId}-response`;
   </div>
 
   <button type="submit">
-    <span class="button-text">Submit</span>
+    <span class="button-text">Search for Member</span>
     <span class="htmx-indicator">Submitting...</span>
   </button>
 </form>
@@ -135,6 +135,8 @@ const responseTargetId = `${formId}-response`;
     }
   }) as EventListener);
 
+
+  // TODO do i even need this below?
   document.addEventListener("htmx:afterRequest", function (evt: CustomEvent) {
     const form = evt.detail.elt;
 

@@ -1,42 +1,112 @@
 ---
+import {Credit, db, eq, and, Member} from "astro:db"
 import { formatPhoneToE164Manual } from '@lib/formatters';
 import { z } from 'astro/zod';
 import { formatPhonePrettyManual } from '@lib/formatters';
+
+class NotFoundError extends Error {
+  constructor(message:string) {
+    super(message);
+    this.name = 'NotFoundError';
+  }
+}
+class ConflictError extends Error {
+  constructor(message:string) {
+    super(message);
+    this.name = 'ConflictError';
+  }
+}
 
 export const partial = true;
 export const prerender = false;
 
 const formSchema = z.object({
-  courseId: z.number(),
+  courseId: z.preprocess((val) => Number(val), z.number()),
   email: z.string().email({ message: "Invalid email address" }),
-  phone: z.string().regex(/^\+[1-9]\d{1,14}$/, {
-    message: "Invalid E.164 phone number format"
-  }).min(10, { message: "Phone number must be at least 10 digits" })
+  phone: z.string().transform(val => formatPhoneToE164Manual(val)),
+  first_name: z.string(),
+  last_name: z.string(),
+  middle_initial: z.string().optional(),
+  address1: z.string(),
+  address2: z.string().optional(),
+  city: z.string(),
+  state: z.string(),
+  zip: z.preprocess((val) => Number(val), z.number())
+        .refine(n => Number.isInteger(n) && n.toString().length === 5, {
+          message: "ZIP must be 5 digits"
+        }),
 });
 
 let errors = null;
 let formData = null;
+let existingMember = null
+let existingCredit = null
 let formId = 'credits-form'; // default
 
 if (Astro.request.method === 'POST') {
+  console.log('credits-submit.astro');
   try {
-    const formInputs = await Astro.request.formData();
+    const formInputs = Object.fromEntries(await Astro.request.formData());
+    console.log({formInputs});
+    // const formInputs = await Astro.request.formData();
+    // console.log({formInputs});
     
     // Get the formId to scope OOB swaps
-    formId = formInputs.get('formId')?.toString() || 'credits-form';
+    // formId = formInputs.get('formId')?.toString() || 'credits-form';
     
-    const courseId = Number(formInputs.get('courseId'));
-    const email = formInputs.get('email')?.toString().trim() || '';
-    const phone = formatPhoneToE164Manual(formInputs.get('phone')?.toString().trim() || '');
-    
-    const validated = formSchema.parse({ email, phone, courseId });
+    // formData = Object.fromEntries(await Astro.request.formData());
 
-    // TODO find member and set as attended
+    // const courseId = Number(formInputs.get('courseId'));
+    // const email = formInputs.get('email')?.toString().trim() || '';
+    // const phone = formatPhoneToE164Manual(formInputs.get('phone')?.toString().trim() || '');
+    
+    const validated = formSchema.parse(formInputs);
+    console.log({validated});
+    
+
+    existingMember = 
+      validated.phone 
+        ? await db.select().from(Member).where(eq(Member.phone, validated.phone)).get() 
+        : validated.email 
+          ? await db.select().from(Member).where(eq(Member.email, validated.email)).get() 
+          : null
+
+    console.log({existingMember});
+
+    if(!existingMember){
+      throw new NotFoundError('Member was not found with matching phone or email')
+    }
+
+    existingCredit = await db.select().from(Credit).where(and(eq(Credit.memberId, existingMember.id), eq(Credit.courseId, validated.courseId))).get()
+
+    console.log({existingCredit});
+
+    // TODO if the credit exists at all (meaning they register) throw an error
+    if(existingCredit?.attended){
+      throw new ConflictError("Member already attended and confirmed credit for this scourse")
+    }
+
+    existingCredit ? await db.update(Credit).set({
+      memberId: existingMember.id,
+      courseId: validated.courseId,
+      date: new Date(),
+      attended: true,
+    }).where(eq(Credit.id, existingCredit.id)) 
+    // TODO later don't allow member to insert Credit if they didn't register
+    : await db.insert(Credit).values({
+      memberId: existingMember.id,
+      courseId: validated.courseId,
+      date: new Date(),
+      attended: true,
+    });
+
     
     formData = {
       ...validated,
       phone: formatPhonePrettyManual(validated.phone)
     };
+
+    console.log({formData});
     
     Astro.response.status = 200;
   } catch (error) {
@@ -47,8 +117,15 @@ if (Astro.request.method === 'POST') {
         message: err.message
       }));
       Astro.response.status = 422;
-    } else {
-      // console.log('Unexpected error:', error instanceof Error ? error.message : 'Unknown error');
+    } else if(error instanceof NotFoundError){
+      errors = [{ field: 'not_found', message: error.message }];
+      Astro.response.status = 404
+    } else if(error instanceof ConflictError){
+      errors = [{ field: 'conflict', message: error.message }];
+      Astro.response.status = 409
+    } 
+    else {
+      console.log('Unexpected error:', error instanceof Error ? error.message : 'Unknown error');
       errors = [{ field: 'general', message: 'An unexpected error occurred' }];
       Astro.response.status = 500;
     }
@@ -58,7 +135,7 @@ if (Astro.request.method === 'POST') {
 
 {errors ? (
   <>
-    <div class="error-messages card error" role="alert">
+    <div class="error-messages card status" data-status="error" role="alert">
       <h3>Please fix the following errors:</h3>
       <ul>
         {errors.map(error => (
@@ -80,13 +157,13 @@ if (Astro.request.method === 'POST') {
   
   </>
 ) : formData && (
-  <div class="success-state card success" role="status">
-    <h2>✓ Success!</h2>
-    <p>Thank you for submitting your information.</p>
+  <div class="success-state card status" data-status="success" role="status">
+    <h2>✓ Course Credit Confirmed!</h2>
+    <p>Thank you {formData.first_name + " " + formData.middle_initial + " " + formData.last_name} for confirming your attendance</p>
     <div class="submitted-data">
-      <p><strong>Course ID:</strong> {formData.courseId}</p>
-      <p><strong>Email:</strong> {formData.email}</p>
-      <p><strong>Phone:</strong> {formData.phone}</p>
+      <p><strong>Course ID: </strong>{formData.courseId}</p>
+      <p><strong>Email: </strong>{formData.email}</p>
+      <p><strong>Phone: </strong>{formData.phone}</p>
     </div>
   </div>
 )}

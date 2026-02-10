@@ -6,8 +6,9 @@ import { db, eq, Course } from "astro:db";
 import Layout from "@layouts/Layout.astro";
 // import ClassForm from "../../partials/credit-form.astro";
 import CreditForm from "@partials/credits-form.astro";
-import MembersSearchForm from "@partials/members-search-form.astro"
+import MembersSearchForm from "@partials/members-search-form.astro";
 import CreditsTable from "@partials/credits-table.astro";
+import CreditsForm from "@partials/credits-form.astro";
 export const prerender = false; // Not needed in 'server' mode
 const { id } = Astro.params;
 if (!id) throw new Error("no id found. throw 404");
@@ -54,8 +55,27 @@ const { subject, date, description } = foundCourse;
     <hr />
     <!-- <ClassForm course={foundCourse} /> -->
     <!-- <CreditForm course={foundCourse} /> -->
+    <!-- TODO debug remove later -->
+    <CreditsForm
+      courseId={foundCourse.id}
+      member={{
+        id: 11,
+        asipId: 741843,
+        regNum: 769871,
+        first_name: "Gareth",
+        last_name: "Lethbrig",
+        middle_initial: null,
+        phone: "+12605806719",
+        email: "glethbriga@rambler.ru",
+        address1: "81320 Macpherson Park",
+        city: "Fort Wayne",
+        state: "Indiana",
+        zip: 62167,
+      }}
+    />
     <MembersSearchForm course={foundCourse} />
     <hr />
+    <h2>TEMPORARY: move to admin dashboard on production</h2>
     <CreditsTable courseId={foundCourse.id} />
   </main>
 </Layout>

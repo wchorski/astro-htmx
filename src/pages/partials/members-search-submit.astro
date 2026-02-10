@@ -3,6 +3,7 @@ import { formatPhoneToE164Manual } from '@lib/formatters';
 import { z } from 'astro/zod';
 import { formatPhonePrettyManual } from '@lib/formatters';
 import { db, eq, Member, or } from 'astro:db';
+import CreditsForm from '@partials/credits-form.astro'
 
 class NotFoundError extends Error {
   constructor(message:string) {
@@ -40,6 +41,8 @@ let existingMember = null
 if (Astro.request.method === 'POST') {
   try {
     const formInputs = await Astro.request.formData();
+    // TODO get courseId from url instead of form
+    // const courseId = url.searchParams.get("courseId"); // read from URL
     
     // Get the formId to scope OOB swaps
     // formId = formInputs.get('formId')?.toString() || 'members-search-form';
@@ -66,7 +69,7 @@ if (Astro.request.method === 'POST') {
 
     existingMember = {
       ...existingMember,
-      phone: formatPhonePrettyManual(existingMember.phone)
+      phone: formatPhonePrettyManual(existingMember.phone) || ''
     }
       
     formData = {
@@ -121,7 +124,7 @@ if (Astro.request.method === 'POST') {
     ))}
   
   </>
-) : formData && existingMember && (
+) : formData && existingMember && <>
   <div class="success-state card status" data-status="success" role="status">
     <h2>✓ Member Found!</h2>
     <p>Confirm your details</p>
@@ -137,4 +140,5 @@ if (Astro.request.method === 'POST') {
       {/* <p><strong>Phone:</strong> {formData.phone}</p> */}
     </div>
   </div>
-)}      
+  <CreditsForm courseId={formData.courseId} member={existingMember}/>
+</>}      

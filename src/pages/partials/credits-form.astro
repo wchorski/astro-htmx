@@ -1,23 +1,20 @@
 ---
-import type { Course } from "../../../types/Course";
+import type { Member, Course } from "astro:db";
 interface Props {
-  course: Course;
-  defaultValues?: {
-    first_name: string;
-    email: string;
-  };
+  courseId: number;
+  member?: typeof Member.$inferInsert;
   formId?: string;
 }
-const { course, formId = "credits-form" } = Astro.props;
+const { courseId, member, formId = "credits-form" } = Astro.props;
 const errorTargetId = `${formId}-errors`;
 const responseTargetId = `${formId}-response`;
 ---
 
-<div id={responseTargetId}></div>
+<div id={responseTargetId} class="form-response-target"></div>
 
 <form
   id={formId}
-  class="credits-form"
+  class="credits-form card"
   hx-ext="response-targets"
   hx-post="/partials/credits-submit"
   hx-target={`#${responseTargetId}`}
@@ -26,54 +23,205 @@ const responseTargetId = `${formId}-response`;
   hx-vals={JSON.stringify({ formId })}
   hx-swap="innerHTML"
 >
+  <legend>Confirm Credits Form</legend>
+  <!-- TODO remove id not needed -->
   <div id={errorTargetId}></div>
 
-  <label class="form-field">
-    <span class="text">Course ID:</span>
-    <input
-      type="number"
-      name="courseId"
-      aria-describedby={`${formId}-error-courseId`}
-      id={`${formId}-courseId`}
-      value={course.id}
-      required
-    />
-    <span class="field-error" id={`${formId}-error-courseId`}></span>
-  </label>
+  <fieldset>
+    <label class="form-field">
+      <span class="text">Course ID</span>
+      <input
+        type="number"
+        name="courseId"
+        aria-describedby={`${formId}-error-courseId`}
+        id={`${formId}-courseId`}
+        value={courseId}
+        readonly
+        required
+      />
+      <span class="field-error" id={`${formId}-error-courseId`}></span>
+    </label>
+  </fieldset>
 
-  <label class="form-field">
-    <span class="text">Email:</span>
-    <input
-      type="email"
-      name="email"
-      aria-describedby={`${formId}-error-courseId`}
-      id={`${formId}-email`}
-      value="bobby@bob.com"
-      required
-    />
-    <span class="field-error" id={`${formId}-error-email`}></span>
-  </label>
+  <fieldset>
+    <legend>Contact</legend>
+    <label class="form-field">
+      <span class="text">Email</span>
+      <input
+        type="email"
+        name="email"
+        aria-describedby={`${formId}-error-email`}
+        id={`${formId}-email`}
+        value={member?.email}
+        required
+      />
+      <span class="field-error" id={`${formId}-error-email`}></span>
+    </label>
 
-  <label class="form-field">
-    <span class="text">Phone:</span>
-    <input
-      type="tel"
-      name="phone"
-      aria-describedby={`${formId}-error-courseId`}
-      id={`${formId}-phone`}
-      value="(123) 123-1234"
-      required
-    />
-    <span class="field-error" id={`${formId}-error-phone`}></span>
-  </label>
+    <label class="form-field">
+      <span class="text">Phone</span>
+      <input
+        type="tel"
+        name="phone"
+        aria-describedby={`${formId}-error-phone`}
+        id={`${formId}-phone`}
+        value={member?.phone}
+        required
+      />
+      <span class="field-error" id={`${formId}-error-phone`}></span>
+    </label>
+  </fieldset>
+
+  <fieldset>
+    <legend>Personal Info</legend>
+
+    <label class="form-field">
+      <span class="text">First Name</span>
+      <input
+        type="text"
+        name="first_name"
+        aria-describedby={`${formId}-error-first_name`}
+        id={`${formId}-phone`}
+        value={member?.first_name}
+        required
+      />
+      <span class="field-error" id={`${formId}-error-first_name`}></span>
+    </label>
+
+    <label class="form-field">
+      <span class="text">Last Name</span>
+      <input
+        type="text"
+        name="last_name"
+        aria-describedby={`${formId}-error-last_name`}
+        id={`${formId}-last_name`}
+        value={member?.last_name}
+        required
+      />
+      <span class="field-error" id={`${formId}-error-last_name`}></span>
+    </label>
+
+    <label class="form-field">
+      <span class="text">Middle Initial</span>
+      <input
+        type="text"
+        name="middle_initial"
+        aria-describedby={`${formId}-error-middle_inital`}
+        id={`${formId}-middle_initial`}
+        value={member?.middle_initial}
+      />
+      <span class="field-error" id={`${formId}-error-middle_initial`}></span>
+    </label>
+  </fieldset>
+
+  <fieldset>
+    <legend>Residence</legend>
+    <label class="form-field">
+      <span class="text">Address Number and Street</span>
+      <input
+        type="text"
+        name="address1"
+        aria-describedby={`${formId}-error-address1`}
+        id={`${formId}-address1`}
+        value={member?.address1}
+        required
+      />
+      <span class="field-error" id={`${formId}-error-address1`}></span>
+    </label>
+
+    <label class="form-field">
+      <span class="text">P.O. Box</span>
+      <input
+        type="text"
+        name="address2"
+        aria-describedby={`${formId}-error-address2`}
+        id={`${formId}-address2`}
+        value={member?.address2}
+      />
+      <span class="field-error" id={`${formId}-error-address2`}></span>
+    </label>
+
+    <label class="form-field">
+      <span class="text">City/Town</span>
+      <input
+        type="text"
+        list="cities"
+        name="city"
+        id="city"
+        value={member?.city}
+        required
+      />
+      <datalist id="cities">
+        <option value="Countryside">Countryside</option>
+        <option value="Joliet">Joliet</option>
+        <option value="Rockford">Rockford</option>
+        <option value="Rock Island">Rock Island</option>
+        <option value="Utica">Utica</option>
+        <option value="Lakeville">Lakeville</option>
+        <option value="Lakemoor">Lakemoor</option>
+        <option value="Merville">Merville</option>
+      </datalist>
+    </label>
+
+    <label class="form-field">
+      <span class="text">State</span>
+      <input
+        type="text"
+        list="states"
+        name="state"
+        id="state"
+        value={member?.state}
+        required
+      />
+      <datalist id="states">
+        <option value="Illinois">Illinois</option>
+        <option value="Indiana">Indiana</option>
+        <option value="Iowa">Iowa</option>
+      </datalist>
+    </label>
+
+    <label class="form-field">
+      <span class="text">ZIP</span>
+      <input type="number" name="zip" value={member?.zip} required />
+    </label>
+  </fieldset>
 
   <button type="submit">
-    <span class="button-text">Submit</span>
+    <span class="button-text">Confirm Course Credit</span>
     <span class="htmx-indicator">Submitting...</span>
   </button>
 </form>
 
 <style>
+  /* Base styles for form fields */
+  .credits-form .form-field {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1rem;
+  }
+
+  /* Grid container for fieldsets */
+  .credits-form fieldset {
+    display: grid;
+    gap: 1rem;
+  }
+
+  /* Grid for Email & Phone (2 columns) */
+  .credits-form fieldset > .form-field:nth-child(1),
+  .credits-form fieldset > .form-field:nth-child(2) {
+    grid-column: span 1;
+  }
+
+  /* Grid for First Name, Last Name, Middle Initial (3 columns) */
+  .credits-form fieldset > .form-field:nth-child(n + 3):nth-child(-n + 5) {
+    grid-column: span 1;
+  }
+
+  /* General grid rules to make responsive without media queries */
+  .credits-form fieldset {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  }
+
   .form-field:has(.field-error:not(:empty)) {
     border-style: dotted;
     border-width: 1px;
@@ -82,17 +230,23 @@ const responseTargetId = `${formId}-response`;
     border-inline-start-style: solid;
   }
 
-  .htmx-indicator {
+  form .htmx-indicator {
     display: none;
     animation: fadeIn 0.1s;
   }
 
-  .htmx-request .htmx-indicator {
-    display: inline;
-    /* Force minimum display time even if request is fast */
-    animation:
-      fadeIn 0.1s,
-      stay 3s;
+  form .htmx-request {
+    & .button-text {
+      display: none;
+    }
+
+    & .htmx-indicator {
+      display: inline;
+      /* Force minimum display time even if request is fast */
+      animation:
+        fadeIn 0.1s,
+        stay 3s;
+    }
   }
 
   @keyframes fadeIn {
@@ -110,19 +264,28 @@ const responseTargetId = `${formId}-response`;
       opacity: 1;
     }
   }
+
+  .form-response-target:has(.success-state) + form {
+    & :global(.form-field) {
+      border: none;
+    }
+    & :global(.field-error) {
+      display: none;
+    }
+  }
 </style>
 
 <script>
   // Force htmx to swap on error status codes
-  import htmx from "htmx.org";
-
   document.body.addEventListener("htmx:beforeSwap", ((evt: CustomEvent) => {
-    if (evt.detail.xhr.status === 422 || evt.detail.xhr.status === 500) {
+    const status = evt.detail.xhr.status;
+    if (status >= 400 && status < 600) {
       evt.detail.shouldSwap = true;
       evt.detail.isError = false;
     }
   }) as EventListener);
 
+  // TODO do i even need this below?
   // Use event delegation to handle all credits forms on the page
   document.addEventListener("htmx:afterRequest", function (evt: CustomEvent) {
     const form = evt.detail.elt;

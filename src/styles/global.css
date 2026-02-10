@@ -1,4 +1,4 @@
-:root{
+:root {
   --c-success: rgb(70, 148, 70);
   --c-error: rgb(205, 109, 109);
   --c-pending: rgb(214, 221, 114);
@@ -8,7 +8,8 @@ body {
   background-color: rgb(241, 241, 241);
 }
 
-body, html {
+body,
+html {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -62,12 +63,11 @@ h1 {
   border-left: 8px solid var(--status-color);
   padding: 1rem;
 
-  background:
-    linear-gradient(
-      to right,
-      color-mix(in srgb, var(--status-color) 10%, white),
-      white
-    );
+  background: linear-gradient(
+    to right,
+    color-mix(in srgb, var(--status-color) 10%, white),
+    white
+  );
 }
 
 .card h2 {
@@ -91,21 +91,45 @@ button:hover {
   background: #2563eb;
 }
 
-input[type="text"] {
+input[type="text"],
+input[type="tel"],
+input[type="number"],
+input[type="email"] {
   padding: 0.5rem;
   border: 1px solid #ddd;
   border-radius: 4px;
   font-size: 1rem;
   width: 100%;
   max-width: 300px;
+  box-sizing: border-box;
+}
+
+label:has(input:required) .text::after {
+  content: "*";
+}
+input[name="middle_initial"], input[name="courseId"]{
+  max-width: 10ch;
 }
 
 form {
   display: grid;
   gap: 0.5rem;
 
+  & fieldset {
+    border-color: rgba(211, 211, 211, 0.099);
+  }
+
   & .form-field {
     display: grid;
+  }
+
+  button[type="submit"] {
+    margin-top: 1.5rem;
+  }
+
+  label {
+    display: grid;
+    color: grey;
   }
 }
 
