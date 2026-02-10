@@ -25,7 +25,7 @@ const responseTargetId = `${formId}-response`;
 >
   <legend>Confirm Credits Form</legend>
   <!-- TODO remove id not needed -->
-  <div id={errorTargetId}></div>
+  <div id="credits-form-response"></div>
 
   <fieldset>
     <label class="form-field">
@@ -193,6 +193,7 @@ const responseTargetId = `${formId}-response`;
 </form>
 
 <style>
+
   /* Base styles for form fields */
   .credits-form .form-field {
     display: flex;
@@ -265,6 +266,9 @@ const responseTargetId = `${formId}-response`;
     }
   }
 
+  .form-response-target {
+    scroll-margin-top: 10rem; 
+  }
   .form-response-target:has(.success-state) + form {
     & :global(.form-field) {
       border: none;
@@ -276,6 +280,14 @@ const responseTargetId = `${formId}-response`;
 </style>
 
 <script>
+  document.body.addEventListener("htmx:afterSwap", (evt: CustomEvent) => {
+    if (evt.target.id === "credits-form-response") {
+      document
+        .getElementById("credits-form-response")
+        .scrollIntoView({ behavior: "smooth" });
+    }
+  });
+
   // Force htmx to swap on error status codes
   document.body.addEventListener("htmx:beforeSwap", ((evt: CustomEvent) => {
     const status = evt.detail.xhr.status;

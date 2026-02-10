@@ -44,10 +44,10 @@ let existingCredit = null
 let formId = 'credits-form'; // default
 
 if (Astro.request.method === 'POST') {
-  console.log('credits-submit.astro');
+
   try {
     const formInputs = Object.fromEntries(await Astro.request.formData());
-    console.log({formInputs});
+    
     // const formInputs = await Astro.request.formData();
     // console.log({formInputs});
     
@@ -61,8 +61,6 @@ if (Astro.request.method === 'POST') {
     // const phone = formatPhoneToE164Manual(formInputs.get('phone')?.toString().trim() || '');
     
     const validated = formSchema.parse(formInputs);
-    console.log({validated});
-    
 
     existingMember = 
       validated.phone 
@@ -71,15 +69,11 @@ if (Astro.request.method === 'POST') {
           ? await db.select().from(Member).where(eq(Member.email, validated.email)).get() 
           : null
 
-    console.log({existingMember});
-
     if(!existingMember){
       throw new NotFoundError('Member was not found with matching phone or email')
     }
 
     existingCredit = await db.select().from(Credit).where(and(eq(Credit.memberId, existingMember.id), eq(Credit.courseId, validated.courseId))).get()
-
-    console.log({existingCredit});
 
     // TODO if the credit exists at all (meaning they register) throw an error
     if(existingCredit?.attended){
@@ -105,8 +99,6 @@ if (Astro.request.method === 'POST') {
       ...validated,
       phone: formatPhonePrettyManual(validated.phone)
     };
-
-    console.log({formData});
     
     Astro.response.status = 200;
   } catch (error) {

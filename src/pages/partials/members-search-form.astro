@@ -41,28 +41,25 @@ const responseTargetId = `${formId}-response`;
     <span class="field-error" id={`${formId}-error-courseId`}></span>
   </div>
 
-  <div class="form-field">
-    <label>
-      Phone:
-      <input
-        type="tel"
-        name="phone"
-        id={`${formId}-phone`}
-        placeholder="123-123-1234"
-      />
+  <fieldset>
+    <label class="form-field">
+      <div>
+        <span class="text">Phone</span>
+        |
+        <span class="example">example: 123-456-7890</span>
+      </div>
+      <input type="tel" name="phone" id={`${formId}-phone`} />
+      <span class="field-error" id={`${formId}-error-phone`}></span>
     </label>
-    <span class="field-error" id={`${formId}-error-phone`}></span>
-  </div>
 
-  - or -
+    - or -
 
-  <div class="form-field">
-    <label>
-      Email:
+    <label class="form-field">
+      <span class="text">Email</span>
       <input type="email" name="email" id={`${formId}-email`} />
+      <span class="field-error" id={`${formId}-error-email`}></span>
     </label>
-    <span class="field-error" id={`${formId}-error-email`}></span>
-  </div>
+  </fieldset>
 
   <button type="submit">
     <span class="button-text">Search for Member</span>
@@ -85,7 +82,6 @@ const responseTargetId = `${formId}-response`;
   }
 
   form .htmx-request {
-
     & .button-text {
       display: none;
     }
@@ -134,7 +130,6 @@ const responseTargetId = `${formId}-response`;
       evt.detail.isError = false;
     }
   }) as EventListener);
-
 
   // TODO do i even need this below?
   document.addEventListener("htmx:afterRequest", function (evt: CustomEvent) {
