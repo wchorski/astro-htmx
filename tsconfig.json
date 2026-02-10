@@ -6,9 +6,10 @@
     "paths": {
       "@components/*": ["./src/components/*"],
       "@styles/*": ["./src/styles/*"],
-      "@partials/*": ["./src/partials/*"],
+      "@partials/*": ["./src/pages/partials/*"],
       "@lib/*": ["./src/lib/*"],
-      "@types/*": ["./types/*"]
+      "@types/*": ["./types/*"],
+      "@layouts/*": ["./src/layouts/*"]
     }
   }
 }

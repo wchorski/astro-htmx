@@ -1,0 +1,153 @@
+---
+import type { Course } from "../../../types/Course";
+interface Props {
+  course: Course;
+  defaultValues?: {
+    first_name: string;
+    email: string;
+  };
+  formId?: string;
+}
+const { course, formId = "credits-form" } = Astro.props;
+const errorTargetId = `${formId}-errors`;
+const responseTargetId = `${formId}-response`;
+---
+
+<div id={responseTargetId}></div>
+
+<form
+  id={formId}
+  class="credits-form"
+  hx-ext="response-targets"
+  hx-post="/partials/credits-submit"
+  hx-target={`#${responseTargetId}`}
+  hx-target-422={`#${errorTargetId}`}
+  hx-target-500={`#${errorTargetId}`}
+  hx-vals={JSON.stringify({ formId })}
+  hx-swap="innerHTML"
+>
+  <div id={errorTargetId}></div>
+
+  <div class="form-field">
+    <label>
+      Course ID:
+      <input
+        type="number"
+        name="courseId"
+        id={`${formId}-courseId`}
+        value={course.id}
+        required
+      />
+    </label>
+    <span class="field-error" id={`${formId}-error-courseId`}></span>
+  </div>
+
+  <div class="form-field">
+    <label>
+      Email:
+      <input
+        type="email"
+        name="email"
+        id={`${formId}-email`}
+        value="bobby@bob.com"
+        required
+      />
+    </label>
+    <span class="field-error" id={`${formId}-error-email`}></span>
+  </div>
+
+  <div class="form-field">
+    <label>
+      Phone:
+      <input
+        type="tel"
+        name="phone"
+        id={`${formId}-phone`}
+        value="(123) 123-1234"
+        required
+      />
+    </label>
+    <span class="field-error" id={`${formId}-error-phone`}></span>
+  </div>
+
+  <button type="submit">
+    <span class="button-text">Submit</span>
+    <span class="htmx-indicator">Submitting...</span>
+  </button>
+</form>
+
+<style>
+  .form-field:has(.field-error:not(:empty)) {
+    border-style: dotted;
+    border-width: 1px;
+    border-color: red;
+    border-inline-start-width: 5px;
+    border-inline-start-style: solid;
+  }
+
+  .htmx-indicator {
+    display: none;
+    animation: fadeIn 0.1s;
+  }
+
+  .htmx-request .htmx-indicator {
+    display: inline;
+    /* Force minimum display time even if request is fast */
+    animation:
+      fadeIn 0.1s,
+      stay 3s;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes stay {
+    from,
+    to {
+      opacity: 1;
+    }
+  }
+</style>
+
+<script>
+  // Force htmx to swap on error status codes
+  import htmx from "htmx.org";
+
+  document.body.addEventListener("htmx:beforeSwap", ((evt: CustomEvent) => {
+    if (evt.detail.xhr.status === 422 || evt.detail.xhr.status === 500) {
+      evt.detail.shouldSwap = true;
+      evt.detail.isError = false;
+    }
+  }) as EventListener);
+
+  // Use event delegation to handle all credits forms on the page
+  document.addEventListener("htmx:afterRequest", function (evt: CustomEvent) {
+    const form = evt.detail.elt;
+
+    // Only process if this is a credits form
+    if (!form.classList.contains("credits-form")) return;
+
+    if (evt.detail.successful) {
+      const formId = form.id;
+
+      // Clear field errors scoped to this form
+      form.querySelectorAll(".field-error").forEach((el: Element) => {
+        (el as HTMLElement).textContent = "";
+      });
+
+      // Clear form errors div for this specific form
+      const errorTargetId = `${formId}-errors`;
+      const formErrors = document.getElementById(errorTargetId);
+      if (formErrors) formErrors.innerHTML = "";
+
+      // Reset the form
+      (form as HTMLFormElement).reset();
+    }
+  });
+</script>

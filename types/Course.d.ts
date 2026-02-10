@@ -1,5 +1,5 @@
 export type Course = {
-    id: string,
+    id: number,
     subject: string,
     date: Date,
     description: string | null,

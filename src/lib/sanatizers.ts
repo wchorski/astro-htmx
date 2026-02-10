@@ -5,6 +5,57 @@ export interface SanitizationResult {
   invalid: string[];
 }
 
+interface FormatPhoneOptions {
+  defaultCountryCode?: string;
+}
+
+/**
+ * Sanitizes and formats a phone number to E.164 format (manual implementation)
+ * @param input - Raw phone number input
+ * @param options - Configuration options
+ * @returns Formatted phone number in E.164 format
+ */
+export function formatPhoneToE164Manual(
+  input: string,
+  options: FormatPhoneOptions = { defaultCountryCode: "1" },
+): string {
+  if (!input) {
+    throw new Error("Phone number is required");
+  }
+
+  const { defaultCountryCode = "1" } = options;
+
+  // Step 1: Remove all non-digit characters
+  let digitsOnly = input.replace(/\D/g, "");
+
+  // Step 2: Handle country code
+  let e164: string;
+
+  //? must have `+` in front if prefix country code
+  if (input.startsWith("+") && digitsOnly.length === 11) {
+    // Already has a + prefix, just clean it
+    e164 = "+" + digitsOnly;
+  } else if (digitsOnly.length === 10) {
+    // US number without country code (e.g., 1231231234)
+    e164 = `+${defaultCountryCode}${digitsOnly}`;
+  } else {
+    // Too short return empty string (which will cause validation error)
+    e164 = '';
+  }
+
+  return e164;
+}
+
+// Example usage:
+/*
+console.log(formatPhoneToE164Manual('(123) 123-1234')); // '+11231231234'
+console.log(formatPhoneToE164Manual('1231231234')); // '+11231231234'
+console.log(formatPhoneToE164Manual('+11231231234')); // '+11231231234'
+console.log(formatPhoneToE164Manual('11231231234')); // '+11231231234'
+console.log(formatPhoneToE164Manual('123 123 1234')); // '+11231231234'
+console.log(formatPhoneToE164Manual('+44 20 7123 4567', { defaultCountryCode: '44' })); // '+442071234567'
+*/
+
 export class PhoneSanitizer {
   /**
    * Sanitize phone number to XXX-XXX-XXXX format
@@ -90,20 +141,20 @@ export class PhoneSanitizer {
 // import PhoneSanitizer, { SanitizationResult } from './phoneSanitizer';
 
 // // Basic sanitization
-// const phone1: string | null = PhoneSanitizer.sanitize('3121325537');        
+// const phone1: string | null = PhoneSanitizer.sanitize('3121325537');
 // // "312-132-5537"
 
-// const phone2: string | null = PhoneSanitizer.sanitize('(312) 132-5537');   
+// const phone2: string | null = PhoneSanitizer.sanitize('(312) 132-5537');
 // // "312-132-5537"
 
-// const phone3: string | null = PhoneSanitizer.sanitize('123');               
+// const phone3: string | null = PhoneSanitizer.sanitize('123');
 // // null
 
 // // Validation
 // const isValid: boolean = PhoneSanitizer.isValid('312-132-5537');  // true
 
 // // Get digits only
-// const digits: string | null = PhoneSanitizer.getDigitsOnly('312-132-5537'); 
+// const digits: string | null = PhoneSanitizer.getDigitsOnly('312-132-5537');
 // // "3121325537"
 
 // // Batch processing

@@ -5,6 +5,7 @@
     - [ ] user submits member data (creates their member profile and checks them as attended) 
 - [ ] how do i save db data into an csv and save it to sharepoint?
 - [ ] look into using the MS SDK 
+- [ ] `member-search-form.astro` (should I limit search to courseId? As to only allow members who have registered to complete their credit?)
 ```js
 import { Client } from "@microsoft/microsoft-graph-client";
 ```

@@ -1,0 +1,104 @@
+---
+import { formatPhoneToE164Manual } from '@lib/sanatizers';
+import { z } from 'astro/zod';
+import { formatPhonePrettyManual } from '@lib/formatters';
+import { db, eq, Member, or } from 'astro:db';
+
+export const partial = true;
+export const prerender = false;
+
+const formSchema = z.object({
+  courseId: z.number(),
+  email: z.string().email({ message: "Invalid email address" }),
+  phone: z.string().regex(/^\+[1-9]\d{1,14}$/, {
+    message: "Invalid E.164 phone number format"
+  }).min(10, { message: "Phone number must be at least 10 digits" })
+});
+
+let errors = null;
+let formData = null;
+let formId = 'members-search-form'; // default
+
+if (Astro.request.method === 'POST') {
+  try {
+    const formInputs = await Astro.request.formData();
+    
+    // Get the formId to scope OOB swaps
+    formId = formInputs.get('formId')?.toString() || 'members-search-form';
+    
+    const courseId = Number(formInputs.get('courseId'));
+    const email = formInputs.get('email')?.toString().trim() || '';
+    const phoneE16 = formatPhoneToE164Manual(formInputs.get('phone')?.toString().trim() || '');
+    const phoneFormated = formatPhonePrettyManual(phoneE16)
+    
+    const validated = formSchema.parse({ email, phone: phoneE16, courseId });
+
+    // TODO find member and set as attended
+    const memberExists = await db.select().from(Member).where(or(eq(Member.phone, phoneE16), eq(Member.email, email))).get()
+    console.log({memberExists});
+
+    if(!memberExists){
+      Astro.response.status = 404
+      errors = [{ field: 'not-found', message: 'Member was not found with matching phone or email' }];
+
+    }
+
+    // TODO how to fill in other form if member is found?
+    
+    formData = {
+      ...validated,
+      phone: phoneFormated
+    };
+    
+    Astro.response.status = 200;
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      // console.log('Validation errors:', error.errors);
+      errors = error.errors.map(err => ({
+        field: err.path[0],
+        message: err.message
+      }));
+      Astro.response.status = 422;
+    } else {
+      // console.log('Unexpected error:', error instanceof Error ? error.message : 'Unknown error');
+      errors = [{ field: 'general', message: 'An unexpected error occurred' }];
+      Astro.response.status = 500;
+    }
+  }
+}
+---
+
+{errors ? (
+  <>
+    <div class="error-messages" role="alert">
+      <h3>Please fix the following errors:</h3>
+      <ul>
+        {errors.map(error => (
+          <li><strong>{String(error.field)}:</strong> {error.message}</li>
+        ))}
+      </ul>
+    </div>
+    
+    <!-- Inject field-specific errors via htmx OOB swaps (scoped to formId) -->
+    {errors.map(error => (
+      <span 
+        class="field-error" 
+        id={`${formId}-error-${error.field}`}
+        hx-swap-oob="true"
+      >
+        {error.message}
+      </span>
+    ))}
+  
+  </>
+) : formData && (
+  <div class="success-state" role="status">
+    <h2>✓ Success!</h2>
+    <p>Thank you for submitting your information.</p>
+    <div class="submitted-data">
+      <p><strong>Course ID:</strong> {formData.courseId}</p>
+      <p><strong>Email:</strong> {formData.email}</p>
+      <p><strong>Phone:</strong> {formData.phone}</p>
+    </div>
+  </div>
+)}      

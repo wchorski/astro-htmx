@@ -3,7 +3,7 @@ import { PhoneSanitizer } from "@lib/sanatizers";
 import type { APIRoute } from "astro";
 import { db, Credit, Course, Member } from "astro:db";
 import { eq, or } from "astro:db";
-import { z } from "zod";
+import { z } from "astro/zod";
 
 const formSchema = z.object({
   memberId: z.coerce.number().optional(),

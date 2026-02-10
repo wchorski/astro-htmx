@@ -3,16 +3,19 @@ interface Params {
   id: string;
 }
 import { db, eq, Course } from "astro:db";
-import Layout from "../../../layouts/Layout.astro";
-import ClassForm from "../../partials/credit-form.astro";
-import CreditsTable from "../../partials/credits-table.astro";
+import Layout from "@layouts/Layout.astro";
+// import ClassForm from "../../partials/credit-form.astro";
+import CreditForm from "@partials/credits-form.astro";
+import MembersSearchForm from "@partials/members-search-form.astro"
+import CreditsTable from "@partials/credits-table.astro";
 export const prerender = false; // Not needed in 'server' mode
 const { id } = Astro.params;
 if (!id) throw new Error("no id found. throw 404");
 const courses = await db
   .select()
   .from(Course)
-  .where(eq(Course.id, Number(id))).limit(1);
+  .where(eq(Course.id, Number(id)))
+  .limit(1);
 const foundCourse = courses[0];
 if (!foundCourse) throw new Error("404");
 const { subject, date, description } = foundCourse;
@@ -23,8 +26,17 @@ const { subject, date, description } = foundCourse;
     <header>
       <h1>
         {subject}
-        <span>{id}</span>
         |
+        <time datetime={date.toISOString()}>
+          {
+            date.toLocaleString("en-US", {
+              year: "numeric",
+              month: "short",
+            })
+          }
+        </time>
+      </h1>
+      <p>
         <time datetime={date.toISOString()}>
           {
             date.toLocaleString("en-US", {
@@ -33,13 +45,16 @@ const { subject, date, description } = foundCourse;
               day: "numeric",
             })
           }
-        </time>
-      </h1>
-      <p>{description}</p>
+        </time>{description}
+        |
+        <span class="course-id">{id}</span>
+      </p>
     </header>
 
     <hr />
-    <ClassForm course={foundCourse} />
+    <!-- <ClassForm course={foundCourse} /> -->
+    <!-- <CreditForm course={foundCourse} /> -->
+    <MembersSearchForm course={foundCourse} />
     <hr />
     <CreditsTable courseId={foundCourse.id} />
   </main>

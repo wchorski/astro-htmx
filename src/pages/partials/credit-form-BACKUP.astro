@@ -2,6 +2,8 @@
 interface Props {
   course?: Course;
 }
+export const partial = true;
+export const prerender = false;
 import { db, Credit } from "astro:db";
 import type { Course } from "../../../types/Course";
 
