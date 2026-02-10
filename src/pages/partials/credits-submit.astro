@@ -1,5 +1,5 @@
 ---
-import { formatPhoneToE164Manual } from '@lib/sanatizers';
+import { formatPhoneToE164Manual } from '@lib/formatters';
 import { z } from 'astro/zod';
 import { formatPhonePrettyManual } from '@lib/formatters';
 
@@ -58,7 +58,7 @@ if (Astro.request.method === 'POST') {
 
 {errors ? (
   <>
-    <div class="error-messages" role="alert">
+    <div class="error-messages card error" role="alert">
       <h3>Please fix the following errors:</h3>
       <ul>
         {errors.map(error => (
@@ -80,7 +80,7 @@ if (Astro.request.method === 'POST') {
   
   </>
 ) : formData && (
-  <div class="success-state" role="status">
+  <div class="success-state card success" role="status">
     <h2>✓ Success!</h2>
     <p>Thank you for submitting your information.</p>
     <div class="submitted-data">

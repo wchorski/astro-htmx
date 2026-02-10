@@ -1,3 +1,46 @@
+interface FormatPhoneOptions {
+  defaultCountryCode?: string;
+}
+
+/**
+ * Sanitizes and formats a phone number to E.164 format (manual implementation)
+ * @param input - Raw phone number input
+ * @param options - Configuration options
+ * @returns Formatted phone number in E.164 format or undefined
+ */
+export function formatPhoneToE164Manual(
+  input: string|undefined,
+  options: FormatPhoneOptions = { defaultCountryCode: "1" },
+): string | undefined {
+  // if (input === "") return "";
+  // if (input === undefined || input === null) {
+  //   throw new Error("Formatter: Phone number is required");
+  // }
+  if (!input) return undefined;
+
+  const { defaultCountryCode = "1" } = options;
+
+  // Step 1: Remove all non-digit characters
+  let digitsOnly = input.replace(/\D/g, "");
+
+  // Step 2: Handle country code
+  let e164: string;
+
+  //? must have `+` in front if prefix country code
+  if (input.startsWith("+") && digitsOnly.length === 11) {
+    // Already has a + prefix, just clean it
+    e164 = "+" + digitsOnly;
+  } else if (digitsOnly.length === 10) {
+    // US number without country code (e.g., 1231231234)
+    e164 = `+${defaultCountryCode}${digitsOnly}`;
+  } else {
+    // Too short return empty string (which will cause validation error)
+    e164 = "";
+  }
+
+  return e164;
+}
+
 interface PrettyFormatOptions {
   defaultCountryCode?: string;
 }
@@ -6,30 +49,32 @@ interface PrettyFormatOptions {
  * Formats a phone number to a pretty format (manual implementation)
  * @param input - Phone number (preferably E.164 format)
  * @param options - Configuration options
- * @returns Formatted phone number like "+1 (123) 123-1234"
+ * @returns Formatted phone number like "+1 (123) 123-1234" or undefined
  */
 export function formatPhonePrettyManual(
-  input: string,
-  options: PrettyFormatOptions = { defaultCountryCode: '1' }
-): string {
-  if (!input) {
-    throw new Error('Phone number is required');
-  }
+  input: string|undefined,
+  options: PrettyFormatOptions = { defaultCountryCode: "1" },
+): string | undefined {
+  if (!input) return undefined;
+  // if (input === undefined || input === null) {
+  //   throw new Error("Formatter: Phone number is required");
+  // }
+  // if (input === "") return "";
 
-  const { defaultCountryCode = '1' } = options;
+  const { defaultCountryCode = "1" } = options;
 
   // Remove all non-digit characters
-  let digitsOnly = input.replace(/\D/g, '');
+  let digitsOnly = input.replace(/\D/g, "");
 
   // Extract country code
   let countryCode: string;
   let nationalNumber: string;
 
-  if (input.startsWith('+')) {
+  if (input.startsWith("+")) {
     // Has explicit country code
-    if (digitsOnly.startsWith('1') && digitsOnly.length === 11) {
+    if (digitsOnly.startsWith("1") && digitsOnly.length === 11) {
       // North American number
-      countryCode = '1';
+      countryCode = "1";
       nationalNumber = digitsOnly.slice(1);
     } else if (digitsOnly.length > 10) {
       // International - try to extract country code (simplified logic)
@@ -41,9 +86,9 @@ export function formatPhonePrettyManual(
       countryCode = defaultCountryCode;
       nationalNumber = digitsOnly;
     }
-  } else if (digitsOnly.length === 11 && digitsOnly.startsWith('1')) {
+  } else if (digitsOnly.length === 11 && digitsOnly.startsWith("1")) {
     // Likely North American with country code
-    countryCode = '1';
+    countryCode = "1";
     nationalNumber = digitsOnly.slice(1);
   } else if (digitsOnly.length === 10) {
     // No country code, use default
@@ -51,11 +96,11 @@ export function formatPhonePrettyManual(
     nationalNumber = digitsOnly;
   } else {
     // Uncertain format
-    throw new Error('Unable to parse phone number format');
+    throw new Error("Unable to parse phone number format");
   }
 
   // Format based on country code
-  if (countryCode === '1' && nationalNumber.length === 10) {
+  if (countryCode === "1" && nationalNumber.length === 10) {
     // North American format: +1 (123) 123-1234
     const areaCode = nationalNumber.slice(0, 3);
     const firstPart = nationalNumber.slice(3, 6);

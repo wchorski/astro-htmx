@@ -5,47 +5,6 @@ export interface SanitizationResult {
   invalid: string[];
 }
 
-interface FormatPhoneOptions {
-  defaultCountryCode?: string;
-}
-
-/**
- * Sanitizes and formats a phone number to E.164 format (manual implementation)
- * @param input - Raw phone number input
- * @param options - Configuration options
- * @returns Formatted phone number in E.164 format
- */
-export function formatPhoneToE164Manual(
-  input: string,
-  options: FormatPhoneOptions = { defaultCountryCode: "1" },
-): string {
-  if (!input) {
-    throw new Error("Phone number is required");
-  }
-
-  const { defaultCountryCode = "1" } = options;
-
-  // Step 1: Remove all non-digit characters
-  let digitsOnly = input.replace(/\D/g, "");
-
-  // Step 2: Handle country code
-  let e164: string;
-
-  //? must have `+` in front if prefix country code
-  if (input.startsWith("+") && digitsOnly.length === 11) {
-    // Already has a + prefix, just clean it
-    e164 = "+" + digitsOnly;
-  } else if (digitsOnly.length === 10) {
-    // US number without country code (e.g., 1231231234)
-    e164 = `+${defaultCountryCode}${digitsOnly}`;
-  } else {
-    // Too short return empty string (which will cause validation error)
-    e164 = '';
-  }
-
-  return e164;
-}
-
 // Example usage:
 /*
 console.log(formatPhoneToE164Manual('(123) 123-1234')); // '+11231231234'

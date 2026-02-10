@@ -13,17 +13,17 @@ const responseTargetId = `${formId}-response`;
 
 <form
   id={formId}
-  class="credits-form"
   hx-ext="response-targets"
   hx-post="/partials/members-search-submit"
   hx-target={`#${responseTargetId}`}
   hx-target-422={`#${errorTargetId}`}
+  hx-target-404={`#${errorTargetId}`}
   hx-target-500={`#${errorTargetId}`}
   hx-vals={JSON.stringify({ formId })}
   hx-swap="innerHTML"
 >
   <caption>Members Search</caption>
-  <div id={errorTargetId}></div>
+  <!-- <div id={errorTargetId}></div> -->
 
   <div class="form-field">
     <label>
@@ -41,32 +41,25 @@ const responseTargetId = `${formId}-response`;
 
   <div class="form-field">
     <label>
-      Email:
+      Phone:
       <input
-        type="email"
-        name="email"
-        id={`${formId}-email`}
-        value="bobby@bob.com"
-        required
+        type="tel"
+        name="phone"
+        id={`${formId}-phone`}
+        placeholder="123-123-1234"
       />
     </label>
-    <span class="field-error" id={`${formId}-error-email`}></span>
+    <span class="field-error" id={`${formId}-error-phone`}></span>
   </div>
 
   - or -
 
   <div class="form-field">
     <label>
-      Phone:
-      <input
-        type="tel"
-        name="phone"
-        id={`${formId}-phone`}
-        value="(123) 123-1234"
-        required
-      />
+      Email:
+      <input type="email" name="email" id={`${formId}-email`} />
     </label>
-    <span class="field-error" id={`${formId}-error-phone`}></span>
+    <span class="field-error" id={`${formId}-error-email`}></span>
   </div>
 
   <button type="submit">
@@ -75,7 +68,7 @@ const responseTargetId = `${formId}-response`;
   </button>
 </form>
 
-<style>
+<style is:global>
   .form-field:has(.field-error:not(:empty)) {
     border-style: dotted;
     border-width: 1px;
@@ -112,25 +105,31 @@ const responseTargetId = `${formId}-response`;
       opacity: 1;
     }
   }
+
+  #members-search-form-response:has(.success-state) + form#members-search-form {
+    & .form-field {
+      border: none;
+    }
+    & .field-error {
+      display: none;
+    }
+  }
 </style>
 
 <script>
   // Force htmx to swap on error status codes
-  import htmx from "htmx.org";
-
   document.body.addEventListener("htmx:beforeSwap", ((evt: CustomEvent) => {
-    if (evt.detail.xhr.status === 422 || evt.detail.xhr.status === 500) {
+    const status = evt.detail.xhr.status;
+    if (status >= 400 && status < 600) {
       evt.detail.shouldSwap = true;
       evt.detail.isError = false;
     }
   }) as EventListener);
 
-  // Use event delegation to handle all credits forms on the page
   document.addEventListener("htmx:afterRequest", function (evt: CustomEvent) {
     const form = evt.detail.elt;
 
-    // Only process if this is a credits form
-    if (!form.classList.contains("credits-form")) return;
+    if (!form.classList.contains("members-search-form")) return;
 
     if (evt.detail.successful) {
       const formId = form.id;
@@ -154,18 +153,18 @@ const responseTargetId = `${formId}-response`;
   // Posted by Andy, modified by community. See post 'Timeline' for change history
   // Retrieved 2026-02-10, License - CC BY-SA 4.0
 
-  document.addEventListener("DOMContentLoaded", function () {
-    const inputs: HTMLInputElement[] = Array.from(
-      document.querySelectorAll("input[name=phone], input[name=email]"),
-    );
+  // document.addEventListener("DOMContentLoaded", function () {
+  //   const inputs: HTMLInputElement[] = Array.from(
+  //     document.querySelectorAll("input[name=phone], input[name=email]"),
+  //   );
 
-    const inputListener = (e: Event) => {
-      inputs
-        .filter((i) => i !== e.target)
-        // @ts-ignore
-        .forEach((i) => (i.required = !e.target?.value.length));
-    };
+  //   const inputListener = (e: Event) => {
+  //     inputs
+  //       .filter((input) => input !== e.target)
+  //       // @ts-ignore
+  //       .forEach((input) => (input.required = !e.target?.value.length));
+  //   };
 
-    inputs.forEach((i) => i.addEventListener("input", inputListener));
-  });
+  //   inputs.forEach((i) => i.addEventListener("input", inputListener));
+  // });
 </script>
