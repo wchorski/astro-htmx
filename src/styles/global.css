@@ -107,13 +107,19 @@ input[type="email"] {
 label:has(input:required) .text::after {
   content: "*";
 }
-input[name="middle_initial"], input[name="courseId"]{
+input[name="middle_initial"],
+input[name="courseId"] {
   max-width: 10ch;
 }
 
 form {
   display: grid;
   gap: 0.5rem;
+
+  & > legend:first-of-type {
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
 
   & fieldset {
     border-color: rgba(211, 211, 211, 0.099);
@@ -130,6 +136,11 @@ form {
   label {
     display: grid;
     color: grey;
+  }
+
+  label.form-field:has(input[type="hidden"]) {
+    border: dashed red 4px;
+    display: none;
   }
 }
 

@@ -23,7 +23,10 @@ export const prerender = false;
 const formSchema = z.object({
   courseId: z.preprocess((val) => Number(val), z.number()),
   email: z.string().email({ message: "Invalid email address" }),
-  phone: z.string().transform(val => formatPhoneToE164Manual(val)),
+  phone: z.string().refine(val => !!formatPhoneToE164Manual(val), {
+      message: "Invalid phone number",
+    }) 
+    .transform(val => formatPhoneToE164Manual(val)),
   first_name: z.string(),
   last_name: z.string(),
   middle_initial: z.string().optional(),
@@ -69,11 +72,28 @@ if (Astro.request.method === 'POST') {
           ? await db.select().from(Member).where(eq(Member.email, validated.email)).get() 
           : null
 
-    if(!existingMember){
-      throw new NotFoundError('Member was not found with matching phone or email')
-    }
+    // TODO add back in when registration form is implimented
+    // if(!existingMember){
+    //   throw new NotFoundError('Member was not found with matching phone or email')
+    // }
 
-    existingCredit = await db.select().from(Credit).where(and(eq(Credit.memberId, existingMember.id), eq(Credit.courseId, validated.courseId))).get()
+    // if member doesn't exist, create a new one
+    const targetMember = existingMember ?? await db.insert(Member).values({
+      asipId: 0,
+      regNum: 0,
+      first_name: validated.first_name,
+      last_name: validated.last_name,
+      middle_initial: validated.middle_initial,
+      phone: validated.phone,
+      email: validated.email,
+      address1: validated.address1,
+      address2: validated.address2,
+      city: validated.city,
+      state: validated.state,
+      zip: validated.zip,
+    }).returning().get();
+
+    existingCredit = await db.select().from(Credit).where(and(eq(Credit.memberId, targetMember.id), eq(Credit.courseId, validated.courseId))).get()
 
     // TODO if the credit exists at all (meaning they register) throw an error
     if(existingCredit?.attended){
@@ -81,14 +101,14 @@ if (Astro.request.method === 'POST') {
     }
 
     existingCredit ? await db.update(Credit).set({
-      memberId: existingMember.id,
+      memberId: targetMember.id,
       courseId: validated.courseId,
       date: new Date(),
       attended: true,
     }).where(eq(Credit.id, existingCredit.id)) 
     // TODO later don't allow member to insert Credit if they didn't register
     : await db.insert(Credit).values({
-      memberId: existingMember.id,
+      memberId: targetMember.id,
       courseId: validated.courseId,
       date: new Date(),
       attended: true,

@@ -56,23 +56,9 @@ const { subject, date, description } = foundCourse;
     <!-- <ClassForm course={foundCourse} /> -->
     <!-- <CreditForm course={foundCourse} /> -->
     <!-- TODO debug remove later -->
-    <CreditsForm
-      courseId={foundCourse.id}
-      member={{
-      id: 28,
-      asipId: 654419,
-      regNum: 727133,
-      first_name: "Hortensia",
-      last_name: "McPaik",
-      middle_initial: null,
-      phone: "+12176463332",
-      email: "hmcpaikr@hc360.com",
-      address1: "6 Summerview Point",
-      city: "Springfield",
-      state: "Illinois",
-      zip: 66144,
-    }}
-    />
+    <CreditsForm courseId={foundCourse.id} />
+    
+    <h2>Search is only useful if connected to L150 Database (Member's Data)</h2>
     <MembersSearchForm course={foundCourse} />
     <hr />
     <h2>TEMPORARY: move to admin dashboard on production</h2>

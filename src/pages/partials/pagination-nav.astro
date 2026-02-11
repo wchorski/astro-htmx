@@ -7,11 +7,9 @@ interface Props {
 }
 
 const { page, perPage, totalCount, path } = Astro.props;
-// console.log(Astro.props);
 
 // calculate total pages dynamically if needed
 const totalPages = Math.ceil(totalCount / perPage);
-console.log({ totalPages });
 
 const start = (page - 1) * perPage + 1;
 const end = Math.min(page * perPage, totalCount);

@@ -27,21 +27,19 @@ const responseTargetId = `${formId}-response`;
   <!-- TODO remove id not needed -->
   <div id="credits-form-response"></div>
 
-  <fieldset>
-    <label class="form-field">
-      <span class="text">Course ID</span>
-      <input
-        type="number"
-        name="courseId"
-        aria-describedby={`${formId}-error-courseId`}
-        id={`${formId}-courseId`}
-        value={courseId}
-        readonly
-        required
-      />
-      <span class="field-error" id={`${formId}-error-courseId`}></span>
-    </label>
-  </fieldset>
+  <label class="form-field">
+    <span class="text">Course ID</span>
+    <input
+      type="hidden"
+      name="courseId"
+      aria-describedby={`${formId}-error-courseId`}
+      id={`${formId}-courseId`}
+      value={courseId}
+      readonly
+      required
+    />
+    <span class="field-error" id={`${formId}-error-courseId`}></span>
+  </label>
 
   <fieldset>
     <legend>Contact</legend>
@@ -193,13 +191,12 @@ const responseTargetId = `${formId}-response`;
 </form>
 
 <style>
-
   /* Base styles for form fields */
-  .credits-form .form-field {
+  /* .credits-form .form-field {
     display: flex;
     flex-direction: column;
     margin-bottom: 1rem;
-  }
+  } */
 
   /* Grid container for fieldsets */
   .credits-form fieldset {
@@ -267,7 +264,7 @@ const responseTargetId = `${formId}-response`;
   }
 
   .form-response-target {
-    scroll-margin-top: 10rem; 
+    scroll-margin-top: 10rem;
   }
   .form-response-target:has(.success-state) + form {
     & :global(.form-field) {
@@ -280,8 +277,11 @@ const responseTargetId = `${formId}-response`;
 </style>
 
 <script>
+  // @ts-ignore
   document.body.addEventListener("htmx:afterSwap", (evt: CustomEvent) => {
+    // @ts-ignore
     if (evt.target.id === "credits-form-response") {
+      // @ts-ignore
       document
         .getElementById("credits-form-response")
         .scrollIntoView({ behavior: "smooth" });

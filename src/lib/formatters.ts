@@ -6,17 +6,16 @@ interface FormatPhoneOptions {
  * Sanitizes and formats a phone number to E.164 format (manual implementation)
  * @param input - Raw phone number input
  * @param options - Configuration options
- * @returns Formatted phone number in E.164 format or undefined
+ * @returns Formatted phone number in E.164 format
  */
 export function formatPhoneToE164Manual(
-  input: string|undefined,
+  input: string,
   options: FormatPhoneOptions = { defaultCountryCode: "1" },
-): string | undefined {
-  // if (input === "") return "";
-  // if (input === undefined || input === null) {
-  //   throw new Error("Formatter: Phone number is required");
-  // }
-  if (!input) return undefined;
+): string {
+  if (!input) {
+    throw new Error("Formatter: Phone number is required");
+  }
+  // if (!input) return undefined;
 
   const { defaultCountryCode = "1" } = options;
 
@@ -35,7 +34,7 @@ export function formatPhoneToE164Manual(
     e164 = `+${defaultCountryCode}${digitsOnly}`;
   } else {
     // Too short return empty string (which will cause validation error)
-    e164 = "";
+    throw new Error('Phone Formatter: Too short, must have missed a number')
   }
 
   return e164;
