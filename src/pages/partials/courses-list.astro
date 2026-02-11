@@ -1,0 +1,53 @@
+---
+interface Props {
+  courses: (typeof Course.$inferInsert)[];
+}
+import { Course } from "astro:db";
+// import { db, desc, count, Course } from "astro:db";
+const { courses } = Astro.props;
+// import PaginationNav from "@partials/pagination-nav.astro";
+
+// // const { page = 1, perPage = 30 } = Astro.url.searchParams.getAll
+// // const page = parseInt(Astro.url.searchParams.get("page") || "1");
+// const perPage = parseInt(Astro.url.searchParams.get("perPage") || "2");
+
+// const { page = 1 } = Astro.params;
+
+// const totalResult = await db.select({ count: count(Course.id) }).from(Course);
+
+// const total = totalResult[0].count;
+// const totalPages = Math.ceil(total / perPage);
+
+// const courses = await db
+//   .select()
+//   .from(Course)
+//   .orderBy(desc(Course.date))
+//   .limit(perPage)
+//   .offset((Number(page) - 1) * perPage);
+---
+
+<ul id="courses-list">
+  {
+    courses.length > 0 ? (
+      courses.map(({ id, subject, description, date }) => (
+        <li>
+          <article>
+            <time datetime={date.toISOString()}>
+              {date.toLocaleString("en-US", {
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+              })}
+            </time>
+            <span>
+              <a href={`/attendance/courses/id/${id}`}>{subject}</a>
+            </span>
+            <p>{description}</p>
+          </article>
+        </li>
+      ))
+    ) : (
+      <p>No courses found</p>
+    )
+  }
+</ul>

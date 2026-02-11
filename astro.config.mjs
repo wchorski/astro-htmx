@@ -6,6 +6,10 @@ import db from '@astrojs/db';
 
 // https://astro.build/config
 export default defineConfig({
+  site: process.env.DOMAIN_URL,
+  redirects: {
+    "/attendance/courses/1": "/attendance/courses",
+  },
   output: 'server',
 
   adapter: node({

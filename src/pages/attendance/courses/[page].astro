@@ -4,13 +4,21 @@ import { getCoursesPage } from "@lib/getCoursesPage";
 import CoursesList from "@partials/courses-list.astro";
 import PaginationNav from "@partials/pagination-nav.astro";
 
-const result = await getCoursesPage(1);
+const page = Number(Astro.params.page);
 
-if ("redirect" in result) {
-  return Astro.redirect("/courses");
-}
+// Redirect /courses/1 → /courses
+// h
+// if (page === 1) {
+//   return Astro.redirect("/attendance/courses", 301);
+// }
 
-const { courses, page, perPage, totalCount, totalPages } = result;
+const result = await getCoursesPage(page);
+
+// if ("redirect" in result) {
+//   return Astro.redirect("/attendance/courses");
+// }
+
+const { courses, totalPages, totalCount, perPage } = result;
 ---
 
 <Layout>

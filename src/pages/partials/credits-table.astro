@@ -3,6 +3,7 @@ interface Props {
   courseId: number;
 }
 
+import { formatPhonePrettyManual } from "@lib/formatters";
 import { db, eq, Credit, Member } from "astro:db";
 const { courseId } = Astro.props;
 if (!courseId) throw new Error("no courseId found. throw 404");
@@ -37,8 +38,8 @@ const memberCredits = await db
             <td>
               {member.first_name} {member.middle_initial} {member.last_name}
             </td>
-            <td>{member.phone}</td>
-            <td>{member.email}</td>
+            <td><a href={`tel:${member.phone}`}>{formatPhonePrettyManual(member.phone)}</a></td>
+            <td><a href={`mailto:${member.email}`}>{member.email}</a></td>
             <td class={`attended-${credit.attended}`}>{credit.attended}</td>
           </tr>
         ))
@@ -63,7 +64,7 @@ const memberCredits = await db
   }
 
   table th {
-    padding: 12px;
+    padding: 0.2rem;
     text-align: left;
   }
 
@@ -80,7 +81,7 @@ const memberCredits = await db
   }
 
   table td {
-    padding: 12px;
+    padding: 0.2rem;
   }
 
   table .no-credits {
