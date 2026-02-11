@@ -49,7 +49,7 @@ if (Astro.request.method === 'POST') {
     
     const courseId = Number(formInputs.get('courseId'));
     const email = formInputs.get('email')?.toString().trim() || undefined;
-    const phoneE16 = formatPhoneToE164Manual(formInputs.get('phone')?.toString().trim() || undefined);
+    const phoneE16 = formatPhoneToE164Manual(formInputs.get('phone')?.toString().trim() || "");
     const phoneFormated = formatPhonePrettyManual(phoneE16)
     
     const validated = formSchema.parse({ email, phone: phoneE16, courseId });
@@ -131,7 +131,7 @@ if (Astro.request.method === 'POST') {
     <div class="submitted-data">
       <p><strong>Course ID:</strong> {formData.courseId}</p>
       <ul>
-        <li>{existingMember.first_name} {existingMember.middle_initial} {existingMember.last_name}</li>
+        <li>{existingMember.first_name + " " + existingMember.middle_initial + " " + existingMember.last_name}</li>
         <li>{existingMember.phone}</li>
         <li>{existingMember.email}</li>
         <li>{existingMember.address1}, {existingMember.city}, {existingMember.state}, {existingMember.zip}</li>

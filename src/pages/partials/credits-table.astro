@@ -17,6 +17,7 @@ const memberCredits = await db
   .where(eq(Credit.courseId, Number(courseId)));
 ---
 
+<button hx-put="/api/credits/export">Export CSV to Sharepoint</button>
 <table class="credits-table">
   <thead>
     <tr>
@@ -38,8 +39,14 @@ const memberCredits = await db
             <td>
               {member.first_name} {member.middle_initial} {member.last_name}
             </td>
-            <td><a href={`tel:${member.phone}`}>{formatPhonePrettyManual(member.phone)}</a></td>
-            <td><a href={`mailto:${member.email}`}>{member.email}</a></td>
+            <td>
+              <a href={`tel:${member.phone}`}>
+                {formatPhonePrettyManual(member.phone)}
+              </a>
+            </td>
+            <td>
+              <a href={`mailto:${member.email}`}>{member.email}</a>
+            </td>
             <td class={`attended-${credit.attended}`}>{credit.attended}</td>
           </tr>
         ))
@@ -87,7 +94,7 @@ const memberCredits = await db
   table .no-credits {
     text-align: center;
   }
-    .attended-true {
+  .attended-true {
     color: white;
     background-color: green;
   }

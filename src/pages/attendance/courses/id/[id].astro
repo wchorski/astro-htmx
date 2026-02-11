@@ -18,7 +18,7 @@ const courses = await db
   .where(eq(Course.id, Number(id)))
   .limit(1);
 const foundCourse = courses[0];
-if (!foundCourse) throw new Error("404");
+if (!foundCourse) return Astro.redirect("/404")  
 const { subject, date, description } = foundCourse;
 ---
 
