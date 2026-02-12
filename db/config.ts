@@ -18,7 +18,7 @@ const Member = defineTable({
     state: column.text(),
     zip: column.number(),
   },
-  indexes: [{ on: ["id", "phone", "asipId", "regNum"], unique: true }],
+  indexes: [{ on: ["id", "phone", "email", "asipId", "regNum"], unique: true }],
 });
 
 const Course = defineTable({

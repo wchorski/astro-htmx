@@ -1,0 +1,518 @@
+---
+interface Props {}
+const {} = Astro.props;
+---
+
+<barcode-scanner class="container">
+  <div class="card">
+    <div class="header">
+      <h1>Barcode Scanner</h1>
+      <p>Scan barcodes and QR codes instantly</p>
+    </div>
+
+    <div class="content">
+      <div id="error" class="error hidden"></div>
+
+      <div id="startView">
+        <div id="cameraSelect" class="hidden" style="margin-bottom: 15px">
+          <label
+            style="
+                  display: block;
+                  margin-bottom: 8px;
+                  font-weight: 500;
+                  color: #374151;
+                "
+            >Select Camera:</label
+          >
+          <select
+            id="cameraList"
+            style="
+                  width: 100%;
+                  padding: 12px;
+                  border: 2px solid #e5e7eb;
+                  border-radius: 8px;
+                  font-size: 16px;
+                "
+          >
+            <option value="">Loading cameras...</option>
+          </select>
+        </div>
+        <button class="btn btn-primary" onclick="startScanning()">
+          Start Scanning
+        </button>
+      </div>
+
+      <div id="scanView" class="hidden">
+        <div class="video-container">
+          <video id="video" playsinline></video>
+          <div class="scanner-overlay">
+            <div class="scanner-frame"></div>
+          </div>
+          <button class="btn-close" onclick="stopScanning()">×</button>
+        </div>
+      </div>
+
+      <div id="resultView" class="hidden">
+        <div class="result-box">
+          <div class="result-header">✓ Barcode Detected!</div>
+          <div class="result-format" id="resultFormat"></div>
+          <div class="result-value" id="resultValue"></div>
+        </div>
+        <div class="button-group">
+          <button class="btn btn-primary" onclick="startScanning()">
+            Scan Again
+          </button>
+          <button class="btn btn-secondary" onclick="clearResult()">
+            Clear
+          </button>
+        </div>
+      </div>
+
+      <div id="history" class="history hidden">
+        <h2>Scan History</h2>
+        <div id="historyList"></div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    Point your camera at a barcode or QR code to scan
+  </footer>
+</barcode-scanner>
+
+<script>
+  //   Define the behaviour for our new type of HTML element.
+  class BarcodeScanner extends HTMLElement {
+    connectedCallback() {
+      let count = 0;
+
+      const scanButton = this.querySelector("button");
+      const countSpan = this.querySelector("span");
+
+      // Each time the button is clicked, update the count.
+      scanButton.addEventListener("click", () => {
+        count++;
+        countSpan.textContent = count.toString();
+      });
+    }
+  }
+
+  // Tell the browser to use our AstroHeart class for <astro-heart> elements.
+  customElements.define("barcode-scanner", BarcodeScanner);
+
+  let stream = null;
+  let scanInterval = null;
+  let history = [];
+  let selectedCamera = null;
+
+  // Load available cameras on page load
+  window.onload = async () => {
+    await loadCameras();
+  };
+
+  async function loadCameras() {
+    try {
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      const videoDevices = devices.filter(
+        (device) => device.kind === "videoinput",
+      );
+
+      const cameraList = document.getElementById("cameraList");
+      const cameraSelect = document.getElementById("cameraSelect");
+
+      if (videoDevices.length > 0) {
+        cameraSelect.classList.remove("hidden");
+        cameraList.innerHTML = videoDevices
+          .map((device, index) => {
+            const label = device.label || `Camera ${index + 1}`;
+            return `<option value="${device.deviceId}">${label}</option>`;
+          })
+          .join("");
+
+        selectedCamera = videoDevices[0].deviceId;
+      }
+    } catch (err) {
+      console.error("Error loading cameras:", err);
+    }
+  }
+
+  async function startScanning() {
+    try {
+      hideError();
+      clearResult();
+
+      // Get selected camera
+      const cameraList = document.getElementById("cameraList");
+      selectedCamera = cameraList.value || selectedCamera;
+
+      const constraints = {
+        video: selectedCamera
+          ? { deviceId: { exact: selectedCamera } }
+          : { facingMode: "environment" },
+      };
+
+      stream = await navigator.mediaDevices.getUserMedia(constraints);
+
+      const video = document.getElementById("video");
+      video.srcObject = stream;
+
+      document.getElementById("startView").classList.add("hidden");
+      document.getElementById("scanView").classList.remove("hidden");
+
+      video.onloadedmetadata = () => {
+        video.play();
+        startDetection();
+      };
+
+      // Reload cameras after permission granted (labels will now be available)
+      await loadCameras();
+    } catch (err) {
+      showError("Camera access denied or not available");
+      console.error(err);
+    }
+  }
+
+  function startDetection() {
+    if (!("BarcodeDetector" in window)) {
+      showError(
+        "Barcode detection not supported on this browser. Try Chrome on Android.",
+      );
+      stopScanning();
+      return;
+    }
+
+    const detector = new BarcodeDetector({
+      formats: [
+        "code_128",
+        "code_39",
+        "ean_13",
+        "ean_8",
+        "upc_a",
+        "upc_e",
+        "qr_code",
+      ],
+    });
+
+    const video = document.getElementById("video");
+
+    scanInterval = setInterval(async () => {
+      if (video.readyState === video.HAVE_ENOUGH_DATA) {
+        try {
+          const barcodes = await detector.detect(video);
+          if (barcodes.length > 0) {
+            handleDetection(barcodes[0]);
+          }
+        } catch (err) {
+          console.error("Detection error:", err);
+        }
+      }
+    }, 300);
+  }
+
+  function handleDetection(barcode) {
+    const result = {
+      value: barcode.rawValue,
+      format: barcode.format,
+      timestamp: new Date(),
+    };
+
+    displayResult(result);
+    addToHistory(result);
+
+    if (navigator.vibrate) {
+      navigator.vibrate(200);
+    }
+
+    stopScanning();
+  }
+
+  function stopScanning() {
+    if (scanInterval) {
+      clearInterval(scanInterval);
+      scanInterval = null;
+    }
+
+    if (stream) {
+      stream.getTracks().forEach((track) => track.stop());
+      stream = null;
+    }
+
+    const video = document.getElementById("video");
+    video.srcObject = null;
+
+    document.getElementById("scanView").classList.add("hidden");
+    document.getElementById("startView").classList.remove("hidden");
+  }
+
+  function displayResult(result) {
+    document.getElementById("resultFormat").textContent =
+      `Format: ${result.format.toUpperCase()}`;
+    document.getElementById("resultValue").textContent = result.value;
+    document.getElementById("resultView").classList.remove("hidden");
+    document.getElementById("startView").classList.add("hidden");
+  }
+
+  function clearResult() {
+    document.getElementById("resultView").classList.add("hidden");
+    document.getElementById("startView").classList.remove("hidden");
+  }
+
+  function addToHistory(result) {
+    history.unshift(result);
+    if (history.length > 10) {
+      history = history.slice(0, 10);
+    }
+    updateHistoryDisplay();
+  }
+
+  function updateHistoryDisplay() {
+    const historyList = document.getElementById("historyList");
+    const historySection = document.getElementById("history");
+
+    if (history.length === 0) {
+      historySection.classList.add("hidden");
+      return;
+    }
+
+    historySection.classList.remove("hidden");
+    historyList.innerHTML = history
+      .map(
+        (item) => `
+                <div class="history-item">
+                    <div class="history-meta">
+                        <span>${item.format.toUpperCase()}</span>
+                        <span>${item.timestamp.toLocaleTimeString()}</span>
+                    </div>
+                    <div class="history-value">${item.value}</div>
+                </div>
+            `,
+      )
+      .join("");
+  }
+
+  function showError(message) {
+    const errorEl = document.getElementById("error");
+    errorEl.textContent = message;
+    errorEl.classList.remove("hidden");
+  }
+
+  function hideError() {
+    document.getElementById("error").classList.add("hidden");
+  }
+</script>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 20px;
+  }
+
+  .container {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .card {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+  }
+
+  .header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 30px;
+  }
+
+  .header h1 {
+    font-size: 28px;
+    margin-bottom: 8px;
+  }
+
+  .header p {
+    opacity: 0.9;
+    font-size: 14px;
+  }
+
+  .content {
+    padding: 30px;
+  }
+
+  .error {
+    background: #fee;
+    border: 2px solid #fcc;
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 20px;
+    color: #c33;
+  }
+
+  .btn {
+    width: 100%;
+    padding: 18px;
+    font-size: 18px;
+    font-weight: 600;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition:
+      transform 0.2s,
+      box-shadow 0.2s;
+  }
+
+  .btn:active {
+    transform: scale(0.98);
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+  }
+
+  .btn-primary:hover {
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+  }
+
+  .video-container {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #000;
+  }
+
+  #video {
+    width: 100%;
+    display: block;
+  }
+
+  .scanner-overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .scanner-frame {
+    position: absolute;
+    left: 50px;
+    right: 50px;
+    top: 30%;
+    bottom: 30%;
+    border: 3px solid #667eea;
+    border-radius: 12px;
+    box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5);
+  }
+
+  .btn-close {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: #e53e3e;
+    color: white;
+    border: none;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    font-size: 24px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    z-index: 10;
+  }
+
+  .result-box {
+    background: #f0fdf4;
+    border: 2px solid #86efac;
+    border-radius: 12px;
+    padding: 25px;
+    margin-bottom: 20px;
+  }
+
+  .result-header {
+    font-size: 18px;
+    font-weight: 600;
+    color: #166534;
+    margin-bottom: 5px;
+  }
+
+  .result-format {
+    font-size: 13px;
+    color: #15803d;
+    margin-bottom: 15px;
+  }
+
+  .result-value {
+    background: white;
+    border: 1px solid #86efac;
+    border-radius: 8px;
+    padding: 15px;
+    font-family: "Courier New", monospace;
+    font-size: 16px;
+    word-break: break-all;
+  }
+
+  .button-group {
+    display: flex;
+    gap: 10px;
+  }
+
+  .btn-secondary {
+    background: #f3f4f6;
+    color: #374151;
+  }
+
+  .btn-secondary:hover {
+    background: #e5e7eb;
+  }
+
+  .history {
+    margin-top: 30px;
+  }
+
+  .history h2 {
+    font-size: 18px;
+    margin-bottom: 15px;
+    color: #374151;
+  }
+
+  .history-item {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 10px;
+  }
+
+  .history-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: #6b7280;
+    margin-bottom: 5px;
+  }
+
+  .history-value {
+    font-family: "Courier New", monospace;
+    font-size: 13px;
+    word-break: break-all;
+  }
+
+  .hidden {
+    display: none;
+  }
+
+  .footer {
+    text-align: center;
+    margin-top: 20px;
+    color: white;
+    font-size: 14px;
+    opacity: 0.9;
+  }
+</style>
