@@ -8,7 +8,7 @@
       "@styles/*": ["./src/styles/*"],
       "@partials/*": ["./src/pages/partials/*"],
       "@lib/*": ["./src/lib/*"],
-      "@types/*": ["./types/*"],
+      "@ty/*": ["./types/*"],
       "@layouts/*": ["./src/layouts/*"]
     }
   }

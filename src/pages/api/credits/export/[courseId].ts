@@ -1,20 +1,17 @@
+import { formatPhonePrettyManual } from "@lib/formatters";
+import type { CreditInsert, MemberInsert } from "@ty/Schema.d.ts";
 import type { APIRoute } from "astro";
 import { Course, Credit, db, eq, Member } from "astro:db";
-import fs from "node:fs/promises";
-import path from "node:path";
+
 const {
   MS_SHAREPOINT_KYU_DRIVE_ID,
   MS_SHAREPOINT_KYU_ATTENDENCE_FOLDER_ID,
-  TENANT_ID,
-  MS_SECRET_VALUE,
-  MS_CLIENT_ID,
   MS_TOKEN_SITE_UPLOAD,
 } = import.meta.env;
 
 export const POST: APIRoute = async ({ params, request, redirect }) => {
   const { courseId } = params;
 
-  console.log(courseId, " export course credits");
   if (!courseId)
     return new Response(
       JSON.stringify({
@@ -24,37 +21,41 @@ export const POST: APIRoute = async ({ params, request, redirect }) => {
       { status: 422 },
     );
 
-  const PUBLIC_DIR = path.resolve("public/data");
-  //   const body = await request.json();
   try {
     if (!MS_TOKEN_SITE_UPLOAD) throw new Error("Missing TOKEN env var");
-
-    const localFilePath = PUBLIC_DIR + "/assets/testupload.png";
-    const fileName = "testupload.png";
-
-    // PUT /drives/{drive-id}/items/{parent-id}:/{filename}:/content  (upload new file) [1](https://learn.microsoft.com/en-us/graph/api/driveitem-put-content?view=graph-rest-1.0)
-    const url = `https://graph.microsoft.com/v1.0/drives/${MS_SHAREPOINT_KYU_DRIVE_ID}/items/${MS_SHAREPOINT_KYU_ATTENDENCE_FOLDER_ID}:/${encodeURIComponent(fileName)}:/content`;
 
     // 1️⃣ Fetch the flattened rows
     const rows = await db
       .select({
+        member: Member,
         course: Course,
         credit: Credit,
-        member: Member,
       })
       .from(Course)
       .innerJoin(Credit, eq(Credit.courseId, Course.id))
       .innerJoin(Member, eq(Member.id, Credit.memberId))
       .where(eq(Course.id, Number(courseId)));
 
-    // 2️⃣ Reshape into desired nested structure
+    // reformat
     const courseData = {
       course: rows.length > 0 ? rows[0].course : null,
-      credits: rows.map((row) => ({
-        ...row.credit,
-        member: row.member,
-      })),
+
+      credits: rows.map((row) => {
+        const { id: creditId, date: creditDate, ...creditRest } = row.credit; // pull id out, keep everything else
+        const { id: memberId, ...memberRest } = row.member;
+        return {
+          member: {
+            ...memberRest,
+            memberId,
+            phone: formatPhonePrettyManual(row.member.phone) || "",
+          },
+          ...creditRest,
+          creditId,
+          dateCreated: creditDate,
+        };
+      }),
     };
+
     if (!courseData.course)
       return new Response(
         JSON.stringify({
@@ -64,73 +65,62 @@ export const POST: APIRoute = async ({ params, request, redirect }) => {
         { status: 404 },
       );
 
-    const filename = `${courseData.course.subject} - ${
-      new Date(courseData.course.date).toISOString().split("T")[0]
-    }.csv`;
-
     const csvContent = generateCreditsCsv(courseData.credits);
-
-    // // For Node or SSR: create a buffer
     // const csvBuffer = Buffer.from(csvContent, "utf-8");
+    // const stat = await fs.stat(csvBuffer);
 
-    // // Now you can upload csvBuffer to Microsoft endpoint
-    // // Or serve as a download via Astro SSR
-    // Astro.response.headers.set("Content-Type", "text/csv");
-    // Astro.response.headers.set(
-    //   "Content-Disposition",
-    //   `attachment; filename="${filename}"`,
-    // );
-    // Astro.response.body = csvBuffer;
+    const filename = `${courseData.course.subject} - ${new Date(
+      courseData.course.date,
+    ).toLocaleDateString("en-CA")} Credits.csv`;
+    const folderYear = new Date(courseData.course.date).toLocaleDateString(
+      "en-CA",
+      { year: "numeric" },
+    );
 
-    // const stat = await fs.stat(localFilePath);
-    // const stream = await fs.readFile(localFilePath);
+    // PUT /drives/{drive-id}/items/{parent-id}:/{filename}:/content  (upload new file) [1](https://learn.microsoft.com/en-us/graph/api/driveitem-put-content?view=graph-rest-1.0)
+    const url = `https://graph.microsoft.com/v1.0/drives/${MS_SHAREPOINT_KYU_DRIVE_ID}/items/${MS_SHAREPOINT_KYU_ATTENDENCE_FOLDER_ID}:/${folderYear}/${encodeURIComponent(filename)}:/content`;
 
-    // const res = await fetch(url, {
-    //   method: "PUT",
-    //   headers: {
-    //     Authorization: `Bearer ${MS_TOKEN_SITE_UPLOAD}`,
-    //     "Content-Type": "application/octet-stream",
-    //     "Content-Length": String(stat.size), // helps some proxies; optional but nice
-    //   },
-    //   body: stream,
-    //   // Node fetch requires this when sending a stream body (duplex)
-    //   // duplex: "half",
-    // });
+    const res = await fetch(url, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${MS_TOKEN_SITE_UPLOAD}`,
+        "Content-Type": "application/octet-stream",
+        // "Content-Length": String(stat.size), // helps some proxies; optional but nice
+      },
+      body: csvContent,
+      // Node fetch requires this when sending a stream body (duplex)
+      // duplex: "half",
+    });
 
-    // if (!res.ok) {
-    //   const text = await res.text();
-    //   throw new Error(
-    //     `Upload failed: ${res.status} ${res.statusText}\n${text}`,
-    //   );
-    // }
+    if (!res.ok) {
+      const text = await res.text();
+      throw new Error(
+        `Upload failed: ${res.status} ${res.statusText}\n${text}`,
+      );
+    }
 
-    // const driveItem = await res.json();
-    // console.log("Uploaded:", {
-    //   id: driveItem.id,
-    //   name: driveItem.name,
-    //   webUrl: driveItem.webUrl,
-    // });
-    // return new Response(
-    //   JSON.stringify({
-    //     success: true,
-    //     message: "csv exported and uploaded to sharepoint",
-    //     data: {
-    //       id: driveItem.id,
-    //       name: driveItem.name,
-    //       webUrl: driveItem.webUrl,
-    //     },
-    //   }),
-    //   { status: 200 },
-    // );
+    const driveItem = await res.json();
+
     return new Response(
       JSON.stringify({
         success: true,
         message: "csv exported and uploaded to sharepoint",
-        filename,
-        csv: csvContent,
+        data: {
+          id: driveItem.id,
+          name: driveItem.name,
+          webUrl: driveItem.webUrl,
+        },
       }),
       { status: 200 },
     );
+    // return new Response(
+    //   JSON.stringify({
+    //     success: true,
+    //     message: "csv exported and uploaded to sharepoint",
+    //     data: csvContent,
+    //   }),
+    //   { status: 200 },
+    // );
   } catch (error) {
     console.log(error);
     return new Response(
@@ -143,8 +133,17 @@ export const POST: APIRoute = async ({ params, request, redirect }) => {
   }
 };
 
-type CreditWithMember = typeof Course.$inferInsert & {
-  member: typeof Member.$inferInsert;
+// type CreditWithMember = typeof Credit.$inferInsert & {
+//   member: typeof Member.$inferInsert;
+// };
+
+type CreditWithMember = Omit<CreditInsert, "id" | "date"> & {
+  creditId: CreditInsert["id"];
+  dateCreated: CreditInsert["date"];
+  member: Omit<MemberInsert, "id"> & {
+    memberId: MemberInsert["id"];
+    phone: string; // because you force "" as fallback
+  };
 };
 
 /**
@@ -152,31 +151,32 @@ type CreditWithMember = typeof Course.$inferInsert & {
  * including nested 'member' object keys.
  */
 export function generateCreditsCsv(credits: CreditWithMember[]): string {
+  console.log({ credits });
   if (!credits.length) return "";
 
   // Flatten a single credit into a flat object with nested member keys prefixed
-  function flattenCredit(credit: typeof Credit) {
+  function flattenCredit(credit: CreditWithMember) {
     const flat: Record<string, any> = {};
 
+    // TODO format as much as you can in the `courseData` first. Do i need the member if statement check?
     for (const key in credit) {
       if (key === "member" && credit.member) {
         for (const mKey in credit.member) {
-          flat[`member_${mKey}`] = credit.member[mKey];
+          const typedKey = mKey as keyof typeof credit.member;
+          flat[mKey] = credit.member[typedKey];
         }
       } else {
-        flat[key] = credit[key];
+        const typedKey = key as keyof CreditWithMember;
+
+        flat[key] = credit[typedKey];
       }
     }
     return flat;
   }
 
-  // Flatten all credits
   const flatCredits = credits.map(flattenCredit);
-
-  // Generate headers dynamically
   const headers = Object.keys(flatCredits[0]);
 
-  // Escape CSV values
   function escapeCsv(value: any) {
     if (value === null || value === undefined) return "";
     const str = String(value);
