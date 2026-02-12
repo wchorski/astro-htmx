@@ -9,6 +9,7 @@ import CreditForm from "@partials/credits-form.astro";
 import MembersSearchForm from "@partials/members-search-form.astro";
 import CreditsTable from "@partials/credits-table.astro";
 import CreditsForm from "@partials/credits-form.astro";
+import BarcodeScanner from "@components/BarcodeScanner.astro";
 export const prerender = false; // Not needed in 'server' mode
 const { id } = Astro.params;
 if (!id) throw new Error("no id found. throw 404");
@@ -23,6 +24,7 @@ const { subject, date, description } = foundCourse;
 ---
 
 <Layout>
+  <BarcodeScanner />
   <main>
     <header>
       <h1>
