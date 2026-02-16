@@ -167,3 +167,27 @@ form {
   color: #3b82f6;
   margin: 1rem 0;
 }
+
+.flex {
+  display: flex;
+}
+
+.gap-s {
+  gap: 0.5rem
+}
+.gap-m {
+  gap: 1rem
+}
+.gap-l {
+  gap: 1.7rem
+}
+
+.callout {
+  border-style: dashed;
+  border-width: 5px;
+  border-color: grey;
+  padding: 1rem;
+}
+.warning {
+  border-color: orange;
+}

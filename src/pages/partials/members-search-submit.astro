@@ -3,7 +3,7 @@ import { formatPhoneToE164Manual } from '@lib/formatters';
 import { z } from 'astro/zod';
 import { formatPhonePrettyManual } from '@lib/formatters';
 import { db, eq, Member, or } from 'astro:db';
-import CreditsForm from '@partials/credits-form.astro'
+import CreditsForm from '@components/CreditsForm.astro'
 
 class NotFoundError extends Error {
   constructor(message:string) {
@@ -17,20 +17,20 @@ export const prerender = false;
 
 const formSchema = z.object({
   courseId: z.number(),
+  memberId: z.number().optional(),
   email: z.string().email({ message: "Invalid email address" }).trim().optional(),
   phone: z.string().regex(/^\+[1-9]\d{1,14}$/, {
     message: "Invalid E.164 phone number format"
   }).min(10, { message: "Phone number must be at least 10 digits" }).trim().optional()
 }).refine(  
-  (values) => {   
-    // if one has value the other should be blank
-    return Boolean(values.phone) !== Boolean(values.email);  
-  },  
-  {  
-    message: "Exactly one of 'phone' or 'email' must be provided (not both, not none)",  
-    // Optional: Specify a path for the error (defaults to root)  
-    path: [],  
-  }  
+  (values) => {
+    // At least one of memberId, email, or phone must be present
+    return Boolean(values.memberId) || Boolean(values.email) || Boolean(values.phone);
+  },
+  {
+    message: "At least one of 'memberId', 'email', or 'phone' must be provided",
+    path: [], // Error at root level
+  } 
 ); 
 
 let errors = null;
@@ -48,19 +48,23 @@ if (Astro.request.method === 'POST') {
     // formId = formInputs.get('formId')?.toString() || 'members-search-form';
     
     const courseId = Number(formInputs.get('courseId'));
+    const memberId = Number(formInputs.get('memberId')) || undefined;
     const email = formInputs.get('email')?.toString().trim() || undefined;
-    const phoneE16 = formatPhoneToE164Manual(formInputs.get('phone')?.toString().trim() || "");
+    const phoneE16 = formatPhoneToE164Manual(formInputs.get('phone')?.toString().trim());
     const phoneFormated = formatPhonePrettyManual(phoneE16)
-    
-    const validated = formSchema.parse({ email, phone: phoneE16, courseId });
+    console.log({email, phoneE16, memberId});
+    const validated = formSchema.parse({ memberId, email, phone: phoneE16, courseId });
+    console.log({validated});
 
     // TODO find member and set as attended
     existingMember = 
-      phoneE16 
-        ? await db.select().from(Member).where(eq(Member.phone, phoneE16)).get() 
-        : email 
-          ? await db.select().from(Member).where(eq(Member.email, email)).get() 
-          : null
+      validated.memberId 
+        ? await db.select().from(Member).where(eq(Member.id, validated.memberId)).get()
+        : validated.phone 
+          ? await db.select().from(Member).where(eq(Member.phone, validated.phone)).get() 
+          : validated.email 
+            ? await db.select().from(Member).where(eq(Member.email, validated.email)).get() 
+            : null
     
     if(!existingMember){
       // TODO how to fill in other form if member is found?
@@ -126,9 +130,10 @@ if (Astro.request.method === 'POST') {
   </>
 ) : formData && existingMember && <>
   <div class="success-state card status" data-status="success" role="status">
-    <h2>✓ Member Found!</h2>
-    <p>Confirm your details</p>
-    <div class="submitted-data">
+    
+    <h2><img src="/public/icons/eye.svg" alt="eyeball icon" width="50" height="50"/> Member Found!</h2>
+    <p>Confirm your details and press "Confirm Course Credit" to finish</p>
+    {/* <div class="submitted-data">
       <p><strong>Course ID:</strong> {formData.courseId}</p>
       <ul>
         <li>{existingMember.first_name + " " + existingMember.middle_initial + " " + existingMember.last_name}</li>
@@ -136,9 +141,10 @@ if (Astro.request.method === 'POST') {
         <li>{existingMember.email}</li>
         <li>{existingMember.address1}, {existingMember.city}, {existingMember.state}, {existingMember.zip}</li>
       </ul>
-      {/* <p><strong>Email:</strong> {formData.email}</p> */}
-      {/* <p><strong>Phone:</strong> {formData.phone}</p> */}
-    </div>
+    </div> */}
   </div>
+  <form id="members-search-form" hx-swap-oob="outerHTML" style="display: none;">
+    <!-- Empty or hidden form -->
+  </form>
   <CreditsForm courseId={formData.courseId} member={existingMember}/>
 </>}      

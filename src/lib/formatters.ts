@@ -9,13 +9,14 @@ interface FormatPhoneOptions {
  * @returns Formatted phone number in E.164 format
  */
 export function formatPhoneToE164Manual(
-  input: string,
+  input?: string,
   options: FormatPhoneOptions = { defaultCountryCode: "1" },
-): string {
-  if (!input) {
-    throw new Error("Formatter: Phone number is required");
-  }
-  // if (!input) return undefined;
+) {
+  // TODO how to make validation work with other forms
+  // if (!input) {
+  //   throw new Error("Formatter: Phone number is required");
+  // }
+  if (!input) return undefined;
 
   const { defaultCountryCode = "1" } = options;
 
@@ -34,7 +35,7 @@ export function formatPhoneToE164Manual(
     e164 = `+${defaultCountryCode}${digitsOnly}`;
   } else {
     // Too short return empty string (which will cause validation error)
-    throw new Error('Phone Formatter: Too short, must have missed a number')
+    throw new Error("Phone Formatter: Too short, must have missed a number");
   }
 
   return e164;
@@ -51,7 +52,7 @@ interface PrettyFormatOptions {
  * @returns Formatted phone number like "+1 (123) 123-1234" or undefined
  */
 export function formatPhonePrettyManual(
-  input: string|undefined,
+  input: string | undefined,
   options: PrettyFormatOptions = { defaultCountryCode: "1" },
 ): string | undefined {
   if (!input) return undefined;

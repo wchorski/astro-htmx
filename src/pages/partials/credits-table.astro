@@ -3,6 +3,7 @@ interface Props {
   courseId: number;
 }
 
+import CreditsTableRowForm from "@components/CreditsTableRowForm.astro";
 import { formatPhonePrettyManual } from "@lib/formatters";
 import { db, eq, Credit, Member } from "astro:db";
 const { courseId } = Astro.props;
@@ -56,6 +57,7 @@ const memberCredits = await db
         </tr>
       )
     }
+    <CreditsTableRowForm />
   </tbody>
 </table>
 

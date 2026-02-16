@@ -1,10 +1,12 @@
 ---
-import type { Course } from "../../../types/Course";
+import BarcodeScanner from "./BarcodeScanner.astro";
+import type { CourseInsert, MemberInsert } from "@ty/Schema";
 interface Props {
-  course: Course;
+  course: CourseInsert;
   formId?: string;
+  member?: MemberInsert;
 }
-const { course, formId = "members-search-form" } = Astro.props;
+const { course, member, formId = "members-search-form" } = Astro.props;
 const errorTargetId = `${formId}-errors`;
 const responseTargetId = `${formId}-response`;
 ---
@@ -22,6 +24,7 @@ const responseTargetId = `${formId}-response`;
   hx-target-500={`#${errorTargetId}`}
   hx-vals={JSON.stringify({ formId })}
   hx-swap="innerHTML"
+  data-status="idle"
 >
   <caption>Members Search</caption>
   <!-- <div id={errorTargetId}></div> -->
@@ -42,13 +45,36 @@ const responseTargetId = `${formId}-response`;
   </div>
 
   <fieldset>
+    <div class="flex gap-m">
+      <label class="form-field">
+        <span class="text">Member Id</span>
+
+        <input
+          type="number"
+          name="memberId"
+          id={`${formId}-memberId`}
+          value={member?.id}
+        />
+        <span class="field-error" id={`${formId}-error-memberId`}></span>
+      </label>
+
+      <BarcodeScanner />
+    </div>
+
+    - or -
+
     <label class="form-field">
       <div>
         <span class="text">Phone</span>
         |
         <span class="example">example: 123-456-7890</span>
       </div>
-      <input type="tel" name="phone" id={`${formId}-phone`} />
+      <input
+        type="tel"
+        name="phone"
+        id={`${formId}-phone`}
+        value={member?.phone}
+      />
       <span class="field-error" id={`${formId}-error-phone`}></span>
     </label>
 
@@ -56,7 +82,12 @@ const responseTargetId = `${formId}-response`;
 
     <label class="form-field">
       <span class="text">Email</span>
-      <input type="email" name="email" id={`${formId}-email`} />
+      <input
+        type="email"
+        name="email"
+        id={`${formId}-email`}
+        value={member?.email}
+      />
       <span class="field-error" id={`${formId}-error-email`}></span>
     </label>
   </fieldset>
@@ -154,6 +185,23 @@ const responseTargetId = `${formId}-response`;
       (form as HTMLFormElement).reset();
     }
   });
+
+  document.addEventListener("barcode-scanned", ((evt: CustomEvent) => {
+    const scannedValue = evt.detail.value;
+    const formId = "members-search-form"; // or get dynamically
+    const memberIdInput = document.getElementById(
+      `${formId}-memberId`,
+    ) as HTMLInputElement;
+
+    if (memberIdInput) {
+      memberIdInput.value = scannedValue;
+      // Optionally trigger input event for any listeners
+      memberIdInput.dispatchEvent(new Event("input", { bubbles: true }));
+
+      // Optionally auto-submit the form
+      (memberIdInput.closest("form") as HTMLFormElement)?.requestSubmit();
+    }
+  }) as EventListener);
 
   // Source - https://stackoverflow.com/a/24432131
   // Posted by Andy, modified by community. See post 'Timeline' for change history

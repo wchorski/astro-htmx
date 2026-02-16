@@ -166,7 +166,6 @@ if (Astro.request.method === 'POST') {
         {error.message}
       </span>
     ))}
-  
   </>
 ) : formData && (
   <div class="success-state card status" data-status="success" role="status">
@@ -178,4 +177,7 @@ if (Astro.request.method === 'POST') {
       <p><strong>Phone: </strong>{formData.phone}</p>
     </div>
   </div>
+  <form id="credits-form" hx-swap-oob="outerHTML" style="display: none;">
+      <!-- Empty or hidden form -->
+    </form>
 )}
