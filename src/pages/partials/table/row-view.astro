@@ -1,0 +1,38 @@
+---
+// partials/ViewRow.astro
+interface Props {
+  row: {
+    id: number;
+    name: string;
+    email: string;
+    role: string;
+  };
+}
+
+const { row } = Astro.props;
+---
+
+<td
+  hx-get={`/partials/table/row-edit?id=${row.id}&name=${encodeURIComponent(row.name)}&email=${encodeURIComponent(row.email)}&role=${encodeURIComponent(row.role)}`}
+  hx-target={`#row-${row.id}`}
+  hx-swap="innerHTML"
+  style="cursor: pointer;">{row.name}</td
+>
+<td
+  hx-get={`/partials/table/row-edit?id=${row.id}&name=${encodeURIComponent(row.name)}&email=${encodeURIComponent(row.email)}&role=${encodeURIComponent(row.role)}`}
+  hx-target={`#row-${row.id}`}
+  hx-swap="innerHTML"
+  style="cursor: pointer;">{row.email}</td
+>
+<td
+  hx-get={`/partials/table/row-edit?id=${row.id}&name=${encodeURIComponent(row.name)}&email=${encodeURIComponent(row.email)}&role=${encodeURIComponent(row.role)}`}
+  hx-target={`#row-${row.id}`}
+  hx-swap="innerHTML"
+  style="cursor: pointer;">{row.role}</td
+>
+
+<style>
+  td {
+    padding: 0.5rem;
+  }
+</style>

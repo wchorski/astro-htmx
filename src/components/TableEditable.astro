@@ -1,0 +1,144 @@
+---
+// EditableTable.astro
+import ViewRow from "@partials/table/row-view.astro";
+
+interface TableRow {
+  id: number;
+  name: string;
+  email: string;
+  role: string;
+}
+
+// Sample data - replace with your own data source
+const data: TableRow[] = [
+  {
+    id: 1,
+    name: "Alice Johnson",
+    email: "alice@example.com",
+    role: "Developer",
+  },
+  { id: 2, name: "Bob Smith", email: "bob@example.com", role: "Designer" },
+  { id: 3, name: "Carol White", email: "carol@example.com", role: "Manager" },
+];
+---
+
+<div class="container">
+  <h1>Editable Table</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Role</th>
+      </tr>
+    </thead>
+    <tbody>
+      {
+        data.map((row) => (
+          <tr id={`row-${row.id}`} data-status="viewing">
+            <ViewRow row={row} />
+          </tr>
+        ))
+      }
+    </tbody>
+  </table>
+</div>
+
+<script>
+  // Handle form submissions and update data-status
+  document.body.addEventListener("htmx:afterSwap", (event: CustomEvent) => {
+    const row = event.detail.target;
+    if (!row || row.tagName !== "TR") return;
+
+    // Check if we're showing the edit form or view mode
+    const hasEditForm = row.querySelector(".edit-form");
+    row.setAttribute("data-status", hasEditForm ? "editing" : "viewing");
+  });
+</script>
+
+<style>
+
+  /* .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+  } */
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  thead {
+    background: #f8f9fa;
+    border-bottom: 2px solid #dee2e6;
+  }
+
+  th {
+    text-align: left;
+    padding: 1rem;
+    font-weight: 600;
+    color: #495057;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  tbody tr {
+    border-bottom: 1px solid #dee2e6;
+    transition: background-color 0.2s;
+  }
+
+  tbody tr:hover {
+    background: #f8f9fa;
+  }
+
+  tbody tr[data-status="editing"] {
+    background: #fff3cd;
+  }
+
+  tbody tr[data-status="editing"]:hover {
+    background: #fff3cd;
+  }
+
+  td {
+    padding: 0.5rem;
+  }
+
+  button {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-save {
+    background: #198754;
+    color: white;
+  }
+
+  .btn-save:hover {
+    background: #157347;
+  }
+
+  .btn-cancel {
+    background: #6c757d;
+    color: white;
+  }
+
+  .btn-cancel:hover {
+    background: #5c636a;
+  }
+
+  h1 {
+    padding: 1.5rem;
+    margin: 0;
+    border-bottom: 1px solid #dee2e6;
+  }
+</style>

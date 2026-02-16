@@ -1,0 +1,21 @@
+---
+// partials/SaveRow.astro
+import ViewRow from "@partials/table/row-view.astro";
+
+// In a real app, you'd save to a database here
+// For now, we'll just return the updated view with the new data
+
+const formData = await Astro.request.formData();
+const id = parseInt(formData.get("id")?.toString() || "0");
+const name = formData.get("name")?.toString() || "";
+const email = formData.get("email")?.toString() || "";
+const role = formData.get("role")?.toString() || "";
+
+const row = { id, name, email, role };
+console.log({ row });
+
+// Here you would typically:
+// await db.update('users').set({ name, email, role }).where('id', id);
+---
+
+<ViewRow row={row} />

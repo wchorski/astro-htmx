@@ -1,0 +1,13 @@
+---
+// partials/CancelEdit.astro
+import ViewRow from '@partials/table/row-view.astro';
+
+const id = parseInt(Astro.url.searchParams.get('id') || '0');
+const name = Astro.url.searchParams.get('name') || '';
+const email = Astro.url.searchParams.get('email') || '';
+const role = Astro.url.searchParams.get('role') || '';
+
+const row = { id, name, email, role };
+---
+
+<ViewRow row={row} />

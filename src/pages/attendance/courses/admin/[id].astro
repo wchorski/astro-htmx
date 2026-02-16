@@ -1,0 +1,62 @@
+---
+interface Params {
+  id: string;
+}
+import { db, eq, Course } from "astro:db";
+import Layout from "@layouts/Layout.astro";
+import CreditsTable from "@partials/credits-table.astro";
+import TableEditable from "@components/TableEditable.astro";
+export const prerender = false; // Not needed in 'server' mode
+const { id } = Astro.params;
+if (!id) throw new Error("no id found. throw 404");
+const courses = await db
+  .select()
+  .from(Course)
+  .where(eq(Course.id, Number(id)))
+  .limit(1);
+const foundCourse = courses[0];
+if (!foundCourse) return Astro.redirect("/404")  
+const { subject, date, description } = foundCourse;
+---
+
+<Layout>
+  <main>
+    <header>
+      <h1>
+        {subject}
+        |
+        <time datetime={date.toISOString()}>
+          {
+            date.toLocaleString("en-US", {
+              year: "numeric",
+              month: "short",
+            })
+          }
+        </time>
+      </h1>
+      <p>
+        <time datetime={date.toISOString()}>
+          {
+            date.toLocaleString("en-US", {
+              year: "numeric",
+              month: "short",
+              day: "numeric",
+            })
+          }
+        </time>{description}
+        |
+        <span class="course-id">{id}</span>
+      </p>
+    </header>
+
+    <p class="callout warning">TODO: secure route and data with auth</p>
+    <TableEditable />
+    <!-- <CreditsTable courseId={foundCourse.id} /> -->
+  </main>
+</Layout>
+
+<style>
+  main {
+    padding: 1rem;
+  }
+</style>
