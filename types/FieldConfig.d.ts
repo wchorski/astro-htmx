@@ -1,0 +1,1 @@
+export type FieldConfig = Record<string, FieldSlot>;

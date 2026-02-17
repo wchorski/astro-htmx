@@ -1,13 +1,8 @@
 ---
 // EditableTable.astro
-import ViewRow from "@partials/table/row-view.astro";
-
-interface TableRow {
-  id: number;
-  name: string;
-  email: string;
-  role: string;
-}
+import ViewRow from "@components/tables/RowView.astro";
+import type { FieldConfig } from "@ty/FieldConfig";
+import type { TableRow } from "@ty/Table";
 
 // Sample data - replace with your own data source
 const data: TableRow[] = [
@@ -20,56 +15,89 @@ const data: TableRow[] = [
   { id: 2, name: "Bob Smith", email: "bob@example.com", role: "Designer" },
   { id: 3, name: "Carol White", email: "carol@example.com", role: "Manager" },
 ];
+
+const fieldConfig: FieldConfig = {
+  id: {
+    label: "ID",
+    type: "number",
+    required: true,
+    readonly: true,
+  },
+  name: {
+    label: "Full Name",
+    type: "text",
+    required: true,
+    placeholder: "Jane Doe...",
+    autocomplete: "name",
+  },
+  email: {
+    label: "Email",
+    type: "email",
+    required: true,
+    placeholder: "jane@example.com...",
+    autocomplete: "email",
+  },
+  role: {
+    label: "Role",
+    type: "text",
+    required: true,
+    placeholder: "e.g. Designer...",
+  },
+};
+
+// Extract headers from first row (excluding 'id')
+const headers = Object.keys(fieldConfig);
+
+// Helper: resolve the display label for a key
+function label(key: string) {
+  return fieldConfig[key]?.label ?? key.charAt(0).toUpperCase() + key.slice(1);
+}
 ---
 
-<div class="container">
-  <h1>Editable Table</h1>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Email</th>
-        <th>Role</th>
-      </tr>
-    </thead>
-    <tbody>
-      {
-        data.map((row) => (
-          <tr id={`row-${row.id}`} data-status="viewing">
-            <ViewRow row={row} />
-          </tr>
-        ))
-      }
-    </tbody>
-  </table>
-</div>
+<table>
+  <thead>
+    <tr>
+      {headers.map((h) => <th>{label(h)}</th>)}
+      <th aria-label="Actions"></th>
+    </tr>
+  </thead>
+  <tbody>
+    {
+      data.map((row) => (
+        <ViewRow row={row} headers={headers} config={fieldConfig} />
+      ))
+    }
+  </tbody>
+</table>
 
 <script>
   // Handle form submissions and update data-status
-  document.body.addEventListener("htmx:afterSwap", (event: CustomEvent) => {
+  document.body.addEventListener("htmx:afterSwap", (event) => {
+    // TODO match other htmx event listeneres to this one
+    // event is inferred as Htmx.HtmxAfterSwapEvent
     const row = event.detail.target;
     if (!row || row.tagName !== "TR") return;
 
-    // Check if we're showing the edit form or view mode
     const hasEditForm = row.querySelector(".edit-form");
     row.setAttribute("data-status", hasEditForm ? "editing" : "viewing");
   });
 </script>
-
 <style>
-
-  /* .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-  } */
-
   table {
     width: 100%;
     border-collapse: collapse;
+  }
+
+  :global(table tbody > tr:nth-child(odd)) {
+    background-color: #ececec; /* Light gray for odd rows */
+  }
+
+  :global(table tbody > tr:nth-child(even)) {
+    background-color: #ffffff; /* White for even rows */
+  }
+
+  :global(table tbody tr:hover) {
+    background-color: rgba(255, 255, 0, 0.201) !important;
   }
 
   thead {
@@ -79,7 +107,7 @@ const data: TableRow[] = [
 
   th {
     text-align: left;
-    padding: 1rem;
+    padding: 0.5rem;
     font-weight: 600;
     color: #495057;
     font-size: 0.875rem;
@@ -104,8 +132,53 @@ const data: TableRow[] = [
     background: #fff3cd;
   }
 
-  td {
+  :global(td) {
     padding: 0.5rem;
+    color: #212529;
+  }
+
+  .edit-form {
+    padding: 0.5rem 0;
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) auto;
+    gap: 1rem;
+    align-items: center;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .form-group label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #6c757d;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .form-group input {
+    padding: 0.5rem;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    transition: border-color 0.2s;
+  }
+
+  .form-group input:focus {
+    outline: none;
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.1);
+  }
+
+  .button-group {
+    display: flex;
+    gap: 0.5rem;
   }
 
   button {

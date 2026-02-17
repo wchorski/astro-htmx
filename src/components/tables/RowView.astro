@@ -1,0 +1,36 @@
+---
+import type { FieldConfig } from "@ty/FieldConfig";
+
+// partials/ViewRow.astro
+interface Props {
+  row: Record<string, any> & { id: number };
+  headers: string[];
+  config: FieldConfig;
+}
+
+const { row, headers, config } = Astro.props;
+// const keys = Object.keys(row).filter((key) => key !== "id");
+// const keys = Object.keys(row);
+---
+
+<tr id={`row-${row.id}`} data-status="viewing">
+  {/* ── View cells ── */}
+  {headers.map((key) => <td class="view-cell">{row[key] ?? "—"}</td>)}
+
+  {/* ── Action cell (view mode) ── */}
+  <td class="action-cell">
+    <button
+      class="btn-edit"
+      type="button"
+      hx-post="/partials/table/row-edit"
+      hx-target={`#row-${row.id}`}
+      hx-swap="outerHTML"
+      hx-vals={JSON.stringify({
+        _row: JSON.stringify(row),
+        _config: JSON.stringify(config),
+      })}
+    >
+      Edit
+    </button>
+  </td>
+</tr>

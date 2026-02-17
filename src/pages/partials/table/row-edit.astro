@@ -1,116 +1,38 @@
 ---
-// partials/EditRow.astro
-const id = Astro.url.searchParams.get("id") || "0";
-const name = Astro.url.searchParams.get("name") || "";
-const email = Astro.url.searchParams.get("email") || "";
-const role = Astro.url.searchParams.get("role") || "";
+// partials/table/row-edit.astro
+import type { FieldConfig } from "@ty/FieldConfig";
+import type { TableRow } from "@ty/Table";
+import RowEditForm from "@components/tables/RowEdit.astro";
+
+let row: TableRow | null = null;
+let config: FieldConfig | null = null;
+let headers: string[] = [];
+
+if (Astro.request.method === "POST") {
+  try {
+    const raw = Astro.request.formData ? await Astro.request.formData() : null;
+    if (!raw) return new Response("Bad Request", { status: 400 });
+    // Rebuild row and config from POST body
+    row = JSON.parse(raw?.get("_row") as string);
+    config = JSON.parse(raw?.get("_config") as string);
+    if (!config) throw new Error("no config found");
+    headers = Object.keys(config);
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(error.message);
+    }
+  }
+}
 ---
 
-<td colspan="3">
-  <form
-    class="edit-form form-grid"
-    hx-post={`/partials/table/row-save`}
-    hx-target={`#row-${id}`}
-    hx-swap="innerHTML"
-  >
-    <input type="hidden" name="id" value={id} />
-
-    <label class="form-group">
-      <span class="text">Name</span>
-      <input
-        type="text"
-        id={`name-${id}`}
-        name="name"
-        value={name}
-        required
-        autofocus
-      />
-    </label>
-    <label class="form-group">
-      <span class="text">Email</span>
-      <input
-        type="email"
-        id={`email-${id}`}
-        name="email"
-        value={email}
-        required
-      />
-    </label>
-    <label class="form-group">
-      <span class="text">Role</span>
-      <input type="text" id={`role-${id}`} name="role" value={role} required />
-    </label>
-    <div class="button-group">
-      <button type="submit" class="btn-save">Save</button>
-      <button
-        type="button"
-        class="btn-cancel"
-        hx-get={`/partials/cancel-edit?id=${id}&name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&role=${encodeURIComponent(role)}`}
-        hx-target={`#row-${id}`}
-        hx-swap="innerHTML">Cancel</button
-      >
-    </div>
-  </form>
-</td>
-
-<style>
-  .form-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr) auto;
-    gap: 1rem;
-    align-items: center;
-  }
-
-  td {
-    padding: 1rem;
-    color: #212529;
-  }
-  .edit-form {
-    padding: 0.5rem 0;
-    position: relative;
-  }
-
-  .form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-    position: relative;
-  }
-
-  label.form-group {
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: #6c757d;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-
-  label .text {
-    position: absolute;
-    background-color: white;
-    border-radius: 50%;
-    top: -0.3rem;
-    right: -0.3rem;
-  }
-
-  .form-group input {
-    padding: 0.5rem;
-    border: 1px solid #ced4da;
-    border-radius: 4px;
-    font-size: 0.875rem;
-    transition: border-color 0.2s;
-  }
-
-  .form-group input:focus {
-    outline: none;
-    border-color: #0d6efd;
-    box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.1);
-  }
-
-  .button-group {
-    display: flex;
-    gap: 0.5rem;
-    position: absolute;
-    right: -25%;
-  }
-</style>
+{
+  row && config ? (
+    <RowEditForm row={row} headers={headers} config={config} />
+  ) : (
+    <tr>
+      <td>
+        <p>missing parameters</p>
+      </td>
+    </tr>
+  )
+}

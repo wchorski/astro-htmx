@@ -1,21 +1,67 @@
 ---
-// partials/SaveRow.astro
-import ViewRow from "@partials/table/row-view.astro";
+// partials/table/row-save.astro
+import type { FieldConfig } from "@ty/FieldConfig";
+import type { TableRow } from "@ty/Table";
+import ViewRow from "@components/tables/RowView.astro";
 
-// In a real app, you'd save to a database here
-// For now, we'll just return the updated view with the new data
+let row: TableRow | null = null;
+let config: FieldConfig | null = null;
+let headers: string[] = [];
 
-const formData = await Astro.request.formData();
-const id = parseInt(formData.get("id")?.toString() || "0");
-const name = formData.get("name")?.toString() || "";
-const email = formData.get("email")?.toString() || "";
-const role = formData.get("role")?.toString() || "";
+if (Astro.request.method === "POST") {
+  try {
+    const raw = Astro.request.formData ? await Astro.request.formData() : null;
 
-const row = { id, name, email, role };
-console.log({ row });
+    if (!raw) {
+      return new Response("Bad Request", { status: 400 });
+    }
 
-// Here you would typically:
-// await db.update('users').set({ name, email, role }).where('id', id);
+    config = JSON.parse(raw.get("_config") as string);
+    if (!config) throw new Error("no config");
+    headers = Object.keys(config);
+
+    // Build the updated row from submitted form values.
+    // Coerce number fields back to numbers so the row type stays consistent.
+    const id = Number(raw.get("id"));
+
+    row = { id };
+
+    for (const key of headers) {
+      const slot = config[key];
+      const raw_val = raw.get(key) as string;
+
+      if (slot.type === "number") {
+        row[key] = raw_val === "" ? null : Number(raw_val);
+      } else if (slot.type === "checkbox") {
+        // Checkboxes are absent from FormData when unchecked
+        row[key] = raw.has(key);
+      } else {
+        row[key] = raw_val ?? "";
+      }
+    }
+
+    // ── Persist here ────────────────────────────────────────────────────────────
+    // Replace this block with your actual DB / store call, e.g.:
+    //   await db.update(Staff).set(updatedRow).where(eq(Staff.id, id));
+
+    // TODO if validation or submit fails show in UI
+    // ────────────────────────────────────────────────────────────────────────────
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(error.message);
+    }
+  }
+}
 ---
 
-<ViewRow row={row} />
+{
+  row && config ? (
+    <ViewRow row={row} headers={headers} config={config} />
+  ) : (
+    <tr>
+      <td>
+        <p>missing parameters</p>
+      </td>
+    </tr>
+  )
+}

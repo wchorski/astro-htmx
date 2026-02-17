@@ -1,38 +1,38 @@
 ---
-// partials/ViewRow.astro
-interface Props {
-  row: {
-    id: number;
-    name: string;
-    email: string;
-    role: string;
-  };
-}
+// partials/table/row-view.astro
+import ViewRow from "@components/tables/RowView.astro";
+import type { FieldConfig } from "@ty/FieldConfig";
+import type { TableRow } from "@ty/Table";
 
-const { row } = Astro.props;
+let row: TableRow | null = null;
+let config: FieldConfig | null = null;
+let headers: string[] = [];
+
+if (Astro.request.method === "POST") {
+  try {
+    const raw = Astro.request.formData ? await Astro.request.formData() : null;
+    if (!raw) return new Response("Bad Request", { status: 400 });
+
+    row = JSON.parse(raw.get("_row") as string);
+    config = JSON.parse(raw.get("_config") as string);
+    if(!config) throw new Error('no config')
+    headers = Object.keys(config);
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(error.message);
+    }
+  }
+}
 ---
 
-<td
-  hx-get={`/partials/table/row-edit?id=${row.id}&name=${encodeURIComponent(row.name)}&email=${encodeURIComponent(row.email)}&role=${encodeURIComponent(row.role)}`}
-  hx-target={`#row-${row.id}`}
-  hx-swap="innerHTML"
-  style="cursor: pointer;">{row.name}</td
->
-<td
-  hx-get={`/partials/table/row-edit?id=${row.id}&name=${encodeURIComponent(row.name)}&email=${encodeURIComponent(row.email)}&role=${encodeURIComponent(row.role)}`}
-  hx-target={`#row-${row.id}`}
-  hx-swap="innerHTML"
-  style="cursor: pointer;">{row.email}</td
->
-<td
-  hx-get={`/partials/table/row-edit?id=${row.id}&name=${encodeURIComponent(row.name)}&email=${encodeURIComponent(row.email)}&role=${encodeURIComponent(row.role)}`}
-  hx-target={`#row-${row.id}`}
-  hx-swap="innerHTML"
-  style="cursor: pointer;">{row.role}</td
->
-
-<style>
-  td {
-    padding: 0.5rem;
-  }
-</style>
+{
+  row && config ? (
+    <ViewRow row={row} headers={headers} config={config} />
+  ) : (
+    <tr>
+      <td>
+        <p>missing parameters</p>
+      </td>
+    </tr>
+  )
+}

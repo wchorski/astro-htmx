@@ -1,0 +1,164 @@
+---
+import type { FieldConfig } from "@ty/FieldConfig";
+
+interface Props {
+  row: Record<string, any> & { id: number };
+  headers: string[];
+  config: FieldConfig;
+}
+
+const { row, headers, config } = Astro.props;
+
+// const raw = Astro.request.formData ? await Astro.request.formData() : null;
+
+// // Rebuild row and config from POST body
+// const row: TableRow = JSON.parse(raw?.get("_row") as string);
+// const fieldConfig: FieldConfig = JSON.parse(raw?.get("_config") as string);
+
+// const headers = Object.keys(fieldConfig);
+---
+
+<tr id={`row-${row.id}`} data-status="editing">
+  <form
+    id={`edit-form-${row.id}`}
+    style="display:none"
+    hx-post="/partials/table/row-save"
+    hx-target={`#row-${row.id}`}
+    hx-swap="outerHTML"
+    hx-vals={JSON.stringify({
+      _row: JSON.stringify(row),
+      _config: JSON.stringify(config),
+    })}
+  >
+  </form>
+
+  {
+    headers.map((key) => {
+      const { label, value: override, ...inputAttrs } = config[key];
+      const resolvedValue =
+        override !== undefined ? override : (row[key] ?? "");
+      return (
+        <td>
+          <label>
+            <span class="text">{label ?? key}</span>
+            <input
+              form={`edit-form-${row.id}`}
+              name={key}
+              value={resolvedValue}
+              {...inputAttrs}
+            />
+          </label>
+        </td>
+      );
+    })
+  }
+
+  <td class="action-cell">
+    <button type="submit" form={`edit-form-${row.id}`} class="btn-save"
+      >Save</button
+    >
+    <button
+      type="button"
+      class="btn-cancel"
+      hx-post="/partials/table/row-view"
+      hx-target={`#row-${row.id}`}
+      hx-swap="outerHTML"
+      hx-vals={JSON.stringify({
+        _row: JSON.stringify(row),
+        _config: JSON.stringify(config),
+      })}
+    >
+      Cancel
+    </button>
+  </td>
+</tr>
+
+<style>
+  .table-wrap {
+    font-family: "IBM Plex Mono", monospace;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  h2 {
+    margin: 0;
+    padding: 1.25rem 1.5rem;
+    font-size: 0.875rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #94a3b8;
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  th {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    background: #f8fafc;
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  /* td {
+    padding: 0.875rem 1rem;
+    font-size: 0.875rem;
+    color: #1e293b;
+    border-bottom: 1px solid #f1f5f9;
+  } */
+
+  tr:last-child td {
+    border-bottom: none;
+  }
+
+  label .text {
+    font-size: 0.7rem;
+  }
+
+  tr[data-status="editing"] td {
+    background: #fffbeb;
+  }
+
+  .action-cell {
+    text-align: right;
+    width: 1%;
+    white-space: nowrap;
+  }
+
+  button {
+    padding: 0.375rem 0.875rem;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: opacity 0.15s;
+  }
+
+  button:hover {
+    opacity: 0.85;
+  }
+
+  .btn-edit {
+    background: #f1f5f9;
+    color: #475569;
+  }
+  .btn-save {
+    background: #0f172a;
+    color: #fff;
+  }
+  .btn-cancel {
+    background: #f1f5f9;
+    color: #475569;
+  }
+</style>

@@ -1,13 +1,14 @@
----
+<!-- ! don't use astro:actions -->
+<!-- ---
 import { db, Credit } from "astro:db";
 import { actions, isInputError } from "astro:actions";
 
 const credits = await db.select().from(Credit);
 const result = Astro.getActionResult(actions.confirmClassCredit);
 const inputErrors = isInputError(result?.error) ? result.error.fields : {};
----
+--- -->
 
-<form method="POST" action={actions.confirmClassCredit} style="display: grid">
+<!-- <form method="POST" action={actions.confirmClassCredit} style="display: grid">
   <legend>Course Credit & Attendance</legend>
   <fieldset>
     <label for="memberId">
@@ -50,7 +51,7 @@ const inputErrors = isInputError(result?.error) ? result.error.fields : {};
     <label for="email">
       <span>email</span>
       <input type="email" name="email" value="bobby@bob.com" required />
-      <!-- TODO: set error handler for all individual fields -->
+      
       {inputErrors.email && <p id="error">{inputErrors.email.join(",")}</p>}
     </label>
   </fieldset>
@@ -105,4 +106,4 @@ const inputErrors = isInputError(result?.error) ? result.error.fields : {};
       <p>No credits found</p>
     )
   }
-</ul>
+</ul> -->

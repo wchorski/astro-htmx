@@ -15,7 +15,7 @@ const courses = await db
   .where(eq(Course.id, Number(id)))
   .limit(1);
 const foundCourse = courses[0];
-if (!foundCourse) return Astro.redirect("/404")  
+if (!foundCourse) return Astro.redirect("/404");
 const { subject, date, description } = foundCourse;
 ---
 
@@ -49,9 +49,15 @@ const { subject, date, description } = foundCourse;
       </p>
     </header>
 
-    <p class="callout warning">TODO: secure route and data with auth</p>
+    <ul class="callout warning">
+      <li>TODO: secure route and data with auth</li>
+      <li>Proto-type: Using example member data</li>
+    </ul>
+
+    <h2>Member Credits</h2>
     <TableEditable />
-    <!-- <CreditsTable courseId={foundCourse.id} /> -->
+    <hr />
+    <CreditsTable courseId={foundCourse.id} />
   </main>
 </Layout>
 
