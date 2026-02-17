@@ -1,49 +1,16 @@
 ---
+interface Props {
+  rows: TableRow[];
+  fieldConfig: FieldConfig;
+  table: TableRegistryType;
+}
 // EditableTable.astro
 import ViewRow from "@components/tables/RowView.astro";
+import type { TableRegistryType } from "@lib/tableDbRegistry";
 import type { FieldConfig } from "@ty/FieldConfig";
 import type { TableRow } from "@ty/Table";
 
-// Sample data - replace with your own data source
-const data: TableRow[] = [
-  {
-    id: 1,
-    name: "Alice Johnson",
-    email: "alice@example.com",
-    role: "Developer",
-  },
-  { id: 2, name: "Bob Smith", email: "bob@example.com", role: "Designer" },
-  { id: 3, name: "Carol White", email: "carol@example.com", role: "Manager" },
-];
-
-const fieldConfig: FieldConfig = {
-  id: {
-    label: "ID",
-    type: "number",
-    required: true,
-    readonly: true,
-  },
-  name: {
-    label: "Full Name",
-    type: "text",
-    required: true,
-    placeholder: "Jane Doe...",
-    autocomplete: "name",
-  },
-  email: {
-    label: "Email",
-    type: "email",
-    required: true,
-    placeholder: "jane@example.com...",
-    autocomplete: "email",
-  },
-  role: {
-    label: "Role",
-    type: "text",
-    required: true,
-    placeholder: "e.g. Designer...",
-  },
-};
+const { rows, fieldConfig, table } = Astro.props;
 
 // Extract headers from first row (excluding 'id')
 const headers = Object.keys(fieldConfig);
@@ -52,6 +19,48 @@ const headers = Object.keys(fieldConfig);
 function label(key: string) {
   return fieldConfig[key]?.label ?? key.charAt(0).toUpperCase() + key.slice(1);
 }
+
+//? example data
+// const rows: TableRow[] = [
+//   {
+//     id: 1,
+//     name: "Alice Johnson",
+//     email: "alice@example.com",
+//     role: "Developer",
+//   },
+//   { id: 2, name: "Bob Smith", email: "bob@example.com", role: "Designer" },
+//   { id: 3, name: "Carol White", email: "carol@example.com", role: "Manager" },
+// ];
+
+//? example config
+// const fieldConfig: FieldConfig = {
+//   id: {
+//     label: "ID",
+//     type: "number",
+//     required: true,
+//     readonly: true,
+//   },
+//   name: {
+//     label: "Full Name",
+//     type: "text",
+//     required: true,
+//     placeholder: "Jane Doe...",
+//     autocomplete: "name",
+//   },
+//   email: {
+//     label: "Email",
+//     type: "email",
+//     required: true,
+//     placeholder: "jane@example.com...",
+//     autocomplete: "email",
+//   },
+//   role: {
+//     label: "Role",
+//     type: "text",
+//     required: true,
+//     placeholder: "e.g. Designer...",
+//   },
+// };
 ---
 
 <table>
@@ -63,8 +72,13 @@ function label(key: string) {
   </thead>
   <tbody>
     {
-      data.map((row) => (
-        <ViewRow row={row} headers={headers} config={fieldConfig} />
+      rows.map((row) => (
+        <ViewRow
+          row={row}
+          headers={headers}
+          config={fieldConfig}
+          table={table}
+        />
       ))
     }
   </tbody>
@@ -82,6 +96,7 @@ function label(key: string) {
     row.setAttribute("data-status", hasEditForm ? "editing" : "viewing");
   });
 </script>
+
 <style>
   table {
     width: 100%;

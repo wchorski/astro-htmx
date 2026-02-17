@@ -1,13 +1,15 @@
 ---
+import type { TableRegistryType } from "@lib/tableDbRegistry";
 import type { FieldConfig } from "@ty/FieldConfig";
 
 interface Props {
   row: Record<string, any> & { id: number };
   headers: string[];
   config: FieldConfig;
+  table: TableRegistryType;
 }
 
-const { row, headers, config } = Astro.props;
+const { row, headers, config, table } = Astro.props;
 
 // const raw = Astro.request.formData ? await Astro.request.formData() : null;
 
@@ -28,15 +30,22 @@ const { row, headers, config } = Astro.props;
     hx-vals={JSON.stringify({
       _row: JSON.stringify(row),
       _config: JSON.stringify(config),
+      _table: table,
     })}
   >
   </form>
 
   {
     headers.map((key) => {
-      const { label, value: override, ...inputAttrs } = config[key];
+      const { label, value: override, type, ...inputAttrs } = config[key];
+      // TODO may need to think about other input values
       const resolvedValue =
-        override !== undefined ? override : (row[key] ?? "");
+        override !== undefined
+          ? override
+          : type === "checkbox"
+            ? (row[key] ?? false) // ← default false not ""
+            : (row[key] ?? "");
+
       return (
         <td>
           <label>
@@ -45,6 +54,10 @@ const { row, headers, config } = Astro.props;
               form={`edit-form-${row.id}`}
               name={key}
               value={resolvedValue}
+              type={type}
+              {...(type === "checkbox"
+                ? { checked: !!resolvedValue }
+                : { value: resolvedValue })}
               {...inputAttrs}
             />
           </label>
@@ -66,6 +79,7 @@ const { row, headers, config } = Astro.props;
       hx-vals={JSON.stringify({
         _row: JSON.stringify(row),
         _config: JSON.stringify(config),
+        _table: table,
       })}
     >
       Cancel

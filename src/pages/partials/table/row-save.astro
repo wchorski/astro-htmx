@@ -3,8 +3,10 @@
 import type { FieldConfig } from "@ty/FieldConfig";
 import type { TableRow } from "@ty/Table";
 import ViewRow from "@components/tables/RowView.astro";
+import { tableRegistry, type TableRegistryType } from "@lib/tableDbRegistry";
 
 let row: TableRow | null = null;
+let table: TableRegistryType | null = null;
 let config: FieldConfig | null = null;
 let headers: string[] = [];
 
@@ -23,6 +25,10 @@ if (Astro.request.method === "POST") {
     // Build the updated row from submitted form values.
     // Coerce number fields back to numbers so the row type stays consistent.
     const id = Number(raw.get("id"));
+    table = raw.get("_table") as TableRegistryType;
+    const saveFn = tableRegistry[table];
+    if (!saveFn)
+      throw new Error(`No save handler registered for table: ${table}`);
 
     row = { id };
 
@@ -40,12 +46,8 @@ if (Astro.request.method === "POST") {
       }
     }
 
-    // ── Persist here ────────────────────────────────────────────────────────────
-    // Replace this block with your actual DB / store call, e.g.:
-    //   await db.update(Staff).set(updatedRow).where(eq(Staff.id, id));
-
+    await saveFn(row);
     // TODO if validation or submit fails show in UI
-    // ────────────────────────────────────────────────────────────────────────────
   } catch (error) {
     if (error instanceof Error) {
       console.error(error.message);
@@ -55,8 +57,8 @@ if (Astro.request.method === "POST") {
 ---
 
 {
-  row && config ? (
-    <ViewRow row={row} headers={headers} config={config} />
+  row && config && table ? (
+    <ViewRow row={row} headers={headers} config={config} table={table} />
   ) : (
     <tr>
       <td>

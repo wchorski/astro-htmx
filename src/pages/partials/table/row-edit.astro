@@ -3,8 +3,10 @@
 import type { FieldConfig } from "@ty/FieldConfig";
 import type { TableRow } from "@ty/Table";
 import RowEditForm from "@components/tables/RowEdit.astro";
+import type { TableRegistryType } from "@lib/tableDbRegistry";
 
 let row: TableRow | null = null;
+let table: TableRegistryType | null = null;
 let config: FieldConfig | null = null;
 let headers: string[] = [];
 
@@ -14,6 +16,7 @@ if (Astro.request.method === "POST") {
     if (!raw) return new Response("Bad Request", { status: 400 });
     // Rebuild row and config from POST body
     row = JSON.parse(raw?.get("_row") as string);
+    table = raw.get("_table") as TableRegistryType;
     config = JSON.parse(raw?.get("_config") as string);
     if (!config) throw new Error("no config found");
     headers = Object.keys(config);
@@ -26,12 +29,12 @@ if (Astro.request.method === "POST") {
 ---
 
 {
-  row && config ? (
-    <RowEditForm row={row} headers={headers} config={config} />
+  row && config && table ? (
+    <RowEditForm row={row} headers={headers} config={config} table={table} />
   ) : (
     <tr>
       <td>
-        <p>missing parameters</p>
+        <p>row-edit missing parameters</p>
       </td>
     </tr>
   )

@@ -1,4 +1,5 @@
 ---
+import type { TableRegistryType } from "@lib/tableDbRegistry";
 import type { FieldConfig } from "@ty/FieldConfig";
 
 // partials/ViewRow.astro
@@ -6,16 +7,17 @@ interface Props {
   row: Record<string, any> & { id: number };
   headers: string[];
   config: FieldConfig;
+  table: TableRegistryType
 }
 
-const { row, headers, config } = Astro.props;
+const { row, headers, config, table } = Astro.props;
 // const keys = Object.keys(row).filter((key) => key !== "id");
 // const keys = Object.keys(row);
 ---
 
 <tr id={`row-${row.id}`} data-status="viewing">
   {/* ── View cells ── */}
-  {headers.map((key) => <td class="view-cell">{row[key] ?? "—"}</td>)}
+  {headers.map((key) => <td data-key={key} class="view-cell">{row[key] ?? "—"}</td>)}
 
   {/* ── Action cell (view mode) ── */}
   <td class="action-cell">
@@ -28,9 +30,19 @@ const { row, headers, config } = Astro.props;
       hx-vals={JSON.stringify({
         _row: JSON.stringify(row),
         _config: JSON.stringify(config),
+        _table: table,
       })}
     >
       Edit
     </button>
   </td>
 </tr>
+
+<style>
+  td.view-cell[data-key="attended"]:not(:empty) {
+    background-color: seagreen;
+    color: white;
+    border-radius: 10px;
+    border: solid white 1px;
+  }
+</style>

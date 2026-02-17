@@ -114,8 +114,8 @@ export function formatPhonePrettyManual(
 
 // Example usage:
 /*
-console.log(formatPhonePrettyManual('+11231231234')); // "+1 (123) 123-1234"
-console.log(formatPhonePrettyManual('1231231234')); // "+1 (123) 123-1234"
-console.log(formatPhonePrettyManual('(123) 123-1234')); // "+1 (123) 123-1234"
-console.log(formatPhonePrettyManual('+11231231234')); // "+1 (123) 123-1234"
+formatPhonePrettyManual('+11231231234'); // "+1 (123) 123-1234"
+formatPhonePrettyManual('1231231234'); // "+1 (123) 123-1234"
+formatPhonePrettyManual('(123) 123-1234'); // "+1 (123) 123-1234"
+formatPhonePrettyManual('+11231231234'); // "+1 (123) 123-1234"
 */

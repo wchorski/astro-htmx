@@ -7,12 +7,12 @@ export interface SanitizationResult {
 
 // Example usage:
 /*
-console.log(formatPhoneToE164Manual('(123) 123-1234')); // '+11231231234'
-console.log(formatPhoneToE164Manual('1231231234')); // '+11231231234'
-console.log(formatPhoneToE164Manual('+11231231234')); // '+11231231234'
-console.log(formatPhoneToE164Manual('11231231234')); // '+11231231234'
-console.log(formatPhoneToE164Manual('123 123 1234')); // '+11231231234'
-console.log(formatPhoneToE164Manual('+44 20 7123 4567', { defaultCountryCode: '44' })); // '+442071234567'
+formatPhoneToE164Manual('(123) 123-1234'); // '+11231231234'
+formatPhoneToE164Manual('1231231234'); // '+11231231234'
+formatPhoneToE164Manual('+11231231234'); // '+11231231234'
+formatPhoneToE164Manual('11231231234'); // '+11231231234'
+formatPhoneToE164Manual('123 123 1234'); // '+11231231234'
+formatPhoneToE164Manual('+44 20 7123 4567', { defaultCountryCode: '44' }); // '+442071234567'
 */
 
 export class PhoneSanitizer {
