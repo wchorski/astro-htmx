@@ -36,159 +36,80 @@ const tableRows = memberCredits.map(({ credit, member }) => ({
 }));
 ---
 
-<TableEditable
-  rows={tableRows}
-  table="memberCredits"
-  fieldConfig={{
-    id: {
-      label: "ID",
-      type: "number",
-      required: true,
-      readonly: true,
-    },
-    memberId: {
-      label: "Member ID",
-      type: "number",
-      required: true,
-      readonly: true,
-    },
-    first_name: {
-      label: "First Name",
-      type: "text",
-      required: true,
-      placeholder: "Jane Doe...",
-    },
-    last_name: {
-      label: "Last Name",
-      type: "text",
-      required: true,
-      placeholder: "Jane Doe...",
-    },
-    middle_initial: {
-      label: "Middle Init.",
-      type: "text",
-    },
-    email: {
-      label: "Email",
-      type: "email",
-      required: true,
-      placeholder: "jane@example.com...",
-      autocomplete: "email",
-    },
-    phone: {
-      label: "Phone",
-      type: "tel",
-      required: true,
-      autocomplete: "phone",
-    },
-    address1: {
-      label: "Address",
-      type: "text",
-      required: true,
-    },
-    city: {
-      label: "city",
-      type: "text",
-      required: true,
-    },
-    state: {
-      label: "state",
-      type: "text",
-      required: true,
-    },
-    zip: {
-      label: "zip",
-      type: "number",
-      required: true,
-    },
-    attended: {
-      label: "attended",
-      type: "checkbox",
-    },
-  }}
-/>
-<!-- <table class="credits-table">
-  <thead>
-    <tr>
-      <th>Member ID</th>
-      <th>Name</th>
-      <th>Phone</th>
-      <th>Email</th>
-      <th>Attended</th>
-    </tr>
-  </thead>
-  <tbody>
-    {
-      memberCredits.length > 0 ? (
-        memberCredits.map(({ credit, member }) => (
-          <tr>
-            {/* <td>{credit.courseId}</td> */}
-            <td>{credit.memberId}</td>
-            <td>
-              {member.first_name} {member.middle_initial} {member.last_name}
-            </td>
-            <td>
-              <a href={`tel:${member.phone}`}>
-                {formatPhonePrettyManual(member.phone)}
-              </a>
-            </td>
-            <td>
-              <a href={`mailto:${member.email}`}>{member.email}</a>
-            </td>
-            <td class={`attended-${credit.attended}`}>{credit.attended}</td>
-          </tr>
-        ))
-      ) : (
-        <tr>
-          <td col-span="3">No credits found</td>
-        </tr>
-      )
-    }
-    <CreditsTableRowForm />
-  </tbody>
-</table> -->
-
-<!-- <style>
-  table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-
-  table thead tr {
-    background-color: #f0f0f0;
-    border-bottom: 2px solid #ddd;
-  }
-
-  table th {
-    padding: 0.2rem;
-    text-align: left;
-  }
-
-  table tbody tr {
-    border-bottom: 1px solid #ddd;
-  }
-
-  table tbody tr:nth-child(even) {
-    background-color: #f9f9f9;
-  }
-
-  table tbody tr:nth-child(odd) {
-    background-color: #ffffff;
-  }
-
-  table td {
-    padding: 0.2rem;
-  }
-
-  table .no-credits {
-    text-align: center;
-  }
-  .attended-true {
-    color: white;
-    background-color: green;
-  }
-  .attended-false {
-    color: white;
-    background-color: red;
-  }
-</style> -->
+{
+  tableRows.length === 0 ? (
+    <p class="callout not-found">no member credits found</p>
+  ) : (
+    <TableEditable
+      rows={tableRows}
+      table="memberCredits"
+      fieldConfig={{
+        id: {
+          label: "ID",
+          type: "number",
+          required: true,
+          readonly: true,
+        },
+        memberId: {
+          label: "Member ID",
+          type: "number",
+          required: true,
+          readonly: true,
+        },
+        first_name: {
+          label: "First Name",
+          type: "text",
+          required: true,
+          placeholder: "Jane Doe...",
+        },
+        last_name: {
+          label: "Last Name",
+          type: "text",
+          required: true,
+          placeholder: "Jane Doe...",
+        },
+        middle_initial: {
+          label: "Middle Init.",
+          type: "text",
+        },
+        email: {
+          label: "Email",
+          type: "email",
+          required: true,
+          placeholder: "jane@example.com...",
+          autocomplete: "email",
+        },
+        phone: {
+          label: "Phone",
+          type: "tel",
+          required: true,
+          autocomplete: "phone",
+        },
+        address1: {
+          label: "Address",
+          type: "text",
+          required: true,
+        },
+        city: {
+          label: "city",
+          type: "text",
+          required: true,
+        },
+        state: {
+          label: "state",
+          type: "text",
+          required: true,
+        },
+        zip: {
+          label: "zip",
+          type: "number",
+          required: true,
+        },
+        attended: {
+          label: "attended",
+          type: "checkbox",
+        },
+      }}
+    />
+  )
+}

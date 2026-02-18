@@ -1,4 +1,5 @@
 ---
+import { prettyDateLocaleFull } from "@lib/formatters";
 import type { TableRegistryType } from "@lib/tableDbRegistry";
 import type { FieldConfig } from "@ty/FieldConfig";
 
@@ -7,7 +8,7 @@ interface Props {
   row: Record<string, any> & { id: number };
   headers: string[];
   config: FieldConfig;
-  table: TableRegistryType
+  table: TableRegistryType;
 }
 
 const { row, headers, config, table } = Astro.props;
@@ -17,7 +18,24 @@ const { row, headers, config, table } = Astro.props;
 
 <tr id={`row-${row.id}`} data-status="viewing">
   {/* ── View cells ── */}
-  {headers.map((key) => <td data-key={key} class="view-cell">{row[key] ?? "—"}</td>)}
+  {
+    headers.map((key) => {
+      const { label, value: override, type, ...inputAttrs } = config[key];
+      const val =
+        type === "date" || type === "datetime-local"
+          ? prettyDateLocaleFull(row[key])
+          : row[key];
+      return (
+        <td data-key={key} class="view-cell">
+          {key === "id" ? (
+            <a href={`${table}/${val}`}>{val}</a>
+          ) : (
+            <span>{val ?? "—"}</span>
+          )}
+        </td>
+      );
+    })
+  }
 
   {/* ── Action cell (view mode) ── */}
   <td class="action-cell">
@@ -40,9 +58,10 @@ const { row, headers, config, table } = Astro.props;
 
 <style>
   td.view-cell[data-key="attended"]:not(:empty) {
-    background-color: seagreen;
-    color: white;
-    border-radius: 10px;
-    border: solid white 1px;
+    color: seagreen;
+
+    &::after {
+      content: "✔";
+    }
   }
 </style>

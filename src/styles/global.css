@@ -79,7 +79,8 @@ h1 {
   font-size: 1.25rem;
 }
 
-button {
+button,
+.btn {
   background: #3b82f6;
   color: white;
   border: none;
@@ -88,10 +89,12 @@ button {
   cursor: pointer;
   font-size: 1rem;
   transition: background 0.2s;
+  text-decoration: none;
 }
 
-button:hover {
-  background: #2563eb;
+button:hover,
+.btn:hover {
+  background: #25a2eb;
 }
 
 input[type="text"],
@@ -177,13 +180,13 @@ form {
 }
 
 .gap-s {
-  gap: 0.5rem
+  gap: 0.5rem;
 }
 .gap-m {
-  gap: 1rem
+  gap: 1rem;
 }
 .gap-l {
-  gap: 1.7rem
+  gap: 1.7rem;
 }
 
 .callout {

@@ -1,21 +1,20 @@
 ---
 interface Params {
-  id: string;
+  courseId: string;
 }
 import { db, eq, Course } from "astro:db";
 import Layout from "@layouts/Layout.astro";
-import MembersSearchForm from "@components/MembersSearchForm.astro";
 import CreditsTable from "@partials/credits-table.astro";
 export const prerender = false; // Not needed in 'server' mode
-const { id } = Astro.params;
-if (!id) throw new Error("no id found. throw 404");
-const courses = await db
+const { courseId } = Astro.params;
+if (!courseId) throw new Error("no id found. throw 404");
+const foundCourse = await db
   .select()
   .from(Course)
-  .where(eq(Course.id, Number(id)))
-  .limit(1);
-const foundCourse = courses[0];
-if (!foundCourse) return Astro.redirect("/404")  
+  .where(eq(Course.id, Number(courseId)))
+  .get();
+
+if (!foundCourse) return Astro.redirect("/404");
 const { subject, date, description } = foundCourse;
 ---
 
@@ -45,27 +44,23 @@ const { subject, date, description } = foundCourse;
           }
         </time>{description}
         |
-        <span class="course-id">{id}</span>
+        <span class="course-id">{courseId}</span>
       </p>
     </header>
 
-    <hr />
-    <!-- <ClassForm course={foundCourse} /> -->
-    <!-- <CreditForm course={foundCourse} /> -->
-    <!-- TODO debug remove later -->
-    <!-- <CreditsForm courseId={foundCourse.id} /> -->
-    
-    <p class="callout warning card">Using fake member data for testing.</p>
-    
-    <MembersSearchForm course={foundCourse} />
-    <hr />
-    <h2>TEMPORARY: move to admin dashboard on production</h2>
+    <ul class="callout warning">
+      <li>TODO: secure route and data with auth</li>
+      <li>Proto-type: Using example member data</li>
+    </ul>
+
+    <div class="flex space-between">
+      <h2>Member Credits</h2>
+      <button
+        onclick="alert('In the works. Will be implimented later')"
+        hx-put="/api/credits/export">Export CSV to Sharepoint</button
+      >
+    </div>
+
     <CreditsTable courseId={foundCourse.id} />
   </main>
 </Layout>
-
-<style>
-  main {
-    padding: 1rem;
-  }
-</style>

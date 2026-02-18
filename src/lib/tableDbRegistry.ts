@@ -1,9 +1,9 @@
 // src/lib/tableRegistry.ts
 import type { TableRow } from "@ty/Table";
-import { Credit, db, eq, Member } from "astro:db";
+import { Course, Credit, db, eq, Member } from "astro:db";
 import { PhoneSanitizer } from "./sanatizers";
 import { formatPhoneToE164Manual } from "./formatters";
-import { z } from "astro/zod";
+import { z, ZodError } from "astro/zod";
 import type { MemberCredit } from "@ty/Schema";
 
 type SaveFn = (row: TableRow) => Promise<void>;
@@ -22,6 +22,13 @@ const memberCreditsFormSchema = z.object({
   state: z.string().min(1, "State is required"),
   zip: z.coerce.number().min(10000).max(99999, "Invalid ZIP code"),
   attended: z.coerce.boolean(),
+});
+
+const courseFormSchema = z.object({
+  id: z.coerce.number(),
+  subject: z.string().min(3, "Must be more than 3 characters"),
+  description: z.string().optional(),
+  date: z.date(),
 });
 
 export const tableRegistry = {
@@ -117,6 +124,36 @@ export const tableRegistry = {
     // } else {
     //   await entry.save({ id: row.id, ...updates });
     // }
+  },
+  "/attendance/admin/courses/id": async (row) => {
+    const validated = courseFormSchema.parse(row);
+
+    try {
+      const existingCourse = await db
+        .select()
+        .from(Course)
+        .where(eq(Course.id, Number(validated.id)))
+        .get();
+
+      if (!existingCourse)
+        throw new Error(`course does not exist with id ${validated.id}`);
+
+      await db
+        .update(Course)
+        //   TODO memberExists ? {id: memberExists} : {id: memberId}
+        .set(validated)
+        .where(eq(Course.id, validated.id));
+    } catch (e) {
+      console.log("❌ tableDBRegistry /attendance/admin/courses/id");
+
+      const error =
+        e instanceof ZodError
+          ? e.flatten() // ← structured object, no parsing needed
+          : e instanceof Error
+            ? e.message
+            : "500 server error";
+      console.log(error);
+    }
   },
   members: async (row) => {
     /* db.update(Users)... */

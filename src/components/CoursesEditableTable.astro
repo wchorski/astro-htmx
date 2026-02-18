@@ -1,0 +1,37 @@
+---
+interface Props {
+  courses: CourseSelect[];
+}
+import type { CourseSelect } from "@ty/Schema";
+import TableEditable from "./TableEditable.astro";
+const { courses } = Astro.props;
+---
+
+<TableEditable
+  rows={courses || []}
+  table="/attendance/admin/courses/id"
+  fieldConfig={{
+    id: {
+      label: "ID",
+      type: "number",
+      required: true,
+      readonly: true,
+    },
+    subject: {
+      label: "subject",
+      type: "text",
+      required: true,
+      placeholder: "Course Studies IV...",
+    },
+    description: {
+      label: "description",
+      type: "text",
+      placeholder: "...",
+    },
+    date: {
+      label: "Date",
+      type: "datetime-local",
+      required: true,
+    },
+  }}
+/>

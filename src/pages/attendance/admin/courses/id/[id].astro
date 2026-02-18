@@ -1,0 +1,81 @@
+---
+interface Params {
+  id: string;
+}
+import { db, eq, Course } from "astro:db";
+import Layout from "@layouts/Layout.astro";
+import MembersSearchForm from "@components/MembersSearchForm.astro";
+import CreditsTable from "@partials/credits-table.astro";
+import AttendanceAdminNav from "@components/navigation/AttendanceAdminNav.astro";
+export const prerender = false; // Not needed in 'server' mode
+const { id } = Astro.params;
+if (!id) throw new Error("no id found. throw 404");
+const course = await db
+  .select()
+  .from(Course)
+  .where(eq(Course.id, Number(id)))
+  .get();
+if (!course) return Astro.redirect("/404");
+const { subject, date, description } = course;
+---
+
+<Layout>
+  <AttendanceAdminNav />
+  <main>
+    <header>
+      <h1>
+        {subject}
+        |
+        <time datetime={date.toISOString()}>
+          {
+            date.toLocaleString("en-US", {
+              year: "numeric",
+              month: "short",
+            })
+          }
+        </time>
+      </h1>
+      <p>
+        <time datetime={date.toISOString()}>
+          {
+            date.toLocaleString("en-US", {
+              year: "numeric",
+              month: "short",
+              day: "numeric",
+            })
+          }
+        </time>{description}
+        |
+        <span class="course-id">{id}</span>
+      </p>
+    </header>
+
+    <hr />
+    <!-- <ClassForm course={foundCourse} /> -->
+    <!-- <CreditForm course={foundCourse} /> -->
+    <!-- TODO debug remove later -->
+    <!-- <CreditsForm courseId={foundCourse.id} /> -->
+
+    <p class="callout warning card">Using fake member data for testing.</p>
+    <div class="flex space-between">
+      <h2>Member Credits</h2>
+      <button
+        onclick="alert('In the works. Will be implimented later')"
+        hx-put="/api/credits/export">Export CSV to Sharepoint</button
+      >
+    </div>
+
+    <CreditsTable courseId={course.id} />
+    <hr />
+    
+    <a href={`/attendance/check-in/${id}`} class="btn"
+      >Member Check-In for this course</a
+    >
+  </main>
+</Layout>
+
+<style>
+  main {
+    padding: 1rem;
+  }
+</style>

@@ -1,0 +1,43 @@
+---
+import CoursesEditableTable from "@components/CoursesEditableTable.astro";
+import Layout from "@layouts/Layout.astro";
+import { getCoursesPage } from "@lib/getCoursesPage";
+import PaginationNav from "@partials/pagination-nav.astro";
+
+const result = await getCoursesPage(1);
+
+if ("redirect" in result) {
+  return Astro.redirect("/admin/courses");
+}
+
+const { courses, page, perPage, totalCount, totalPages } = result;
+---
+
+<Layout>
+  <main>
+    <header class="flex space-between">
+      <h1>Admin Courses - Page {page}</h1>
+      <button
+        onclick="alert('In the works. Will be implimented later')"
+        hx-put="/api/courses/import">Import Events from Wordpress</button
+      >
+    </header>
+    {
+      courses.length === 0 ? (
+        <p class="callout not-found">no member credits found</p>
+      ) : (
+        <CoursesEditableTable courses={courses} />
+      )
+    }
+    {
+      courses ? (
+        <PaginationNav
+          path="/attendance/admin/courses"
+          page={Number(page)}
+          perPage={perPage}
+          totalCount={totalCount}
+        />
+      ) : null
+    }
+  </main>
+</Layout>

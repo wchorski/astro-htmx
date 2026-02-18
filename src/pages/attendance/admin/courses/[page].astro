@@ -1,0 +1,41 @@
+---
+import CoursesEditableTable from "@components/CoursesEditableTable.astro";
+import TableEditable from "@components/TableEditable.astro";
+import Layout from "@layouts/Layout.astro";
+import { getCoursesPage } from "@lib/getCoursesPage";
+import CoursesList from "@partials/courses-list.astro";
+import PaginationNav from "@partials/pagination-nav.astro";
+const page = Number(Astro.params.page);
+const result = await getCoursesPage(page);
+
+if ("redirect" in result) {
+  return Astro.redirect("/admin/courses");
+}
+
+const { courses, perPage, totalCount, totalPages } = result;
+---
+
+<Layout>
+  <main>
+    <header>
+      <h1>Admin Courses - Page {page}</h1>
+    </header>
+    {
+      courses?.length === 0 ? (
+        <p class="callout not-found">no member credits found</p>
+      ) : (
+        <CoursesEditableTable courses={courses} />
+      )
+    }
+    {
+      courses ? (
+        <PaginationNav
+          path="/attendance/admin/courses"
+          page={Number(page)}
+          perPage={perPage}
+          totalCount={totalCount}
+        />
+      ) : null
+    }
+  </main>
+</Layout>

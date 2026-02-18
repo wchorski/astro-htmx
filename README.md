@@ -1,7 +1,7 @@
 #todo
 - [ ] composable and editable table Component!!!!
 - [ ] admin table for `courses` and a "fetch events" button that get Wordpress data
-- [ ] `/attendance/courses/id/[id].astro/admin` make an editable table for admin use
+- [x] `/attendance/admin/courses/id/[id].astro/admin` make an editable table for admin use
 - [ ] pull from db all `Course` and display them on page
     - [ ] label with subject and date of class (with clickble link)
     - [ ] `/courses/[id].astro` reveals attendence form.

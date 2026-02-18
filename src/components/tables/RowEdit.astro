@@ -2,6 +2,7 @@
 import type { TableRegistryType } from "@lib/tableDbRegistry";
 import type { FieldConfig } from "@ty/FieldConfig";
 import type { ZodError } from "astro/zod";
+import { dateToLocaleFieldValue } from "@lib/formatters";
 
 interface Props {
   row: Record<string, any> & { id: number };
@@ -45,7 +46,9 @@ const { row, headers, config, table, error } = Astro.props;
           ? override
           : type === "checkbox"
             ? (row[key] ?? false) // ← default false not ""
-            : (row[key] ?? "");
+            : type === "datetime-local"
+              ? dateToLocaleFieldValue(row[key])
+              : (row[key] ?? "");
 
       const fieldError =
         typeof error === "object" ? error.fieldErrors[key]?.[0] : null;
@@ -139,6 +142,10 @@ const { row, headers, config, table, error } = Astro.props;
     border-bottom: none;
   }
 
+  label {
+    display: grid;
+  }
+
   label .text {
     font-size: 0.7rem;
   }
@@ -162,6 +169,9 @@ const { row, headers, config, table, error } = Astro.props;
     cursor: pointer;
     font-family: inherit;
     transition: opacity 0.15s;
+  }
+  input[name="id"] {
+    max-width: 4rem;
   }
 
   button:hover {

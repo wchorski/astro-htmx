@@ -112,6 +112,30 @@ export function formatPhonePrettyManual(
   }
 }
 
+export const prettyDateLocaleFull = (date: string) => {
+  return new Date(date).toLocaleString("en-US", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  });
+};
+
+export const dateToLocaleFieldValue = (date: string) => {
+  return new Date(date)
+    .toLocaleString("en-CA", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+    })
+    .replace(", ", "T");
+};
+
 // Example usage:
 /*
 formatPhonePrettyManual('+11231231234'); // "+1 (123) 123-1234"
