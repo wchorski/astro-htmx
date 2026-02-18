@@ -67,9 +67,9 @@ export const POST: APIRoute = async ({ request, redirect }) => {
       .select()
       .from(Course)
       .where(eq(Course.id, courseId))
-      .limit(1);
+      .get();
 
-    if (courseExists.length === 0) {
+    if (!courseExists) {
       return redirect(
         `/partials/credit-form?error=${encodeURIComponent(`Course with ID ${courseId} does not exist`)}`,
       );

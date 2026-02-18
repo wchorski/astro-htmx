@@ -21,8 +21,9 @@ if (Astro.request.method === "POST") {
     if (!config) throw new Error("no config");
     headers = Object.keys(config);
   } catch (error) {
+    console.log('partials/table/row-view');
     if (error instanceof Error) {
-      console.error(error.message);
+      console.error(error);
     }
   }
 }

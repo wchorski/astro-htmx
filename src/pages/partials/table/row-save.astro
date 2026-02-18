@@ -3,12 +3,15 @@
 import type { FieldConfig } from "@ty/FieldConfig";
 import type { TableRow } from "@ty/Table";
 import ViewRow from "@components/tables/RowView.astro";
+import EditRow from "@components/tables/RowEdit.astro";
 import { tableRegistry, type TableRegistryType } from "@lib/tableDbRegistry";
+import { ZodError } from "astro/zod";
 
 let row: TableRow | null = null;
 let table: TableRegistryType | null = null;
 let config: FieldConfig | null = null;
 let headers: string[] = [];
+let error: string | ReturnType<ZodError["flatten"]> | null = null;
 
 if (Astro.request.method === "POST") {
   try {
@@ -48,22 +51,34 @@ if (Astro.request.method === "POST") {
 
     await saveFn(row);
     // TODO if validation or submit fails show in UI
-  } catch (error) {
-    if (error instanceof Error) {
-      console.error(error.message);
-    }
+  } catch (e) {
+    console.log("❌ partials/table/row-save");
+    error =
+      e instanceof ZodError
+        ? e.flatten() // ← structured object, no parsing needed
+        : e instanceof Error
+          ? e.message
+          : "500 server error";
   }
 }
 ---
 
 {
-  row && config && table ? (
-    <ViewRow row={row} headers={headers} config={config} table={table} />
-  ) : (
+  !row || !config || !table ? (
     <tr>
       <td>
         <p>missing parameters</p>
       </td>
     </tr>
+  ) : error ? (
+    <EditRow
+      row={row}
+      headers={headers}
+      config={config}
+      table={table}
+      error={error}
+    />
+  ) : (
+    <ViewRow row={row} headers={headers} config={config} table={table} />
   )
 }

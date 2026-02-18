@@ -1,16 +1,17 @@
 ---
 import type { TableRegistryType } from "@lib/tableDbRegistry";
 import type { FieldConfig } from "@ty/FieldConfig";
+import type { ZodError } from "astro/zod";
 
 interface Props {
   row: Record<string, any> & { id: number };
   headers: string[];
   config: FieldConfig;
   table: TableRegistryType;
+  error?: string | ReturnType<ZodError["flatten"]>;
 }
 
-const { row, headers, config, table } = Astro.props;
-
+const { row, headers, config, table, error } = Astro.props;
 // const raw = Astro.request.formData ? await Astro.request.formData() : null;
 
 // // Rebuild row and config from POST body
@@ -46,6 +47,9 @@ const { row, headers, config, table } = Astro.props;
             ? (row[key] ?? false) // ← default false not ""
             : (row[key] ?? "");
 
+      const fieldError =
+        typeof error === "object" ? error.fieldErrors[key]?.[0] : null;
+
       return (
         <td>
           <label>
@@ -60,6 +64,7 @@ const { row, headers, config, table } = Astro.props;
                 : { value: resolvedValue })}
               {...inputAttrs}
             />
+            {fieldError && <span class="field-error">{fieldError}</span>}
           </label>
         </td>
       );
@@ -174,5 +179,10 @@ const { row, headers, config, table } = Astro.props;
   .btn-cancel {
     background: #f1f5f9;
     color: #475569;
+  }
+
+  .field-error {
+    color: red;
+    border-bottom: dotted red 2px;
   }
 </style>

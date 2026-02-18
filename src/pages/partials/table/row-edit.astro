@@ -9,6 +9,7 @@ let row: TableRow | null = null;
 let table: TableRegistryType | null = null;
 let config: FieldConfig | null = null;
 let headers: string[] = [];
+let error: Error | null = null
 
 if (Astro.request.method === "POST") {
   try {
@@ -21,14 +22,16 @@ if (Astro.request.method === "POST") {
     if (!config) throw new Error("no config found");
     headers = Object.keys(config);
   } catch (error) {
+    console.log('partials/table/row-edit');
     if (error instanceof Error) {
-      console.error(error.message);
+      console.error(error);
+      error = error.message
     }
   }
 }
 ---
 
-{
+{ error ? <p>{JSON.stringify(error, null,2 )}</p> :
   row && config && table ? (
     <RowEditForm row={row} headers={headers} config={config} table={table} />
   ) : (

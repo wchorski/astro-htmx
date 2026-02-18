@@ -3,32 +3,41 @@ import type { TableRow } from "@ty/Table";
 import { Credit, db, eq, Member } from "astro:db";
 import { PhoneSanitizer } from "./sanatizers";
 import { formatPhoneToE164Manual } from "./formatters";
+import { z } from "astro/zod";
+import type { MemberCredit } from "@ty/Schema";
 
 type SaveFn = (row: TableRow) => Promise<void>;
 
+const memberCreditsFormSchema = z.object({
+  //   courseId: z.coerce.number(),
+  id: z.coerce.number(),
+  memberId: z.coerce.number(),
+  first_name: z.string().min(3, "Must be more than 3 characters"),
+  last_name: z.string().min(3, "Must be more than 3 characters"),
+  middle_initial: z.string().max(1, "no more than one character").optional(),
+  phone: z.string().min(10, "Phone must be at least 10 digits"),
+  email: z.string().email("Invalid email address"),
+  address1: z.string().min(3, "Address is required"),
+  city: z.string().min(1, "City is required"),
+  state: z.string().min(1, "State is required"),
+  zip: z.coerce.number().min(10000).max(99999, "Invalid ZIP code"),
+  attended: z.coerce.boolean(),
+});
+
 export const tableRegistry = {
   memberCredits: async (row) => {
-    /* db.update(Users)... */
     // console.log("memberCredits");
     // console.log({ row });
-    //? example result
-    // memberCredits
-    // {
-    //     row: {
-    //         id: 9,
-    //         memberId: 5,
-    //         first_name: 'test',
-    //         last_name: 'Ruddom',
-    //         middle_initial: '',
-    //         email: 'oruddom4@forbes.com',
-    //         phone: '+15157941939',
-    //         address1: '058 Pond Pass',
-    //         city: 'Des Moines',
-    //         state: 'Iowa',
-    //         zip: 69953,
-    //         attended: false
-    //     }
-    // }
+
+    // TODO 1. validate (prob shouldn't allow changing of memberId or creditId)
+
+    const phoneSanatized = formatPhoneToE164Manual(row.phone);
+    if (!phoneSanatized) throw new Error("phone bad");
+    const validated = memberCreditsFormSchema.parse({
+      ...row,
+      phone: phoneSanatized,
+    });
+    // console.log({ validated });
     const {
       id: creditId,
       memberId,
@@ -42,7 +51,7 @@ export const tableRegistry = {
       city,
       state,
       zip,
-    } = row;
+    } = validated as MemberCredit;
     const updatedMemberVals = {
       id: memberId,
       first_name,
@@ -55,12 +64,7 @@ export const tableRegistry = {
       state,
       zip,
     };
-    // TODO MORE VALIDATION
-    // TODO 1. validate (prob shouldn't allow changing of memberId or creditId)
-    const phoneSanatized = formatPhoneToE164Manual(phone);
-    
-    if (!phoneSanatized) throw new Error("phone bad");
-    
+
     // 2. find member if exists by id or phone #
     try {
       const memberExists = memberId
@@ -88,8 +92,9 @@ export const tableRegistry = {
         })
         .where(eq(Credit.id, creditId));
     } catch (error) {
+      console.log("❌ tableRegistry error");
       if (error instanceof Error) {
-        console.log(error.message);
+        console.log(error);
       }
     }
     // 4. why am i sending full data back to be processed? can't i partially send back only changed fields?

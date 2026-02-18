@@ -78,6 +78,7 @@ if (Astro.request.method === 'POST') {
     // }
 
     // if member doesn't exist, create a new one
+    if(!validated.phone) throw new Error('!validated.phone')
     const targetMember = existingMember ?? await db.insert(Member).values({
       asipId: 0,
       regNum: 0,
