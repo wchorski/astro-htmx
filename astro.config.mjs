@@ -9,6 +9,7 @@ export default defineConfig({
   site: process.env.DOMAIN_URL,
   redirects: {
     "/attendance/courses/1": "/attendance/courses",
+    "/attendance/admin/courses/1": "/attendance/admin/courses",
   },
   output: 'server',
 

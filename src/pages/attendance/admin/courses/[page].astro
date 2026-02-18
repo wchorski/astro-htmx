@@ -9,7 +9,7 @@ const page = Number(Astro.params.page);
 const result = await getCoursesPage(page);
 
 if ("redirect" in result) {
-  return Astro.redirect("/admin/courses");
+  return Astro.redirect("/attendance/admin/courses");
 }
 
 const { courses, perPage, totalCount, totalPages } = result;

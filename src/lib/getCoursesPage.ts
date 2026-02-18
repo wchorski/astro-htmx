@@ -1,6 +1,6 @@
 import { db, count, Course, desc } from "astro:db";
 
-export async function getCoursesPage(page: number, perPage = 5) {
+export async function getCoursesPage(page: number, perPage = 12) {
   if (page < 1) page = 1;
 
   const totalResult = await db.select({ count: count(Course.id) }).from(Course);

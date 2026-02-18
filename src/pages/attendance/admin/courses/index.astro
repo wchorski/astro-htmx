@@ -1,4 +1,5 @@
 ---
+import ButtonCoursesImport from "@components/ButtonCoursesImport.astro";
 import CoursesEditableTable from "@components/CoursesEditableTable.astro";
 import Layout from "@layouts/Layout.astro";
 import { getCoursesPage } from "@lib/getCoursesPage";
@@ -7,7 +8,7 @@ import PaginationNav from "@partials/pagination-nav.astro";
 const result = await getCoursesPage(1);
 
 if ("redirect" in result) {
-  return Astro.redirect("/admin/courses");
+  return Astro.redirect("/attendance/admin/courses");
 }
 
 const { courses, page, perPage, totalCount, totalPages } = result;
@@ -17,10 +18,11 @@ const { courses, page, perPage, totalCount, totalPages } = result;
   <main>
     <header class="flex space-between">
       <h1>Admin Courses - Page {page}</h1>
-      <button
+      <ButtonCoursesImport />
+      <!-- <button
         onclick="alert('In the works. Will be implimented later')"
         hx-put="/api/courses/import">Import Events from Wordpress</button
-      >
+      > -->
     </header>
     {
       courses.length === 0 ? (

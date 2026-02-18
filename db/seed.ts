@@ -2,15 +2,92 @@ import { db, Member, Course, Credit } from "astro:db";
 
 export default async function () {
   await db.insert(Course).values([
-    { id: 1, subject: "Know Your Union", date: new Date("2025-01-10") },
-    { id: 2, subject: "Know Your Union", date: new Date("2025-08-13") },
-    { id: 3, subject: "Know Your Union", date: new Date("2025-11-23") },
-    { id: 4, subject: "COMET", date: new Date("2025-01-20") },
-    { id: 5, subject: "COMET", date: new Date("2025-08-23") },
-    { id: 6, subject: "COMET", date: new Date("2025-11-26") },
-    { id: 7, subject: "LABOR EDUCATION", date: new Date("2025-01-20") },
-    { id: 8, subject: "LABOR EDUCATION", date: new Date("2025-08-23") },
-    { id: 9, subject: "LABOR EDUCATION", date: new Date("2025-11-26") },
+    {
+      id: 55098,
+      subject: "COMET 1 and Labor Studies",
+      description:
+        "Space is limited. Please contact (708) 390-8160 to R.S.V.P.",
+      date: new Date("2025-11-07T01:00:29.000Z"),
+    },
+    {
+      id: 59736,
+      subject: "Know Your Union",
+      description:
+        "Space is limited. Please contact (708) 390-8160 to R.S.V.P.",
+      date: new Date("2025-11-07T19:42:14.000Z"),
+    },
+    {
+      id: 59740,
+      subject: "Know Your Union",
+      description:
+        "Space is limited. Please contact (708) 390-8160 to R.S.V.P.",
+      date: new Date("2025-11-07T19:45:05.000Z"),
+    },
+    {
+      id: 59741,
+      subject: "Know Your Union",
+      description:
+        "Space is limited. Please contact (708) 390-8160 to R.S.V.P.",
+      date: new Date("2025-11-07T19:45:40.000Z"),
+    },
+    {
+      id: 59742,
+      subject: "Know Your Union",
+      description:
+        "Space is limited. Please contact (708) 390-8160 to R.S.V.P.",
+      date: new Date("2025-11-07T19:46:56.000Z"),
+    },
+    {
+      id: 59744,
+      subject: "COMET 1 and Labor Studies",
+      description:
+        "Space is limited. Please contact (708) 390-8160 to R.S.V.P.",
+      date: new Date("2025-11-07T19:50:46.000Z"),
+    },
+    {
+      id: 59745,
+      subject: "COMET 1 and Labor Studies",
+      description:
+        "Space is limited. Please contact (708) 390-8160 to R.S.V.P.",
+      date: new Date("2025-11-07T19:52:00.000Z"),
+    },
+    {
+      id: 59746,
+      subject: "COMET 1 and Labor Studies",
+      description:
+        "Space is limited. Please contact (708) 390-8160 to R.S.V.P.",
+      date: new Date("2025-11-07T19:52:41.000Z"),
+    },
+    {
+      id: 59909,
+      subject: "General Membership Meeting",
+      description: "A valid union card is required for entry.",
+      date: new Date("2026-01-07T19:25:53.000Z"),
+    },
+    {
+      id: 59958,
+      subject: "District 2 Union Meeting",
+      description: "A valid union card is required for entry.",
+      date: new Date("2026-02-17T17:09:51.000Z"),
+    },
+    {
+      id: 59959,
+      subject: "District 5 Union Meeting",
+      description: "Union card is required for entry.",
+      date: new Date("2026-02-17T17:11:28.000Z"),
+    },
+    {
+      id: 59960,
+      subject: "District 6 Union Meeting",
+      description: "A valid union card is required for entry.",
+      date: new Date("2026-02-17T17:12:22.000Z"),
+    },
+    {
+      id: 59961,
+      subject: "District 1 Union Meeting",
+      description: "A valid union card is required for entry.",
+      date: new Date("2026-02-17T17:13:30.000Z"),
+    },
   ]);
 
   //! MOCK DATA, do not enter sensative data into seed
@@ -14022,7 +14099,7 @@ export default async function () {
     {
       id: 1,
       memberId: 1,
-      courseId: 1,
+      courseId: 59742,
       date: new Date(),
       grade: null,
       attended: true,
@@ -14030,7 +14107,7 @@ export default async function () {
     {
       id: 2,
       memberId: 1,
-      courseId: 2,
+      courseId: 59746,
       date: new Date(),
       grade: null,
       attended: true,
@@ -14038,7 +14115,7 @@ export default async function () {
     {
       id: 3,
       memberId: 2,
-      courseId: 1,
+      courseId: 59742,
       date: new Date(),
       grade: null,
       attended: true,
@@ -14046,7 +14123,7 @@ export default async function () {
     {
       id: 4,
       memberId: 2,
-      courseId: 2,
+      courseId: 59746,
       date: new Date(),
       grade: null,
       attended: true,
@@ -14054,7 +14131,7 @@ export default async function () {
     {
       id: 5,
       memberId: 3,
-      courseId: 1,
+      courseId: 59742,
       date: new Date(),
       grade: null,
       attended: true,
@@ -14062,7 +14139,7 @@ export default async function () {
     {
       id: 6,
       memberId: 3,
-      courseId: 2,
+      courseId: 59746,
       date: new Date(),
       grade: null,
       attended: true,
@@ -14070,7 +14147,7 @@ export default async function () {
     {
       id: 7,
       memberId: 4,
-      courseId: 1,
+      courseId: 59742,
       date: new Date(),
       grade: null,
       attended: true,
@@ -14078,7 +14155,7 @@ export default async function () {
     {
       id: 8,
       memberId: 4,
-      courseId: 2,
+      courseId: 59746,
       date: new Date(),
       grade: null,
       attended: true,
@@ -14086,7 +14163,7 @@ export default async function () {
     {
       id: 9,
       memberId: 5,
-      courseId: 1,
+      courseId: 59742,
       date: new Date(),
       grade: null,
       attended: true,
@@ -14094,7 +14171,7 @@ export default async function () {
     {
       id: 10,
       memberId: 5,
-      courseId: 2,
+      courseId: 59746,
       date: new Date(),
       grade: null,
       attended: true,

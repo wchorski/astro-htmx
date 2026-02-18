@@ -1,0 +1,23 @@
+---
+interface Props {}
+const {} = Astro.props;
+---
+
+<button
+  hx-get="/api/courses/import?after=2025-11-01T00:00:00"
+  hx-on::after-request="
+    if(event.detail.successful)
+      htmx.trigger('#events-list', 'refresh')
+  "
+>
+  Sync Events
+</button>
+
+<div
+  id="events-list"
+  hx-get="/partials/courses-import"
+  hx-trigger="refresh from:body"
+  hx-swap="innerHTML"
+>
+  <!-- populated on load -->
+</div>
