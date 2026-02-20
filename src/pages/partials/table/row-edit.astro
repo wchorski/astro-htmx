@@ -2,14 +2,14 @@
 // partials/table/row-edit.astro
 import type { FieldConfig } from "@ty/FieldConfig";
 import type { TableRow } from "@ty/Table";
-import RowEditForm from "@components/tables/RowEdit.astro";
+import RowEditComponent from "@components/tables/RowEdit.astro";
 import type { TableRegistryType } from "@lib/tableDbRegistry";
 
 let row: TableRow | null = null;
 let table: TableRegistryType | null = null;
 let config: FieldConfig | null = null;
 let headers: string[] = [];
-let error: Error | null = null;
+let error: Error | string | null = null;
 
 if (Astro.request.method === "POST") {
   try {
@@ -21,21 +21,14 @@ if (Astro.request.method === "POST") {
     config = JSON.parse(raw?.get("_config") as string);
     if (!config) throw new Error("no config found");
     headers = Object.keys(config);
-  } catch (error) {
+  } catch (e) {
     console.log("partials/table/row-edit");
-    if (error instanceof Error) {
-      console.error(error);
-      error = error.message;
+    if (e instanceof Error) {
+      console.error(e);
+      error = e.message;
     }
   }
 }
-// TODO add in top level errors
-// {typeof error === "string" && (
-//   <tr><td colspan={headers.length + 1} class="error-banner">{error}</td></tr>
-// )}
-// {typeof error === "object" && error.formErrors.map(e => (
-//   <tr><td colspan={headers.length + 1} class="error-banner">{e}</td></tr>
-// ))}
 
 //? .flatten() is usually what you want. .format() is the alternative if you need nested errors for object/array fields.
 ---
@@ -43,16 +36,22 @@ if (Astro.request.method === "POST") {
 {
   error ? (
     <tr>
-      <td colspan={headers.length + 1} class="error-banner">
-        <pre>{JSON.stringify(error, null, 2)}</pre>
+      <td colspan={headers.length + 1} class="callout error">
+        <pre>component error: {JSON.stringify(error, null, 2)}</pre>
       </td>
     </tr>
   ) : row && config && table ? (
-    <RowEditForm row={row} headers={headers} config={config} table={table} />
+    <RowEditComponent
+      row={row}
+      headers={headers}
+      config={config}
+      table={table}
+      error={error}
+    />
   ) : (
     <tr>
       <td>
-        <p>row-edit missing parameters</p>
+        <p class="callout not-found">row-edit missing parameters</p>
       </td>
     </tr>
   )

@@ -4,12 +4,9 @@
   --c-pending: rgb(214, 221, 114);
 }
 
-body {
-  background-color: rgb(241, 241, 241);
-}
-
 body,
 html {
+  background-color: rgb(241, 241, 241);
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -81,7 +78,7 @@ h1 {
 
 button,
 .btn {
-  background: #3b82f6;
+  background-color: #3b82f6;
   color: white;
   border: none;
   padding: 0.5rem 1rem;
@@ -92,62 +89,17 @@ button,
   text-decoration: none;
 }
 
+button.save, .btn.save {
+  background-color: mediumseagreen;
+}
+button.cancel, .btn.cancel {
+    background: lightgrey;
+    color: #475569;
+  }
+
 button:hover,
 .btn:hover {
   background: #25a2eb;
-}
-
-input[type="text"],
-input[type="tel"],
-input[type="number"],
-input[type="email"] {
-  padding: 0.5rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 1rem;
-  width: 100%;
-  max-width: 300px;
-  box-sizing: border-box;
-}
-
-label:has(input:required) .text::after {
-  content: "*";
-}
-input[name="middle_initial"],
-input[name="courseId"] {
-  max-width: 10ch;
-}
-
-form {
-  display: grid;
-  gap: 0.5rem;
-
-  & > legend:first-of-type {
-    font-size: 1.5rem;
-    font-weight: bold;
-  }
-
-  & fieldset {
-    border-color: rgba(211, 211, 211, 0.099);
-  }
-
-  & .form-field {
-    display: grid;
-  }
-
-  button[type="submit"] {
-    margin-top: 1.5rem;
-  }
-
-  label {
-    display: grid;
-    color: grey;
-  }
-
-  label.form-field:has(input[type="hidden"]) {
-    border: dashed red 4px;
-    display: none;
-  }
 }
 
 .result {
@@ -195,15 +147,15 @@ form {
   border-color: grey;
   padding: 1rem;
 }
-.warning {
-  border-color: orange;
-}
-.error-banner {
-  background-color: rgba(255, 0, 0, 0.192);
+.error {
+  background-color: rgba(255, 0, 0, 0.192) !important;
   border: solid red 3px;
   border-left-style: dashed;
 
   &::before {
     content: "⚠ ";
   }
+}
+.warning {
+  border-color: orange;
 }

@@ -5,6 +5,7 @@ import { PhoneSanitizer } from "./sanatizers";
 import { formatPhoneToE164Manual, localDateTimeToRealDate } from "./formatters";
 import { z, ZodError } from "astro/zod";
 import type { MemberCredit } from "@ty/Schema";
+import { NotFoundError } from "./errors";
 
 type SaveFn = (row: TableRow) => Promise<void>;
 
@@ -29,7 +30,7 @@ const courseFormSchema = z.object({
   subject: z.string().min(3, "Must be more than 3 characters"),
   description: z.string().optional(),
   // date: z.date(),
-  dateLocal: z.string(),
+  dateCivil: z.string(),
   locationId: z.coerce.number(),
 });
 const locationFormSchema = z.object({
@@ -51,7 +52,7 @@ export const tableRegistry = {
     // TODO 1. validate (prob shouldn't allow changing of memberId or creditId)
 
     const phoneSanatized = formatPhoneToE164Manual(row.phone);
-    if (!phoneSanatized) throw new Error("phone bad");
+    if (!phoneSanatized) throw new Error("phoneSanatized bad format");
     const validated = memberCreditsFormSchema.parse({
       ...row,
       phone: phoneSanatized,
@@ -85,37 +86,33 @@ export const tableRegistry = {
     };
 
     // 2. find member if exists by id or phone #
-    try {
-      const memberExists = memberId
-        ? await db.select().from(Member).where(eq(Member.id, memberId)).get()
-        : await db
-            .select()
-            .from(Member)
-            .where(eq(Member.phone, phoneSanatized))
-            .get();
-      if (!memberExists) throw new Error("member does not exist");
-      // 3. update credit attended true/false and member data
-      await db
-        .update(Member)
-        //   TODO memberExists ? {id: memberExists} : {id: memberId}
-        .set(updatedMemberVals)
-        .where(eq(Member.id, memberExists.id));
 
-      await db
-        .update(Credit)
-        .set({
-          //   memberId: memberExists.id,
-          //   courseId,
-          date: new Date(),
-          attended,
-        })
-        .where(eq(Credit.id, creditId));
-    } catch (error) {
-      console.log("❌ tableRegistry error");
-      if (error instanceof Error) {
-        console.log(error);
-      }
-    }
+    const memberExists = memberId
+      ? await db.select().from(Member).where(eq(Member.id, memberId)).get()
+      : await db
+          .select()
+          .from(Member)
+          .where(eq(Member.phone, phoneSanatized))
+          .get();
+    if (!memberExists)
+      throw new NotFoundError(`member ${memberId} does not exist`);
+    // 3. update credit attended true/false and member data
+    await db
+      .update(Member)
+      //   TODO memberExists ? {id: memberExists} : {id: memberId}
+      .set(updatedMemberVals)
+      .where(eq(Member.id, memberExists.id));
+
+    await db
+      .update(Credit)
+      .set({
+        //   memberId: memberExists.id,
+        //   courseId,
+        date: new Date(),
+        attended,
+      })
+      .where(eq(Credit.id, creditId));
+
     // 4. why am i sending full data back to be processed? can't i partially send back only changed fields?
     //? don't worry about it too much. unless app is on huge scale
     // EXAMPLE
@@ -142,146 +139,111 @@ export const tableRegistry = {
     // console.log({ row });
     const validated = locationFormSchema.parse(row);
 
-    try {
-      const existingLocation = await db
+    const existingLocation = await db
+      .select()
+      .from(Location)
+      .where(eq(Location.id, Number(validated.id)))
+      .get();
+
+    if (!existingLocation)
+      throw new NotFoundError(
+        `location does not exist with id ${validated.id}`,
+      );
+
+    if (existingLocation.timezone !== validated.timezone) {
+      // Compute cutoff (1 year ago from "now")
+      const oneYearAgo = new Date();
+      oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+
+      const relatedCourses = await db
         .select()
-        .from(Location)
-        .where(eq(Location.id, Number(validated.id)))
-        .get();
+        .from(Course)
+        .where(
+          and(
+            eq(Course.locationId, validated.id),
+            gte(Course.date, oneYearAgo),
+          ),
+        );
 
-      if (!existingLocation)
-        throw new Error(`location does not exist with id ${validated.id}`);
+      if (relatedCourses.length > 9999)
+        throw new Error(
+          "processing WAY to many relatedCourses when timezone switched, consider changing the hardcoded oneYearAgo value",
+        );
 
-      if (existingLocation.timezone !== validated.timezone) {
-        // Compute cutoff (1 year ago from "now")
-        const oneYearAgo = new Date();
-        oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
-
-        const relatedCourses = await db
-          .select()
-          .from(Course)
-          .where(
-            and(
-              eq(Course.locationId, validated.id),
-              gte(Course.date, oneYearAgo),
-            ),
-          );
-
-        if (relatedCourses.length > 0) {
-          const coursesTimeZoneUpdated = relatedCourses.map(
-            (course) =>
-              db
-                .update(Course)
-                .set({
-                  // recompute per-course derived instant
-                  date: localDateTimeToRealDate(
-                    course.dateLocal,
-                    validated.timezone,
-                  ),
-                })
-                .where(eq(Course.id, course.id)), // ✅ IMPORTANT
-          );
-          console.log(
-            "coursesTimeZoneUpdated coursesTimeZoneUpdated coursesTimeZoneUpdated",
-          );
-          // console.log(JSON.stringify(coursesTimeZoneUpdated, null, 2));
-          // Drizzle's batch() expects a non-empty array typed as [head, ...tail]
-          const [head, ...tail] = coursesTimeZoneUpdated;
-          await db.batch([head, ...tail]); // ✅ one call / implicit transaction on libSQL
-        }
-
-        console.log(
-          "🐸🐸🐸 TODO: if TIMEZONE changes then all related courses `date` must be updated",
+      if (relatedCourses.length > 0) {
+        const coursesTimeZoneUpdated = relatedCourses.map(
+          (course) =>
+            db
+              .update(Course)
+              .set({
+                // recompute per-course derived instant
+                date: localDateTimeToRealDate(
+                  course.dateCivil,
+                  validated.timezone,
+                ),
+              })
+              .where(eq(Course.id, course.id)), // ✅ IMPORTANT
         );
         console.log(
-          "🐸🐸🐸 TODO: this updates all events (even ones in the past) maybe only make it update ones in the last year? or only the future events?",
+          "coursesTimeZoneUpdated coursesTimeZoneUpdated coursesTimeZoneUpdated",
         );
-        // throw new Error(
-        //   "🐸🐸🐸 TODO: if TIMEZONE changes then all related courses `date` must be updated",
-        // );
+        // console.log(JSON.stringify(coursesTimeZoneUpdated, null, 2));
+        // Drizzle's batch() expects a non-empty array typed as [head, ...tail]
+        const [head, ...tail] = coursesTimeZoneUpdated;
+        await db.batch([head, ...tail]); // ✅ one call / implicit transaction on libSQL
       }
-
-      await db
-        .update(Location)
-        //   TODO memberExists ? {id: memberExists} : {id: memberId}
-        .set(validated)
-        .where(eq(Location.id, validated.id));
-    } catch (e) {
-      console.log("❌ tableDBRegistry /attendance/admin/location/id");
-
-      const error =
-        e instanceof ZodError
-          ? e.flatten() // ← structured object, no parsing needed
-          : e instanceof Error
-            ? e.message
-            : "500 server error";
-      console.log(error);
-      throw new Error(error.toString());
     }
+
+    await db
+      .update(Location)
+      //   TODO memberExists ? {id: memberExists} : {id: memberId}
+      .set(validated)
+      .where(eq(Location.id, validated.id));
   },
   "/attendance/admin/courses/id": async (row) => {
     const validated = courseFormSchema.parse(row);
 
-    try {
-      const existingCourse = await db
-        .select()
-        .from(Course)
-        .where(eq(Course.id, Number(validated.id)))
-        .get();
+    const existingCourse = await db
+      .select()
+      .from(Course)
+      .where(eq(Course.id, Number(validated.id)))
+      .get();
 
-      if (!existingCourse)
-        throw new Error(`course does not exist with id ${validated.id}`);
+    if (!existingCourse)
+      throw new NotFoundError(`course does not exist with id ${validated.id}`);
 
-      const courseLocation = await db
-        .select()
-        .from(Location)
-        .where(eq(Location.id, validated.locationId))
-        .get();
+    const courseLocation = await db
+      .select()
+      .from(Location)
+      .where(eq(Location.id, validated.locationId))
+      .get();
 
-      if (!courseLocation)
-        throw new Error(
-          `location id: ${validated.locationId} does not exist`,
-        );
+    if (!courseLocation)
+      throw new NotFoundError(
+        `location id: ${validated.locationId} does not exist`,
+      );
 
-      // if (validated.dateLocal) {
-      //   validated.date = localDateTimeToRealDate(
-      //     validated.dateLocal,
-      //     courseLocation.timezone,
-      //   );
-      // }
-
-      await db
-        .update(Course)
-        //   TODO memberExists ? {id: memberExists} : {id: memberId}
-        .set({
-          date: localDateTimeToRealDate(
-            validated.dateLocal,
-            courseLocation.timezone,
-          ),
-          ...validated,
-        })
-        .where(eq(Course.id, validated.id));
-    } catch (e) {
-      console.log("❌ tableDBRegistry /attendance/admin/courses/id");
-
-      const error =
-        e instanceof ZodError
-          ? e.flatten() // ← structured object, no parsing needed
-          : e instanceof Error
-            ? e.message
-            : "500 server error";
-      console.log(error);
-    }
+    await db
+      .update(Course)
+      //   TODO memberExists ? {id: memberExists} : {id: memberId}
+      .set({
+        date: localDateTimeToRealDate(
+          validated.dateCivil,
+          courseLocation.timezone,
+        ),
+        ...validated,
+      })
+      .where(eq(Course.id, validated.id));
   },
-  members: async (row) => {
-    /* db.update(Users)... */
-  },
-  credits: async (row) => {
-    /* db.update(Todos)... */
-  },
-  courses: async (row) => {
-    /* db.update(Posts)... */
-  },
+  // members: async (row) => {
+  //   /* db.update(Users)... */
+  // },
+  // credits: async (row) => {
+  //   /* db.update(Todos)... */
+  // },
+  // courses: async (row) => {
+  //   /* db.update(Posts)... */
+  // },
 } satisfies Record<string, SaveFn>;
 
 // Derived automatically from the object keys

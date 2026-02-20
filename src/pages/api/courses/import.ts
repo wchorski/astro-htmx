@@ -68,17 +68,17 @@ export const GET: APIRoute = async ({ url }) => {
       }
 
       // ✅ Canonical local time from real_event_date
-      const dateLocal = realEventDateToLocalString(event.real_event_date);
+      const dateCivil = realEventDateToLocalString(event.real_event_date);
 
       // ✅ Real Date (instant) derived from local+zone
-      const realDate = localDateTimeToUtcDate(dateLocal, loc.timezone);
+      const realDate = localDateTimeToUtcDate(dateCivil, loc.timezone);
 
       const newCourse: CourseInsert = {
         id: event.id,
         subject: event.title,
         description: event.event_description,
         date: realDate,
-        dateLocal,
+        dateCivil,
         where: removeHTMLfromString(event.where),
         locationId: loc.id,
       };
@@ -121,10 +121,10 @@ function realEventDateToLocalString(real: string): string {
   return `${y}-${mo}-${d}T${h}:${mi}`;
 }
 
-function parseDateLocal(dateLocal: string) {
-  const [datePart, timePart] = dateLocal.split("T");
+function parsedateCivil(dateCivil: string) {
+  const [datePart, timePart] = dateCivil.split("T");
   if (!datePart || !timePart)
-    throw new Error(`Invalid dateLocal: ${dateLocal}`);
+    throw new Error(`Invalid dateCivil: ${dateCivil}`);
 
   const [year, month, day] = datePart.split("-").map(Number);
   const [hour, minute] = timePart.split(":").map(Number);
@@ -157,8 +157,8 @@ function getZonedParts(date: Date, timeZone: string) {
   };
 }
 
-function localDateTimeToUtcDate(dateLocal: string, timeZone: string): Date {
-  const desired = parseDateLocal(dateLocal);
+function localDateTimeToUtcDate(dateCivil: string, timeZone: string): Date {
+  const desired = parsedateCivil(dateCivil);
 
   // First guess: treat desired local time as if it were UTC
   let guess = new Date(

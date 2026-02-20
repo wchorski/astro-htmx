@@ -1,5 +1,5 @@
 ---
-import { prettyDateLocaleFull } from "@lib/formatters";
+// components/tables/RowView.astro
 import type { TableRegistryType } from "@lib/tableDbRegistry";
 import type { FieldConfig } from "@ty/FieldConfig";
 import CellViewElement from "./CellViewElement.astro";
@@ -34,7 +34,7 @@ const { row, headers, config, table } = Astro.props;
   {/* ── Action cell (view mode) ── */}
   <td class="action-cell">
     <button
-      class="btn-edit"
+      class="edit"
       type="button"
       hx-post="/partials/table/row-edit"
       hx-target={`#row-${row.id}`}

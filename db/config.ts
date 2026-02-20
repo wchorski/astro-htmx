@@ -28,7 +28,7 @@ const Course = defineTable({
     description: column.text({ optional: true }),
     where: column.text({ optional: true }),
     date: column.date(),
-    dateLocal: column.text(),
+    dateCivil: column.text(),
     locationId: column.number({ references: () => Location.columns.id }),
   },
   indexes: [{ on: ["id"], unique: true }],

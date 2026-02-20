@@ -1,5 +1,5 @@
 ---
-import { prettyDateLocaleFull } from "@lib/formatters";
+import { prettyDateFull } from "@lib/formatters";
 import type { TableRegistryType } from "@lib/tableDbRegistry";
 import type { InputTypeAttr } from "@ty/FieldConfig";
 
@@ -17,8 +17,8 @@ const prettyVal = (() => {
   switch (true) {
     case type === "date":
     case type === "datetime-local":
-      return key === "dateLocal"
-        ? prettyDateLocaleFull(rawVal.toString())
+      return key === "dateCivil"
+        ? prettyDateFull(rawVal.toString())
         : rawVal;
     // case "case2":
     //   return "result2";

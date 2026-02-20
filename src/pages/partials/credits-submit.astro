@@ -3,19 +3,7 @@ import {Credit, db, eq, and, Member} from "astro:db"
 import { formatPhoneToE164Manual } from '@lib/formatters';
 import { z } from 'astro/zod';
 import { formatPhonePrettyManual } from '@lib/formatters';
-
-class NotFoundError extends Error {
-  constructor(message:string) {
-    super(message);
-    this.name = 'NotFoundError';
-  }
-}
-class ConflictError extends Error {
-  constructor(message:string) {
-    super(message);
-    this.name = 'ConflictError';
-  }
-}
+import { ConflictError, NotFoundError } from "@lib/errors";
 
 export const partial = true;
 export const prerender = false;
@@ -98,7 +86,7 @@ if (Astro.request.method === 'POST') {
 
     // TODO if the credit exists at all (meaning they register) throw an error
     if(existingCredit?.attended){
-      throw new ConflictError("Member already attended and confirmed credit for this scourse")
+      throw new ConflictError(`Member ${targetMember.id} ${targetMember.first_name} ${targetMember.last_name} already attended and confirmed credit for this scourse`)
     }
 
     existingCredit ? await db.update(Credit).set({

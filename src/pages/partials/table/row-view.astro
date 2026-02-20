@@ -21,7 +21,7 @@ if (Astro.request.method === "POST") {
     if (!config) throw new Error("no config");
     headers = Object.keys(config);
   } catch (error) {
-    console.log('partials/table/row-view');
+    console.log("partials/table/row-view");
     if (error instanceof Error) {
       console.error(error);
     }
@@ -35,7 +35,7 @@ if (Astro.request.method === "POST") {
   ) : (
     <tr>
       <td>
-        <p>row-view missing parameters</p>
+        <p class="callout not-found">? row-view missing parameters</p>
       </td>
     </tr>
   )

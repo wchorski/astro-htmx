@@ -45,7 +45,6 @@ export function formatPhoneToE164Manual(
   return e164;
 }
 
-
 /**
  * Formats a phone number to a pretty format (manual implementation)
  * @param input - Phone number (preferably E.164 format)
@@ -121,9 +120,48 @@ export function localDateTimeToRealDate(localString: string, timezone: string) {
   return new Date(zoned.epochMilliseconds);
 }
 
+// TODO do i even need this?
+// export function plainDateTime(date: Date) {
+//   let plain: Temporal.PlainDateTime;
+//   try {
+//     plain = Temporal.PlainDateTime.from(date);
+//   } catch {
+//     throw new Error(
+//       `Invalid calendar date/time: ${date}`
+//     );
+//   }
 
-export const prettyDateLocaleFull = (date: string) => {
-  return new Date(date).toLocaleString("en-US", {
+//   return plain.toLocaleString("en-CA", {
+//     year: "numeric",
+//     month: "numeric",
+//     day: "numeric",
+//     hour: "numeric",
+//     minute: "2-digit",
+//   });
+// }
+
+const LOCAL_DATE_TIME_REGEX =
+  /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/;
+
+export function prettyDateFull(dateCivil: string): string {
+  // 1️⃣ Enforce exact format shape
+  if (!LOCAL_DATE_TIME_REGEX.test(dateCivil)) {
+    throw new Error(
+      `Invalid format. Expected YYYY-MM-DDTHH:mm, received: ${dateCivil}`
+    );
+  }
+
+  // 2️⃣ Let Temporal validate real calendar correctness
+  let plain: Temporal.PlainDateTime;
+  try {
+    plain = Temporal.PlainDateTime.from(dateCivil);
+  } catch {
+    throw new Error(
+      `Invalid calendar date/time: ${dateCivil}`
+    );
+  }
+
+  return plain.toLocaleString("en-US", {
     weekday: "long",
     year: "numeric",
     month: "long",
@@ -131,10 +169,10 @@ export const prettyDateLocaleFull = (date: string) => {
     hour: "numeric",
     minute: "2-digit",
   });
-};
+}
 
-export const dateToLocaleFieldValue = (date: string) => {
-  return new Date(date)
+export const dateToLocaleFieldValue = (date: Date) => {
+  return date
     .toLocaleString("en-CA", {
       year: "numeric",
       month: "2-digit",
@@ -160,7 +198,7 @@ formatPhonePrettyManual('+11231231234'); // "+1 (123) 123-1234"
  */
 export function toLocalDateTimeString(
   apiDateString: string,
-  timeZone: string
+  timeZone: string,
 ): string {
   const date = new Date(apiDateString);
 
@@ -169,7 +207,7 @@ export function toLocalDateTimeString(
   }
 
   const parts = new Intl.DateTimeFormat("en-CA", {
-    timeZone,             // e.g. "America/Chicago"
+    timeZone, // e.g. "America/Chicago"
     year: "numeric",
     month: "2-digit",
     day: "2-digit",
@@ -178,7 +216,7 @@ export function toLocalDateTimeString(
     hour12: false,
   }).formatToParts(date);
 
-  const get = (type: string) => parts.find(p => p.type === type)?.value;
+  const get = (type: string) => parts.find((p) => p.type === type)?.value;
 
   const y = get("year");
   const m = get("month");
@@ -194,11 +232,11 @@ export function toLocalDateTimeString(
 }
 
 // export function localDateTimeToRealDate(
-//   dateLocal: string,        // "2026-02-26T19:00"
+//   dateCivil: string,        // "2026-02-26T19:00"
 //   timeZone: string          // "America/Chicago"
 // ): Date {
 //   // Parse components manually (do NOT let Date guess)
-//   const [datePart, timePart] = dateLocal.split("T");
+//   const [datePart, timePart] = dateCivil.split("T");
 //   const [year, month, day] = datePart.split("-").map(Number);
 //   const [hour, minute] = timePart.split(":").map(Number);
 
