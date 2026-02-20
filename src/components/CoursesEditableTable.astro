@@ -28,8 +28,14 @@ const { courses } = Astro.props;
       type: "text",
       placeholder: "...",
     },
-    date: {
-      label: "Date",
+    //? hidden away as to not confuse users from different timezones editing schedual
+    // date: {
+    //   label: "Date",
+    //   type: "datetime-local",
+    //   required: true,
+    // },
+    dateLocal: {
+      label: "Local Date",
       type: "datetime-local",
       required: true,
     },

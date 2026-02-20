@@ -49,8 +49,9 @@ if (Astro.request.method === "POST") {
         case "checkbox":
           row[key] = raw.has(key);
           break;
+        // TODO how to handle dates that are local vs idiosyncratic
         case "datetime-local":
-          row[key] = new Date(raw_val);
+          row[key] = key === "dateLocal" ? raw_val : new Date(raw_val);
           break;
 
         default:
@@ -63,6 +64,7 @@ if (Astro.request.method === "POST") {
     // TODO if validation or submit fails show in UI
   } catch (e) {
     console.log("❌ partials/table/row-save");
+    console.log({ e });
     error =
       e instanceof ZodError
         ? e.flatten() // ← structured object, no parsing needed

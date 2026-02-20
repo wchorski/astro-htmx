@@ -1,10 +1,12 @@
 import type { WordpressEvent } from "@ty/WordpressEvent";
 import type { APIRoute } from "astro";
 import { Course, db } from "astro:db";
-import eventJson from '../../../../private/l150-events.json'
+import eventJson from "../../../../private/l150-events.json";
 import { removeHTMLfromString } from "@lib/sanatizers";
+import { toLocalDateTimeString } from "@lib/formatters";
 
-const { WORDPRESS_ENDPOINT, WP_APP_NAME, WP_APP_PASSWORD } = import.meta.env;
+const { WORDPRESS_ENDPOINT, WP_APP_NAME, WP_APP_PASSWORD, SERVER_TIMEZONE } =
+  import.meta.env;
 
 export const GET: APIRoute = async ({ url }) => {
   // Pass-through the `after` param (default to a fallback)
@@ -42,18 +44,19 @@ export const GET: APIRoute = async ({ url }) => {
   //   });
   // }
   console.log("🐸 BYPASSING API FETCH BECAUSE CLOUDFLARE 403 ERROR");
-  events = eventJson
+  events = eventJson;
 
-  const debugCourses = events.map((evt) => ({
-    id: evt.id,
-    subject: evt.title,
-    description: evt.event_description,
-    date: `new Date(${new Date(evt.event_date)})`,
-    where: removeHTMLfromString(evt.where),
-    locationId: 0,
-  }));
-  // console.log({events});
-  console.log({ debugCourses });
+  // const debugCourses = events.map((evt) => ({
+  //   id: evt.id,
+  //   subject: evt.title,
+  //   description: evt.event_description,
+  //   date: `new Date(${new Date(evt.event_date)})`,
+  //   where: removeHTMLfromString(evt.where),
+  //   dateLocal: toLocalDateTimeString(evt.event_date, SERVER_TIMEZONE),
+  //   locationId: 0,
+  // }));
+  // // console.log({events});
+  // console.log({ debugCourses });
   // --- Save to DB (adapt to your ORM / driver) ---
   try {
     for (const event of events) {
@@ -65,6 +68,7 @@ export const GET: APIRoute = async ({ url }) => {
           description: event.event_description,
           //   TODO is real_date the better choice? it's in the wrong format
           date: new Date(event.event_date),
+          dateLocal: toLocalDateTimeString(event.event_date, SERVER_TIMEZONE),
           where: event.where,
           locationId: 100,
         })
@@ -74,6 +78,7 @@ export const GET: APIRoute = async ({ url }) => {
           set: {
             subject: event.title,
             date: new Date(event.event_date),
+            dateLocal: toLocalDateTimeString(event.event_date, SERVER_TIMEZONE),
             description: event.event_description,
           },
         });

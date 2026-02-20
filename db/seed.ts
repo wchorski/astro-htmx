@@ -197,7 +197,7 @@ export default async function () {
       ),
       where: "District 1 Hall, 6200 Joliet Road, Countryside, IL",
       locationId: 100,
-      dateLocal: "2026-01-30T15:00",
+      dateLocal: "2026-01-30T19:00",
     },
     {
       id: 59958,
@@ -209,7 +209,7 @@ export default async function () {
       where:
         "District 2 Hall, 1050 N. I-55 E. Frontage Road, Joliet, Illinois 60431",
       locationId: 200,
-      dateLocal: "2026-02-19T15:00",
+      dateLocal: "2026-02-19T19:00",
     },
     {
       id: 59959,
@@ -220,7 +220,7 @@ export default async function () {
       ),
       where: "District 5 Hall, 740 E. Route 6, Utica, Illinois 61373",
       locationId: 500,
-      dateLocal: "2026-02-19T15:00",
+      dateLocal: "2026-02-19T19:00",
     },
     {
       id: 59960,
@@ -231,7 +231,7 @@ export default async function () {
       ),
       where: "District 6 Hall, 1001 N. Michigan Street, Lakeville, IN",
       locationId: 600,
-      dateLocal: "2026-02-19T15:00",
+      dateLocal: "2026-02-19T19:00",
     },
     {
       id: 59961,
@@ -242,7 +242,7 @@ export default async function () {
       ),
       where: "District 1 Hall, 6200 Joliet Road, Countryside, IL",
       locationId: 100,
-      dateLocal: "2026-02-26T15:00",
+      dateLocal: "2026-02-26T19:00",
     },
   ]);
 

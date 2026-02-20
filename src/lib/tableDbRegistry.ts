@@ -2,7 +2,7 @@
 import type { TableRow } from "@ty/Table";
 import { Course, Credit, db, eq, Member, Location } from "astro:db";
 import { PhoneSanitizer } from "./sanatizers";
-import { formatPhoneToE164Manual } from "./formatters";
+import { formatPhoneToE164Manual, localDateTimeToRealDate } from "./formatters";
 import { z, ZodError } from "astro/zod";
 import type { MemberCredit } from "@ty/Schema";
 
@@ -28,7 +28,8 @@ const courseFormSchema = z.object({
   id: z.coerce.number(),
   subject: z.string().min(3, "Must be more than 3 characters"),
   description: z.string().optional(),
-  date: z.date(),
+  // date: z.date(),
+  dateLocal: z.string(),
 });
 const locationFormSchema = z.object({
   id: z.coerce.number(),
@@ -180,10 +181,34 @@ export const tableRegistry = {
       if (!existingCourse)
         throw new Error(`course does not exist with id ${validated.id}`);
 
+      const courseLocation = await db
+        .select()
+        .from(Location)
+        .where(eq(Location.id, existingCourse.locationId))
+        .get();
+
+      if (!courseLocation)
+        throw new Error(
+          `location id: ${existingCourse.locationId} does not exist`,
+        );
+
+      // if (validated.dateLocal) {
+      //   validated.date = localDateTimeToRealDate(
+      //     validated.dateLocal,
+      //     courseLocation.timezone,
+      //   );
+      // }
+
       await db
         .update(Course)
         //   TODO memberExists ? {id: memberExists} : {id: memberId}
-        .set(validated)
+        .set({
+          date: localDateTimeToRealDate(
+            validated.dateLocal,
+            courseLocation.timezone,
+          ),
+          ...validated,
+        })
         .where(eq(Course.id, validated.id));
     } catch (e) {
       console.log("❌ tableDBRegistry /attendance/admin/courses/id");

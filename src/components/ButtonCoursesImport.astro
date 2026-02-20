@@ -9,8 +9,11 @@ const {} = Astro.props;
     if(event.detail.successful)
       htmx.trigger('#events-list', 'refresh')
   "
+  hx-target-422={`#events-list`}
+  hx-target-404={`#events-list`}
+  hx-target-403={`#events-list`}
 >
-  Sync Events
+  Sync Events from Wordpress
 </button>
 
 <div
@@ -21,3 +24,12 @@ const {} = Astro.props;
 >
   <!-- populated on load -->
 </div>
+<script>
+  document.body.addEventListener("htmx:beforeSwap", ((evt: CustomEvent) => {
+    const status = evt.detail.xhr.status;
+    if (status >= 400 && status < 600) {
+      evt.detail.shouldSwap = true;
+      evt.detail.isError = false;
+    }
+  }) as EventListener);
+</script>

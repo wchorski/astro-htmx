@@ -21,6 +21,7 @@ const responseTargetId = `${formId}-response`;
   hx-target={`#${responseTargetId}`}
   hx-target-422={`#${errorTargetId}`}
   hx-target-404={`#${errorTargetId}`}
+  hx-target-403={`#${errorTargetId}`}
   hx-target-500={`#${errorTargetId}`}
   hx-vals={JSON.stringify({ formId })}
   hx-swap="innerHTML"
