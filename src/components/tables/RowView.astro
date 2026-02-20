@@ -25,7 +25,12 @@ const { row, headers, config, table } = Astro.props;
 
       return (
         <td data-key={key} class="view-cell">
-          <CellViewElement key={key} type={type} rawVal={row[key]} table={table} />
+          <CellViewElement
+            key={key}
+            type={type}
+            rawVal={row[key]}
+            table={table}
+          />
         </td>
       );
     })
@@ -49,6 +54,8 @@ const { row, headers, config, table } = Astro.props;
     </button>
   </td>
 </tr>
+
+<tr id={`row-error-${row.id}`} hx-swap-oob="outerHTML" class="row-error"></tr>
 
 <style>
   td.view-cell[data-key="attended"]:not(:empty) {

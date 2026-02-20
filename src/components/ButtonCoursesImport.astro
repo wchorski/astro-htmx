@@ -24,12 +24,3 @@ const {} = Astro.props;
 >
   <!-- populated on load -->
 </div>
-<script>
-  document.body.addEventListener("htmx:beforeSwap", ((evt: CustomEvent) => {
-    const status = evt.detail.xhr.status;
-    if (status >= 400 && status < 600) {
-      evt.detail.shouldSwap = true;
-      evt.detail.isError = false;
-    }
-  }) as EventListener);
-</script>

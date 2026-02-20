@@ -154,14 +154,6 @@ const responseTargetId = `${formId}-response`;
 </style>
 
 <script>
-  // Force htmx to swap on error status codes
-  document.body.addEventListener("htmx:beforeSwap", ((evt: CustomEvent) => {
-    const status = evt.detail.xhr.status;
-    if (status >= 400 && status < 600) {
-      evt.detail.shouldSwap = true;
-      evt.detail.isError = false;
-    }
-  }) as EventListener);
 
   // TODO do i even need this below?
   document.addEventListener("htmx:afterRequest", function (evt: CustomEvent) {

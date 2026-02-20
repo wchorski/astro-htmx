@@ -33,7 +33,7 @@ if (Astro.request.method === "POST") {
   row && config && table ? (
     <>
       <ViewRow row={row} headers={headers} config={config} table={table} />
-      <tr id={`row-error-${row.id}`} hx-swap-oob="outerHTML" />
+      <tr id={`row-error-${row.id}`} hx-swap-oob="outerHTML" class="row-error"/>
     </>
   ) : (
     <tr>

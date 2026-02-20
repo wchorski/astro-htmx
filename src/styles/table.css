@@ -35,19 +35,32 @@ tr[data-status="editing"] td {
   width: 1%;
   white-space: nowrap;
 }
-tr, td {
+tr,
+td {
   padding-inline: 0.5rem;
 }
 td {
   padding-block: 0.5rem;
   color: #212529;
 }
-table tbody > tr:nth-child(odd) {
-  background-color: #ececec; /* Light gray for odd rows */
+/* table tbody > tr:nth-child(odd) {
+  background-color: #ececec;
 }
 
 table tbody > tr:nth-child(even) {
-  background-color: #ffffff; /* White for even rows */
+  background-color: #ffffff;
+} */
+
+table tbody > tr:nth-child(odd of :not(.row-error)) {
+  background-color: #ececec;
+}
+table tbody > tr:nth-child(even of :not(.row-error)) {
+  background-color: #ffffff;
+}
+
+tr.row-error:empty {
+  display: none;
+  border: dotted green 3px;
 }
 
 table tbody tr:hover {
