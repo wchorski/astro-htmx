@@ -57,6 +57,7 @@ const { row, headers, config, table, error } = Astro.props;
         <td>
           <label>
             <span class="text">{label ?? key}</span>
+            {/* TODO dynamic element that can be input, select, textarea, checkbox, etc */}
             <input
               form={`edit-form-${row.id}`}
               name={key}

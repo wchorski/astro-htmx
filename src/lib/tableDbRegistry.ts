@@ -30,6 +30,7 @@ const courseFormSchema = z.object({
   description: z.string().optional(),
   // date: z.date(),
   dateLocal: z.string(),
+  locationId: z.coerce.number(),
 });
 const locationFormSchema = z.object({
   id: z.coerce.number(),
@@ -180,7 +181,10 @@ export const tableRegistry = {
                 })
                 .where(eq(Course.id, course.id)), // ✅ IMPORTANT
           );
-          console.log({ coursesTimeZoneUpdated });
+          console.log(
+            "coursesTimeZoneUpdated coursesTimeZoneUpdated coursesTimeZoneUpdated",
+          );
+          // console.log(JSON.stringify(coursesTimeZoneUpdated, null, 2));
           // Drizzle's batch() expects a non-empty array typed as [head, ...tail]
           const [head, ...tail] = coursesTimeZoneUpdated;
           await db.batch([head, ...tail]); // ✅ one call / implicit transaction on libSQL
@@ -212,6 +216,7 @@ export const tableRegistry = {
             ? e.message
             : "500 server error";
       console.log(error);
+      throw new Error(error.toString());
     }
   },
   "/attendance/admin/courses/id": async (row) => {
@@ -230,12 +235,12 @@ export const tableRegistry = {
       const courseLocation = await db
         .select()
         .from(Location)
-        .where(eq(Location.id, existingCourse.locationId))
+        .where(eq(Location.id, validated.locationId))
         .get();
 
       if (!courseLocation)
         throw new Error(
-          `location id: ${existingCourse.locationId} does not exist`,
+          `location id: ${validated.locationId} does not exist`,
         );
 
       // if (validated.dateLocal) {

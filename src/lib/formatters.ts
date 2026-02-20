@@ -1,7 +1,11 @@
+interface PrettyFormatOptions {
+  defaultCountryCode?: string;
+}
 interface FormatPhoneOptions {
   defaultCountryCode?: string;
 }
 
+import { Temporal } from "@js-temporal/polyfill";
 /**
  * Sanitizes and formats a phone number to E.164 format (manual implementation)
  * @param input - Raw phone number input
@@ -41,9 +45,6 @@ export function formatPhoneToE164Manual(
   return e164;
 }
 
-interface PrettyFormatOptions {
-  defaultCountryCode?: string;
-}
 
 /**
  * Formats a phone number to a pretty format (manual implementation)
@@ -111,6 +112,15 @@ export function formatPhonePrettyManual(
     return `+${countryCode} ${nationalNumber}`;
   }
 }
+
+export function localDateTimeToRealDate(localString: string, timezone: string) {
+  const plain = Temporal.PlainDateTime.from(localString);
+
+  const zoned = plain.toZonedDateTime(timezone);
+
+  return new Date(zoned.epochMilliseconds);
+}
+
 
 export const prettyDateLocaleFull = (date: string) => {
   return new Date(date).toLocaleString("en-US", {
@@ -183,41 +193,41 @@ export function toLocalDateTimeString(
   return `${y}-${m}-${d}T${h}:${min}`;
 }
 
-export function localDateTimeToRealDate(
-  dateLocal: string,        // "2026-02-26T19:00"
-  timeZone: string          // "America/Chicago"
-): Date {
-  // Parse components manually (do NOT let Date guess)
-  const [datePart, timePart] = dateLocal.split("T");
-  const [year, month, day] = datePart.split("-").map(Number);
-  const [hour, minute] = timePart.split(":").map(Number);
+// export function localDateTimeToRealDate(
+//   dateLocal: string,        // "2026-02-26T19:00"
+//   timeZone: string          // "America/Chicago"
+// ): Date {
+//   // Parse components manually (do NOT let Date guess)
+//   const [datePart, timePart] = dateLocal.split("T");
+//   const [year, month, day] = datePart.split("-").map(Number);
+//   const [hour, minute] = timePart.split(":").map(Number);
 
-  // Create a UTC date from the components
-  const utcDate = new Date(Date.UTC(year, month - 1, day, hour, minute));
+//   // Create a UTC date from the components
+//   const utcDate = new Date(Date.UTC(year, month - 1, day, hour, minute));
 
-  // Ask Intl what the offset is for this timezone at that moment
-  const formatter = new Intl.DateTimeFormat("en-US", {
-    timeZone,
-    hour12: false,
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-  });
+//   // Ask Intl what the offset is for this timezone at that moment
+//   const formatter = new Intl.DateTimeFormat("en-US", {
+//     timeZone,
+//     hour12: false,
+//     year: "numeric",
+//     month: "2-digit",
+//     day: "2-digit",
+//     hour: "2-digit",
+//     minute: "2-digit",
+//     second: "2-digit",
+//   });
 
-  const parts = formatter.formatToParts(utcDate);
-  const get = (t: string) => Number(parts.find(p => p.type === t)?.value);
+//   const parts = formatter.formatToParts(utcDate);
+//   const get = (t: string) => Number(parts.find(p => p.type === t)?.value);
 
-  const adjusted = Date.UTC(
-    get("year"),
-    get("month") - 1,
-    get("day"),
-    get("hour"),
-    get("minute"),
-    get("second")
-  );
+//   const adjusted = Date.UTC(
+//     get("year"),
+//     get("month") - 1,
+//     get("day"),
+//     get("hour"),
+//     get("minute"),
+//     get("second")
+//   );
 
-  return new Date(adjusted);
-}
+//   return new Date(adjusted);
+// }

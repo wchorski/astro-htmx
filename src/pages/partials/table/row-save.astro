@@ -83,13 +83,22 @@ if (Astro.request.method === "POST") {
       </td>
     </tr>
   ) : error ? (
-    <EditRow
-      row={row}
-      headers={headers}
-      config={config}
-      table={table}
-      error={error}
-    />
+    <>
+      {typeof error === "string" ? (
+        <tr>
+          <td colspan={headers.length + 1} class="error-banner">
+            {error}
+          </td>
+        </tr>
+      ) : null}
+      <EditRow
+        row={row}
+        headers={headers}
+        config={config}
+        table={table}
+        error={error}
+      />
+    </>
   ) : (
     <ViewRow row={row} headers={headers} config={config} table={table} />
   )

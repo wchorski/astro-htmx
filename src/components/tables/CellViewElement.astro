@@ -1,0 +1,41 @@
+---
+import { prettyDateLocaleFull } from "@lib/formatters";
+import type { TableRegistryType } from "@lib/tableDbRegistry";
+import type { InputTypeAttr } from "@ty/FieldConfig";
+
+interface Props {
+  key: string;
+  type: InputTypeAttr;
+  //   prettyVal: string;
+  rawVal: string | number;
+  table: TableRegistryType;
+  //   row: Record<string, any> & { id: number };
+}
+const { key, table, rawVal, type } = Astro.props;
+
+const prettyVal = (() => {
+  switch (true) {
+    case type === "date":
+    case type === "datetime-local":
+      return key === "dateLocal"
+        ? prettyDateLocaleFull(rawVal.toString())
+        : rawVal;
+    // case "case2":
+    //   return "result2";
+    default:
+      return rawVal;
+  }
+})();
+---
+
+{
+  key === "id" ? (
+    <a href={`${table}/${prettyVal}`}>{prettyVal}</a>
+  ) : type === "datetime-local" ? (
+    <time datetime={rawVal.toString()}>{prettyVal}</time>
+  ) : type === "number" ? (
+    <data value={rawVal}>{prettyVal}</data>
+  ) : (
+    <span>{prettyVal ?? "—"}</span>
+  )
+}

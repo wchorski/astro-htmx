@@ -198,3 +198,12 @@ form {
 .warning {
   border-color: orange;
 }
+.error-banner {
+  background-color: rgba(255, 0, 0, 0.192);
+  border: solid red 3px;
+  border-left-style: dashed;
+
+  &::before {
+    content: "⚠ ";
+  }
+}
