@@ -1,9 +1,7 @@
 ---
 import CoursesEditableTable from "@components/CoursesEditableTable.astro";
-import TableEditable from "@components/TableEditable.astro";
 import Layout from "@layouts/Layout.astro";
 import { getCoursesPage } from "@lib/getCoursesPage";
-import CoursesList from "@partials/courses-list.astro";
 import PaginationNav from "@partials/pagination-nav.astro";
 const page = Number(Astro.params.page);
 const result = await getCoursesPage(page);

@@ -26,7 +26,23 @@ const Course = defineTable({
     id: column.number({ primaryKey: true }),
     subject: column.text(),
     description: column.text({ optional: true }),
+    where: column.text({ optional: true }),
     date: column.date(),
+    dateLocal: column.text(),
+    locationId: column.number({ references: () => Location.columns.id }),
+  },
+  indexes: [{ on: ["id"], unique: true }],
+});
+const Location = defineTable({
+  columns: {
+    id: column.number({ primaryKey: true }),
+    name: column.text(),
+    address: column.text(),
+    city: column.text(),
+    state: column.text(),
+    zip: column.number(),
+    timezone: column.text(),
+    description: column.text({ optional: true }),
   },
   indexes: [{ on: ["id"], unique: true }],
 });
@@ -49,6 +65,7 @@ export default defineDb({
   tables: {
     Member,
     Course,
+    Location,
     Credit,
   },
 });

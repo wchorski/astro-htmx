@@ -6,9 +6,9 @@ export type WordpressEvent = {
   link: string;
   event_date: string;
   real_event_date: string;
-  location: string;
+  location: string | null;
   where: string;
-  description: string;
+  description: string | null;
   event_description: string;
   _ame_cpe_post_policy: any;
 };

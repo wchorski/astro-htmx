@@ -1,6 +1,6 @@
 // src/lib/tableRegistry.ts
 import type { TableRow } from "@ty/Table";
-import { Course, Credit, db, eq, Member } from "astro:db";
+import { Course, Credit, db, eq, Member, Location } from "astro:db";
 import { PhoneSanitizer } from "./sanatizers";
 import { formatPhoneToE164Manual } from "./formatters";
 import { z, ZodError } from "astro/zod";
@@ -29,6 +29,16 @@ const courseFormSchema = z.object({
   subject: z.string().min(3, "Must be more than 3 characters"),
   description: z.string().optional(),
   date: z.date(),
+});
+const locationFormSchema = z.object({
+  id: z.coerce.number(),
+  name: z.string().min(3, "Must be more than 3 characters"),
+  address: z.string().min(3, "Must be more than 3 characters"),
+  city: z.string().min(3, "Must be more than 3 characters"),
+  state: z.string().min(2, "Must be more than 3 characters"),
+  zip: z.coerce.number().min(10000).max(99999, "Invalid ZIP code"),
+  timezone: z.string().min(5, "Must be more than 3 characters"),
+  description: z.string().optional(),
 });
 
 export const tableRegistry = {
@@ -124,6 +134,38 @@ export const tableRegistry = {
     // } else {
     //   await entry.save({ id: row.id, ...updates });
     // }
+  },
+  "/attendance/admin/locations/id": async (row) => {
+    // console.log("/attendance/admin/locations/id");
+    // console.log({ row });
+    const validated = locationFormSchema.parse(row);
+
+    try {
+      const existingLocation = await db
+        .select()
+        .from(Location)
+        .where(eq(Location.id, Number(validated.id)))
+        .get();
+
+      if (!existingLocation)
+        throw new Error(`location does not exist with id ${validated.id}`);
+
+      await db
+        .update(Location)
+        //   TODO memberExists ? {id: memberExists} : {id: memberId}
+        .set(validated)
+        .where(eq(Location.id, validated.id));
+    } catch (e) {
+      console.log("❌ tableDBRegistry /attendance/admin/location/id");
+
+      const error =
+        e instanceof ZodError
+          ? e.flatten() // ← structured object, no parsing needed
+          : e instanceof Error
+            ? e.message
+            : "500 server error";
+      console.log(error);
+    }
   },
   "/attendance/admin/courses/id": async (row) => {
     const validated = courseFormSchema.parse(row);

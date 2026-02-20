@@ -1,8 +1,17 @@
 // phoneSanitizer.ts
 
+
 export interface SanitizationResult {
   valid: string[];
   invalid: string[];
+}
+
+export function removeHTMLfromString(raw: string): string {
+  return raw
+    .replace(/<[^>]*>/g, '')   // strip HTML tags
+    .replace(/[\r\n]+/g, ', ') // replace newlines with comma+space
+    .replace(/\s{2,}/g, ' ')   // collapse extra spaces
+    .trim()
 }
 
 // Example usage:

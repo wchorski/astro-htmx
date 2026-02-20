@@ -1,4 +1,6 @@
 #todo
+- [ ] ask how to bypass Cloudflare blocking. WP import is getting 403
+- [ ] css style construction theme (road signs, asphalt, road paint, concrete, gerders, tire tracks, scafolding)
 - [ ] composable and editable table Component!!!!
 - [ ] admin table for `courses` and a "fetch events" button that get Wordpress data
 - [x] `/attendance/admin/courses/id/[id].astro/admin` make an editable table for admin use

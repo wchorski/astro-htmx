@@ -1,0 +1,39 @@
+---
+import LocationsEditableTable from "@components/LocationsEditableTable.astro";
+import Layout from "@layouts/Layout.astro";
+import { getLocationsPage } from "@lib/getLocationsPage";
+import PaginationNav from "@partials/pagination-nav.astro";
+const page = Number(Astro.params.page);
+const result = await getLocationsPage(page);
+
+if ("redirect" in result) {
+  return Astro.redirect("/attendance/admin/locations");
+}
+
+const { locations, perPage, totalCount, totalPages } = result;
+---
+
+<Layout>
+  <main>
+    <header>
+      <h1>Admin Locations - Page {page}</h1>
+    </header>
+    {
+      locations?.length === 0 ? (
+        <p class="callout not-found">no member credits found</p>
+      ) : (
+        <LocationsEditableTable locations={locations} />
+      )
+    }
+    {
+      locations ? (
+        <PaginationNav
+          path="/attendance/admin/locations"
+          page={Number(page)}
+          perPage={perPage}
+          totalCount={totalCount}
+        />
+      ) : null
+    }
+  </main>
+</Layout>

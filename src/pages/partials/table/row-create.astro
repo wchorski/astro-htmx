@@ -1,0 +1,54 @@
+---
+import type { FieldConfig } from "@ty/FieldConfig";
+import type { TableRegistryType } from "@lib/tableDbRegistry";
+import { tableRegistry } from "@lib/tableDbRegistry";
+import RowView from "@components/tables/RowView.astro";
+import RowCreate from "@components/tables/RowCreate.astro";
+
+let config: FieldConfig | null = null;
+let table: TableRegistryType | null = null;
+let error: string | Record<string, any> | null = null;
+let createdRow: Record<string, any> | null = null;
+
+if (Astro.request.method === "POST") {
+  try {
+    const raw = await Astro.request.clone().formData();
+    table = raw.get("_table") as TableRegistryType;
+    const entry = tableRegistry[table];
+    config = entry.config;
+    const headers = Object.keys(config);
+
+    const newRow: Record<string, any> = {};
+    for (const key of headers) {
+      const slot = config[key];
+      const val = raw.get(key) as string;
+      if (slot.type === "number") {
+        newRow[key] = val === "" ? null : Number(val);
+      } else if (slot.type === "checkbox") {
+        newRow[key] = raw.has(key);
+      } else {
+        newRow[key] = val ?? "";
+      }
+    }
+
+    createdRow = await entry.create(newRow); // return the created record with id
+
+  } catch (e) {
+    error = e instanceof Error ? e.message : "500 server error";
+  }
+}
+---
+
+{createdRow && config && table && (
+  <>
+    {/* Inserted beforebegin #row-new — becomes the new last data row */}
+    <RowView row={createdRow} headers={Object.keys(config)} config={config} table={table} />
+    {/* Replaces #row-new with a fresh empty create row */}
+    <RowCreate config={config} table={table} />
+  </>
+)}
+
+{error && config && table && (
+  {/* Return the create row with errors so the user doesn't lose their input */}
+  <RowCreate config={config} table={table} error={error} />
+)}

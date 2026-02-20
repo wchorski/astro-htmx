@@ -1,9 +1,9 @@
-import { db, count, Course, desc } from "astro:db";
+import { db, count, Location, desc } from "astro:db";
 
-export async function getCoursesPage(page: number, perPage = 12) {
+export async function getLocationsPage(page: number, perPage = 12) {
   if (page < 1) page = 1;
 
-  const totalResult = await db.select({ count: count(Course.id) }).from(Course);
+  const totalResult = await db.select({ count: count(Location.id) }).from(Location);
 
   const totalCount = totalResult[0].count;
   const totalPages = Math.ceil(totalCount / perPage);
@@ -12,15 +12,15 @@ export async function getCoursesPage(page: number, perPage = 12) {
     return { redirect: true };
   }
 
-  const courses = await db
+  const locations = await db
     .select()
-    .from(Course)
-    .orderBy(desc(Course.date))
+    .from(Location)
+    .orderBy(desc(Location.id))
     .limit(perPage)
     .offset((page - 1) * perPage);
 
   return {
-    courses,
+    locations,
     page,
     totalCount,
     totalPages,

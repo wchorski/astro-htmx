@@ -10,6 +10,7 @@ export default defineConfig({
   redirects: {
     "/attendance/courses/1": "/attendance/courses",
     "/attendance/admin/courses/1": "/attendance/admin/courses",
+    "/attendance/admin/locations/1": "/attendance/admin/locations",
   },
   output: 'server',
 

@@ -13,6 +13,9 @@ let config: FieldConfig | null = null;
 let headers: string[] = [];
 let error: string | ReturnType<ZodError["flatten"]> | null = null;
 
+// TODO symanticly, i should use PUT on edit/update and POST on creating new record
+// if (Astro.request.method === "PUT") {}
+
 if (Astro.request.method === "POST") {
   try {
     const raw = Astro.request.formData ? await Astro.request.formData() : null;
@@ -54,19 +57,6 @@ if (Astro.request.method === "POST") {
           row[key] = raw_val ?? "";
           break;
       }
-
-      //? using switch above
-      // if (slot.type === "number") {
-      //   row[key] = raw_val === "" ? null : Number(raw_val);
-      // } else if (slot.type === "checkbox") {
-      //   // Checkboxes are absent from FormData when unchecked
-      //   row[key] = raw.has(key);
-      // } else if (slot.type === "datetime-local") {
-      //   // Checkboxes are absent from FormData when unchecked
-      //   row[key] = new Date(raw_val).toISOString();
-      // } else {
-      //   row[key] = raw_val ?? "";
-      // }
     }
 
     await saveFn(row);

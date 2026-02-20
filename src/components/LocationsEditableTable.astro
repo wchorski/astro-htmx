@@ -1,0 +1,55 @@
+---
+interface Props {
+  locations: LocationSelect[];
+}
+import type { LocationSelect } from "@ty/Schema";
+import TableEditable from "./TableEditable.astro";
+const { locations } = Astro.props;
+---
+
+<TableEditable
+  rows={locations || []}
+  table="/attendance/admin/locations/id"
+  fieldConfig={{
+    id: {
+      label: "ID",
+      type: "number",
+      required: true,
+      readonly: true,
+    },
+    name: {
+      type: "text",
+      required: true,
+      placeholder: "Union Hall...",
+    },
+    address: {
+      type: "text",
+      required: true,
+      placeholder: "123 West East St...",
+    },
+    city: {
+      type: "text",
+      required: true,
+      placeholder: "Naperville...",
+    },
+    state: {
+      type: "text",
+      required: true,
+      placeholder: "Illinois...",
+    },
+    zip: {
+      type: "number",
+      required: true,
+      placeholder: "50505",
+    },
+    timezone: {
+      label: "Time Zone",
+      // TODO needs to be select input field
+      type: "text",
+      required: true,
+    },
+    description: {
+      type: "text",
+    },
+  }}
+/>
