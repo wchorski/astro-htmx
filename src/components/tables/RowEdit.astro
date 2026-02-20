@@ -3,17 +3,17 @@
 import type { TableRegistryType } from "@lib/tableDbRegistry";
 import type { FieldConfig } from "@ty/FieldConfig";
 import type { ZodError } from "astro/zod";
-import { dateToLocaleFieldValue } from "@lib/formatters";
 
 interface Props {
   row: Record<string, any> & { id: number };
+  originalRow?: Record<string, any> & { id: number }; // fallback to row if not provided
   headers: string[];
   config: FieldConfig;
   table: TableRegistryType;
   error?: string | ReturnType<ZodError["flatten"]> | null;
 }
 
-const { row, headers, config, table, error } = Astro.props;
+const { row, originalRow = row, headers, config, table, error } = Astro.props;
 // hx-target-422={`#row-${row.id}`}
 // hx-target-404={`#row-${row.id}`}
 // hx-target-403={`#row-${row.id}`}
@@ -21,19 +21,14 @@ const { row, headers, config, table, error } = Astro.props;
 const topLevelError = typeof error === "string" ? error.toString() : null;
 ---
 
-{
-  topLevelError ? (
-    <tr class="callout error top-level">
-      <td colspan={headers.length}>{topLevelError}</td>
-    </tr>
-  ) : null
-}
 <tr id={`row-${row.id}`} data-status="editing">
   <form
     id={`edit-form-${row.id}`}
     style="display:none"
     hx-post="/partials/table/row-save"
     hx-target={`#row-${row.id}`}
+    hx-target-4xx={`#table-error`}
+    hx-target-5xx={`#table-error`}
     hx-swap="outerHTML"
     hx-vals={JSON.stringify({
       _row: JSON.stringify(row),
@@ -43,6 +38,14 @@ const topLevelError = typeof error === "string" ? error.toString() : null;
   >
   </form>
 
+  <!-- TODO creates layout mess but does hide away -->
+  <!-- {
+    topLevelError ? (
+      <td class="callout error top-level" colspan={headers.length}>
+        {topLevelError}
+      </td>
+    ) : null
+  } -->
   {
     headers.map((key) => {
       const { label, value: override, type, ...inputAttrs } = config[key];
@@ -83,11 +86,8 @@ const topLevelError = typeof error === "string" ? error.toString() : null;
   }
 
   <td class="action-cell">
-    <button
-      title="save"
-      type="submit"
-      form={`edit-form-${row.id}`}
-      class="save">💾</button
+    <button title="save" type="submit" form={`edit-form-${row.id}`} class="save"
+      >💾</button
     >
     <button
       type="button"
@@ -97,7 +97,7 @@ const topLevelError = typeof error === "string" ? error.toString() : null;
       hx-target={`#row-${row.id}`}
       hx-swap="outerHTML"
       hx-vals={JSON.stringify({
-        _row: JSON.stringify(row),
+        _row: JSON.stringify(originalRow),
         _config: JSON.stringify(config),
         _table: table,
       })}
@@ -107,7 +107,17 @@ const topLevelError = typeof error === "string" ? error.toString() : null;
   </td>
 </tr>
 
-<!-- <script>
+<tr id={`row-error-${row.id}`}>
+  {
+    topLevelError ? (
+      <td class="callout error top-level" colspan={headers.length}>
+        {topLevelError}
+      </td>
+    ) : null
+  }
+</tr>
+
+<script>
   document.body.addEventListener("htmx:beforeSwap", ((evt: CustomEvent) => {
     const status = evt.detail.xhr.status;
     if (status >= 400 && status < 600) {
@@ -115,4 +125,4 @@ const topLevelError = typeof error === "string" ? error.toString() : null;
       evt.detail.isError = false;
     }
   }) as EventListener);
-</script> -->
+</script>

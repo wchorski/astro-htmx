@@ -20,35 +20,42 @@ const headers = Object.keys(config);
     hx-target="#row-new"
     hx-swap="beforebegin"
     hx-vals={JSON.stringify({ _config: JSON.stringify(config), _table: table })}
-  />
+  >
+  </form>
 
-  {headers.map((key) => {
-    const { label, type, value: override, ...inputAttrs } = config[key];
-    const fieldError = typeof error === "object" ? error?.fieldErrors?.[key]?.[0] : null;
+  {
+    headers.map((key) => {
+      const { label, type, value: override, ...inputAttrs } = config[key];
+      const fieldError =
+        typeof error === "object" ? error?.fieldErrors?.[key]?.[0] : null;
 
-    return (
-      <td>
-        <label>
-          <span class="text">{label ?? key}</span>
-          <input
-            form="create-form"
-            name={key}
-            type={type}
-            {...(type === "checkbox"
-              ? { checked: !!(override ?? false) }
-              : { value: override ?? "" }
-            )}
-            {...inputAttrs}
-          />
-          {fieldError && <span class="field-error">{fieldError}</span>}
-        </label>
-      </td>
-    );
-  })}
+      return (
+        <td>
+          <label>
+            <span class="text">{label ?? key}</span>
+            <input
+              {...inputAttrs}
+              form="create-form"
+              name={key}
+              type={type}
+              {...(type === "checkbox"
+                ? { checked: !!(override ?? false) }
+                : { value: typeof override !== "boolean" ? override?.toString() ?? "" : "" })}
+            />
+            {fieldError && <span class="field-error">{fieldError}</span>}
+          </label>
+        </td>
+      );
+    })
+  }
 
   <td class="action-cell">
     <button type="submit" form="create-form" class="save">Create</button>
-    <button type="button" class="cancel" onclick="document.getElementById('create-form').reset()">
+    <button
+      type="button"
+      class="cancel"
+      onclick="document.getElementById('create-form').reset()"
+    >
       Cancel
     </button>
   </td>

@@ -9,6 +9,7 @@ import { ZodError } from "astro/zod";
 import { ConflictError, NotFoundError } from "@lib/errors";
 
 let row: TableRow | null = null;
+let originalRow: TableRow | null = null;
 let table: TableRegistryType | null = null;
 let config: FieldConfig | null = null;
 let headers: string[] = [];
@@ -31,6 +32,7 @@ if (Astro.request.method === "POST") {
 
     // Build the updated row from submitted form values.
     // Coerce number fields back to numbers so the row type stays consistent.
+    originalRow = JSON.parse(raw?.get("_row") as string);
     const id = Number(raw.get("id"));
     table = raw.get("_table") as TableRegistryType;
     const saveFn = tableRegistry[table];
@@ -66,34 +68,45 @@ if (Astro.request.method === "POST") {
   } catch (e) {
     console.log("❌ partials/table/row-save");
     console.log({ e });
-    error =
-      e instanceof ZodError
-        ? e.flatten() // ← structured object, no parsing needed
-        : e instanceof Error ||
-            e instanceof NotFoundError ||
-            e instanceof ConflictError
-          ? e.message
-          : "500 unknown server error";
+    if (e instanceof ZodError) {
+      Astro.response.status = 422;
+      error = e.flatten();
+    } else if (e instanceof NotFoundError) {
+      Astro.response.status = 404;
+      error = e.message;
+    } else if (e instanceof ConflictError) {
+      Astro.response.status = 409;
+      error = e.message;
+    } else {
+      Astro.response.status = 500;
+      error = "An unexpected error occurred";
+    }
   }
 }
 ---
 
 {
-  !row || !config || !table ? (
+  !row || !config || !table || !originalRow ? (
     <tr>
       <td>
-        <p>missing parameters</p>
+        <p class="callout not-found">missing parameters</p>
       </td>
     </tr>
   ) : error ? (
+    // This gets swapped into #row-error-{id} via hx-target-4xx
     <EditRow
       row={row}
+      originalRow={originalRow}
       headers={headers}
       config={config}
       table={table}
       error={error}
     />
   ) : (
-    <ViewRow row={row} headers={headers} config={config} table={table} />
+    // Success: swap #row-{id} AND clear the error row via OOB
+    <>
+      <ViewRow row={row} headers={headers} config={config} table={table} />
+      <tr id={`row-error-${row.id}`} hx-swap-oob="outerHTML" />
+    </>
   )
 }
