@@ -104,11 +104,6 @@ if (Astro.request.method === "POST") {
       error={error}
     />
   ) : (
-    <ViewRow
-      row={originalRow || row}
-      headers={headers}
-      config={config}
-      table={table}
-    />
+    <ViewRow row={row} headers={headers} config={config} table={table} />
   )
 }
