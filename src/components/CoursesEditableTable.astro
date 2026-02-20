@@ -1,10 +1,13 @@
 ---
+// components/CoursesEditableTable.astro
 interface Props {
   courses: CourseSelect[];
 }
 import type { CourseSelect } from "@ty/Schema";
 import TableEditable from "./TableEditable.astro";
 const { courses } = Astro.props;
+
+
 ---
 
 <TableEditable

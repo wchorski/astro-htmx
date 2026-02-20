@@ -46,7 +46,7 @@ if (Astro.request.method === "POST") {
       const slot = config[key];
       const raw_val = raw.get(key) as string;
 
-      switch (slot.type) {
+      switch (slot?.type) {
         case "number":
           row[key] = raw_val === "" ? null : Number(raw_val);
           break;

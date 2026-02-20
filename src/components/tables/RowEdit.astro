@@ -1,14 +1,14 @@
 ---
 // components/tables/RowEdit.astro
 import type { TableRegistryType } from "@lib/tableDbRegistry";
-import type { FieldConfig } from "@ty/FieldConfig";
+import type { BaseRow, FieldConfig } from "@ty/FieldConfig";
 import type { ZodError } from "astro/zod";
 
-interface Props {
-  row: Record<string, any> & { id: number };
-  originalRow?: Record<string, any> & { id: number }; // fallback to row if not provided
-  headers: string[];
-  config: FieldConfig;
+interface Props<TRow extends BaseRow = BaseRow> {
+  row: TRow;
+  originalRow?: TRow; // fallback to row if not provided
+  headers: (keyof TRow & string)[];
+  config: FieldConfig<TRow>;
   table: TableRegistryType;
   error?: string | ReturnType<ZodError["flatten"]> | null;
 }
@@ -51,17 +51,14 @@ const topLevelError = typeof error === "string" ? error.toString() : null;
   } -->
   {
     headers.map((key) => {
-      const { label, value: override, type, ...inputAttrs } = config[key];
+      const { label, value: override, type, ...inputAttrs } = config[key] ?? {};
       // TODO may need to think about other input values
       const resolvedValue =
         override !== undefined
           ? override
           : type === "checkbox"
-            ? (row[key] ?? false) // ← default false not ""
-            : // : // bad mutation, don't even need it
-              //   type === "datetime-local"
-              //   ? dateToLocaleFieldValue(row[key])
-              (row[key] ?? "");
+            ? (row[key] ?? false)
+            : (row[key] ?? "");
 
       const fieldError =
         typeof error === "object" ? error?.fieldErrors[key]?.[0] : null;
@@ -72,14 +69,13 @@ const topLevelError = typeof error === "string" ? error.toString() : null;
             <span class="text">{label ?? key}</span>
             {/* TODO dynamic element that can be input, select, textarea, checkbox, etc */}
             <input
+              {...inputAttrs}
               form={`edit-form-${row.id}`}
               name={key}
-              value={resolvedValue}
               type={type}
               {...(type === "checkbox"
                 ? { checked: !!resolvedValue }
-                : { value: resolvedValue })}
-              {...inputAttrs}
+                : { value: resolvedValue as string | number | undefined })}
             />
             {fieldError && <span class="field-error">{fieldError}</span>}
           </label>
