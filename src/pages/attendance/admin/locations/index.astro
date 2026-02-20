@@ -22,7 +22,6 @@ const { locations, page, perPage, totalCount, totalPages } = result;
     <header class="flex space-between">
       <h1>Admin Locations - Page {page}</h1>
     </header>
-    <p class="callout warning">Editing Course info does not update Wordpress events (import only)</p>
     {
       locations.length === 0 ? (
         <p class="callout not-found">no locations found</p>

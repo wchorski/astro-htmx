@@ -21,10 +21,23 @@ const { row, headers, config, table } = Astro.props;
   {
     headers.map((key) => {
       const { label, value: override, type, ...inputAttrs } = config[key];
-      const val =
-        type === "date" || type === "datetime-local"
-          ? prettyDateLocaleFull(row[key])
-          : row[key];
+      const val = (() => {
+        switch (true) {
+          case type === "date":
+          case type === "datetime-local":
+            return key === "dateLocal"
+              ? prettyDateLocaleFull(row[key])
+              : row[key];
+          // case "case2":
+          //   return "result2";
+          default:
+            return row[key];
+        }
+      })();
+      // const val =
+      //   type === "date" || type === "datetime-local"
+      //     ? key === 'dateLocal' ? prettyDateLocaleFull(row[key])
+      //     : row[key]
       return (
         <td data-key={key} class="view-cell">
           {key === "id" ? (

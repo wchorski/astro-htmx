@@ -20,7 +20,7 @@ const { locations, perPage, totalCount, totalPages } = result;
     </header>
     {
       locations?.length === 0 ? (
-        <p class="callout not-found">no member credits found</p>
+        <p class="callout not-found">no locations found</p>
       ) : (
         <LocationsEditableTable locations={locations} />
       )

@@ -1,6 +1,5 @@
 // phoneSanitizer.ts
 
-
 export interface SanitizationResult {
   valid: string[];
   invalid: string[];
@@ -8,10 +7,13 @@ export interface SanitizationResult {
 
 export function removeHTMLfromString(raw: string): string {
   return raw
-    .replace(/<[^>]*>/g, '')   // strip HTML tags
-    .replace(/[\r\n]+/g, ', ') // replace newlines with comma+space
-    .replace(/\s{2,}/g, ' ')   // collapse extra spaces
+    .replace(/<[^>]*>/g, "") // strip HTML tags
+    .replace(/[\r\n]+/g, ", ") // replace newlines with comma+space
+    .replace(/\s{2,}/g, " ") // collapse extra spaces
+    .replace(/[\u200B-\u200D\uFEFF]/g, "") // zero-width chars
+    .replace(/\s+/g, " ")
     .trim()
+    .toLowerCase();
 }
 
 // Example usage:

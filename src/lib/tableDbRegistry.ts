@@ -1,6 +1,6 @@
 // src/lib/tableRegistry.ts
 import type { TableRow } from "@ty/Table";
-import { Course, Credit, db, eq, Member, Location } from "astro:db";
+import { Course, Credit, db, eq, and, gte, Member, Location } from "astro:db";
 import { PhoneSanitizer } from "./sanatizers";
 import { formatPhoneToE164Manual, localDateTimeToRealDate } from "./formatters";
 import { z, ZodError } from "astro/zod";
@@ -150,6 +150,52 @@ export const tableRegistry = {
 
       if (!existingLocation)
         throw new Error(`location does not exist with id ${validated.id}`);
+
+      if (existingLocation.timezone !== validated.timezone) {
+        // Compute cutoff (1 year ago from "now")
+        const oneYearAgo = new Date();
+        oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+
+        const relatedCourses = await db
+          .select()
+          .from(Course)
+          .where(
+            and(
+              eq(Course.locationId, validated.id),
+              gte(Course.date, oneYearAgo),
+            ),
+          );
+
+        if (relatedCourses.length > 0) {
+          const coursesTimeZoneUpdated = relatedCourses.map(
+            (course) =>
+              db
+                .update(Course)
+                .set({
+                  // recompute per-course derived instant
+                  date: localDateTimeToRealDate(
+                    course.dateLocal,
+                    validated.timezone,
+                  ),
+                })
+                .where(eq(Course.id, course.id)), // ✅ IMPORTANT
+          );
+          console.log({ coursesTimeZoneUpdated });
+          // Drizzle's batch() expects a non-empty array typed as [head, ...tail]
+          const [head, ...tail] = coursesTimeZoneUpdated;
+          await db.batch([head, ...tail]); // ✅ one call / implicit transaction on libSQL
+        }
+
+        console.log(
+          "🐸🐸🐸 TODO: if TIMEZONE changes then all related courses `date` must be updated",
+        );
+        console.log(
+          "🐸🐸🐸 TODO: this updates all events (even ones in the past) maybe only make it update ones in the last year? or only the future events?",
+        );
+        // throw new Error(
+        //   "🐸🐸🐸 TODO: if TIMEZONE changes then all related courses `date` must be updated",
+        // );
+      }
 
       await db
         .update(Location)

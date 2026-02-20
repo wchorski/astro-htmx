@@ -29,14 +29,21 @@ const { courses } = Astro.props;
       placeholder: "...",
     },
     //? hidden away as to not confuse users from different timezones editing schedual
-    // date: {
-    //   label: "Date",
-    //   type: "datetime-local",
-    //   required: true,
-    // },
+    date: {
+      label: "Timestamp",
+      type: "datetime-local",
+      required: true,
+    },
     dateLocal: {
       label: "Local Date",
       type: "datetime-local",
+      required: true,
+    },
+    // TODO needs to be select field
+    // TODO how to show location.name as label?
+    locationId: {
+      label: "Location ID",
+      type: "number",
       required: true,
     },
   }}

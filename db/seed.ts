@@ -83,167 +83,128 @@ export default async function () {
       description: null,
     },
   ]);
+
+  // find and replace date
+  // find: date:\s*'([^']+)',
+  // replace: date: new Date('$1'),
   await db.insert(Course).values([
     {
       id: 55098,
-      subject: "COMET 1 and Labor Studies",
-      description:
-        "Space is limited. Please contact (708) 390-8160 to R.S.V.P.",
-      date: new Date(
-        "Sat Feb 07 2026 08:00:00 GMT-0600 (Central Standard Time",
-      ),
-      where:
-        "Local 150 District 1 Hall, 6200 Joliet Road, Countryside IL 60525",
-      locationId: 100,
-      dateLocal: "2026-02-07T08:00",
+      subject: 'COMET 1 and Labor Studies',
+      description: 'Space is limited. Please contact (708) 390-8160 to R.S.V.P.',
+      date: new Date('2026-02-07T14:00:00.000Z'),
+      dateLocal: '2026-02-07T08:00',
+      where: 'local 150 district 1 hall, 6200 joliet road, countryside il 60525',
+      locationId: 100
     },
     {
       id: 59736,
-      subject: "Know Your Union",
-      description:
-        "Space is limited. Please contact (708) 390-8160 to R.S.V.P.",
-      date: new Date(
-        "Sat Jan 24 2026 08:00:00 GMT-0600 (Central Standard Time",
-      ),
-      where:
-        "Local 150 District 1 Hall, 6200 Joliet Road, Countryside IL 60525",
-      locationId: 100,
-      dateLocal: "2026-01-24T08:00",
+      subject: 'Know Your Union',
+      description: 'Space is limited. Please contact (708) 390-8160 to R.S.V.P.',
+      date: new Date('2026-01-24T14:00:00.000Z'),
+      dateLocal: '2026-01-24T08:00',
+      where: 'local 150 district 1 hall, 6200 joliet road, countryside il 60525',
+      locationId: 100
     },
     {
       id: 59740,
-      subject: "Know Your Union",
-      description:
-        "Space is limited. Please contact (708) 390-8160 to R.S.V.P.",
-      date: new Date(
-        "Sat May 02 2026 08:00:00 GMT-0500 (Central Daylight Time",
-      ),
-      where:
-        "Local 150 District 1 Hall, 6200 Joliet Road, Countryside IL 60525",
-      locationId: 100,
-      dateLocal: "2026-05-02T08:00",
+      subject: 'Know Your Union',
+      description: 'Space is limited. Please contact (708) 390-8160 to R.S.V.P.',
+      date: new Date('2026-05-02T13:00:00.000Z'),
+      dateLocal: '2026-05-02T08:00',
+      where: 'local 150 district 1 hall, 6200 joliet road, countryside il 60525',
+      locationId: 100
     },
     {
       id: 59741,
-      subject: "Know Your Union",
-      description:
-        "Space is limited. Please contact (708) 390-8160 to R.S.V.P.",
-      date: new Date(
-        "Sat Aug 29 2026 08:00:00 GMT-0500 (Central Daylight Time",
-      ),
-      where:
-        "Local 150 District 1 Hall, 6200 Joliet Road, Countryside IL 60525",
-      locationId: 100,
-      dateLocal: "2026-08-29T08:00",
+      subject: 'Know Your Union',
+      description: 'Space is limited. Please contact (708) 390-8160 to R.S.V.P.',
+      date: new Date('2026-08-29T13:00:00.000Z'),
+      dateLocal: '2026-08-29T08:00',
+      where: 'local 150 district 1 hall, 6200 joliet road, countryside il 60525',
+      locationId: 100
     },
     {
       id: 59742,
-      subject: "Know Your Union",
-      description:
-        "Space is limited. Please contact (708) 390-8160 to R.S.V.P.",
-      date: new Date(
-        "Sat Nov 21 2026 08:00:00 GMT-0600 (Central Standard Time",
-      ),
-      where:
-        "Local 150 District 1 Hall, 6200 Joliet Road, Countryside IL 60525",
-      locationId: 100,
-      dateLocal: "2026-11-21T08:00",
+      subject: 'Know Your Union',
+      description: 'Space is limited. Please contact (708) 390-8160 to R.S.V.P.',
+      date: new Date('2026-11-21T14:00:00.000Z'),
+      dateLocal: '2026-11-21T08:00',
+      where: 'local 150 district 1 hall, 6200 joliet road, countryside il 60525',
+      locationId: 100
     },
     {
       id: 59744,
-      subject: "COMET 1 and Labor Studies",
-      description:
-        "Space is limited. Please contact (708) 390-8160 to R.S.V.P.",
-      date: new Date(
-        "Sat May 09 2026 08:00:00 GMT-0500 (Central Daylight Time",
-      ),
-      where:
-        "Local 150 District 1 Hall, 6200 Joliet Road, Countryside IL 60525",
-      locationId: 100,
-      dateLocal: "2026-05-09T08:00",
+      subject: 'COMET 1 and Labor Studies',
+      description: 'Space is limited. Please contact (708) 390-8160 to R.S.V.P.',
+      date: new Date('2026-05-09T13:00:00.000Z'),
+      dateLocal: '2026-05-09T08:00',
+      where: 'local 150 district 1 hall, 6200 joliet road, countryside il 60525',
+      locationId: 100
     },
     {
       id: 59745,
-      subject: "COMET 1 and Labor Studies",
-      description:
-        "Space is limited. Please contact (708) 390-8160 to R.S.V.P.",
-      date: new Date(
-        "Sat Sep 12 2026 08:00:00 GMT-0500 (Central Daylight Time",
-      ),
-      where:
-        "Local 150 District 1 Hall, 6200 Joliet Road, Countryside IL 60525",
-      locationId: 100,
-      dateLocal: "2026-09-12T08:00",
+      subject: 'COMET 1 and Labor Studies',
+      description: 'Space is limited. Please contact (708) 390-8160 to R.S.V.P.',
+      date: new Date('2026-09-12T13:00:00.000Z'),
+      dateLocal: '2026-09-12T08:00',
+      where: 'local 150 district 1 hall, 6200 joliet road, countryside il 60525',
+      locationId: 100
     },
     {
       id: 59746,
-      subject: "COMET 1 and Labor Studies",
-      description:
-        "Space is limited. Please contact (708) 390-8160 to R.S.V.P.",
-      date: new Date(
-        "Sat Dec 19 2026 08:00:00 GMT-0600 (Central Standard Time",
-      ),
-      where:
-        "Local 150 District 1 Hall, 6200 Joliet Road, Countryside IL 60525",
-      locationId: 100,
-      dateLocal: "2026-12-19T08:00",
+      subject: 'COMET 1 and Labor Studies',
+      description: 'Space is limited. Please contact (708) 390-8160 to R.S.V.P.',
+      date: new Date('2026-12-19T14:00:00.000Z'),
+      dateLocal: '2026-12-19T08:00',
+      where: 'local 150 district 1 hall, 6200 joliet road, countryside il 60525',
+      locationId: 100
     },
     {
       id: 59909,
-      subject: "General Membership Meeting",
-      description: "A valid union card is required for entry.",
-      date: new Date(
-        "Fri Jan 30 2026 19:00:00 GMT-0600 (Central Standard Time",
-      ),
-      where: "District 1 Hall, 6200 Joliet Road, Countryside, IL",
-      locationId: 100,
-      dateLocal: "2026-01-30T19:00",
+      subject: 'General Membership Meeting',
+      description: 'A valid union card is required for entry.',
+      date: new Date('2026-01-31T01:00:00.000Z'),
+      dateLocal: '2026-01-30T19:00',
+      where: 'district 1 hall, 6200 joliet road, countryside, il',
+      locationId: 100
     },
     {
       id: 59958,
-      subject: "District 2 Union Meeting",
-      description: "A valid union card is required for entry.",
-      date: new Date(
-        "Thu Feb 19 2026 19:00:00 GMT-0600 (Central Standard Time",
-      ),
-      where:
-        "District 2 Hall, 1050 N. I-55 E. Frontage Road, Joliet, Illinois 60431",
-      locationId: 200,
-      dateLocal: "2026-02-19T19:00",
+      subject: 'District 2 Union Meeting',
+      description: 'A valid union card is required for entry.',
+      date: new Date('2026-02-20T01:00:00.000Z'),
+      dateLocal: '2026-02-19T19:00',
+      where: 'district 2 hall, 1050 n. i-55 e. frontage road, joliet, illinois 60431',
+      locationId: 200
     },
     {
       id: 59959,
-      subject: "District 5 Union Meeting",
-      description: "Union card is required for entry.",
-      date: new Date(
-        "Thu Feb 19 2026 19:00:00 GMT-0600 (Central Standard Time",
-      ),
-      where: "District 5 Hall, 740 E. Route 6, Utica, Illinois 61373",
-      locationId: 500,
-      dateLocal: "2026-02-19T19:00",
+      subject: 'District 5 Union Meeting',
+      description: 'Union card is required for entry.',
+      date: new Date('2026-02-20T01:00:00.000Z'),
+      dateLocal: '2026-02-19T19:00',
+      where: 'district 5 hall, 740 e. route 6, utica, illinois 61373',
+      locationId: 500
     },
     {
       id: 59960,
-      subject: "District 6 Union Meeting",
-      description: "A valid union card is required for entry.",
-      date: new Date(
-        "Thu Feb 19 2026 19:00:00 GMT-0600 (Central Standard Time",
-      ),
-      where: "District 6 Hall, 1001 N. Michigan Street, Lakeville, IN",
-      locationId: 600,
-      dateLocal: "2026-02-19T19:00",
+      subject: 'District 6 Union Meeting',
+      description: 'A valid union card is required for entry.',
+      date: new Date('2026-02-20T00:00:00.000Z'),
+      dateLocal: '2026-02-19T19:00',
+      where: 'district 6 hall, 1001 n. michigan street, lakeville, in',
+      locationId: 600
     },
     {
       id: 59961,
-      subject: "District 1 Union Meeting",
-      description: "A valid union card is required for entry.",
-      date: new Date(
-        "Thu Feb 26 2026 19:00:00 GMT-0600 (Central Standard Time",
-      ),
-      where: "District 1 Hall, 6200 Joliet Road, Countryside, IL",
-      locationId: 100,
-      dateLocal: "2026-02-26T19:00",
-    },
+      subject: 'District 1 Union Meeting',
+      description: 'A valid union card is required for entry.',
+      date: new Date('2026-02-27T01:00:00.000Z'),
+      dateLocal: '2026-02-26T19:00',
+      where: 'district 1 hall, 6200 joliet road, countryside, il',
+      locationId: 100
+    }
   ]);
 
   //! MOCK DATA, do not enter sensative data into seed
