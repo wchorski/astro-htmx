@@ -6,15 +6,37 @@ export type InputTypeAttr = InputProps["type"] | (string & {});
 
 type BaseInputAttrs = Omit<HTMLAttributes<"input">, "value">;
 
-export type FieldSlot = BaseInputAttrs & {
+export type FieldOption = {
+  value: string | number;
+  label: string;
+};
+
+type BaseFieldSlot = {
   label?: string;
   value?: string | number | boolean;
 };
 
-// Row must always have an id
+type InputFieldSlot = BaseFieldSlot &
+  BaseInputAttrs & {
+    type?: InputTypeAttr;
+    datalist?: FieldOption[];
+  };
+
+type SelectFieldSlot = BaseFieldSlot &
+  Omit<HTMLAttributes<"select">, "value"> & {
+    type: "select";
+    options: FieldOption[];
+  };
+
+type TextareaFieldSlot = BaseFieldSlot &
+  Omit<HTMLAttributes<"textarea">, "value"> & {
+    type: "textarea";
+  };
+
+export type FieldSlot = InputFieldSlot | SelectFieldSlot | TextareaFieldSlot;
+
 export type BaseRow = Record<string, unknown> & { id: number };
 
-// Keys are constrained to the row shape, all optional
 export type FieldConfig<TRow extends BaseRow = BaseRow> = {
   [K in keyof TRow]?: FieldSlot;
 };

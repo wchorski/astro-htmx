@@ -5,47 +5,70 @@ interface Params {
 import { db, eq, Course } from "astro:db";
 import Layout from "@layouts/Layout.astro";
 import MembersSearchForm from "@components/MembersSearchForm.astro";
-import CreditsTable from "@partials/credits-table.astro";
+import { prettyPlainCivilDateFull } from "@lib/formatters";
+import { Location } from "astro:db";
 export const prerender = false; // Not needed in 'server' mode
 const { courseId } = Astro.params;
 if (!courseId) throw new Error("no id found. throw 404");
-const courses = await db
+const course = await db
   .select()
   .from(Course)
   .where(eq(Course.id, Number(courseId)))
-  .limit(1);
-const foundCourse = courses[0];
-if (!foundCourse) return Astro.redirect("/404");
-const { subject, date, description } = foundCourse;
+  .get();
+if (!course) return Astro.redirect("/404");
+
+const location = await db
+  .select()
+  .from(Location)
+  .where(eq(Location.id, course.locationId))
+  .get();
+if (!location) return Astro.redirect("/404");
+
+const { subject, date, description, dateCivil } = course;
 ---
 
 <Layout>
   <main>
     <header>
-      <h1>Check-In</h1>
-
-      <p>
-        {subject}
+      <h1>
+        Check-In for {subject}
         <span class="course-id">({courseId})</span>
-        |
-        <time datetime={date.toISOString()}>
-          {
-            date.toLocaleString("en-US", {
-              year: "numeric",
-              month: "short",
-            })
-          }
-        </time>
-        <time datetime={date.toISOString()}>
-          {
-            date.toLocaleString("en-US", {
-              year: "numeric",
-              month: "short",
-              day: "numeric",
-            })
-          }
-        </time>{description}
-      </p>
+      </h1>
+      <div class="flex space-between">
+        <address>
+          <img
+            class="icon"
+            src="/icons/location.svg"
+            alt="drop pin location icon"
+            width="30"
+            height="30"
+          />
+          {location.name}
+          <br />
+          {location.address}
+          <br />
+          {location.city}, {location.state}
+          {location.zip}
+          USA
+        </address>
+        <p>
+          <img
+            class="icon"
+            src="/icons/datetime.svg"
+            alt="date time icon"
+            width="30"
+            height="30"
+          />
+          <time datetime={dateCivil}>{prettyPlainCivilDateFull(dateCivil)}</time
+          >
+          <br />
+          <time class="real" datetime={date.toISOString()}>
+            {date}
+          </time>
+          <br />
+        </p>
+      </div>
+      <p class="description">{description}</p>
     </header>
 
     <hr />
@@ -56,7 +79,7 @@ const { subject, date, description } = foundCourse;
 
     <p class="callout warning card">Using fake member data for testing.</p>
 
-    <MembersSearchForm course={foundCourse} />
+    <MembersSearchForm course={course} />
   </main>
 </Layout>
 
@@ -64,5 +87,10 @@ const { subject, date, description } = foundCourse;
   main {
     max-width: 800px;
     margin-inline: auto;
+  }
+
+  time.real {
+    color: grey;
+    font-size: 0.7rem;
   }
 </style>

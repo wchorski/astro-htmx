@@ -3,6 +3,7 @@
 import type { TableRegistryType } from "@lib/tableDbRegistry";
 import type { BaseRow, FieldConfig } from "@ty/FieldConfig";
 import CellViewElement from "./CellViewElement.astro";
+import { undefined } from "astro:schema";
 
 interface Props<TRow extends BaseRow = BaseRow> {
   row: TRow;
@@ -12,15 +13,24 @@ interface Props<TRow extends BaseRow = BaseRow> {
 }
 
 const { row, headers, config, table } = Astro.props;
-// const keys = Object.keys(row).filter((key) => key !== "id");
-// const keys = Object.keys(row);
 ---
 
 <tr id={`row-${row.id}`} data-status="viewing">
-  {/* ── View cells ── */}
   {
     headers.map((key) => {
-      const { label, value: override, type, ...inputAttrs } = config[key] ?? {};
+      const {
+        label,
+        value: override,
+        options,
+        type,
+        ...inputAttrs
+      } = config[key] ?? {};
+
+      // if (key === "locationId") {
+      //   console.log({ row });
+      //   console.log("CONFIG");
+      //   console.log(config["locationId"]);
+      // }
 
       return (
         <td data-key={key} class="view-cell">
@@ -28,6 +38,7 @@ const { row, headers, config, table } = Astro.props;
             key={key}
             type={type}
             rawVal={row[key] as string | number}
+            options={type === "select" ? options : undefined}
             table={table}
           />
         </td>

@@ -12,7 +12,7 @@ if ("redirect" in result) {
   return Astro.redirect("/attendance/admin/courses");
 }
 
-const { courses, page, perPage, totalCount, totalPages } = result;
+const { courses, locations, page, perPage, totalCount, totalPages } = result;
 ---
 
 <Layout>
@@ -26,12 +26,14 @@ const { courses, page, perPage, totalCount, totalPages } = result;
         hx-put="/api/courses/import">Import Events from Wordpress</button
       > -->
     </header>
-    <p class="callout warning">Editing Course info does not update Wordpress events (import only)</p>
+    <p class="callout warning">
+      Editing Course info does not update Wordpress events (import only)
+    </p>
     {
       courses.length === 0 ? (
         <p class="callout not-found">no member credits found</p>
       ) : (
-        <CoursesEditableTable courses={courses} />
+        <CoursesEditableTable courses={courses} locations={locations} />
       )
     }
     {

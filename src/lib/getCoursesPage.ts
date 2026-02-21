@@ -1,4 +1,4 @@
-import { db, count, Course, desc } from "astro:db";
+import { db, count, Course, Location, desc } from "astro:db";
 
 export async function getCoursesPage(page: number, perPage = 12) {
   if (page < 1) page = 1;
@@ -19,8 +19,16 @@ export async function getCoursesPage(page: number, perPage = 12) {
     .limit(perPage)
     .offset((page - 1) * perPage);
 
+  // TODO move this into one db call
+  const locations = await db
+    .select()
+    .from(Location)
+    // .limit(perPage)
+    // .offset((page - 1) * perPage);
+
   return {
     courses,
+    locations,
     page,
     totalCount,
     totalPages,

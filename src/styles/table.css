@@ -35,7 +35,7 @@ tr[data-status="editing"] td {
   width: 1%;
   white-space: nowrap;
 }
-tr,
+th,
 td {
   padding-inline: 0.5rem;
 }

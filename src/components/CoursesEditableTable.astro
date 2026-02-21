@@ -2,12 +2,11 @@
 // components/CoursesEditableTable.astro
 interface Props {
   courses: CourseSelect[];
+  locations: LocationSelect[];
 }
-import type { CourseSelect } from "@ty/Schema";
+import type { CourseSelect, LocationSelect } from "@ty/Schema";
 import TableEditable from "./TableEditable.astro";
-const { courses } = Astro.props;
-
-
+const { courses, locations } = Astro.props;
 ---
 
 <TableEditable
@@ -44,10 +43,16 @@ const { courses } = Astro.props;
     },
     // TODO needs to be select field
     // TODO how to show location.name as label?
+    // locationId: {
+    //   label: "Location ID",
+    //   type: "number",
+    //   required: true,
+    // },
     locationId: {
-      label: "Location ID",
-      type: "number",
+      label: "Locations",
+      type: "select",
       required: true,
+      options: locations.map((loc) => ({ value: loc.id, label: loc.name })),
     },
   }}
 />

@@ -1,27 +1,31 @@
 ---
-import { prettyDateFull } from "@lib/formatters";
+import { prettyPlainCivilDateFull } from "@lib/formatters";
 import type { TableRegistryType } from "@lib/tableDbRegistry";
-import type { InputTypeAttr } from "@ty/FieldConfig";
+import type { FieldConfig } from "@ty/FieldConfig";
+import type { FieldSlot } from "@ty/FieldSlot";
 
 interface Props {
   key: string;
-  type: InputTypeAttr;
+  options?: { value: number; label: string }[];
+  type: FieldSlot["type"];
   //   prettyVal: string;
   rawVal: string | number;
   table: TableRegistryType;
   //   row: Record<string, any> & { id: number };
 }
-const { key, table, rawVal, type } = Astro.props;
+const { key, table, rawVal, type, options } = Astro.props;
 
 const prettyVal = (() => {
   switch (true) {
     case type === "date":
     case type === "datetime-local":
-      return key === "dateCivil"
-        ? prettyDateFull(rawVal.toString())
-        : rawVal;
-    // case "case2":
-    //   return "result2";
+      return key === "dateCivil" ? prettyPlainCivilDateFull(rawVal.toString()) : rawVal;
+    case type === "select":
+      return (
+        options?.find((opt) => String(opt.value) === String(rawVal))?.label ||
+        ""
+      );
+
     default:
       return rawVal;
   }
@@ -35,6 +39,8 @@ const prettyVal = (() => {
     <time datetime={rawVal.toString()}>{prettyVal}</time>
   ) : type === "number" ? (
     <data value={rawVal}>{prettyVal}</data>
+  ) : type === "select" ? (
+    <span data-id={rawVal}>{prettyVal}</span>
   ) : (
     <span>{prettyVal ?? "—"}</span>
   )

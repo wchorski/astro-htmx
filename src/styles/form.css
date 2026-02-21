@@ -21,13 +21,12 @@ label {
 label .text {
   font-size: 0.7rem;
 }
-input[name="middle_initial"],
-input[name="courseId"] {
-  max-width: 10ch;
-}
 
 input[name="id"],
-input[name="locationId"] {
+input[name="middle_initial"],
+input[name="courseId"] 
+input[name="locationId"],
+select[name="locationId"] {
   max-width: 10ch;
 }
 

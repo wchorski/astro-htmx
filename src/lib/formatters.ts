@@ -140,14 +140,13 @@ export function localDateTimeToRealDate(localString: string, timezone: string) {
 //   });
 // }
 
-const LOCAL_DATE_TIME_REGEX =
-  /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/;
+const LOCAL_DATE_TIME_REGEX = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/;
 
-export function prettyDateFull(dateCivil: string): string {
+export function prettyPlainCivilDateFull(dateCivil: string): string {
   // 1️⃣ Enforce exact format shape
   if (!LOCAL_DATE_TIME_REGEX.test(dateCivil)) {
     throw new Error(
-      `Invalid format. Expected YYYY-MM-DDTHH:mm, received: ${dateCivil}`
+      `Invalid format. Expected YYYY-MM-DDTHH:mm, received: ${dateCivil}`,
     );
   }
 
@@ -156,12 +155,21 @@ export function prettyDateFull(dateCivil: string): string {
   try {
     plain = Temporal.PlainDateTime.from(dateCivil);
   } catch {
-    throw new Error(
-      `Invalid calendar date/time: ${dateCivil}`
-    );
+    throw new Error(`Invalid calendar date/time: ${dateCivil}`);
   }
 
   return plain.toLocaleString("en-US", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  });
+}
+
+export function prettyDateToLocale(date: Date) {
+  return date.toLocaleString("en-US", {
     weekday: "long",
     year: "numeric",
     month: "long",
