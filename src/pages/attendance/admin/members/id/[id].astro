@@ -1,0 +1,129 @@
+---
+interface Params {
+  id: string;
+}
+import { Credit, db, eq, Member, Course, Location } from "astro:db";
+import Layout from "@layouts/Layout.astro";
+import AttendanceAdminNav from "@components/navigation/AttendanceAdminNav.astro";
+import TableEditable from "@components/TableEditable.astro";
+export const prerender = false; // Not needed in 'server' mode
+const { id } = Astro.params;
+if (!id) throw new Error("no id found. throw 404");
+const member = await db
+  .select()
+  .from(Member)
+  .where(eq(Member.id, Number(id)))
+  .get();
+if (!member) return Astro.redirect("/404");
+
+const { first_name, last_name, middle_initial, address1, city, state, zip } =
+  member;
+
+const ownedCredits = await db
+  .select({
+    credit: Credit,
+    course: Course,
+    location: Location,
+  })
+  .from(Credit)
+  .innerJoin(Course, eq(Credit.courseId, Course.id))
+  .innerJoin(Location, eq(Course.locationId, Location.id))
+  .where(eq(Credit.memberId, Number(id)));
+
+console.log(JSON.stringify(ownedCredits, null, 2));
+
+const tableRows = ownedCredits.map(({ credit, course, location }) => ({
+  id: credit.id,
+  courseId: course.id,
+  subject: course.subject,
+  location: location.name,
+  address: location.address,
+  attended: credit.attended,
+}));
+---
+
+<Layout>
+  <AttendanceAdminNav />
+  <main>
+    <header>
+      <h1>
+        {first_name}
+        {last_name}
+        {middle_initial ? `(${middle_initial})` : ""}
+      </h1>
+      <div class="flex space-between">
+        <address>
+          {address1}
+          <br />
+          {city}, {state}
+          {zip}
+          USA
+        </address>
+      </div>
+    </header>
+    <hr />
+
+    <h2>Course Credits</h2>
+    {
+      tableRows.length === 0 ? (
+        <p class="callout not-found">no member credits found</p>
+      ) : (
+        <TableEditable
+          rows={tableRows}
+          table="ownedCredits"
+          fieldConfig={{
+            id: {
+              label: "ID",
+              type: "number",
+              required: true,
+              readonly: true,
+            },
+            courseId: {
+              label: "Course ID",
+              type: "number",
+              required: true,
+              readonly: true,
+            },
+            subject: {
+              type: "text",
+              required: true,
+            },
+            location: {
+              type: "text",
+              required: true,
+            },
+            address: {
+              type: "text",
+              required: true,
+            },
+            // city: {
+            //   label: "city",
+            //   type: "text",
+            //   required: true,
+            // },
+            // state: {
+            //   label: "state",
+            //   type: "text",
+            //   required: true,
+            // },
+            // zip: {
+            //   label: "zip",
+            //   type: "number",
+            //   required: true,
+            // },
+            attended: {
+              label: "attended",
+              type: "checkbox",
+            },
+          }}
+        />
+      )
+    }
+  </main>
+</Layout>
+
+<style>
+  main {
+    padding: 1rem;
+  }
+</style>

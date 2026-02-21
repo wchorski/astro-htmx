@@ -1,0 +1,76 @@
+---
+interface Props {
+  members: MemberSelect[];
+}
+import type { MemberSelect } from "@ty/Schema";
+import TableEditable from "./TableEditable.astro";
+const { members } = Astro.props;
+---
+
+<TableEditable
+  rows={members || []}
+  table="/attendance/admin/members/id"
+  fieldConfig={{
+    id: {
+      label: "ID",
+      type: "number",
+      required: true,
+      readonly: true,
+    },
+    first_name: {
+      label: "First Name",
+      type: "text",
+      required: true,
+      placeholder: "John...",
+    },
+    last_name: {
+      label: "Last Name",
+      type: "text",
+      required: true,
+      placeholder: "Doe...",
+    },
+    middle_initial: {
+      label: "Middle Int.",
+      type: "text",
+    },
+    phone: {
+      label: "Phone",
+      type: "tel",
+      required: true,
+      placeholder: "123-123-1234",
+    },
+    email: {
+      label: "Email",
+      type: "email",
+      required: true,
+      placeholder: "john@mail.lan",
+    },
+    address1: {
+      label: "Address",
+      type: "text",
+      required: true,
+      placeholder: "123 West East St...",
+    },
+    address2: {
+      label: "P.O. Box",
+      type: "text",
+      required: true,
+      placeholder: "123 West East St...",
+    },
+    city: {
+      type: "text",
+      required: true,
+      placeholder: "Naperville...",
+    },
+    state: {
+      type: "text",
+      required: true,
+      placeholder: "Illinois...",
+    },
+    zip: {
+      type: "number",
+      required: true,
+      placeholder: "50505",
+    },
+  }}
+/>

@@ -1,11 +1,9 @@
 ---
-import ButtonCoursesImport from "@components/ButtonCoursesImport.astro";
-import CoursesEditableTable from "@components/CoursesEditableTable.astro";
 import LocationsEditableTable from "@components/LocationsEditableTable.astro";
 import AttendanceAdminNav from "@components/navigation/AttendanceAdminNav.astro";
 import Layout from "@layouts/Layout.astro";
 import { getLocationsPage } from "@lib/getLocationsPage";
-import PaginationNav from "@partials/pagination-nav.astro";
+import PaginationNav from "@components/navigation/PaginationNav.astro";
 
 const result = await getLocationsPage(1);
 

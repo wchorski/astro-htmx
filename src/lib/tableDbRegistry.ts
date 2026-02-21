@@ -235,6 +235,7 @@ export const tableRegistry = {
       })
       .where(eq(Course.id, validated.id));
   },
+  
   // members: async (row) => {
   //   /* db.update(Users)... */
   // },

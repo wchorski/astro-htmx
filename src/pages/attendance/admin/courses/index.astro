@@ -4,7 +4,7 @@ import CoursesEditableTable from "@components/CoursesEditableTable.astro";
 import AttendanceAdminNav from "@components/navigation/AttendanceAdminNav.astro";
 import Layout from "@layouts/Layout.astro";
 import { getCoursesPage } from "@lib/getCoursesPage";
-import PaginationNav from "@partials/pagination-nav.astro";
+import PaginationNav from "@components/navigation/PaginationNav.astro";
 
 const result = await getCoursesPage(1);
 
