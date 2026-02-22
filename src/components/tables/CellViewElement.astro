@@ -1,25 +1,26 @@
 ---
+// components/tables/CellViewElement.astro
 import { prettyPlainCivilDateFull } from "@lib/formatters";
-import type { TableRegistryType } from "@lib/tableDbRegistry";
-import type { FieldConfig } from "@ty/FieldConfig";
-import type { FieldSlot } from "@ty/FieldSlot";
+import type { FieldOption, FieldType, FieldValue } from "@ty/FieldConfig";
 
 interface Props {
   key: string;
-  options?: { value: number; label: string }[];
-  type: FieldSlot["type"];
+  options: FieldOption[] | undefined;
+  type: FieldType;
   //   prettyVal: string;
-  rawVal: string | number;
-  table: TableRegistryType;
+  rawVal: FieldValue;
+  endpoint: string;
   //   row: Record<string, any> & { id: number };
 }
-const { key, table, rawVal, type, options } = Astro.props;
+const { key, endpoint, rawVal, type, options } = Astro.props;
 
 const prettyVal = (() => {
   switch (true) {
     case type === "date":
     case type === "datetime-local":
-      return key === "dateCivil" ? prettyPlainCivilDateFull(rawVal.toString()) : rawVal;
+      return key === "dateCivil"
+        ? prettyPlainCivilDateFull(String(rawVal))
+        : String(rawVal);
     case type === "select":
       return (
         options?.find((opt) => String(opt.value) === String(rawVal))?.label ||
@@ -34,11 +35,11 @@ const prettyVal = (() => {
 
 {
   key === "id" ? (
-    <a href={`${table}/${prettyVal}`}>{prettyVal}</a>
+    <a href={`${endpoint}/${rawVal}`}>{prettyVal}</a>
   ) : type === "datetime-local" ? (
-    <time datetime={rawVal.toString()}>{prettyVal}</time>
+    <time datetime={String(rawVal)}>{prettyVal}</time>
   ) : type === "number" ? (
-    <data value={rawVal}>{prettyVal}</data>
+    <data value={String(rawVal)}>{prettyVal}</data>
   ) : type === "select" ? (
     <span data-id={rawVal}>{prettyVal}</span>
   ) : (

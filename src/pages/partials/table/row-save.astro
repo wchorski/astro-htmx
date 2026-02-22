@@ -4,13 +4,13 @@ import type { FieldConfig } from "@ty/FieldConfig";
 import type { TableRow } from "@ty/Table";
 import ViewRow from "@components/tables/RowView.astro";
 import EditRow from "@components/tables/RowEdit.astro";
-import { tableRegistry, type TableRegistryType } from "@lib/tableDbRegistry";
+import { crudRegistry, type CrudRegistryType } from "@lib/crudRegistry";
 import { ZodError } from "astro/zod";
 import { ConflictError, NotFoundError } from "@lib/errors";
 
 let row: TableRow | null = null;
 let originalRow: TableRow | null = null;
-let table: TableRegistryType | null = null;
+let table: CrudRegistryType | null = null;
 let config: FieldConfig | null = null;
 let headers: string[] = [];
 let error: string | ReturnType<ZodError["flatten"]> | null = null;
@@ -18,7 +18,7 @@ let error: string | ReturnType<ZodError["flatten"]> | null = null;
 // TODO symanticly, i should use PUT on edit/update and POST on creating new record
 // if (Astro.request.method === "PUT") {}
 
-if (Astro.request.method === "POST") {
+if (Astro.request.method === "PUT") {
   try {
     const raw = Astro.request.formData ? await Astro.request.formData() : null;
 
@@ -35,8 +35,8 @@ if (Astro.request.method === "POST") {
       ? JSON.parse(raw.get("_originalRow") as string)
       : row; // first time entering edit, seed it from row
     const id = Number(raw.get("id"));
-    table = raw.get("_table") as TableRegistryType;
-    const saveFn = tableRegistry[table];
+    table = raw.get("_endpoint") as CrudRegistryType;
+    const saveFn = crudRegistry[table];
     if (!saveFn)
       throw new Error(`No save handler registered for table: ${table}`);
 
@@ -54,8 +54,11 @@ if (Astro.request.method === "POST") {
           row[key] = raw.has(key);
           break;
         // TODO how to handle dates that are local vs idiosyncratic
+        // TOOD must append timezone from location if creating date here, but i do it on the backend anyway
         case "datetime-local":
-          row[key] = key === "dateCivil" ? raw_val : new Date(raw_val);
+        case "date":
+          row[key] = raw_val ?? "";
+          // row[key] = key === "dateCivil" ? raw_val : new Date(raw_val);
           break;
 
         default:
@@ -104,6 +107,6 @@ if (Astro.request.method === "POST") {
       error={error}
     />
   ) : (
-    <ViewRow row={row} headers={headers} config={config} table={table} />
+    <ViewRow row={row} headers={headers} config={config} endpoint={table} />
   )
 }

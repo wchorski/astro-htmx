@@ -1,54 +1,77 @@
 ---
-import type { FieldConfig } from "@ty/FieldConfig";
-import type { TableRegistryType } from "@lib/tableDbRegistry";
-import { tableRegistry } from "@lib/tableDbRegistry";
+import type { BaseRow, FieldConfig, FieldValue } from "@ty/FieldConfig";
+import type { CrudRegistryType } from "@lib/crudRegistry";
+import { crudRegistry } from "@lib/crudRegistry";
 import RowView from "@components/tables/RowView.astro";
-import RowCreate from "@components/tables/RowCreate.astro";
+import RowCreateForm from "@components/tables/RowCreate.astro";
+import { ZodError } from "astro/zod";
+import { ConflictError, NotFoundError } from "@lib/errors";
+import { parseFormFields } from "@lib/parseFormFields";
 
-let config: FieldConfig | null = null;
-let table: TableRegistryType | null = null;
+let ctx: {
+  config: FieldConfig;
+  crud: CrudRegistryType;
+  endpoint: string;
+  headers: string[];
+} | null = null;
 let error: string | Record<string, any> | null = null;
-let createdRow: Record<string, any> | null = null;
+let newRow: BaseRow | null = null;
 
 if (Astro.request.method === "POST") {
   try {
-    const raw = await Astro.request.clone().formData();
-    table = raw.get("_table") as TableRegistryType;
-    const entry = tableRegistry[table];
-    config = entry.config;
-    const headers = Object.keys(config);
+    const raw = await Astro.request.formData();
+    if (!raw) return new Response("Bad Request", { status: 400 });
+    const crud = raw.get("_crud") as CrudRegistryType;
+    const config = JSON.parse(raw.get("_config") as string);
+    if (!config) throw new Error("config not found");
+    const endpoint = raw.get("_endpoint") as string;
+    const headers = Object.keys(config)
+    ctx = { config, crud, endpoint, headers };
 
-    const newRow: Record<string, any> = {};
-    for (const key of headers) {
-      const slot = config[key];
-      const val = raw.get(key) as string;
-      if (slot.type === "number") {
-        newRow[key] = val === "" ? null : Number(val);
-      } else if (slot.type === "checkbox") {
-        newRow[key] = raw.has(key);
-      } else {
-        newRow[key] = val ?? "";
-      }
-    }
+    const fields = parseFormFields(raw, headers, config);
 
-    createdRow = await entry.create(newRow); // return the created record with id
+    const entry = crudRegistry[crud];
+    if (!entry)
+      throw new NotFoundError(`No handler registered for crud: ${crud}`);
+
+    // TODO kinda hacky but it works. database assigns ID
+    delete fields.id
+    const fn = entry.create;
+    newRow = await fn(fields);
+    console.log({ newRow });
 
   } catch (e) {
-    error = e instanceof Error ? e.message : "500 server error";
+    console.log("❌ PUT partials/crud/row-create");
+    console.log({ e });
+    if (e instanceof ZodError) {
+      Astro.response.status = 422;
+      error = e.flatten();
+    } else if (e instanceof NotFoundError) {
+      Astro.response.status = 404;
+      error = e.message;
+    } else if (e instanceof ConflictError) {
+      Astro.response.status = 409;
+      error = e.message;
+    } else {
+      Astro.response.status = 500;
+      const msg = typeof e === "string" ? e : String(e);
+      error = "An unexpected error occurred " + msg;
+    }
   }
 }
 ---
 
-{createdRow && config && table && (
-  <>
-    {/* Inserted beforebegin #row-new — becomes the new last data row */}
-    <RowView row={createdRow} headers={Object.keys(config)} config={config} table={table} />
-    {/* Replaces #row-new with a fresh empty create row */}
-    <RowCreate config={config} table={table} />
-  </>
-)}
-
-{error && config && table && (
-  {/* Return the create row with errors so the user doesn't lose their input */}
-  <RowCreate config={config} table={table} error={error} />
-)}
+{
+  !ctx ? (
+    <p class="callout not-found">missing row-create context</p>
+  ) : error ? (
+    <RowCreateForm {...ctx} error={error} />
+  ) : newRow ? (
+    <>
+      <RowView row={newRow} {...ctx} classList={["new-row"]} />
+      <RowCreateForm {...ctx} />
+    </>
+  ) : (
+    <p>unknown row-create render</p>
+  )
+}

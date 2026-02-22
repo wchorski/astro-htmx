@@ -3,10 +3,10 @@
 import type { FieldConfig } from "@ty/FieldConfig";
 import type { TableRow } from "@ty/Table";
 import RowEditComponent from "@components/tables/RowEdit.astro";
-import type { TableRegistryType } from "@lib/tableDbRegistry";
+import type { CrudRegistryType } from "@lib/crudRegistry";
 
 let row: TableRow | null = null;
-let table: TableRegistryType | null = null;
+let table: CrudRegistryType | null = null;
 let config: FieldConfig | null = null;
 let headers: string[] = [];
 let error: Error | string | null = null;
@@ -17,7 +17,7 @@ if (Astro.request.method === "POST") {
     if (!raw) return new Response("Bad Request", { status: 400 });
     // Rebuild row and config from POST body
     row = JSON.parse(raw?.get("_row") as string);
-    table = raw.get("_table") as TableRegistryType;
+    table = raw.get("_endpoint") as CrudRegistryType;
     config = JSON.parse(raw?.get("_config") as string);
     if (!config) throw new Error("no config found");
     headers = Object.keys(config);

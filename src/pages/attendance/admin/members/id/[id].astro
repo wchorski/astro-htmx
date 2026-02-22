@@ -70,8 +70,8 @@ const tableRows = ownedCredits.map(({ credit, course, location }) => ({
       ) : (
         <TableEditable
           rows={tableRows}
-          table="ownedCredits"
-          fieldConfig={{
+          endpoint="ownedCredits"
+          config={{
             id: {
               label: "ID",
               type: "number",

@@ -9,8 +9,9 @@ const { members } = Astro.props;
 
 <TableEditable
   rows={members || []}
-  table="/attendance/admin/members/id"
-  fieldConfig={{
+  crud={'members'}
+  endpoint="/attendance/admin/members/id"
+  config={{
     id: {
       label: "ID",
       type: "number",
@@ -22,12 +23,14 @@ const { members } = Astro.props;
       type: "text",
       required: true,
       placeholder: "John...",
+      // value: "test Bobby"
     },
     last_name: {
       label: "Last Name",
       type: "text",
       required: true,
       placeholder: "Doe...",
+      // value: "test Bobberson"
     },
     middle_initial: {
       label: "Middle Int.",
@@ -38,39 +41,44 @@ const { members } = Astro.props;
       type: "tel",
       required: true,
       placeholder: "123-123-1234",
+      // value: "123-123-1234"
     },
     email: {
       label: "Email",
       type: "email",
       required: true,
       placeholder: "john@mail.lan",
+      // value: "testBob@mail.lan",
     },
     address1: {
       label: "Address",
       type: "text",
       required: true,
       placeholder: "123 West East St...",
+      // value: "123 test st",
     },
     address2: {
       label: "P.O. Box",
       type: "text",
-      required: true,
-      placeholder: "123 West East St...",
+      // placeholder: "PO Box 254",
     },
     city: {
       type: "text",
       required: true,
       placeholder: "Naperville...",
+      // value: "testCity",
     },
     state: {
       type: "text",
       required: true,
       placeholder: "Illinois...",
+      // value: "testState"
     },
     zip: {
       type: "number",
       required: true,
-      placeholder: "50505",
+      placeholder: "50505...",
+      // value: "10101"
     },
   }}
 />

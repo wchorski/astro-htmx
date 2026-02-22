@@ -5,7 +5,7 @@ interface Props {
   totalCount: number;
   path: string;
   // how many pages to show on each side of current page
-  siblingCount: number;
+  siblingCount?: number;
 }
 
 const { page, perPage, totalCount, path, siblingCount = 10 } = Astro.props;

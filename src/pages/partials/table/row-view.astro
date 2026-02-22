@@ -1,12 +1,12 @@
 ---
 // partials/table/row-view.astro
 import ViewRow from "@components/tables/RowView.astro";
-import type { TableRegistryType } from "@lib/tableDbRegistry";
+import type { CrudRegistryType } from "@lib/crudRegistry";
 import type { FieldConfig } from "@ty/FieldConfig";
 import type { TableRow } from "@ty/Table";
 
 let row: TableRow | null = null;
-let table: TableRegistryType | null = null;
+let table: CrudRegistryType | null = null;
 let config: FieldConfig | null = null;
 let headers: string[] = [];
 
@@ -16,7 +16,7 @@ if (Astro.request.method === "POST") {
     if (!raw) return new Response("Bad Request", { status: 400 });
 
     row = JSON.parse(raw.get("_row") as string);
-    table = raw.get("_table") as TableRegistryType;
+    table = raw.get("_endpoint") as CrudRegistryType;
     config = JSON.parse(raw.get("_config") as string);
     if (!config) throw new Error("no config");
     headers = Object.keys(config);
@@ -32,7 +32,7 @@ if (Astro.request.method === "POST") {
 {
   row && config && table ? (
     <>
-      <ViewRow row={row} headers={headers} config={config} table={table} />
+      <ViewRow row={row} headers={headers} config={config} endpoint={table} />
       <tr id={`row-error-${row.id}`} hx-swap-oob="outerHTML" class="row-error"/>
     </>
   ) : (

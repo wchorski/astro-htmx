@@ -1,36 +1,29 @@
 ---
 // components/tables/RowView.astro
-import type { TableRegistryType } from "@lib/tableDbRegistry";
 import type { BaseRow, FieldConfig } from "@ty/FieldConfig";
 import CellViewElement from "./CellViewElement.astro";
-import { undefined } from "astro:schema";
+import type { AstroBuiltinAttributes } from "astro";
 
 interface Props<TRow extends BaseRow = BaseRow> {
   row: TRow;
   headers: (keyof TRow & string)[];
   config: FieldConfig<TRow>;
-  table: TableRegistryType;
+  endpoint: string;
+  classList?: AstroBuiltinAttributes["class:list"];
 }
 
-const { row, headers, config, table } = Astro.props;
+const { row, headers, config, endpoint, classList } = Astro.props;
+if (!headers.includes("id")) throw new Error("header does not include ID");
 ---
 
-<tr id={`row-${row.id}`} data-status="viewing">
+<tr id={`row-${row.id}`} data-status="viewing" class:list={classList}>
   {
     headers.map((key) => {
-      const {
-        label,
-        value: override,
-        options,
-        type,
-        ...inputAttrs
-      } = config[key] ?? {};
+      const field = config[key] ?? {};
+      const { label, value: override, type, ...inputAttrs } = field;
+      const options =
+        type === "select" && "options" in field ? field.options : undefined;
 
-      // if (key === "locationId") {
-      //   console.log({ row });
-      //   console.log("CONFIG");
-      //   console.log(config["locationId"]);
-      // }
 
       return (
         <td data-key={key} class="view-cell">
@@ -38,8 +31,8 @@ const { row, headers, config, table } = Astro.props;
             key={key}
             type={type}
             rawVal={row[key] as string | number}
-            options={type === "select" ? options : undefined}
-            table={table}
+            options={options}
+            endpoint={endpoint}
           />
         </td>
       );
@@ -57,7 +50,7 @@ const { row, headers, config, table } = Astro.props;
       hx-vals={JSON.stringify({
         _row: JSON.stringify(row),
         _config: JSON.stringify(config),
-        _table: table,
+        _endpoint: endpoint,
       })}
     >
       Edit

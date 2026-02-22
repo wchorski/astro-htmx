@@ -2,22 +2,24 @@
 // components/TableEditable.astro
 interface Props<TRow extends BaseRow = BaseRow> {
   rows: TRow[];
-  fieldConfig: FieldConfig<TRow>;
-  table: TableRegistryType;
+  config: FieldConfig<TRow>;
+  crud: CrudRegistryType;
+  endpoint: string;
 }
 // EditableTable.astro
 import ViewRow from "@components/tables/RowView.astro";
-import type { TableRegistryType } from "@lib/tableDbRegistry";
+import RowCreate from "./tables/RowCreate.astro";
+import type { CrudRegistryType } from "@lib/crudRegistry";
 import type { BaseRow, FieldConfig } from "@ty/FieldConfig";
 
-const { rows, fieldConfig, table } = Astro.props;
+const { rows, config, crud, endpoint } = Astro.props;
 
 // Extract headers from first row (excluding 'id')
-const headers = Object.keys(fieldConfig);
+const headers = Object.keys(config);
 
 // Helper: resolve the display label for a key
 function label(key: string) {
-  return fieldConfig[key]?.label ?? key.charAt(0).toUpperCase() + key.slice(1);
+  return config[key]?.label ?? key.charAt(0).toUpperCase() + key.slice(1);
 }
 ---
 
@@ -34,19 +36,15 @@ function label(key: string) {
         <ViewRow
           row={row}
           headers={headers}
-          config={fieldConfig}
-          table={table}
+          config={config}
+          endpoint={endpoint}
         />
       ))
     }
   </tbody>
-  <div
-    id="table-error"
-    class="table-error"
-    style="display:none"
-    aria-live="polite"
-  >
-  </div>
+ <tfoot>
+  <RowCreate config={config} endpoint={endpoint} crud={crud}  />
+ </tfoot>
 </table>
 
 <script>

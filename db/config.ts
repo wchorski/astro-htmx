@@ -3,8 +3,8 @@ import { column, defineDb, defineTable } from "astro:db";
 const Member = defineTable({
   columns: {
     id: column.number({ primaryKey: true }),
-    asipId: column.number(),
-    regNum: column.number(),
+    // asipId: column.number(),
+    // regNum: column.number(),
     first_name: column.text(),
     last_name: column.text(),
     middle_initial: column.text({ optional: true }),
@@ -18,7 +18,7 @@ const Member = defineTable({
     state: column.text(),
     zip: column.number(),
   },
-  indexes: [{ on: ["id", "phone", "email", "asipId", "regNum"], unique: true }],
+  indexes: [{ on: ["id", "phone", "email"], unique: true }],
 });
 
 const Course = defineTable({

@@ -1,15 +1,18 @@
 ---
 import type { FieldConfig } from "@ty/FieldConfig";
-import type { TableRegistryType } from "@lib/tableDbRegistry";
+import type { CrudRegistryType } from "@lib/crudRegistry";
 
 interface Props {
+  crud: CrudRegistryType;
   config: FieldConfig;
-  table: TableRegistryType;
+  endpoint: string;
   error?: string | Record<string, any>;
 }
 
-const { config, table, error } = Astro.props;
+const { config, crud, endpoint, error } = Astro.props;
 const headers = Object.keys(config);
+
+const topLevelError = typeof error === "string" ? error.toString() : null;
 ---
 
 <tr id="row-new" data-status="creating">
@@ -18,8 +21,12 @@ const headers = Object.keys(config);
     style="display:none"
     hx-post="/partials/table/row-create"
     hx-target="#row-new"
-    hx-swap="beforebegin"
-    hx-vals={JSON.stringify({ _config: JSON.stringify(config), _table: table })}
+    hx-swap="outerHTML"
+    hx-vals={JSON.stringify({
+      _config: JSON.stringify(config),
+      _endpoint: endpoint,
+      _crud: crud,
+    })}
   >
   </form>
 
@@ -28,6 +35,9 @@ const headers = Object.keys(config);
       const { label, type, value: override, ...inputAttrs } = config[key];
       const fieldError =
         typeof error === "object" ? error?.fieldErrors?.[key]?.[0] : null;
+      if (key === "id") {
+        return <td />;
+      }
 
       return (
         <td>
@@ -40,7 +50,12 @@ const headers = Object.keys(config);
               type={type}
               {...(type === "checkbox"
                 ? { checked: !!(override ?? false) }
-                : { value: typeof override !== "boolean" ? override?.toString() ?? "" : "" })}
+                : {
+                    value:
+                      typeof override !== "boolean"
+                        ? (override?.toString() ?? "")
+                        : "",
+                  })}
             />
             {fieldError && <span class="field-error">{fieldError}</span>}
           </label>
@@ -50,13 +65,48 @@ const headers = Object.keys(config);
   }
 
   <td class="action-cell">
-    <button type="submit" form="create-form" class="save">Create</button>
     <button
+      type="submit"
+      form="create-form"
+      class="save"
+      title="create new item"
+      ><img
+        class="icon"
+        src="/icons/add.svg"
+        alt="delete icon"
+        width="30"
+        height="30"
+      /></button
+    >
+    <button
+      title="clear fields"
       type="button"
       class="cancel"
       onclick="document.getElementById('create-form').reset()"
     >
-      Cancel
+      <img
+        class="icon"
+        src="/icons/delete.svg"
+        alt="delete icon"
+        width="30"
+        height="30"
+      />
     </button>
   </td>
 </tr>
+
+<tr id={`row-error-create`} class="row-error">
+  {
+    topLevelError ? (
+      <td class="callout error top-level" colspan={headers.length}>
+        {topLevelError}
+      </td>
+    ) : null
+  }
+</tr>
+
+<style>
+  tr {
+    background-color: #3cb34d8c;
+  }
+</style>

@@ -9,8 +9,8 @@ const { locations } = Astro.props;
 
 <TableEditable
   rows={locations || []}
-  table="/attendance/admin/locations/id"
-  fieldConfig={{
+  endpoint="/attendance/admin/locations/id"
+  config={{
     id: {
       label: "ID",
       type: "number",

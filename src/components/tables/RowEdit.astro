@@ -1,6 +1,6 @@
 ---
 // components/tables/RowEdit.astro
-import type { TableRegistryType } from "@lib/tableDbRegistry";
+import type { CrudRegistryType } from "@lib/crudRegistry";
 import type { BaseRow, FieldConfig } from "@ty/FieldConfig";
 import type { ZodError } from "astro/zod";
 
@@ -9,7 +9,7 @@ interface Props<TRow extends BaseRow = BaseRow> {
   originalRow?: TRow; // fallback to row if not provided
   headers: (keyof TRow & string)[];
   config: FieldConfig<TRow>;
-  table: TableRegistryType;
+  table: CrudRegistryType;
   error?: string | ReturnType<ZodError["flatten"]> | null;
 }
 
@@ -22,7 +22,7 @@ const topLevelError = typeof error === "string" ? error.toString() : null;
   <form
     id={`edit-form-${row.id}`}
     style="display:none"
-    hx-post="/partials/table/row-save"
+    hx-put="/partials/table/row-save"
     hx-target={`#row-${row.id}`}
     hx-target-422={`#row-error-${row.id}`}
     hx-target-404={`#row-error-${row.id}`}
@@ -33,7 +33,7 @@ const topLevelError = typeof error === "string" ? error.toString() : null;
       _row: JSON.stringify(row),
       _originalRow: JSON.stringify(originalRow),
       _config: JSON.stringify(config),
-      _table: table,
+      _endpoint: table,
     })}
   >
   </form>
@@ -136,7 +136,7 @@ const topLevelError = typeof error === "string" ? error.toString() : null;
       hx-vals={JSON.stringify({
         _row: JSON.stringify(originalRow),
         _config: JSON.stringify(config),
-        _table: table,
+        _endpoint: table,
       })}
     >
       ⌀
