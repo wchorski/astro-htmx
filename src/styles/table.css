@@ -40,14 +40,13 @@ td {
 }
 td {
   padding-block: 0.5rem;
-  color: #212529;
 }
 
 table tbody > tr:nth-child(odd of :not(.row-error)) {
-  background-color: #ececec;
+  background-color: #0000001c;
 }
 table tbody > tr:nth-child(even of :not(.row-error)) {
-  background-color: #ffffff;
+  background-color: #0000004f;
 }
 
 tr.row-error:empty {

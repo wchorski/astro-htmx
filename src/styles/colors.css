@@ -2,6 +2,12 @@
   :root {
     --c-bg: #dddddd;
     --c-txt: #2e2b28;
+    --c-txt-rev: #fff7f0;
+    --c-txt-bg: #ffffff;
+    --c-seperator: rgb(160, 160, 160);
+    --c-interactive: rgb(85, 123, 136);
+    --c-active: rgb(100, 160, 151);
+    --c-primary: rgb(79, 79, 196);
   }
 }
 /* TODO debug w dark theme override for now */
@@ -9,10 +15,64 @@
   :root {
     --c-bg: #0e0e0d;
     --c-txt: #ddccbb;
+    --c-txt-rev: #000000;
+    --c-txt-bg: #262525;
+    --c-seperator: rgb(51, 51, 51);
+    --c-interactive: rgb(85, 123, 136);
+    --c-active: rgb(100, 160, 151);
+    --c-primary: rgb(79, 79, 196);
   }
 }
 
 body {
-    background-color: var(--c-bg);
+  background-color: var(--c-bg);
+  color: var(--c-txt);
+}
+
+table {
+  background-color: var(--c-txt-bg);
+}
+thead {
+  background-color: var(--c-txt-bg);
+  border-bottom-color: var(--c-seperator);
+}
+.pill {
+  padding-inline: 0.3rem;
+  border-style: solid;
+  border-width: 2px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.c-primary {
+  border-color: var(--c-primary);
+}
+
+a:link {
+  color: var(--c-interactive);
+  text-decoration: none;
+}
+a:visited {
+  color: var(--c-interactive);
+  filter: brightness(0.1);
+  text-decoration: none;
+}
+a:hover {
+  filter: brightness(1.2);
+  text-decoration: underline;
+}
+a:active {
+  color: var(--c-active);
+}
+
+button,
+.btn {
+  background-color: var(--c-interactive);
+  color: var(--c-txt-rev);
+
+  &:visited {
     color: var(--c-txt);
+  }
 }
