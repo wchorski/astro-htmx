@@ -1,11 +1,16 @@
 ---
+// partials/table/row-create.astro
 import type { BaseRow, FieldConfig, FieldValue } from "@ty/FieldConfig";
 import type { CrudRegistryType } from "@lib/crudRegistry";
 import { crudRegistry } from "@lib/crudRegistry";
 import RowView from "@components/tables/RowView.astro";
 import RowCreateForm from "@components/tables/RowCreate.astro";
 import { ZodError } from "astro/zod";
-import { ConflictError, NotFoundError } from "@lib/errors";
+import {
+  ConflictError,
+  errorHandlingOnSubmit,
+  NotFoundError,
+} from "@lib/errors";
 import { parseFormFields } from "@lib/parseFormFields";
 
 let ctx: {
@@ -26,7 +31,7 @@ if (Astro.request.method === "POST") {
     const config = JSON.parse(raw.get("_config") as string);
     if (!config) throw new Error("config not found");
     const endpoint = raw.get("_endpoint") as string;
-    const headers = Object.keys(config)
+    const headers = Object.keys(config);
     ctx = { config, crud, endpoint, headers };
 
     const fields = parseFormFields(raw, headers, config);
@@ -36,27 +41,18 @@ if (Astro.request.method === "POST") {
       throw new NotFoundError(`No handler registered for crud: ${crud}`);
 
     // TODO kinda hacky but it works. database assigns ID
-    delete fields.id
+    delete fields.id;
     newRow = await entry.create(fields);
-    console.log({ newRow });
-
   } catch (e) {
-    console.log("❌ PUT partials/crud/row-create");
-    console.log({ e });
-    if (e instanceof ZodError) {
-      Astro.response.status = 422;
-      error = e.flatten();
-    } else if (e instanceof NotFoundError) {
-      Astro.response.status = 404;
-      error = e.message;
-    } else if (e instanceof ConflictError) {
-      Astro.response.status = 409;
-      error = e.message;
-    } else {
-      Astro.response.status = 500;
-      const msg = typeof e === "string" ? e : String(e);
-      error = "An unexpected error occurred " + msg;
-    }
+    // console.log("❌ PUT partials/crud/row-create");
+    // console.log({ e });
+    const { err, status } = errorHandlingOnSubmit(e);
+    error = err;
+    Astro.response.status = status;
+    
+    // TODO add this logic to other forms. this preserves the original form while showing a new error
+    Astro.response.headers.set("HX-Retarget", "#row-error-create");
+    Astro.response.headers.set("HX-Reswap", "innerHTML");
   }
 }
 ---
@@ -65,11 +61,14 @@ if (Astro.request.method === "POST") {
   !ctx ? (
     <p class="callout not-found">missing row-create context</p>
   ) : error ? (
-    <RowCreateForm {...ctx} error={error} />
+    <td class="callout error top-level" colspan={ctx.headers.length}>
+      {typeof error === "string" ? error : "Validation error"}
+    </td>
   ) : newRow ? (
     <>
       <RowView row={newRow} {...ctx} classList={["new-row"]} />
       <RowCreateForm {...ctx} />
+      <tr hx-swap-oob="innerHTML:#row-error-create" />
     </>
   ) : (
     <p>unknown row-create render</p>

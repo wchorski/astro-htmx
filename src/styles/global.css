@@ -83,17 +83,20 @@ button,
   text-decoration: none;
 }
 
-button:has(.icon), .btn:has(.icon) {
+button:has(.icon),
+.btn:has(.icon) {
   padding: 0.1rem 0.3rem;
 }
 
-button.save, .btn.save {
+button.save,
+.btn.save {
   background-color: mediumseagreen;
 }
-button.cancel, .btn.cancel {
-    background: lightgrey;
-    color: #475569;
-  }
+button.cancel,
+.btn.cancel {
+  background: lightgrey;
+  color: #475569;
+}
 
 button:hover,
 .btn:hover {
@@ -156,4 +159,31 @@ button:hover,
 }
 .warning {
   border-color: orange;
+}
+
+/* ANIMATION */
+.error {
+  animation-name: vibrate;
+  animation-duration: 100ms;
+  animation-timing-function: linear;
+  animation-delay: 0;
+  animation-iteration-count: 3;
+  animation-direction: normal;
+}
+
+@keyframes vibrate {
+  0% {
+    opacity: 0.3;
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-4px);
+  }
+  75% {
+    transform: translateX(4px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }

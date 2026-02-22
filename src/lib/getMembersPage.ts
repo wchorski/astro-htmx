@@ -1,4 +1,4 @@
-import { db, count, Member, desc } from "astro:db";
+import { db, count, Member, desc, asc } from "astro:db";
 
 export async function getMembersPage(page: number, perPage = 12) {
   if (page < 1) page = 1;
@@ -15,7 +15,7 @@ export async function getMembersPage(page: number, perPage = 12) {
   const members = await db
     .select()
     .from(Member)
-    .orderBy(Member.last_name)
+    .orderBy(asc(Member.last_name))
     .limit(perPage)
     .offset((page - 1) * perPage);
 

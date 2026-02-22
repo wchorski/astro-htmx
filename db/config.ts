@@ -18,7 +18,12 @@ const Member = defineTable({
     state: column.text(),
     zip: column.number(),
   },
-  indexes: [{ on: ["id", "phone", "email"], unique: true }],
+  //? this is a composit unique constraint. meaning the combo must be unique
+  // indexes: [{ on: ["id", "phone", "email"], unique: true }],
+  indexes: [
+    { on: ["phone"], unique: true },
+    { on: ["email"], unique: true },
+  ],
 });
 
 const Course = defineTable({
@@ -31,7 +36,7 @@ const Course = defineTable({
     dateCivil: column.text(),
     locationId: column.number({ references: () => Location.columns.id }),
   },
-  indexes: [{ on: ["id"], unique: true }],
+  // indexes: [{ on: ["id"], unique: true }],
 });
 const Location = defineTable({
   columns: {
@@ -44,7 +49,7 @@ const Location = defineTable({
     timezone: column.text(),
     description: column.text({ optional: true }),
   },
-  indexes: [{ on: ["id"], unique: true }],
+  indexes: [{ on: ["name"], unique: true }],
 });
 
 const Credit = defineTable({
@@ -57,7 +62,7 @@ const Credit = defineTable({
     grade: column.text({ optional: true }),
     attended: column.boolean(),
   },
-  indexes: [{ on: ["id"], unique: true }],
+  // indexes: [{ on: ["id"], unique: true }],
 });
 
 // https://astro.build/db/config
