@@ -32,9 +32,17 @@ const topLevelError = typeof error === "string" ? error.toString() : null;
 
   {
     headers.map((key) => {
-      const { label, type, value: override, ...inputAttrs } = config[key];
+      const field = config[key] ?? {};
+      const { label, value: override, type, ...inputAttrs } = field;
+
       const fieldError =
-        typeof error === "object" ? error?.fieldErrors?.[key]?.[0] : null;
+        typeof error === "object" ? error?.fieldErrors[key]?.[0] : null;
+      const options =
+        type === "select" && "options" in field ? field.options : undefined;
+      const datalist =
+        type && !["select", "textarea"].includes(type) && "datalist" in field
+          ? field.datalist
+          : undefined;
       if (key === "id") {
         return <td />;
       }
@@ -57,6 +65,13 @@ const topLevelError = typeof error === "string" ? error.toString() : null;
                         : "",
                   })}
             />
+            {datalist ? (
+              <datalist id={`datalist-${key}`}>
+                {datalist.map((opt) => (
+                  <option value={opt.value}>{opt.label}</option>
+                ))}
+              </datalist>
+            ) : null}
             {fieldError && <span class="field-error">{fieldError}</span>}
           </label>
         </td>

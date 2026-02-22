@@ -4,28 +4,53 @@ import type { FieldConfig } from "@ty/FieldConfig";
 import type { TableRow } from "@ty/Table";
 import RowEditComponent from "@components/tables/RowEdit.astro";
 import type { CrudRegistryType } from "@lib/crudRegistry";
+import { ZodError } from "astro/zod";
+import { NotFoundError, ConflictError } from "@lib/errors";
+import type { table } from "console";
+import type { config } from "process";
 
+// let table: CrudRegistryType | null = null;
+// let config: FieldConfig | null = null;
+// let headers: string[] = [];
+let ctx: {
+  config: FieldConfig;
+  crud: CrudRegistryType;
+  endpoint: string;
+  headers: string[];
+} | null = null;
 let row: TableRow | null = null;
-let table: CrudRegistryType | null = null;
-let config: FieldConfig | null = null;
-let headers: string[] = [];
-let error: Error | string | null = null;
+let error: string | ReturnType<ZodError["flatten"]> | null = null;
 
-if (Astro.request.method === "POST") {
+if (Astro.request.method === "PUT") {
+  
   try {
-    const raw = Astro.request.formData ? await Astro.request.formData() : null;
+    const raw = await Astro.request.formData();
     if (!raw) return new Response("Bad Request", { status: 400 });
-    // Rebuild row and config from POST body
+    console.log({ raw });
+    const crud = raw.get("_crud") as CrudRegistryType;
+    if (!crud) throw new Error("crud not found");
+    const config = JSON.parse(raw.get("_config") as string);
+    if (!config) throw new Error("config not found");
+    const endpoint = raw.get("_endpoint") as string;
+    const headers = Object.keys(config);
+    ctx = { config, crud, endpoint, headers };
+
     row = JSON.parse(raw?.get("_row") as string);
-    table = raw.get("_endpoint") as CrudRegistryType;
-    config = JSON.parse(raw?.get("_config") as string);
-    if (!config) throw new Error("no config found");
-    headers = Object.keys(config);
   } catch (e) {
-    console.log("partials/table/row-edit");
-    if (e instanceof Error) {
-      console.error(e);
+    console.log("XXX partials/table/row-edit");
+    console.log({ e });
+    if (e instanceof ZodError) {
+      Astro.response.status = 422;
+      error = e.flatten();
+    } else if (e instanceof NotFoundError) {
+      Astro.response.status = 404;
       error = e.message;
+    } else if (e instanceof ConflictError) {
+      Astro.response.status = 409;
+      error = e.message;
+    } else {
+      Astro.response.status = 500;
+      error = "An unexpected error occurred";
     }
   }
 }
@@ -36,21 +61,15 @@ if (Astro.request.method === "POST") {
 {
   error ? (
     <tr>
-      <td colspan={headers.length + 1} class="callout error">
+      <td colspan={ctx?.headers.length} class="callout error">
         <pre>component error: {JSON.stringify(error, null, 2)}</pre>
       </td>
     </tr>
-  ) : row && config && table ? (
-    <RowEditComponent
-      row={row}
-      headers={headers}
-      config={config}
-      table={table}
-      error={error}
-    />
+  ) : row && ctx ? (
+    <RowEditComponent {...ctx} row={row} error={error} />
   ) : (
     <tr>
-      <td>
+      <td colspan={ctx?.headers.length}>
         <p class="callout not-found">row-edit missing parameters</p>
       </td>
     </tr>

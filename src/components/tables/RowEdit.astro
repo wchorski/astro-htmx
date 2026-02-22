@@ -10,11 +10,20 @@ interface Props<TRow extends BaseRow = BaseRow> {
   originalRow?: TRow; // fallback to row if not provided
   headers: (keyof TRow & string)[];
   config: FieldConfig<TRow>;
-  table: CrudRegistryType;
+  crud: CrudRegistryType;
+  endpoint: string;
   error?: string | ReturnType<ZodError["flatten"]> | null;
 }
 
-const { row, originalRow = row, headers, config, table, error } = Astro.props;
+const {
+  row,
+  originalRow = row,
+  headers,
+  config,
+  endpoint,
+  crud,
+  error,
+} = Astro.props;
 
 const topLevelError = typeof error === "string" ? error.toString() : null;
 ---
@@ -34,7 +43,8 @@ const topLevelError = typeof error === "string" ? error.toString() : null;
       _row: JSON.stringify(row),
       _originalRow: JSON.stringify(originalRow),
       _config: JSON.stringify(config),
-      _endpoint: table,
+      _endpoint: endpoint,
+      _crud: crud,
     })}
   >
   </form>
@@ -150,7 +160,8 @@ const topLevelError = typeof error === "string" ? error.toString() : null;
       hx-vals={JSON.stringify({
         _row: JSON.stringify(originalRow),
         _config: JSON.stringify(config),
-        _endpoint: table,
+        _endpoint: endpoint,
+        _crud: crud,
       })}
     >
       ⌀

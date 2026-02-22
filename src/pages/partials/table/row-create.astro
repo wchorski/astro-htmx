@@ -22,6 +22,7 @@ if (Astro.request.method === "POST") {
     const raw = await Astro.request.formData();
     if (!raw) return new Response("Bad Request", { status: 400 });
     const crud = raw.get("_crud") as CrudRegistryType;
+    if (!crud) throw new Error("crud not found");
     const config = JSON.parse(raw.get("_config") as string);
     if (!config) throw new Error("config not found");
     const endpoint = raw.get("_endpoint") as string;
@@ -36,8 +37,7 @@ if (Astro.request.method === "POST") {
 
     // TODO kinda hacky but it works. database assigns ID
     delete fields.id
-    const fn = entry.create;
-    newRow = await fn(fields);
+    newRow = await entry.create(fields);
     console.log({ newRow });
 
   } catch (e) {

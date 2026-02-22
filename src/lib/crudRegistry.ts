@@ -24,12 +24,12 @@ export const crudRegistry = {
       await db.select().from(Member).where(eq(Member.id, id)).get(),
     update: async (row) => {
       const { id, ...fields } = row;
-      const result = await db
+      const [result] = await db
         .update(Member)
         .set(fields)
         .where(eq(Member.id, id))
         .returning();
-      return result[0];
+      return result;
     },
     delete: async (id) => {
       await db.delete(Member).where(eq(Member.id, id));

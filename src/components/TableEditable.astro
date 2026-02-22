@@ -38,13 +38,14 @@ function label(key: string) {
           headers={headers}
           config={config}
           endpoint={endpoint}
+          crud={crud}
         />
       ))
     }
   </tbody>
- <tfoot>
-  <RowCreate config={config} endpoint={endpoint} crud={crud}  />
- </tfoot>
+  <tfoot>
+    <RowCreate config={config} endpoint={endpoint} crud={crud} />
+  </tfoot>
 </table>
 
 <script>
