@@ -1,5 +1,6 @@
 ---
 // components/tables/RowEdit.astro
+import InputField from "@components/form/InputField.astro";
 import type { CrudRegistryType } from "@lib/crudRegistry";
 import type { BaseRow, FieldConfig } from "@ty/FieldConfig";
 import type { ZodError } from "astro/zod";
@@ -40,15 +41,18 @@ const topLevelError = typeof error === "string" ? error.toString() : null;
 
   {
     headers.map((key) => {
-      const {
-        label,
-        value: override,
-        type,
-        datalist,
-        options,
-        ...inputAttrs
-      } = config[key] ?? {};
-      // TODO may need to think about other input values
+      const field = config[key] ?? {};
+      const { label, value: override, type, ...inputAttrs } = field;
+
+      const options =
+        type === "select" && "options" in field ? field.options : undefined;
+      const datalist =
+        type && !["select", "textarea"].includes(type) && "datalist" in field
+          ? field.datalist
+          : undefined;
+
+      // TODO  may need to think about other input values
+      // can i use parseFormFields()?
       const resolvedValue =
         override !== undefined
           ? override
@@ -65,7 +69,7 @@ const topLevelError = typeof error === "string" ? error.toString() : null;
             <label>
               <span class="text">{label ?? key}</span>
               <select {...inputAttrs} form={`edit-form-${row.id}`} name={key}>
-                {options.map((opt) => (
+                {options?.map((opt) => (
                   <option
                     value={opt.value}
                     selected={resolvedValue === opt.value}
@@ -95,19 +99,28 @@ const topLevelError = typeof error === "string" ? error.toString() : null;
       } else {
         return (
           <td>
-            <label>
+            <InputField
+              formId={`edit-form-${row.id}`}
+              key={key}
+              label={label}
+              type={type}
+              value={resolvedValue}
+              fieldError={fieldError}
+              datalist={datalist}
+              inputAttrs={inputAttrs}
+            />
+            {/* <label>
               <span class="text">{label ?? key}</span>
-              {/* TODO dynamic element that can be input, select, textarea, checkbox, etc */}
               <input
                 {...inputAttrs}
                 form={`edit-form-${row.id}`}
                 name={key}
                 type={type}
+                list={`datalist-${key}`}
                 {...(type === "checkbox"
                   ? { checked: !!resolvedValue }
                   : { value: resolvedValue as string | number | undefined })}
               />
-              {fieldError && <span class="field-error">{fieldError}</span>}
               {datalist ? (
                 <datalist id={`datalist-${key}`}>
                   {datalist.map((opt) => (
@@ -115,7 +128,8 @@ const topLevelError = typeof error === "string" ? error.toString() : null;
                   ))}
                 </datalist>
               ) : null}
-            </label>
+              {fieldError && <span class="field-error">{fieldError}</span>}
+            </label> */}
           </td>
         );
       }

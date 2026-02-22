@@ -1,0 +1,18 @@
+@media (prefers-color-scheme: light) {
+  :root {
+    --c-bg: #dddddd;
+    --c-txt: #2e2b28;
+  }
+}
+/* TODO debug w dark theme override for now */
+@media (prefers-color-scheme: light) {
+  :root {
+    --c-bg: #0e0e0d;
+    --c-txt: #ddccbb;
+  }
+}
+
+body {
+    background-color: var(--c-bg);
+    color: var(--c-txt);
+}

@@ -1,6 +1,6 @@
 // src/lib/tableDbRegistry.ts
 import type { TableRow } from "@ty/Table";
-import { db, Member, Credit } from "astro:db";
+import { db, eq, Member, Credit, Location } from "astro:db";
 
 type CreateFn = (row: Omit<TableRow, "id">) => Promise<TableRow>;
 type ReadFn = (id: number) => Promise<TableRow | null>;
@@ -54,6 +54,26 @@ export const crudRegistry = {
     },
     delete: async (id) => {
       await db.delete(Credit).where(eq(Credit.id, id));
+    },
+  },
+  locations: {
+    create: async (row) => {
+      const [result] = await db.insert(Location).values(row).returning();
+      return result;
+    },
+    read: async (id) =>
+      await db.select().from(Location).where(eq(Location.id, id)).get(),
+    update: async (row) => {
+      const { id, ...fields } = row;
+      const result = await db
+        .update(Location)
+        .set(fields)
+        .where(eq(Location.id, id))
+        .returning();
+      return result[0];
+    },
+    delete: async (id) => {
+      await db.delete(Location).where(eq(Location.id, id));
     },
   },
 } satisfies Record<string, CrudEntry>;

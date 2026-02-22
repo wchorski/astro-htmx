@@ -6,7 +6,6 @@
 
 body,
 html {
-  background-color: rgb(241, 241, 241);
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -24,7 +23,6 @@ body {
 }
 
 h1 {
-  color: #333;
   margin-bottom: 0.5rem;
 }
 
@@ -33,7 +31,6 @@ h1 {
 } */
 
 .subtitle {
-  color: #666;
   margin-bottom: 2rem;
 }
 
@@ -72,7 +69,6 @@ h1 {
 
 .card h2 {
   margin-bottom: 1rem;
-  color: #444;
   font-size: 1.25rem;
 }
 
@@ -87,6 +83,10 @@ button,
   font-size: 1rem;
   transition: background 0.2s;
   text-decoration: none;
+}
+
+button:has(.icon), .btn:has(.icon) {
+  padding: 0.1rem 0.3rem;
 }
 
 button.save, .btn.save {

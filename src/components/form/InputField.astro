@@ -1,0 +1,41 @@
+---
+import type { FieldOption, FieldSlot, FieldType } from "@ty/FieldConfig";
+
+interface Props {
+  formId: string;
+  key: string;
+  label?: string;
+  type: FieldType | HTMLInputTypeAttribute | null | undefined;
+  value: string | number | undefined;
+  fieldError: any;
+  datalist: FieldOption[] | undefined;
+  inputAttrs: Omit<FieldSlot, "label" | "value" | "type">;
+}
+
+const { formId, inputAttrs, key, label, type, value, fieldError, datalist } =
+  Astro.props;
+---
+
+<label>
+  <span class="text">{label ?? key}</span>
+  {
+    /* TODO dynamic element that can be input, select, textarea, checkbox, etc */
+  }
+  <input
+    {...inputAttrs}
+    form={formId}
+    name={key}
+    type={type}
+    {...type === "checkbox" ? { checked: !!value } : { value: value }}
+  />
+  {fieldError && <span class="field-error">{fieldError}</span>}
+  {
+    datalist ? (
+      <datalist id={`datalist-${key}`}>
+        {datalist.map((opt) => (
+          <option value={opt.value}>{opt.label}</option>
+        ))}
+      </datalist>
+    ) : null
+  }
+</label>

@@ -4,11 +4,13 @@ interface Props {
 }
 import type { LocationSelect } from "@ty/Schema";
 import TableEditable from "./TableEditable.astro";
+const { DATALIST_STATES, DATALIST_CITIES } = import.meta.env;
 const { locations } = Astro.props;
 ---
 
 <TableEditable
   rows={locations || []}
+  crud={"locations"}
   endpoint="/attendance/admin/locations/id"
   config={{
     id: {
@@ -31,11 +33,19 @@ const { locations } = Astro.props;
       type: "text",
       required: true,
       placeholder: "Naperville...",
+      datalist: DATALIST_CITIES?.split(",").map((city) => ({
+        value: city,
+        label: city,
+      })),
     },
     state: {
       type: "text",
       required: true,
       placeholder: "Illinois...",
+      datalist: DATALIST_STATES?.split(",").map((state) => ({
+        value: state,
+        label: state,
+      })),
     },
     zip: {
       type: "number",
