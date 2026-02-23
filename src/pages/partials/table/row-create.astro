@@ -12,6 +12,7 @@ import {
   NotFoundError,
 } from "@lib/errors";
 import { parseFormFields } from "@lib/parseFormFields";
+import { getContext } from "@lib/context";
 
 let ctx: {
   config: FieldConfig;
@@ -27,21 +28,14 @@ if (Astro.request.method === "POST") {
   try {
     const formData = await Astro.request.formData();
     if (!formData) return new Response("Bad Request", { status: 400 });
-    const crud = formData.get("_crud") as CrudRegistryType;
-    if (!crud) throw new Error("crud not found");
-    const config = JSON.parse(formData.get("_config") as string);
-    if (!config) throw new Error("config not found");
-    const endpoint = formData.get("_endpoint") as string;
-    const headers = Object.keys(config);
-    ctx = { config, crud, endpoint, headers };
-
+    ctx = getContext(formData)
     submittedFields = Object.fromEntries(
       [...formData.entries()].filter(([key]) => !key.startsWith("_")),
     );
 
-    const entry = crudRegistry[crud];
+    const entry = crudRegistry[ctx.crud];
     if (!entry)
-      throw new NotFoundError(`No handler registered for crud: ${crud}`);
+      throw new NotFoundError(`No handler registered for crud: ${ctx.crud}`);
 
     // TODO kinda hacky but it works. database assigns ID
     // delete fields.id;
@@ -51,6 +45,8 @@ if (Astro.request.method === "POST") {
     console.log({ e });
     const { err, status } = errorHandlingOnSubmit(e);
     Astro.response.status = status;
+    error = err;
+    // TODO i like the idea of swapping target to not touch form, but causes issues with inline field errors not rendering
     // if (status === 422) {
     //   // let normal swap happen
     // } else {
@@ -58,17 +54,8 @@ if (Astro.request.method === "POST") {
     //   Astro.response.headers.set("HX-Retarget", "#row-error-create");
     //   Astro.response.headers.set("HX-Reswap", "innerHTML");
     // }
-    error = err;
+    
   }
-}
-
-if (Astro.request.method === "GET") {
-  const params = Astro.url.searchParams;
-  const crud = params.get("_crud") as CrudRegistryType;
-  const config = JSON.parse(params.get("_config") as string);
-  const endpoint = params.get("_endpoint") as string;
-  const headers = Object.keys(config);
-  ctx = { config, crud, endpoint, headers };
 }
 ---
 

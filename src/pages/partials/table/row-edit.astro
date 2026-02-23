@@ -5,9 +5,14 @@ import type { TableRow } from "@ty/Table";
 import RowEditComponent from "@components/tables/RowEdit.astro";
 import type { CrudRegistryType } from "@lib/crudRegistry";
 import { ZodError } from "astro/zod";
-import { NotFoundError, ConflictError } from "@lib/errors";
+import {
+  NotFoundError,
+  ConflictError,
+  errorHandlingOnSubmit,
+} from "@lib/errors";
 import type { table } from "console";
 import type { config } from "process";
+import { getContext } from "@lib/context";
 
 // let table: CrudRegistryType | null = null;
 // let config: FieldConfig | null = null;
@@ -19,39 +24,26 @@ let ctx: {
   headers: string[];
 } | null = null;
 let row: TableRow | null = null;
+let submittedFields: Record<string, any> | null = null;
 let error: string | ReturnType<ZodError["flatten"]> | null = null;
 
 if (Astro.request.method === "PUT") {
-  
   try {
-    const raw = await Astro.request.formData();
-    if (!raw) return new Response("Bad Request", { status: 400 });
-    console.log({ raw });
-    const crud = raw.get("_crud") as CrudRegistryType;
-    if (!crud) throw new Error("crud not found");
-    const config = JSON.parse(raw.get("_config") as string);
-    if (!config) throw new Error("config not found");
-    const endpoint = raw.get("_endpoint") as string;
-    const headers = Object.keys(config);
-    ctx = { config, crud, endpoint, headers };
+    const formData = await Astro.request.formData();
+    if (!formData) return new Response("Bad Request", { status: 400 });
+    ctx = getContext(formData);
+    // submittedFields = Object.fromEntries(
+    //   [...formData.entries()].filter(([key]) => !key.startsWith("_")),
+    // );
 
-    row = JSON.parse(raw?.get("_row") as string);
+    row = JSON.parse(formData?.get("_row") as string);
+    
   } catch (e) {
     console.log("XXX partials/table/row-edit");
     console.log({ e });
-    if (e instanceof ZodError) {
-      Astro.response.status = 422;
-      error = e.flatten();
-    } else if (e instanceof NotFoundError) {
-      Astro.response.status = 404;
-      error = e.message;
-    } else if (e instanceof ConflictError) {
-      Astro.response.status = 409;
-      error = e.message;
-    } else {
-      Astro.response.status = 500;
-      error = "An unexpected error occurred";
-    }
+    const { err, status } = errorHandlingOnSubmit(e);
+    Astro.response.status = status;
+    error = err;
   }
 }
 

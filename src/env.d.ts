@@ -1,7 +1,7 @@
 interface ImportMetaEnv {
   readonly DATALIST_STATES?: string;
   readonly DATALIST_CITIES?: string;
-  // more env variables...
+  readonly DATALIST_TIMEZONES?: string;
 }
 
 interface ImportMeta {

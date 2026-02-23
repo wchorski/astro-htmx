@@ -4,7 +4,7 @@ interface Props {
 }
 import type { LocationSelect } from "@ty/Schema";
 import TableEditable from "./TableEditable.astro";
-const { DATALIST_STATES, DATALIST_CITIES } = import.meta.env;
+const { DATALIST_STATES, DATALIST_CITIES, DATALIST_TIMEZONES } = import.meta.env;
 const { locations } = Astro.props;
 ---
 
@@ -33,18 +33,18 @@ const { locations } = Astro.props;
       type: "text",
       required: true,
       placeholder: "Naperville...",
-      datalist: DATALIST_CITIES?.split(",").map((city) => ({
-        value: city,
-        label: city,
+      datalist: DATALIST_CITIES?.split(",").map((li) => ({
+        value: li,
+        label: li,
       })),
     },
     state: {
       type: "text",
       required: true,
       placeholder: "Illinois...",
-      datalist: DATALIST_STATES?.split(",").map((state) => ({
-        value: state,
-        label: state,
+      datalist: DATALIST_STATES?.split(",").map((li) => ({
+        value: li,
+        label: li,
       })),
     },
     zip: {
@@ -57,6 +57,10 @@ const { locations } = Astro.props;
       // TODO needs to be select input field
       type: "text",
       required: true,
+      datalist: DATALIST_TIMEZONES?.split(",").map((li) => ({
+        value: li,
+        label: li,
+      })),
     },
     description: {
       type: "text",

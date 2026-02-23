@@ -1,21 +1,36 @@
 ---
 // components/form/InputField.astro
+import type { HTMLAttributes } from "astro/types";
 import type { FieldOption, FieldSlot, FieldType } from "@ty/FieldConfig";
 
-interface Props {
+type InputFieldType = Exclude<FieldType, "select" | "textarea">;
+
+interface Props extends Omit<
+  HTMLAttributes<"input">,
+  "type" | "value" | "checked" | "name"
+> {
   formId: string;
   name: string;
   label?: string;
-  type: FieldType | HTMLInputTypeAttribute | null | undefined;
+  type?: InputFieldType | null;
   value?: string | number;
   checked?: boolean;
-  fieldError: any;
-  datalist: FieldOption[] | undefined;
-  inputAttrs: Omit<FieldSlot, "label" | "value" | "type">;
+  fieldError?: string | null;
+  datalist?: FieldOption[];
+  inputAttrs?: Omit<FieldSlot, "label" | "value" | "type">;
 }
 
-const { formId, inputAttrs, checked, name, label, type, value, fieldError, datalist } =
-  Astro.props;
+const {
+  formId,
+  inputAttrs,
+  checked,
+  name,
+  label,
+  type,
+  value,
+  fieldError,
+  datalist,
+} = Astro.props;
 ---
 
 <label>
@@ -25,12 +40,12 @@ const { formId, inputAttrs, checked, name, label, type, value, fieldError, datal
       <input type="hidden" name={name} form={formId} value="false" />
     )
   }
-
   <input
     {...inputAttrs}
     form={formId}
     name={name}
     type={type}
+    {...datalist ? { list: `datalist-${name}` } : {}}
     {...type === "checkbox" ? { checked: checked } : { value: value ?? "" }}
   />
   {fieldError && <span class="field-error">{fieldError}</span>}

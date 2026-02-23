@@ -45,15 +45,15 @@ export const crudRegistry = {
     },
     update: async (row) => {
       try {
-        const { id, ...fields } = row;
-        const validated = validate.memberUpdate.parse(fields);
-        const validId = validate.id.parse(id);
+        
+        const validated = validate.memberUpdate.parse(row);
+        
         const [result] = await db
           .update(Member)
           .set(validated)
-          .where(eq(Member.id, validId))
+          .where(eq(Member.id, validated.id))
           .returning();
-        if (!result) throw new NotFoundError(`Member ${id} not found`);
+        if (!result) throw new NotFoundError(`Member ${validated.id} not found`);
         return result;
       } catch (e) {
         throwErrorsForCRUD(e);
@@ -120,9 +120,9 @@ export const crudRegistry = {
     },
     update: async (row) => {
       try {
-        const { id, ...fields } = row;
-        const validated = validate.courseUpdate.parse(fields);
-        const validId = validate.id.parse(id);
+        
+        const validated = validate.courseUpdate.parse(row);
+        
 
         const location = await db
           .select()
@@ -144,9 +144,9 @@ export const crudRegistry = {
             ),
             ...validated,
           })
-          .where(eq(Course.id, validId))
+          .where(eq(Course.id, validated.id))
           .returning();
-        if (!result) throw new NotFoundError(`Course ${id} not found`);
+        if (!result) throw new NotFoundError(`Course ${row.id} not found`);
         return result;
       } catch (e) {
         throwErrorsForCRUD(e);
@@ -200,15 +200,15 @@ export const crudRegistry = {
     },
     update: async (row) => {
       try {
-        const { id, ...fields } = row;
-        const validated = validate.creditUpdate.parse(fields);
-        const validId = validate.id.parse(id);
+        
+        const validated = validate.creditUpdate.parse(row);
+        
         const [result] = await db
           .update(Credit)
           .set(validated)
-          .where(eq(Credit.id, validId))
+          .where(eq(Credit.id, validated.id))
           .returning();
-        if (!result) throw new NotFoundError(`Credit ${id} not found`);
+        if (!result) throw new NotFoundError(`Credit ${row.id} not found`);
         return result;
       } catch (e) {
         throwErrorsForCRUD(e);
@@ -259,15 +259,15 @@ export const crudRegistry = {
 
     update: async (row) => {
       try {
-        const { id, ...fields } = row;
-        const validated = validate.locationUpdate.parse(fields);
-        const validId = validate.id.parse(id);
+        
+        const validated = validate.locationUpdate.parse(row);
+        const validId = validate.id.parse(row.id);
         const [result] = await db
           .update(Location)
           .set(validated)
           .where(eq(Location.id, validId))
           .returning();
-        if (!result) throw new NotFoundError(`Location ${id} not found`);
+        if (!result) throw new NotFoundError(`Location ${row.id} not found`);
         return result;
       } catch (e) {
         throwErrorsForCRUD(e);

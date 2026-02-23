@@ -6,8 +6,13 @@ import ViewRow from "@components/tables/RowView.astro";
 import EditRow from "@components/tables/RowEdit.astro";
 import { crudRegistry, type CrudRegistryType } from "@lib/crudRegistry";
 import { ZodError } from "astro/zod";
-import { ConflictError, NotFoundError } from "@lib/errors";
+import {
+  ConflictError,
+  errorHandlingOnSubmit,
+  NotFoundError,
+} from "@lib/errors";
 import { parseFormFields } from "@lib/parseFormFields";
+import { getContext } from "@lib/context";
 
 let row: TableRow | null = null;
 let originalRow: TableRow | null = null;
@@ -20,6 +25,7 @@ let ctx: {
   endpoint: string;
   headers: string[];
 } | null = null;
+let submittedFields: Record<string, any> | null = null;
 let error: string | ReturnType<ZodError["flatten"]> | null = null;
 
 // TODO symanticly, i should use PUT on edit/update and POST on creating new record
@@ -27,46 +33,33 @@ let error: string | ReturnType<ZodError["flatten"]> | null = null;
 
 if (Astro.request.method === "PUT") {
   try {
-    const raw = await Astro.request.formData();
-    if (!raw) return new Response("Bad Request", { status: 400 });
-    const crud = raw.get("_crud") as CrudRegistryType;
-    if (!crud) throw new Error("crud not found");
-    const config = JSON.parse(raw.get("_config") as string);
-    if (!config) throw new Error("config not found");
-    const endpoint = raw.get("_endpoint") as string;
-    const headers = Object.keys(config);
-    ctx = { config, crud, endpoint, headers };
+    const formData = await Astro.request.formData();
+    if (!formData) return new Response("Bad Request", { status: 400 });
 
-    row = JSON.parse(raw?.get("_row") as string);
-    originalRow = raw.get("_originalRow")
-      ? JSON.parse(raw.get("_originalRow") as string)
+    ctx = getContext(formData);
+
+    submittedFields = Object.fromEntries(
+      [...formData.entries()].filter(([key]) => !key.startsWith("_")),
+    );
+
+    row = JSON.parse(formData?.get("_row") as string);
+    originalRow = formData.get("_originalRow")
+      ? JSON.parse(formData.get("_originalRow") as string)
       : row; // first time entering edit, seed it from row
-    const id = Number(raw.get("id"));
 
-    // row = { id };
-
-    const fields = parseFormFields(raw, headers, config);
-
-    const entry = crudRegistry[crud];
+    const entry = crudRegistry[ctx.crud];
     if (!entry)
-      throw new NotFoundError(`No handler registered for crud: ${crud}`);
-    row = await entry.update(fields);
+      throw new NotFoundError(`No handler registered for crud: ${ctx.crud}`);
+    
+    row = await entry.update(
+      submittedFields as Partial<TableRow> & { id: string },
+    );
   } catch (e) {
-    console.log("❌ partials/table/row-save");
-    console.log({ e });
-    if (e instanceof ZodError) {
-      Astro.response.status = 422;
-      error = e.flatten();
-    } else if (e instanceof NotFoundError) {
-      Astro.response.status = 404;
-      error = e.message;
-    } else if (e instanceof ConflictError) {
-      Astro.response.status = 409;
-      error = e.message;
-    } else {
-      Astro.response.status = 500;
-      error = "An unexpected error occurred";
-    }
+    // console.log("❌ partials/table/row-save");
+    // console.log({ e });
+    const { err, status } = errorHandlingOnSubmit(e);
+    Astro.response.status = status;
+    error = err;
   }
 }
 ---

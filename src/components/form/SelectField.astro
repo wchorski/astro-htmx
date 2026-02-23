@@ -1,3 +1,14 @@
 ---
+import type { FieldOption } from "@ty/FieldConfig";
+
+interface Props {
+  options: FieldOption[] | undefined;
+}
+const { options } = Astro.props;
 ---
-<select>TODO select component</select>
+
+<select
+  >TODO select component {
+    options?.map((opt) => <option value={opt.value}>{opt.label}</option>)
+  }</select
+>

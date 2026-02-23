@@ -8,6 +8,7 @@
     --c-interactive: rgb(85, 123, 136);
     --c-active: rgb(100, 160, 151);
     --c-primary: rgb(79, 79, 196);
+    --c-error: rgb(166, 25, 25);
   }
 }
 /* TODO debug w dark theme override for now */
@@ -21,6 +22,7 @@
     --c-interactive: rgb(85, 123, 136);
     --c-active: rgb(100, 160, 151);
     --c-primary: rgb(79, 79, 196);
+    --c-error: rgb(255 73 73);
   }
 }
 
@@ -75,4 +77,9 @@ button,
   &:visited {
     color: var(--c-txt);
   }
+}
+
+.field-error {
+  color: var(--c-error);
+  border-bottom: dotted 2px var(--c-error);
 }

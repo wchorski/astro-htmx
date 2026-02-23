@@ -1,6 +1,11 @@
 ---
 // components/tables/RowCreate.astro
-import type { FieldConfig } from "@ty/FieldConfig";
+import type {
+  FieldConfig,
+  FieldSlot,
+  InputFieldSlot,
+  SelectFieldSlot,
+} from "@ty/FieldConfig";
 import type { CrudRegistryType } from "@lib/crudRegistry";
 import SelectField from "@components/form/SelectField.astro";
 import TextareaField from "@components/form/TextareaField.astro";
@@ -43,7 +48,24 @@ const topLevelError =
   {
     headers.map((key) => {
       const field = config[key] ?? {};
-      const { label, value: override, type, ...inputAttrs } = field;
+      const {
+        label,
+        value: override,
+        type,
+        ...inputAttrs
+      } = field as FieldSlot;
+      delete (inputAttrs as any).options;
+      const { options } = field as SelectFieldSlot;
+      delete (inputAttrs as any).datalist;
+      const { datalist } = field as InputFieldSlot;
+      // const { label, value: override, type, datalist, options, ...inputAttrs } = field as any
+
+      // const options =
+      //   type === "select" && "options" in field ? field.options : undefined;
+      // const datalist =
+      //   type && !["select", "textarea"].includes(type) && "datalist" in field
+      //     ? field.datalist
+      //     : undefined;
 
       const submittedValue = values?.[key];
 
@@ -61,19 +83,14 @@ const topLevelError =
 
       const fieldError =
         typeof error === "object" ? error?.fieldErrors[key]?.[0] : null;
-      const options =
-        type === "select" && "options" in field ? field.options : undefined;
-      const datalist =
-        type && !["select", "textarea"].includes(type) && "datalist" in field
-          ? field.datalist
-          : undefined;
+
       if (key === "id") {
         return <td />;
       }
       if (type === "select")
         return (
           <td>
-            <SelectField />
+            <SelectField options={options} />
           </td>
         );
       if (type === "textarea")

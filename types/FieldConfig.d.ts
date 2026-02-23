@@ -18,19 +18,19 @@ type BaseFieldSlot = {
 };
 
 
-type InputFieldSlot = BaseFieldSlot &
+export type InputFieldSlot = BaseFieldSlot &
 BaseInputAttrs & {
   type?: InputTypeAttr;
   datalist?: FieldOption[];
 };
 
-type SelectFieldSlot = BaseFieldSlot &
+export type SelectFieldSlot = BaseFieldSlot &
 Omit<HTMLAttributes<"select">, "value"> & {
   type: "select";
   options: FieldOption[];
 };
 
-type TextareaFieldSlot = BaseFieldSlot &
+export type TextareaFieldSlot = BaseFieldSlot &
 Omit<HTMLAttributes<"textarea">, "value"> & {
   type: "textarea";
 };

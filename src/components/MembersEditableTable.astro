@@ -4,6 +4,7 @@ interface Props {
 }
 import type { MemberSelect } from "@ty/Schema";
 import TableEditable from "./TableEditable.astro";
+const { DATALIST_STATES, DATALIST_CITIES } = import.meta.env;
 const { members } = Astro.props;
 ---
 
@@ -23,14 +24,12 @@ const { members } = Astro.props;
       type: "text",
       required: true,
       placeholder: "John...",
-      // value: "test Bobby"
     },
     last_name: {
       label: "Last Name",
       type: "text",
       required: true,
       placeholder: "Doe...",
-      // value: "test Bobberson"
     },
     middle_initial: {
       label: "Middle Int.",
@@ -41,44 +40,45 @@ const { members } = Astro.props;
       type: "tel",
       required: true,
       placeholder: "123-123-1234",
-      // value: "123-123-1234"
     },
     email: {
       label: "Email",
       type: "email",
       required: true,
       placeholder: "john@mail.lan",
-      // value: "testBob@mail.lan",
     },
     address1: {
       label: "Address",
       type: "text",
       required: true,
       placeholder: "123 West East St...",
-      // value: "123 test st",
     },
     address2: {
       label: "P.O. Box",
       type: "text",
-      // placeholder: "PO Box 254",
     },
     city: {
       type: "text",
       required: true,
       placeholder: "Naperville...",
-      // value: "testCity",
+      datalist: DATALIST_CITIES?.split(",").map((city) => ({
+        value: city,
+        label: city,
+      })),
     },
     state: {
       type: "text",
       required: true,
       placeholder: "Illinois...",
-      // value: "testState"
+      datalist: DATALIST_STATES?.split(",").map((state) => ({
+        value: state,
+        label: state,
+      })),
     },
     zip: {
       type: "number",
       required: true,
       placeholder: "50505...",
-      // value: "10101"
     },
   }}
 />
