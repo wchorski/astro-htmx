@@ -60,7 +60,7 @@ const Credit = defineTable({
     date: column.date(),
     // date: column.date({ default: NOW }),
     grade: column.text({ optional: true }),
-    attended: column.boolean(),
+    attended: column.boolean({ default: false }),
   },
   // indexes: [{ on: ["id"], unique: true }],
 });

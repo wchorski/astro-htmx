@@ -30,26 +30,33 @@ export class ConflictError extends Error {
 // Catches low-level DB/zod errors and re-throws as domain errors
 // TODO use only if statements in error handling. like the func below
 export function throwErrorsForCRUD(e: unknown): never {
-  switch (true) {
-    case e instanceof ZodError:
-      throw new ValidationError(e.flatten());
-
-    case e instanceof LibsqlError &&
-      (e as LibsqlError).extendedCode === "SQLITE_CONSTRAINT_UNIQUE":
-      const match = (e as LibsqlError).message.match(
-        /UNIQUE constraint failed: (\w+\.\w+)/,
-      )?.[1];
-
-      throw new ConflictError(
-        match
-          ? `Database Duplicate: Item with "${match}" already exists`
-          : "A duplicate entry already exists",
-      );
-
-    default:
-      const msg = e instanceof Error ? e.message : String(e);
-      throw new Error("An unexpected error occurred: " + msg);
+  if (
+    e instanceof NotFoundError ||
+    e instanceof ConflictError ||
+    e instanceof ValidationError
+  ) {
+    throw e;
   }
+
+  if (e instanceof ZodError) throw new ValidationError(e.flatten());
+
+  if (
+    e instanceof LibsqlError &&
+    (e as LibsqlError).extendedCode === "SQLITE_CONSTRAINT_UNIQUE"
+  ) {
+    const match = (e as LibsqlError).message.match(
+      /UNIQUE constraint failed: (\w+\.\w+)/,
+    )?.[1];
+
+    throw new ConflictError(
+      match
+        ? `Database Duplicate: Item with "${match}" already exists`
+        : "A duplicate entry already exists",
+    );
+  }
+
+  const msg = e instanceof Error ? e.message : String(e);
+  throw new Error("An unexpected error occurred: " + msg);
 }
 
 // --- For use in partials ---
@@ -74,4 +81,3 @@ export function errorHandlingOnSubmit(e: unknown): {
   const msg = e instanceof Error ? e.message : String(e);
   return { status: 500, err: "An unexpected error occurred: " + msg };
 }
-

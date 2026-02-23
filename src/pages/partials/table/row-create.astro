@@ -61,6 +61,15 @@ if (Astro.request.method === "POST") {
     error = err;
   }
 }
+
+if (Astro.request.method === "GET") {
+  const params = Astro.url.searchParams;
+  const crud = params.get("_crud") as CrudRegistryType;
+  const config = JSON.parse(params.get("_config") as string);
+  const endpoint = params.get("_endpoint") as string;
+  const headers = Object.keys(config);
+  ctx = { config, crud, endpoint, headers };
+}
 ---
 
 {
@@ -78,6 +87,9 @@ if (Astro.request.method === "POST") {
     <RowCreateForm {...ctx} error={error} values={submittedFields} />
     <tr hx-swap-oob="innerHTML:#row-error-create" />
   ) : (
-    <p>unknown row-create render</p>
+    <>
+      <RowCreateForm {...ctx} />
+      <tr hx-swap-oob="innerHTML:#row-error-create" />
+    </>
   )
 }
