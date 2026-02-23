@@ -6,44 +6,48 @@ interface FormatPhoneOptions {
 }
 
 import { Temporal } from "@js-temporal/polyfill";
-/**
- * Sanitizes and formats a phone number to E.164 format (manual implementation)
- * @param input - Raw phone number input
- * @param options - Configuration options
- * @returns Formatted phone number in E.164 format
- */
-export function formatPhoneToE164Manual(
-  input?: string,
-  options: FormatPhoneOptions = { defaultCountryCode: "1" },
-) {
-  // TODO how to make validation work with other forms
-  // if (!input) {
-  //   throw new Error("Formatter: Phone number is required");
-  // }
-  if (!input) return undefined;
 
-  const { defaultCountryCode = "1" } = options;
-
-  // Step 1: Remove all non-digit characters
+export function formatPhoneToE164Manual(input?: string): string | null {
+  if (!input) return null;
   let digitsOnly = input.replace(/\D/g, "");
-
-  // Step 2: Handle country code
-  let e164: string;
-
-  //? must have `+` in front if prefix country code
-  if (input.startsWith("+") && digitsOnly.length === 11) {
-    // Already has a + prefix, just clean it
-    e164 = "+" + digitsOnly;
-  } else if (digitsOnly.length === 10) {
-    // US number without country code (e.g., 1231231234)
-    e164 = `+${defaultCountryCode}${digitsOnly}`;
-  } else {
-    // Too short return empty string (which will cause validation error)
-    throw new Error("Phone Formatter: Too short, must have missed a number");
-  }
-
-  return e164;
+  if (input.startsWith("+") && digitsOnly.length === 11)
+    return "+" + digitsOnly;
+  if (digitsOnly.length === 10) return `+1${digitsOnly}`;
+  return null; // too short
 }
+
+// export function formatPhoneToE164Manual(
+//   input?: string,
+//   options: FormatPhoneOptions = { defaultCountryCode: "1" },
+// ) {
+//   // TODO how to make validation work with other forms
+//   // if (!input) {
+//   //   throw new Error("Formatter: Phone number is required");
+//   // }
+//   if (!input) return undefined;
+
+//   const { defaultCountryCode = "1" } = options;
+
+//   // Step 1: Remove all non-digit characters
+//   let digitsOnly = input.replace(/\D/g, "");
+
+//   // Step 2: Handle country code
+//   let e164: string;
+
+//   //? must have `+` in front if prefix country code
+//   if (input.startsWith("+") && digitsOnly.length === 11) {
+//     // Already has a + prefix, just clean it
+//     e164 = "+" + digitsOnly;
+//   } else if (digitsOnly.length === 10) {
+//     // US number without country code (e.g., 1231231234)
+//     e164 = `+${defaultCountryCode}${digitsOnly}`;
+//   } else {
+//     // Too short return empty string (which will cause validation error)
+//     throw new Error("Phone Formatter: Too short, must have missed a number");
+//   }
+
+//   return e164;
+// }
 
 /**
  * Formats a phone number to a pretty format (manual implementation)

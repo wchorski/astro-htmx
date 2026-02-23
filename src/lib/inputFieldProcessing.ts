@@ -2,7 +2,7 @@ import type { InputTypeAttr } from "@ty/FieldConfig";
 
 export const inputFieldValue = (
   fieldType: InputTypeAttr,
-  key: string,
+  name: string,
   rawValue: string | boolean | number,
   formData: FormData,
 ) => {
@@ -11,7 +11,7 @@ export const inputFieldValue = (
       return rawValue === "" ? null : Number(rawValue);
 
     case "checkbox":
-      return formData.has(key);
+      return formData.has(name);
 
     case "datetime-local":
       return typeof rawValue === "string" && rawValue !== ""

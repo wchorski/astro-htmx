@@ -4,7 +4,7 @@ import { prettyPlainCivilDateFull } from "@lib/formatters";
 import type { FieldOption, FieldType, FieldValue } from "@ty/FieldConfig";
 
 interface Props {
-  key: string;
+  name: string;
   options: FieldOption[] | undefined;
   type: FieldType;
   //   prettyVal: string;
@@ -12,13 +12,13 @@ interface Props {
   endpoint: string;
   //   row: Record<string, any> & { id: number };
 }
-const { key, endpoint, rawVal, type, options } = Astro.props;
+const { name, endpoint, rawVal, type, options } = Astro.props;
 
 const prettyVal = (() => {
   switch (true) {
     case type === "date":
     case type === "datetime-local":
-      return key === "dateCivil"
+      return name === "dateCivil"
         ? prettyPlainCivilDateFull(String(rawVal))
         : String(rawVal);
     case type === "select":
@@ -34,7 +34,7 @@ const prettyVal = (() => {
 ---
 
 {
-  key === "id" ? (
+  name === "id" ? (
     <a href={`${endpoint}/${rawVal}`}>{prettyVal}</a>
   ) : type === "datetime-local" ? (
     <time datetime={String(rawVal)}>{prettyVal}</time>

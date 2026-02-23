@@ -111,7 +111,7 @@ const topLevelError = typeof error === "string" ? error.toString() : null;
           <td>
             <InputField
               formId={`edit-form-${row.id}`}
-              key={key}
+              name={key}
               label={label}
               type={type}
               value={resolvedValue}

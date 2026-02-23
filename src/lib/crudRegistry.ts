@@ -1,6 +1,8 @@
-// src/lib/tableDbRegistry.ts
+// src/lib/crudRegistry.ts
 import type { TableRow } from "@ty/Table";
 import { db, eq, Member, Credit, Location } from "astro:db";
+import { errorHandlingOnSubmit, throwErrorsForCRUD } from "@lib/errors";
+import { validate } from "./validate";
 
 type CreateFn = (row: Omit<TableRow, "id">) => Promise<TableRow>;
 type ReadFn = (id: number) => Promise<TableRow | null>;
@@ -17,8 +19,14 @@ type CrudEntry = {
 export const crudRegistry = {
   members: {
     create: async (row) => {
-      const [newMember] = await db.insert(Member).values(row).returning();
-      return newMember;
+      try {
+        const validated = validate.memberCreate.parse(row);
+
+        const [result] = await db.insert(Member).values(validated).returning();
+        return result;
+      } catch (e) {
+        throwErrorsForCRUD(e);
+      }
     },
     read: async (id) =>
       await db.select().from(Member).where(eq(Member.id, id)).get(),

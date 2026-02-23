@@ -19,57 +19,64 @@ let ctx: {
   endpoint: string;
   headers: string[];
 } | null = null;
+let submittedFields: Record<string, any> | null = null;
 let error: string | Record<string, any> | null = null;
 let newRow: BaseRow | null = null;
 
 if (Astro.request.method === "POST") {
   try {
-    const raw = await Astro.request.formData();
-    if (!raw) return new Response("Bad Request", { status: 400 });
-    const crud = raw.get("_crud") as CrudRegistryType;
+    const formData = await Astro.request.formData();
+    if (!formData) return new Response("Bad Request", { status: 400 });
+    const crud = formData.get("_crud") as CrudRegistryType;
     if (!crud) throw new Error("crud not found");
-    const config = JSON.parse(raw.get("_config") as string);
+    const config = JSON.parse(formData.get("_config") as string);
     if (!config) throw new Error("config not found");
-    const endpoint = raw.get("_endpoint") as string;
+    const endpoint = formData.get("_endpoint") as string;
     const headers = Object.keys(config);
     ctx = { config, crud, endpoint, headers };
 
-    const fields = parseFormFields(raw, headers, config);
+    submittedFields = Object.fromEntries(
+      [...formData.entries()].filter(([key]) => !key.startsWith("_")),
+    );
 
     const entry = crudRegistry[crud];
     if (!entry)
       throw new NotFoundError(`No handler registered for crud: ${crud}`);
 
     // TODO kinda hacky but it works. database assigns ID
-    delete fields.id;
-    newRow = await entry.create(fields);
+    // delete fields.id;
+    newRow = await entry.create(submittedFields);
   } catch (e) {
-    // console.log("❌ PUT partials/crud/row-create");
-    // console.log({ e });
+    console.log("❌ PUT partials/crud/row-create");
+    console.log({ e });
     const { err, status } = errorHandlingOnSubmit(e);
-    error = err;
     Astro.response.status = status;
-    
-    // TODO add this logic to other forms. this preserves the original form while showing a new error
-    Astro.response.headers.set("HX-Retarget", "#row-error-create");
-    Astro.response.headers.set("HX-Reswap", "innerHTML");
+    // if (status === 422) {
+    //   // let normal swap happen
+    // } else {
+    //   // TODO add to other forms
+    //   Astro.response.headers.set("HX-Retarget", "#row-error-create");
+    //   Astro.response.headers.set("HX-Reswap", "innerHTML");
+    // }
+    error = err;
   }
 }
 ---
 
 {
-  !ctx ? (
-    <p class="callout not-found">missing row-create context</p>
-  ) : error ? (
-    <td class="callout error top-level" colspan={ctx.headers.length}>
-      {typeof error === "string" ? error : "Validation error"}
-    </td>
+  !ctx || !submittedFields ? (
+    <tr>
+      <td class="callout not-found">missing row-create context</td>
+    </tr>
   ) : newRow ? (
     <>
       <RowView row={newRow} {...ctx} classList={["new-row"]} />
       <RowCreateForm {...ctx} />
       <tr hx-swap-oob="innerHTML:#row-error-create" />
     </>
+  ) : error ? (
+    <RowCreateForm {...ctx} error={error} values={submittedFields} />
+    <tr hx-swap-oob="innerHTML:#row-error-create" />
   ) : (
     <p>unknown row-create render</p>
   )

@@ -2,18 +2,27 @@
 // components/tables/RowCreate.astro
 import type { FieldConfig } from "@ty/FieldConfig";
 import type { CrudRegistryType } from "@lib/crudRegistry";
+import SelectField from "@components/form/SelectField.astro";
+import TextareaField from "@components/form/TextareaField.astro";
+import InputField from "@components/form/InputField.astro";
 
 interface Props {
   crud: CrudRegistryType;
   config: FieldConfig;
   endpoint: string;
   error?: string | Record<string, any>;
+  values?: Record<string, any>;
 }
 
-const { config, crud, endpoint, error } = Astro.props;
+const { config, values, crud, endpoint, error } = Astro.props;
 const headers = Object.keys(config);
 
-const topLevelError = typeof error === "string" ? error.toString() : null;
+const topLevelError =
+  typeof error === "string"
+    ? error
+    : typeof error === "object" && error?.formErrors?.length
+      ? error.formErrors[0]
+      : null;
 ---
 
 <tr id="row-new" data-status="creating">
@@ -36,6 +45,20 @@ const topLevelError = typeof error === "string" ? error.toString() : null;
       const field = config[key] ?? {};
       const { label, value: override, type, ...inputAttrs } = field;
 
+      const submittedValue = values?.[key];
+
+      const resolvedValue =
+        submittedValue !== undefined
+          ? submittedValue
+          : typeof override !== "boolean"
+            ? override
+            : undefined;
+
+      const resolvedCheckbox =
+        submittedValue !== undefined
+          ? submittedValue === "true" || submittedValue === true
+          : !!(override ?? false);
+
       const fieldError =
         typeof error === "object" ? error?.fieldErrors[key]?.[0] : null;
       const options =
@@ -47,34 +70,31 @@ const topLevelError = typeof error === "string" ? error.toString() : null;
       if (key === "id") {
         return <td />;
       }
-
+      if (type === "select")
+        return (
+          <td>
+            <SelectField />
+          </td>
+        );
+      if (type === "textarea")
+        return (
+          <td>
+            <TextareaField />
+          </td>
+        );
       return (
         <td>
-          <label>
-            <span class="text">{label ?? key}</span>
-            <input
-              {...inputAttrs}
-              form="create-form"
-              name={key}
-              type={type}
-              {...(type === "checkbox"
-                ? { checked: !!(override ?? false) }
-                : {
-                    value:
-                      typeof override !== "boolean"
-                        ? (override?.toString() ?? "")
-                        : "",
-                  })}
-            />
-            {datalist ? (
-              <datalist id={`datalist-${key}`}>
-                {datalist.map((opt) => (
-                  <option value={opt.value}>{opt.label}</option>
-                ))}
-              </datalist>
-            ) : null}
-            {fieldError && <span class="field-error">{fieldError}</span>}
-          </label>
+          <InputField
+            formId={"create-form"}
+            name={key}
+            label={label}
+            value={type === "checkbox" ? undefined : resolvedValue}
+            checked={type === "checkbox" ? resolvedCheckbox : undefined}
+            type={type}
+            datalist={datalist}
+            fieldError={fieldError}
+            inputAttrs={inputAttrs}
+          />
         </td>
       );
     })
@@ -98,7 +118,7 @@ const topLevelError = typeof error === "string" ? error.toString() : null;
       title="clear fields"
       type="button"
       class="cancel"
-      onclick="document.getElementById('create-form').reset()"
+      data-clear-form="create-form"
     >
       <img
         class="icon"
@@ -126,3 +146,26 @@ const topLevelError = typeof error === "string" ? error.toString() : null;
     background-color: #3cb34d8c;
   }
 </style>
+
+<script>
+  document
+    .querySelector("[data-clear-form]")
+    ?.addEventListener("click", (e) => {
+      const formId = (e.currentTarget as HTMLElement).dataset.clearForm;
+      const form = document.getElementById(formId!) as HTMLFormElement;
+
+      [...form.elements].forEach((el) => {
+        const input = el as
+          | HTMLInputElement
+          | HTMLSelectElement
+          | HTMLTextAreaElement;
+        if (input.type === "checkbox")
+          (input as HTMLInputElement).checked = false;
+        else if (input.type === "hidden") return;
+        else input.value = "";
+      });
+
+      const errorRow = document.getElementById("row-error-create");
+      if (errorRow) errorRow.innerHTML = "";
+    });
+</script>

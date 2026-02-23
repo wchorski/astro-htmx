@@ -1,37 +1,42 @@
 ---
+// components/form/InputField.astro
 import type { FieldOption, FieldSlot, FieldType } from "@ty/FieldConfig";
 
 interface Props {
   formId: string;
-  key: string;
+  name: string;
   label?: string;
   type: FieldType | HTMLInputTypeAttribute | null | undefined;
-  value: string | number | undefined;
+  value?: string | number;
+  checked?: boolean;
   fieldError: any;
   datalist: FieldOption[] | undefined;
   inputAttrs: Omit<FieldSlot, "label" | "value" | "type">;
 }
 
-const { formId, inputAttrs, key, label, type, value, fieldError, datalist } =
+const { formId, inputAttrs, checked, name, label, type, value, fieldError, datalist } =
   Astro.props;
 ---
 
 <label>
-  <span class="text">{label ?? key}</span>
+  <span class="text">{label ?? name}</span>
   {
-    /* TODO dynamic element that can be input, select, textarea, checkbox, etc */
+    type === "checkbox" && (
+      <input type="hidden" name={name} form={formId} value="false" />
+    )
   }
+
   <input
     {...inputAttrs}
     form={formId}
-    name={key}
+    name={name}
     type={type}
-    {...type === "checkbox" ? { checked: !!value } : { value: value }}
+    {...type === "checkbox" ? { checked: checked } : { value: value ?? "" }}
   />
   {fieldError && <span class="field-error">{fieldError}</span>}
   {
     datalist ? (
-      <datalist id={`datalist-${key}`}>
+      <datalist id={`datalist-${name}`}>
         {datalist.map((opt) => (
           <option value={opt.value}>{opt.label}</option>
         ))}

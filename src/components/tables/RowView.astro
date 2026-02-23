@@ -29,7 +29,7 @@ if (!headers.includes("id")) throw new Error("header does not include ID");
       return (
         <td data-key={key} class="view-cell">
           <CellViewElement
-            key={key}
+            name={key}
             type={type}
             rawVal={row[key] as string | number}
             options={options}
