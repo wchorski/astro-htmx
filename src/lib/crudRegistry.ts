@@ -1,7 +1,7 @@
 // src/lib/crudRegistry.ts
 import type { TableRow } from "@ty/Table";
 import { db, eq, Member, Course, Credit, Location } from "astro:db";
-import { NotFoundError, throwErrorsForCRUD } from "@lib/errors";
+import { ConflictError, NotFoundError, throwErrorsForCRUD } from "@lib/errors";
 import { validate } from "./validate";
 import { localDateTimeToRealDate } from "./formatters";
 import {
@@ -301,38 +301,123 @@ export const crudRegistry = {
     },
   },
   memberCredits: {
-    delete: async (id) => {
-      try {
-        const validId = validate.id.parse(id);
-        const [deleted] = await db
-          .delete(Credit)
-          .where(eq(Credit.id, validId))
-          .returning();
-        if (!deleted) throw new NotFoundError(`Credit ${id} not found`);
-        return deleted;
-      } catch (e) {
-        throwErrorsForCRUD(e);
-      }
-    },
     create: async (row) => {
       try {
-        const { memberId, courseId, attended } =
-          validate.memberCreditCreate.parse(row);
-        const [credit] = await db
-          .insert(Credit)
-          .values({ attended, memberId, courseId, date: new Date() })
-          .returning();
-        if (!credit) throw new Error("Failed to create credit");
+        const validated = validate.memberCreditCreate.parse(row);
 
-        // fetch the full row to return flat shape consistent with read()
-        const member = await db
-          .select()
-          .from(Member)
-          .where(eq(Member.id, memberId))
-          .get();
-        if (!member) throw new NotFoundError(`Member ${memberId} not found`);
+        return await db.transaction(async (tx) => {
+          let member: typeof Member.$inferSelect;
+          let memberId: number;
 
-        return { ...member, ...credit, memberId: member.id, id: credit.id };
+          // --- Branch 1: link to existing member ---
+          if ("memberId" in validated) {
+            memberId = validated.memberId;
+
+            const found = await tx
+              .select()
+              .from(Member)
+              .where(eq(Member.id, memberId))
+              .get();
+
+            if (!found) throw new NotFoundError(`Member ${memberId} not found`);
+            member = found;
+          }
+          // --- Branch 2: create new member (but error if phone/email already exist) ---
+          else {
+            // TODO remove id not needed. unique conflict for phone/email check happens with ORM and bubbles up to client
+            // validated is memberCreateAndLink here
+            // const phone = validated.phone; // ideally already normalized by Zod
+            // const email = validated.email; // ideally trimmed + lowercased by Zod
+
+            // const existingByPhone = await tx
+            //   .select()
+            //   .from(Member)
+            //   .where(eq(Member.phone, phone))
+            //   .get();
+
+            // const existingByEmail = await tx
+            //   .select()
+            //   .from(Member)
+            //   .where(eq(Member.email, email))
+            //   .get();
+
+            // if (existingByPhone || existingByEmail) {
+            //   throw new ConflictError(
+            //     `Member already exists with ${existingByPhone ? "phone" : "email"} (${existingByPhone ? phone : email}). Select the existing member instead.`,
+            //   );
+            // }
+
+            const [created] = await tx
+              .insert(Member)
+              .values({
+                first_name: validated.first_name,
+                last_name: validated.last_name,
+                phone: validated.phone,
+                email: validated.email,
+                address1: validated.address1,
+                city: validated.city,
+                state: validated.state,
+                zip: validated.zip,
+              })
+              .returning();
+
+            if (!created) throw new Error("Failed to create member");
+
+            member = created;
+            memberId = created.id;
+          }
+
+          // --- Create credit linked to resolved memberId ---
+          const [credit] = await tx
+            .insert(Credit)
+            .values({
+              attended: validated.attended,
+              courseId: validated.courseId,
+              memberId,
+              date: new Date(),
+            })
+            .returning();
+
+          if (!credit) throw new Error("Failed to create credit");
+
+          // flat return: member + credit (ensure credit.id wins)
+          return { ...member, ...credit, memberId: member.id, id: credit.id };
+        });
+
+        // const validated = validate.memberCreditCreate.parse(row);
+
+        // const { courseId, attended } = validated;
+        // if (validated.memberId) {
+        //   // fetch the full row to return flat shape consistent with read()
+        //   const member = await db
+        //     .select()
+        //     .from(Member)
+        //     .where(eq(Member.id, validated.memberId))
+        //     .get();
+        //   if (!member) throw new NotFoundError(`Member ${validated.memberId} not found`);
+        // } else {
+        //   const member = validated.phone
+        //     ? await db
+        //         .select()
+        //         .from(Member)
+        //         .where(eq(Member.phone, validated.phone))
+        //         .get()
+        //     : await db
+        //         .select()
+        //         .from(Member)
+        //         .where(eq(Member.email, validated.email))
+        //         .get();
+
+        //   if (member) throw new ConflictError(`Member with ${validated.phone}/${validated.email} already in database`);
+        // }
+
+        // const [credit] = await db
+        //   .insert(Credit)
+        //   .values({ attended, memberId, courseId, date: new Date() })
+        //   .returning();
+        // if (!credit) throw new Error("Failed to create credit");
+
+        // return { ...member, ...credit, memberId: member.id, id: credit.id };
       } catch (e) {
         throwErrorsForCRUD(e);
       }
@@ -383,6 +468,19 @@ export const crudRegistry = {
         });
 
         return result;
+      } catch (e) {
+        throwErrorsForCRUD(e);
+      }
+    },
+    delete: async (id) => {
+      try {
+        const validId = validate.id.parse(id);
+        const [deleted] = await db
+          .delete(Credit)
+          .where(eq(Credit.id, validId))
+          .returning();
+        if (!deleted) throw new NotFoundError(`Credit ${id} not found`);
+        return deleted;
       } catch (e) {
         throwErrorsForCRUD(e);
       }

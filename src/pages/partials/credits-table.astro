@@ -41,6 +41,7 @@ const tableRows = memberCredits.map(({ credit, member }) => ({
     <p class="callout not-found">no member credits found</p>
   ) : (
     <TableEditable
+      crud={"memberCredits"}
       rows={tableRows}
       endpoint="memberCredits"
       config={{

@@ -61,8 +61,8 @@ h1 {
 
   background: linear-gradient(
     to right,
-    color-mix(in srgb, var(--status-color) 10%, white),
-    white
+    color-mix(in srgb, var(--status-color) 10%, var(--c-txt-bg)),
+    var(--c-txt-bg)
   );
 }
 

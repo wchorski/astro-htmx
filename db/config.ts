@@ -63,7 +63,8 @@ const Credit = defineTable({
     grade: column.text({ optional: true }),
     attended: column.boolean({ default: false }),
   },
-  // indexes: [{ on: ["id"], unique: true }],
+  //? a member can not have more than one credit on any one course (avoid duplicates)
+  indexes: [{ on: ["courseId", "memberId"], unique: true }],
 });
 
 // https://astro.build/db/config

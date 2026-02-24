@@ -54,6 +54,7 @@ export function throwErrorsForCRUD(e: unknown): never {
 
   if (e instanceof ZodError) throw new ValidationError(e.flatten());
 
+  // TODO falls apart if using a different database. look into using `isUniqueConstraintError`
   if (
     e instanceof LibsqlError &&
     (e as LibsqlError).extendedCode === "SQLITE_CONSTRAINT_UNIQUE"
@@ -64,14 +65,36 @@ export function throwErrorsForCRUD(e: unknown): never {
 
     throw new ConflictError(
       match
-        ? `Database Duplicate: Item with "${match}" already exists`
-        : "A duplicate entry already exists",
+        ? `Duplicate: Item with "${match}" already exists`
+        : `A duplicate entry already exists. [${e.message}]`,
     );
   }
 
   const msg = e instanceof Error ? e.message : String(e);
   throw new Error("An unexpected error occurred: " + msg);
 }
+
+
+// function isUniqueConstraintError(e: unknown): { field?: string } | null {
+//   // SQLite / libSQL (Astro DB default)
+//   if (e instanceof LibsqlError && e.extendedCode === "SQLITE_CONSTRAINT_UNIQUE") {
+//     const field = e.message.match(
+//       /UNIQUE constraint failed: (\w+\.\w+)/
+//     )?.[1];
+//     return { field };
+//   }
+
+//   // Postgres (Drizzle + pg)
+//   const anyErr = e as any;
+//   if (anyErr?.code === "23505") {
+//     // constraint name is often here
+//     const constraint = anyErr.constraint ?? anyErr.message;
+//     return { field: constraint };
+//   }
+
+//   return null;
+// }
+
 
 // --- For use in partials ---
 // Maps domain errors to { err, status } for the response

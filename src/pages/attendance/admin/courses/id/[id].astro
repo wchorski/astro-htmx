@@ -6,6 +6,8 @@ import { db, eq, Course } from "astro:db";
 import Layout from "@layouts/Layout.astro";
 import CreditsTable from "@partials/credits-table.astro";
 import AttendanceAdminNav from "@components/navigation/AttendanceAdminNav.astro";
+import MembersSearchForm from "@components/MembersSearchForm.astro";
+import RowSearchMemberCredit from "@components/tables/RowSearchMemberCredit.astro";
 export const prerender = false; // Not needed in 'server' mode
 const { id } = Astro.params;
 if (!id) throw new Error("no id found. throw 404");
@@ -66,14 +68,31 @@ const { subject, date, description } = course;
     <CreditsTable courseId={course.id} />
     <hr />
 
-    <a href={`/attendance/check-in/${id}`} class="btn"
-      >Member Check-In for this course</a
-    >
+    <section>
+      <RowSearchMemberCredit />
+      <MembersSearchForm course={course} />
+    </section>
+    <hr />
+    <footer>
+      <a href={`/attendance/check-in/${id}`} class="btn"
+        >Member Check-In for this course</a
+      >
+    </footer>
   </main>
 </Layout>
 
 <style>
   main {
     padding: 1rem;
+  }
+  section {
+    margin-inline: auto;
+    max-width: 700px;
+    display: grid;
+    gap: 1rem;
+  }
+
+  footer {
+    margin-top: 6rem;
   }
 </style>

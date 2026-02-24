@@ -1,0 +1,48 @@
+---
+import InputField from "@components/form/InputField.astro";
+
+interface Props {}
+const {} = Astro.props;
+---
+
+<form class="card">
+  <legend>search</legend>
+  <div class="flex gap-m space-between">
+    <fieldset>
+      <InputField
+        formId="new-row"
+        name="memberId"
+        type="number"
+        inputAttrs={{}}
+      />
+      <InputField formId="new-row" name="phone" type="number" inputAttrs={{}} />
+      <InputField formId="new-row" name="email" type="number" inputAttrs={{}} />
+    </fieldset>
+    <button type="submit">search</button>
+  </div>
+</form>
+
+<style>
+  form {
+    background-color: var(--c-txt-bg);
+    position: relative;
+    margin-top: 1.3rem;
+  }
+  legend {
+    position: absolute;
+    background-color: var(--c-txt-bg);
+    padding-inline: 0.5rem;
+    border-radius: 10px;
+    top: -1.3rem;
+    left: 0rem;
+  }
+
+  fieldset {
+    display: flex;
+
+    gap: 0.5rem;
+    border: none;
+    padding: 0;
+    margin: 0;
+  }
+</style>

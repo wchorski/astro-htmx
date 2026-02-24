@@ -28,11 +28,12 @@ label .text {
 }
 
 input[name="id"],
+input[name="memberId"],
 input[name="middle_initial"],
 input[name="courseId"] 
 input[name="locationId"],
 select[name="locationId"] {
-  max-width: 10ch;
+  max-width: 6ch;
 }
 
 form {

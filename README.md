@@ -1,4 +1,6 @@
 #todo
+- [ ] crudRegistry.memberCredits.create if member exists with (id, phone, email), then check all input fields to see if they match. if yes, then add existing member with new Credit
+- [ ] create mini member search form in tfooter of memberCredits table. 
 - [ ] ask how to bypass Cloudflare blocking. WP import is getting 403
 - [ ] css style construction theme (road signs, asphalt, road paint, concrete, gerders, tire tracks, scafolding)
 - [ ] composable and editable table Component!!!!

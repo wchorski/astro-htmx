@@ -72,7 +72,7 @@ a:active {
 }
 
 button,
-.btn {
+.btn,.btn:link {
   background-color: var(--c-interactive);
   color: var(--c-txt-rev);
 

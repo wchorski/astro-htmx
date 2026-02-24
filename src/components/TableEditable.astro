@@ -23,31 +23,32 @@ function label(key: string) {
 }
 ---
 
-<table>
-  <thead>
-    <tr>
-      {headers.map((h) => <th data-key={h}>{label(h)}</th>)}
-      <th aria-label="Actions"></th>
-    </tr>
-  </thead>
-  <tbody>
-    {
-      rows.map((row) => (
-        <ViewRow
-          row={row}
-          headers={headers}
-          config={config}
-          endpoint={endpoint}
-          crud={crud}
-        />
-      ))
-    }
-  </tbody>
-  <tfoot>
-    <RowCreate config={config} endpoint={endpoint} crud={crud} />
-  </tfoot>
-</table>
-
+<div class="table-scroll">
+  <table data-crud={crud}>
+    <thead>
+      <tr>
+        {headers.map((h) => <th data-key={h}>{label(h)}</th>)}
+        <th aria-label="Actions"></th>
+      </tr>
+    </thead>
+    <tbody>
+      {
+        rows.map((row) => (
+          <ViewRow
+            row={row}
+            headers={headers}
+            config={config}
+            endpoint={endpoint}
+            crud={crud}
+          />
+        ))
+      }
+    </tbody>
+    <tfoot>
+      <RowCreate config={config} endpoint={endpoint} crud={crud} />
+    </tfoot>
+  </table>
+</div>
 <script>
   // Handle form submissions and update data-status
   document.body.addEventListener("htmx:afterSwap", (event) => {
@@ -62,6 +63,19 @@ function label(key: string) {
 </script>
 
 <style>
+  .table-scroll {
+    width: 100%;
+    overflow-x: auto;
+    position: relative;
+  }
+
+  table {
+    border-collapse: separate;
+    border-spacing: 0;
+    /* min-width: max-content;  */
+    width: 100%;
+  }
+
   table {
     width: 100%;
     border-collapse: collapse;
@@ -70,5 +84,22 @@ function label(key: string) {
   thead {
     border-bottom-width: 3px;
     border-bottom-style: solid;
+  }
+
+  table th,
+  table td {
+    white-space: nowrap;
+  }
+
+  table tr th:last-child,
+  table tr td:last-child,
+  table th[aria-label="Actions"],
+  :global(.action-cell) {
+    /* outline: red dotted 3px; */
+    position: sticky;
+    right: 0;
+    z-index: 2;
+    background-color: inherit;
+    box-shadow: -6px 0 8px rgba(0, 0, 0, 0.08);
   }
 </style>

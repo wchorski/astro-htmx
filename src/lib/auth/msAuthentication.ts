@@ -20,6 +20,5 @@ export async function getMsToken(
   });
 
   if (!result?.accessToken) throw new Error("!!! no result.accessToken");
-  console.log("Access Token:", result.accessToken);
   return result.accessToken;
 }
