@@ -85,3 +85,7 @@ button,
   color: var(--c-error);
   border-bottom: dotted 2px var(--c-error);
 }
+
+hr {
+  border-color: var(--c-seperator);
+}

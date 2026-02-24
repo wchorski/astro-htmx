@@ -3,6 +3,7 @@ import CoursesEditableTable from "@components/CoursesEditableTable.astro";
 import Layout from "@layouts/Layout.astro";
 import { getCoursesPage } from "@lib/getCoursesPage";
 import PaginationNav from "@components/navigation/PaginationNav.astro";
+import AttendanceAdminNav from "@components/navigation/AttendanceAdminNav.astro";
 const page = Number(Astro.params.page);
 const result = await getCoursesPage(page);
 
@@ -14,15 +15,26 @@ const { courses, locations, perPage, totalCount, totalPages } = result;
 ---
 
 <Layout>
+  <AttendanceAdminNav />
   <main>
     <header>
       <h1>Courses - Page {page}</h1>
+      <div class="callout warning">
+        <p>
+          Created/Updated Courses here will create/update an accompanying
+          Wordpress event set as DRAFT.
+        </p>
+        <p>
+          To become viewable on the Wordpress site, it must be set to PUBLISH.
+        </p>
+      </div>
     </header>
+    <hr />
     {
       courses?.length === 0 ? (
         <p class="callout not-found">no member credits found</p>
       ) : (
-        <CoursesEditableTable courses={courses} locations={locations}/>
+        <CoursesEditableTable courses={courses} locations={locations} />
       )
     }
     {
