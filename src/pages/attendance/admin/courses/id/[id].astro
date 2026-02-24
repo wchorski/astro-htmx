@@ -6,7 +6,7 @@ import { db, eq, Course, Credit, Member } from "astro:db";
 import Layout from "@layouts/Layout.astro";
 import AttendanceAdminNav from "@components/navigation/AttendanceAdminNav.astro";
 import MembersSearchForm from "@components/MembersSearchForm.astro";
-import RowSearchMemberCredit from "@components/tables/RowSearchMemberCredit.astro";
+import RowSearchMember from "@components/tables/RowSearchMember.astro";
 import MemberCreditsEditableTable from "@components/MemberCreditsEditableTable.astro";
 export const prerender = false; // Not needed in 'server' mode
 const { id } = Astro.params;
@@ -67,7 +67,7 @@ const { subject, date, description } = course;
     <!-- TODO debug remove later -->
     <!-- <CreditsForm courseId={foundCourse.id} /> -->
 
-    <p class="callout warning card">Using fake member data for testing.</p>
+    
     <div class="flex space-between">
       <h2>Member Credits</h2>
       <button hx-put={`/api/credits/export/${id}`}
@@ -79,7 +79,7 @@ const { subject, date, description } = course;
     <hr />
 
     <section>
-      <RowSearchMemberCredit />
+      <RowSearchMember />
       <MembersSearchForm course={course} />
     </section>
     <hr />

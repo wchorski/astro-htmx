@@ -1,17 +1,38 @@
 ---
+const { pathname } = Astro.url;
 
+const links = [
+  { href: "/attendance/admin/courses", label: "Courses" },
+  { href: "/attendance/admin/locations", label: "Locations" },
+  { href: "/attendance/admin/members", label: "Members" },
+];
+
+const isActive = (path: string) =>
+  pathname === path || pathname.startsWith(path + "/");
 ---
 
 <div class="flex space-between">
   <nav class="main-menu">
-    <a class="link" href="/attendance/admin/courses">Courses</a>
-    <a class="link" href="/attendance/admin/locations">Locations</a>
-    <a class="link" href="/attendance/admin/members">Members</a>
+    {
+      links.map((link) => (
+        <a
+          href={link.href}
+          aria-current={pathname === link.href ? "page" : undefined}
+          class="link"
+        >
+          {link.label}
+        </a>
+      ))
+    }
   </nav>
 
   <div class="flex gap-m">
     <span class="pill c-primary">ADMIN</span>
-    <span class="pill c-secondary">PROTOTYPE</span>
+    <div class="pill c-secondary">
+      <span>PROTOTYPE</span>
+      <br />
+      <span>Using fake member data for testing.</span>
+    </div>
   </div>
 </div>
 <style>
@@ -23,6 +44,9 @@
 
   a.link {
     background-color: rgb(72, 95, 95);
+    border-width: 2px;
+    border-style: solid;
+    border-color: transparent;
     color: white;
     padding: 0.3rem 1rem;
     border-radius: 10px 10px 0 0;
@@ -30,5 +54,10 @@
     &:hover {
       background-color: grey;
     }
+  }
+  a[aria-current="page"] {
+    color: var(--c-active);
+    background-color: transparent;
+    border-color: rgb(72, 95, 95);
   }
 </style>
