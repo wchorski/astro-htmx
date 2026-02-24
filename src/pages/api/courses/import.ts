@@ -6,7 +6,7 @@ import { removeHTMLfromString } from "@lib/sanatizers";
 import { toLocalDateTimeString } from "@lib/formatters";
 import type { CourseInsert } from "@ty/Schema";
 
-const { WORDPRESS_ENDPOINT, WP_APP_NAME, WP_APP_PASSWORD, SERVER_TIMEZONE } =
+const { WORDPRESS_ENDPOINT, WP_USERNAME, WP_APP_PASSWORD, SERVER_TIMEZONE } =
   import.meta.env;
 
 export const GET: APIRoute = async ({ url }) => {
@@ -18,34 +18,34 @@ export const GET: APIRoute = async ({ url }) => {
 
   let events: WordpressEvent[];
 
-  // console.log({ upstream });
-  // try {
-  //   const res = await fetch(upstream, {
-  //     headers: {
-  //       Authorization: `Basic ${Buffer.from(`${WP_APP_NAME}:${WP_APP_PASSWORD}`).toString("base64")}`,
-  //       Accept: "application/json",
-  //       // "User-Agent":
-  //       //   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
-  //       // "Accept-Language": "en-US,en;q=0.9",
-  //       // Referer: "https://local150.org/",
-  //     },
-  //   });
-  //   if (!res.ok) {
-  //     const body = await res.text();
-  //     console.log({ status: res.status, body });
-  //     throw new Error(`Upstream error: ${res.status}`);
-  //   }
-  //   events = await res.json();
-  // } catch (err) {
-  //   console.log("X api/courses/import wordpress fetch");
-  //   console.log({ err });
-  //   return new Response(JSON.stringify({ error: String(err) }), {
-  //     status: 502,
-  //     headers: { "Content-Type": "application/json" },
-  //   });
-  // }
-  console.log("🐸 BYPASSING API FETCH BECAUSE CLOUDFLARE 403 ERROR");
-  events = eventJson;
+  console.log({ upstream });
+  try {
+    const res = await fetch(upstream, {
+      headers: {
+        Authorization: `Basic ${Buffer.from(`${WP_USERNAME}:${WP_APP_PASSWORD}`).toString("base64")}`,
+        Accept: "application/json",
+        // "User-Agent":
+        //   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+        // "Accept-Language": "en-US,en;q=0.9",
+        // Referer: "https://local150.org/",
+      },
+    });
+    if (!res.ok) {
+      const body = await res.text();
+      console.log({ status: res.status, body });
+      throw new Error(`Upstream error: ${res.status}`);
+    }
+    events = await res.json();
+  } catch (err) {
+    console.log("X api/courses/import wordpress fetch");
+    console.log({ err });
+    return new Response(JSON.stringify({ error: String(err) }), {
+      status: 502,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+  // console.log("🐸 BYPASSING API FETCH BECAUSE CLOUDFLARE 403 ERROR");
+  // events = eventJson;
 
   const seedCoursesFormat: CourseInsert[] = [];
 
@@ -207,7 +207,9 @@ function findLocationForEvent(
 ) {
   const whereText = removeHTMLfromString(whereHtml);
 
-  const match = locations.find((loc) => whereText.includes(loc.name.toLowerCase()));
+  const match = locations.find((loc) =>
+    whereText.includes(loc.name.toLowerCase()),
+  );
   return match ?? null;
 }
 // ```

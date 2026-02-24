@@ -1,32 +1,16 @@
 ---
 import fs from "node:fs/promises";
 import path from "node:path";
-import { ConfidentialClientApplication } from "@azure/msal-node";
+
 import EventCalendar from "./EventCalendar.astro";
+import { getMsToken } from "@lib/auth/msAuthentication";
 
-const { TENANT_ID, MS_SECRET_VALUE, MS_CLIENT_ID } = import.meta.env;
-
-const cca = new ConfidentialClientApplication({
-  auth: {
-    clientId: MS_CLIENT_ID,
-    authority: `https://login.microsoftonline.com/${TENANT_ID}`,
-    clientSecret: MS_SECRET_VALUE,
-  },
-});
-
-async function getToken() {
-  const result = await cca.acquireTokenByClientCredential({
-    scopes: ["https://graph.microsoft.com/.default"],
-  });
-
-  if (!result?.accessToken) throw new Error("!!! no result.accessToken");
-  console.log("Access Token:", result.accessToken);
-  return result.accessToken;
-}
+const { MS_GROUP_ID, TENANT_ID, MS_SECRET_VALUE, MS_CLIENT_ID } = import.meta
+  .env;
 
 const BASE_DIR = path.resolve("public/data");
 const filename = "moeits-staff";
-const groupId = "d0dd07fc-dc48-4d16-9439-39f479c9dc05";
+const groupId = MS_GROUP_ID;
 const hoursThreshold = 3 * 60 * 60 * 1000; // 3 hours
 let events: CalEvent[] = [];
 const now = new Date();
@@ -47,26 +31,29 @@ try {
   const timeDifference = now.getTime() - savedDate.getTime();
 
   if (timeDifference >= hoursThreshold) {
+    function dateFromNow(days: number) {
+      // TODO maybe use `now` as to not create another Date obj
+      const d = new Date();
+      d.setDate(d.getDate() + days);
+      return d.toISOString();
+    }
+
+    // TODO set start and end times 1 month before and after current time.
+    const start = dateFromNow(-30);
+    const end = dateFromNow(65);
+
+    let url: string | null =
+      `https://graph.microsoft.com/v1.0/groups/${groupId}/calendar/calendarView` +
+      `?startDateTime=${start}` +
+      `&endDateTime=${end}` +
+      `&$orderby=start/dateTime&$top=100`;
+
     try {
-      function dateFromNow(days: number) {
-        // TODO maybe use `now` as to not create another Date obj
-        const d = new Date();
-        d.setDate(d.getDate() + days);
-        return d.toISOString();
-      }
-
-      // TODO set start and end times 1 month before and after current time.
-      const start = dateFromNow(-30);
-      const end = dateFromNow(65);
-
-      const accessToken = await getToken();
-
-      let url: string | null =
-        `https://graph.microsoft.com/v1.0/groups/${groupId}/calendar/calendarView` +
-        `?startDateTime=${start}` +
-        `&endDateTime=${end}` +
-        `&$orderby=start/dateTime&$top=100`;
-
+      const accessToken = await getMsToken(
+        TENANT_ID,
+        MS_CLIENT_ID,
+        MS_SECRET_VALUE,
+      );
       // debug @ https://developer.microsoft.com/en-us/graph/graph-explorer
       // endpoint -> https://graph.microsoft.com/v1.0/groups/d0dd07fc-dc48-4d16-9439-39f479c9dc05/calendar/calendarView?startDateTime=2026-01-01T00:00:00&endDateTime=2026-02-01T00:00:00
       while (url) {
@@ -206,8 +193,8 @@ const eventItems =
               year: "numeric",
               month: "long",
               day: "numeric",
-              hour: 'numeric',
-              minute: '2-digit'
+              hour: "numeric",
+              minute: "2-digit",
             })}
           </h3>
         )}

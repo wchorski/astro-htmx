@@ -4,6 +4,7 @@ import { db, eq, Member, Course, Credit, Location } from "astro:db";
 import { NotFoundError, throwErrorsForCRUD } from "@lib/errors";
 import { validate } from "./validate";
 import { localDateTimeToRealDate } from "./formatters";
+import { createWordpressEventPost } from "./getsetWordpressPost";
 
 type CreateFn = (row: Omit<TableRow, "id">) => Promise<TableRow>;
 type ReadFn = (id: string) => Promise<TableRow | null>;
@@ -45,15 +46,15 @@ export const crudRegistry = {
     },
     update: async (row) => {
       try {
-        
         const validated = validate.memberUpdate.parse(row);
-        
+
         const [result] = await db
           .update(Member)
           .set(validated)
           .where(eq(Member.id, validated.id))
           .returning();
-        if (!result) throw new NotFoundError(`Member ${validated.id} not found`);
+        if (!result)
+          throw new NotFoundError(`Member ${validated.id} not found`);
         return result;
       } catch (e) {
         throwErrorsForCRUD(e);
@@ -89,14 +90,22 @@ export const crudRegistry = {
             `location: ${validated.locationId} does not exist`,
           );
 
+        const realDate = localDateTimeToRealDate(
+          validated.dateCivil,
+          location.timezone,
+        );
+
+        const wpPost = await createWordpressEventPost({
+          ...validated,
+          date: realDate,
+        });
+
         const [result] = await db
           .insert(Course)
           .values({
-            date: localDateTimeToRealDate(
-              validated.dateCivil,
-              location.timezone,
-            ),
             ...validated,
+            date: realDate,
+            wpPostId: wpPost.id
           })
           .returning();
         return result;
@@ -120,9 +129,7 @@ export const crudRegistry = {
     },
     update: async (row) => {
       try {
-        
         const validated = validate.courseUpdate.parse(row);
-        
 
         const location = await db
           .select()
@@ -200,9 +207,8 @@ export const crudRegistry = {
     },
     update: async (row) => {
       try {
-        
         const validated = validate.creditUpdate.parse(row);
-        
+
         const [result] = await db
           .update(Credit)
           .set(validated)
@@ -259,7 +265,6 @@ export const crudRegistry = {
 
     update: async (row) => {
       try {
-        
         const validated = validate.locationUpdate.parse(row);
         const validId = validate.id.parse(row.id);
         const [result] = await db

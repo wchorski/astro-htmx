@@ -1,3 +1,4 @@
+import { getMsToken } from "@lib/auth/msAuthentication";
 import { formatPhonePrettyManual } from "@lib/formatters";
 import type { CreditInsert, MemberInsert } from "@ty/Schema.d.ts";
 import type { APIRoute } from "astro";
@@ -7,9 +8,12 @@ const {
   MS_SHAREPOINT_KYU_DRIVE_ID,
   MS_SHAREPOINT_KYU_ATTENDENCE_FOLDER_ID,
   MS_TOKEN_SITE_UPLOAD,
+  TENANT_ID,
+  MS_SITES_READWRITE_ALL_APP_ID,
+  MS_SITES_READWRITE_ALL_SECRET_VALUE
 } = import.meta.env;
 
-export const POST: APIRoute = async ({ params, request, redirect }) => {
+export const PUT: APIRoute = async ({ params, request, redirect }) => {
   const { courseId } = params;
 
   if (!courseId)
@@ -80,10 +84,17 @@ export const POST: APIRoute = async ({ params, request, redirect }) => {
     // PUT /drives/{drive-id}/items/{parent-id}:/{filename}:/content  (upload new file) [1](https://learn.microsoft.com/en-us/graph/api/driveitem-put-content?view=graph-rest-1.0)
     const url = `https://graph.microsoft.com/v1.0/drives/${MS_SHAREPOINT_KYU_DRIVE_ID}/items/${MS_SHAREPOINT_KYU_ATTENDENCE_FOLDER_ID}:/${folderYear}/${encodeURIComponent(filename)}:/content`;
 
+    const accessToken = await getMsToken(
+        TENANT_ID,
+        MS_SITES_READWRITE_ALL_APP_ID,
+        MS_SITES_READWRITE_ALL_SECRET_VALUE,
+      );
+    
     const res = await fetch(url, {
       method: "PUT",
       headers: {
-        Authorization: `Bearer ${MS_TOKEN_SITE_UPLOAD}`,
+        Authorization: `Bearer ${accessToken}`,
+        // Authorization: `Bearer ${MS_TOKEN_SITE_UPLOAD}`,
         "Content-Type": "application/octet-stream",
         // "Content-Length": String(stat.size), // helps some proxies; optional but nice
       },
@@ -151,7 +162,7 @@ type CreditWithMember = Omit<CreditInsert, "id" | "date"> & {
  * including nested 'member' object keys.
  */
 export function generateCreditsCsv(credits: CreditWithMember[]): string {
-  console.log({ credits });
+  
   if (!credits.length) return "";
 
   // Flatten a single credit into a flat object with nested member keys prefixed

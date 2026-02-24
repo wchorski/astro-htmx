@@ -29,6 +29,7 @@ const Member = defineTable({
 const Course = defineTable({
   columns: {
     id: column.number({ primaryKey: true }),
+    wpPostId: column.number({ optional: true }),
     subject: column.text(),
     description: column.text({ optional: true }),
     where: column.text({ optional: true }),
@@ -36,7 +37,7 @@ const Course = defineTable({
     dateCivil: column.text(),
     locationId: column.number({ references: () => Location.columns.id }),
   },
-  // indexes: [{ on: ["id"], unique: true }],
+  indexes: [{ on: ["wpPostId"], unique: true }],
 });
 const Location = defineTable({
   columns: {

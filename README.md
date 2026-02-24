@@ -22,6 +22,12 @@ Graph Explorer tokens are for testing only. For production or persistent use:
 Register your own app in Azure AD.
 Implement OAuth flow with refresh tokens or client credentials.
 Use MSAL or similar libraries to handle token lifecycle automatically.
+
+## Wordpress api/courses/import endpoint
+use with `custom-events-api.php` plugin
+
+endpoint example `${WORDPRESS_ENDPOINT}/wp-json/wchorski/v1/events?after=2024-01-01T00:00:00`
+
 # Astro Starter Kit: Basics
 
 ```sh

@@ -58,15 +58,14 @@ const { subject, date, description } = course;
     <p class="callout warning card">Using fake member data for testing.</p>
     <div class="flex space-between">
       <h2>Member Credits</h2>
-      <button
-        onclick="alert('In the works. Will be implimented later')"
-        hx-put="/api/credits/export">Export CSV to Sharepoint</button
+      <button hx-put={`/api/credits/export/${id}`}
+        >Export CSV to Sharepoint</button
       >
     </div>
 
     <CreditsTable courseId={course.id} />
     <hr />
-    
+
     <a href={`/attendance/check-in/${id}`} class="btn"
       >Member Check-In for this course</a
     >

@@ -10,19 +10,19 @@ if ("redirect" in result) {
   return Astro.redirect("/attendance/admin/courses");
 }
 
-const { courses, perPage, totalCount, totalPages } = result;
+const { courses, locations, perPage, totalCount, totalPages } = result;
 ---
 
 <Layout>
   <main>
     <header>
-      <h1>Admin Courses - Page {page}</h1>
+      <h1>Courses - Page {page}</h1>
     </header>
     {
       courses?.length === 0 ? (
         <p class="callout not-found">no member credits found</p>
       ) : (
-        <CoursesEditableTable courses={courses} />
+        <CoursesEditableTable courses={courses} locations={locations}/>
       )
     }
     {

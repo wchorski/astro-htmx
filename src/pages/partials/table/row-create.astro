@@ -42,7 +42,7 @@ if (Astro.request.method === "POST") {
     newRow = await entry.create(submittedFields);
   } catch (e) {
     console.log("❌ PUT partials/crud/row-create");
-    console.log({ e });
+    console.log(JSON.stringify(e, null, 2));
     const { err, status } = errorHandlingOnSubmit(e);
     Astro.response.status = status;
     error = err;

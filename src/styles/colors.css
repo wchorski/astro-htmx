@@ -25,7 +25,9 @@
     --c-error: rgb(255 73 73);
   }
 }
-
+.card {
+  background-color: var(--c-txt-bg);
+}
 body {
   background-color: var(--c-bg);
   color: var(--c-txt);

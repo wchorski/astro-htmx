@@ -90,6 +90,7 @@ export default async function () {
   await db.insert(Course).values([
     {
       id: 55098,
+      wpPostId: 55098,
       subject: "COMET 1 and Labor Studies",
       description:
         "Space is limited. Please contact (708) 390-8160 to R.S.V.P.",
@@ -101,6 +102,7 @@ export default async function () {
     },
     {
       id: 59736,
+      wpPostId: 59736,
       subject: "Know Your Union",
       description:
         "Space is limited. Please contact (708) 390-8160 to R.S.V.P.",
@@ -112,6 +114,7 @@ export default async function () {
     },
     {
       id: 59740,
+      wpPostId: 59740,
       subject: "Know Your Union",
       description:
         "Space is limited. Please contact (708) 390-8160 to R.S.V.P.",
@@ -123,6 +126,7 @@ export default async function () {
     },
     {
       id: 59741,
+      wpPostId: 59741,
       subject: "Know Your Union",
       description:
         "Space is limited. Please contact (708) 390-8160 to R.S.V.P.",
@@ -134,6 +138,7 @@ export default async function () {
     },
     {
       id: 59742,
+      wpPostId: 59742,
       subject: "Know Your Union",
       description:
         "Space is limited. Please contact (708) 390-8160 to R.S.V.P.",
@@ -145,6 +150,7 @@ export default async function () {
     },
     {
       id: 59744,
+      wpPostId: 59744,
       subject: "COMET 1 and Labor Studies",
       description:
         "Space is limited. Please contact (708) 390-8160 to R.S.V.P.",
@@ -156,6 +162,7 @@ export default async function () {
     },
     {
       id: 59745,
+      wpPostId: 59745,
       subject: "COMET 1 and Labor Studies",
       description:
         "Space is limited. Please contact (708) 390-8160 to R.S.V.P.",
@@ -167,6 +174,7 @@ export default async function () {
     },
     {
       id: 59746,
+      wpPostId: 59746,
       subject: "COMET 1 and Labor Studies",
       description:
         "Space is limited. Please contact (708) 390-8160 to R.S.V.P.",
@@ -178,6 +186,7 @@ export default async function () {
     },
     {
       id: 59909,
+      wpPostId: 59909,
       subject: "General Membership Meeting",
       description: "A valid union card is required for entry.",
       date: new Date("2026-01-31T01:00:00.000Z"),
@@ -187,6 +196,7 @@ export default async function () {
     },
     {
       id: 59958,
+      wpPostId: 59958,
       subject: "District 2 Union Meeting",
       description: "A valid union card is required for entry.",
       date: new Date("2026-02-20T01:00:00.000Z"),
@@ -197,6 +207,7 @@ export default async function () {
     },
     {
       id: 59959,
+      wpPostId: 59959,
       subject: "District 5 Union Meeting",
       description: "Union card is required for entry.",
       date: new Date("2026-02-20T01:00:00.000Z"),
@@ -206,6 +217,7 @@ export default async function () {
     },
     {
       id: 59960,
+      wpPostId: 59960,
       subject: "District 6 Union Meeting",
       description: "A valid union card is required for entry.",
       date: new Date("2026-02-20T00:00:00.000Z"),
@@ -215,6 +227,7 @@ export default async function () {
     },
     {
       id: 59961,
+      wpPostId: 59961,
       subject: "District 1 Union Meeting",
       description: "A valid union card is required for entry.",
       date: new Date("2026-02-27T01:00:00.000Z"),

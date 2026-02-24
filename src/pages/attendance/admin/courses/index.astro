@@ -19,7 +19,7 @@ const { courses, locations, page, perPage, totalCount, totalPages } = result;
   <AttendanceAdminNav />
   <main>
     <header class="flex space-between">
-      <h1>Admin Courses - Page {page}</h1>
+      <h1>Courses - Page {page}</h1>
       <ButtonCoursesImport />
       <!-- <button
         onclick="alert('In the works. Will be implimented later')"
@@ -27,7 +27,7 @@ const { courses, locations, page, perPage, totalCount, totalPages } = result;
       > -->
     </header>
     <p class="callout warning">
-      Editing Course info does not update Wordpress events (import only)
+      Editing/Adding Course info here does not update Wordpress events (import only)
     </p>
     {
       courses.length === 0 ? (

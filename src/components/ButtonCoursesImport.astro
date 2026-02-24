@@ -1,10 +1,12 @@
 ---
 interface Props {}
 const {} = Astro.props;
+// TODO add in configurable `after` in the browser. Or i could just run this url in the browser
+// hx-get="/api/courses/import?after=2025-11-01T00:00:00"
 ---
 
 <button
-  hx-get="/api/courses/import?after=2025-11-01T00:00:00"
+  hx-get="/api/courses/import"
   hx-on::after-request="
     if(event.detail.successful)
       htmx.trigger('#events-list', 'refresh')
