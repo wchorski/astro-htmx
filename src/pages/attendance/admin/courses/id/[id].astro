@@ -2,12 +2,12 @@
 interface Params {
   id: string;
 }
-import { db, eq, Course } from "astro:db";
+import { db, eq, Course, Credit, Member } from "astro:db";
 import Layout from "@layouts/Layout.astro";
-import CreditsTable from "@partials/credits-table.astro";
 import AttendanceAdminNav from "@components/navigation/AttendanceAdminNav.astro";
 import MembersSearchForm from "@components/MembersSearchForm.astro";
 import RowSearchMemberCredit from "@components/tables/RowSearchMemberCredit.astro";
+import MemberCreditsEditableTable from "@components/MemberCreditsEditableTable.astro";
 export const prerender = false; // Not needed in 'server' mode
 const { id } = Astro.params;
 if (!id) throw new Error("no id found. throw 404");
@@ -17,6 +17,16 @@ const course = await db
   .where(eq(Course.id, Number(id)))
   .get();
 if (!course) return Astro.redirect("/404");
+
+const memberCredits = await db
+  .select({
+    credit: Credit,
+    member: Member,
+  })
+  .from(Credit)
+  .innerJoin(Member, eq(Credit.memberId, Member.id))
+  .where(eq(Credit.courseId, Number(id)));
+
 const { subject, date, description } = course;
 ---
 
@@ -65,7 +75,7 @@ const { subject, date, description } = course;
       >
     </div>
 
-    <CreditsTable courseId={course.id} />
+    <MemberCreditsEditableTable memberCredits={memberCredits} />
     <hr />
 
     <section>

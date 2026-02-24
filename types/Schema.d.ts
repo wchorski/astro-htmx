@@ -7,6 +7,10 @@ export type CourseInsert = typeof Course.$inferInsert;
 export type CourseSelect = typeof Course.$inferSelect;
 export type LocationInsert = typeof Location.$inferInsert;
 export type LocationSelect = typeof Location.$inferSelect;
+export type MemberCreditSelect = {
+  credit: CreditSelect,
+  member: MemberSelect,
+}
 
 export type MemberCredit = {
   id: number;

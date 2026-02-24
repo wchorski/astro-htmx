@@ -2,9 +2,9 @@
 interface Params {
   courseId: string;
 }
-import { db, eq, Course } from "astro:db";
+import { db, eq, Course, Credit, Member } from "astro:db";
 import Layout from "@layouts/Layout.astro";
-import CreditsTable from "@partials/credits-table.astro";
+import MemberCreditsEditableTable from "@components/MemberCreditsEditableTable.astro";
 export const prerender = false; // Not needed in 'server' mode
 const { courseId } = Astro.params;
 if (!courseId) throw new Error("no id found. throw 404");
@@ -13,6 +13,15 @@ const foundCourse = await db
   .from(Course)
   .where(eq(Course.id, Number(courseId)))
   .get();
+
+const memberCredits = await db
+  .select({
+    credit: Credit,
+    member: Member,
+  })
+  .from(Credit)
+  .innerJoin(Member, eq(Credit.memberId, Member.id))
+  .where(eq(Credit.courseId, Number(courseId)));
 
 if (!foundCourse) return Astro.redirect("/404");
 const { subject, date, description } = foundCourse;
@@ -61,6 +70,6 @@ const { subject, date, description } = foundCourse;
       >
     </div>
 
-    <CreditsTable courseId={foundCourse.id} />
+    <MemberCreditsEditableTable memberCredits={memberCredits} />
   </main>
 </Layout>

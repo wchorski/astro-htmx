@@ -1,0 +1,106 @@
+---
+interface Props {
+  memberCredits: {
+    member: MemberSelect;
+    credit: CreditSelect;
+  }[];
+}
+
+import TableEditable from "@components/TableEditable.astro";
+import type { CreditSelect, MemberSelect } from "@ty/Schema";
+const { memberCredits } = Astro.props;
+
+const tableRows = memberCredits.map(({ credit, member }) => ({
+  id: credit.id,
+  memberId: member.id,
+  first_name: member.first_name,
+  last_name: member.last_name,
+  middle_initial: member.middle_initial,
+  phone: member.phone,
+  email: member.email,
+  address1: member.address1,
+  city: member.city,
+  state: member.state,
+  zip: member.zip,
+  attended: credit.attended,
+}));
+---
+
+{
+  tableRows.length === 0 ? (
+    <p class="callout not-found">no member credits found</p>
+  ) : (
+    <TableEditable
+      crud={"memberCredits"}
+      rows={tableRows}
+      endpoint="memberCredits"
+      config={{
+        id: {
+          label: "ID",
+          type: "number",
+          required: true,
+          readonly: true,
+        },
+        memberId: {
+          label: "Member ID",
+          type: "number",
+          required: true,
+          readonly: true,
+        },
+        first_name: {
+          label: "First Name",
+          type: "text",
+          required: true,
+          placeholder: "Jane Doe...",
+        },
+        last_name: {
+          label: "Last Name",
+          type: "text",
+          required: true,
+          placeholder: "Jane Doe...",
+        },
+        middle_initial: {
+          label: "Middle Init.",
+          type: "text",
+        },
+        email: {
+          label: "Email",
+          type: "email",
+          required: true,
+          placeholder: "jane@example.com...",
+          autocomplete: "email",
+        },
+        phone: {
+          label: "Phone",
+          type: "tel",
+          required: true,
+          autocomplete: "phone",
+        },
+        address1: {
+          label: "Address",
+          type: "text",
+          required: true,
+        },
+        city: {
+          label: "city",
+          type: "text",
+          required: true,
+        },
+        state: {
+          label: "state",
+          type: "text",
+          required: true,
+        },
+        zip: {
+          label: "zip",
+          type: "number",
+          required: true,
+        },
+        attended: {
+          label: "attended",
+          type: "checkbox",
+        },
+      }}
+    />
+  )
+}
