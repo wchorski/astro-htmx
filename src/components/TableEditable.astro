@@ -26,7 +26,7 @@ function label(key: string) {
 <table>
   <thead>
     <tr>
-      {headers.map((h) => <th>{label(h)}</th>)}
+      {headers.map((h) => <th data-key={h}>{label(h)}</th>)}
       <th aria-label="Actions"></th>
     </tr>
   </thead>

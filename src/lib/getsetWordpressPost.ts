@@ -109,7 +109,7 @@ export async function createWordpressEventPost(
     }
 
     const post = JSON.parse(text);
-    console.log("Created event:", { post });
+    // console.log("Created event:", { post });
     return post;
 
     //     curl -i -X POST "https://local150.org/wp-json/wp/v2/event" \
@@ -170,27 +170,45 @@ export async function updateWordpressEventPost(
     },
   };
 
-  const res = await fetch(
-    `https://local150.org/wp-json/wp/v2/event/${course.wpPostId}`,
-    {
-      method: "PATCH",
-      headers: {
-        Authorization: basicAuth(WP_USERNAME, WP_APP_PASSWORD),
-        "Content-Type": "application/json",
-        Accept: "application/json",
+  try {
+    const res = await fetch(
+      `https://local150.org/wp-json/wp/v2/event/${course.wpPostId}`,
+      {
+        method: "PATCH",
+        headers: {
+          Authorization: basicAuth(WP_USERNAME, WP_APP_PASSWORD),
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(payload),
       },
-      body: JSON.stringify(payload),
-    },
-  );
+    );
 
-  const text = await res.text();
-  if (!res.ok) {
-    throw new Error(`WP error ${res.status}: ${text}`);
+    const text = await res.text();
+    if (!res.ok) {
+      throw new Error(`WP error ${res.status}: ${text}`);
+    }
+
+    const post = JSON.parse(text);
+    //   console.log("UPDATED event, ", { post });
+    return post;
+  } catch (e) {
+    console.log(e);
+    //? what a WP error looks like
+    // {
+    //   "code": "rest_not_logged_in",
+    //   "message": "You are not currently logged in.",
+    //   "data": { "status": 401 }
+    // }
+    if (e?.data.status === 401) throw new UnauthorizedError("wp unathorized");
+    if (e?.data.status === 403) throw new ForbiddenError("wp ForbiddenError");
+    if (e?.data.status === 404) throw new NotFoundError("wp NotFoundError");
+    if (e?.data.status === 409) throw new ConflictError("wp ConflictError");
+    if (e?.data.status === 422) throw new ValidationError(e.flatten());
+    if (e?.data.status === 500) throw new Error(e.flatten());
+
+    throw e;
   }
-
-  const post = JSON.parse(text);
-  console.log("UPDATED event, ", { post });
-  return post;
 }
 
 // TODO hardcoding for now to get MVP prototype. need to save id to Course.siteId

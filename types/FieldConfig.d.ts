@@ -29,6 +29,7 @@ Omit<HTMLAttributes<"select">, "value"> & {
   type: "select";
   options: FieldOption[];
 };
+export type FieldType = FieldSlot["type"];
 
 export type TextareaFieldSlot = BaseFieldSlot &
 Omit<HTMLAttributes<"textarea">, "value"> & {
@@ -37,6 +38,8 @@ Omit<HTMLAttributes<"textarea">, "value"> & {
 
 export type FieldSlot = InputFieldSlot | SelectFieldSlot | TextareaFieldSlot;
 export type FieldType = FieldSlot["type"];
+type InputFieldType = Exclude<FieldType, "select" | "textarea">;
+type SelectFieldType = Exclude<FieldType, "input" | "textarea">;
 
 export type BaseRow = Record<string, unknown> & { id: number };
 

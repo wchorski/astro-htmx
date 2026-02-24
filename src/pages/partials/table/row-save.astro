@@ -50,7 +50,7 @@ if (Astro.request.method === "PUT") {
     const entry = crudRegistry[ctx.crud];
     if (!entry)
       throw new NotFoundError(`No handler registered for crud: ${ctx.crud}`);
-    
+
     row = await entry.update(
       submittedFields as Partial<TableRow> & { id: string },
     );

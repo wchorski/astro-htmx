@@ -74,3 +74,14 @@ table tr.new-row {
     top: 25%;
   }
 }
+
+/* TODO hack, i need to pass a 'hidden' class to these in template */
+td:has(input[type="hidden"]) {
+  display: none;
+}
+td,
+th {
+  &[data-key="wpPostId"] {
+    display: none;
+  }
+}

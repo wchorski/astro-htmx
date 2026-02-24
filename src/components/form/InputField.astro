@@ -1,9 +1,7 @@
 ---
 // components/form/InputField.astro
 import type { HTMLAttributes } from "astro/types";
-import type { FieldOption, FieldSlot, FieldType } from "@ty/FieldConfig";
-
-type InputFieldType = Exclude<FieldType, "select" | "textarea">;
+import type { FieldOption, FieldSlot, FieldType, InputFieldType } from "@ty/FieldConfig";
 
 interface Props extends Omit<
   HTMLAttributes<"input">,

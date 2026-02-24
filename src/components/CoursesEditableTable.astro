@@ -20,6 +20,11 @@ const { courses, locations } = Astro.props;
       required: true,
       readonly: true,
     },
+    wpPostId: {
+      type: "hidden",
+      required: true,
+      readonly: true,
+    },
     subject: {
       label: "subject",
       type: "text",

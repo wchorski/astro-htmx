@@ -4,7 +4,10 @@ import { db, eq, Member, Course, Credit, Location } from "astro:db";
 import { NotFoundError, throwErrorsForCRUD } from "@lib/errors";
 import { validate } from "./validate";
 import { localDateTimeToRealDate } from "./formatters";
-import { createWordpressEventPost } from "./getsetWordpressPost";
+import {
+  createWordpressEventPost,
+  updateWordpressEventPost,
+} from "./getsetWordpressPost";
 
 type CreateFn = (row: Omit<TableRow, "id">) => Promise<TableRow>;
 type ReadFn = (id: string) => Promise<TableRow | null>;
@@ -105,7 +108,7 @@ export const crudRegistry = {
           .values({
             ...validated,
             date: realDate,
-            wpPostId: wpPost.id
+            wpPostId: wpPost.id,
           })
           .returning();
         return result;
@@ -141,15 +144,20 @@ export const crudRegistry = {
           throw new NotFoundError(
             `location: ${validated.locationId} does not exist`,
           );
-
+        const realDate = localDateTimeToRealDate(
+          validated.dateCivil,
+          location.timezone,
+        );
+        const wpPost = await updateWordpressEventPost({
+          ...validated,
+          date: realDate,
+        });
         const [result] = await db
           .update(Course)
           .set({
-            date: localDateTimeToRealDate(
-              validated.dateCivil,
-              location.timezone,
-            ),
             ...validated,
+            date: realDate,
+            wpPostId: wpPost.id,
           })
           .where(eq(Course.id, validated.id))
           .returning();
