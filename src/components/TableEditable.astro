@@ -5,6 +5,8 @@ interface Props<TRow extends BaseRow = BaseRow> {
   config: FieldConfig<TRow>;
   crud: CrudRegistryType;
   endpoint: string;
+  // TODO passed down from page
+  // headers: string[]
 }
 // EditableTable.astro
 import ViewRow from "@components/tables/RowView.astro";
@@ -14,7 +16,6 @@ import type { BaseRow, FieldConfig } from "@ty/FieldConfig";
 
 const { rows, config, crud, endpoint } = Astro.props;
 
-// Extract headers from first row (excluding 'id')
 const headers = Object.keys(config);
 
 // Helper: resolve the display label for a key

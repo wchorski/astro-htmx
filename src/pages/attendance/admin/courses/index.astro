@@ -5,6 +5,7 @@ import AttendanceAdminNav from "@components/navigation/AttendanceAdminNav.astro"
 import Layout from "@layouts/Layout.astro";
 import { getCoursesPage } from "@lib/getCoursesPage";
 import PaginationNav from "@components/navigation/PaginationNav.astro";
+import RowCreate from "@components/tables/RowCreate.astro";
 
 const result = await getCoursesPage(1);
 
@@ -37,14 +38,18 @@ const { courses, locations, page, perPage, totalCount, totalPages } = result;
     </div>
     <hr />
     {
-      courses.length === 0 ? (
-        <p class="callout not-found">no member credits found</p>
+      locations.length === 0 ? (
+        <p>
+          No locations set. First create a location on the{" "}
+          <a href="/attendance/admin/locations">locations page</a>
+        </p>
       ) : (
         <CoursesEditableTable courses={courses} locations={locations} />
       )
     }
+
     {
-      courses ? (
+      courses.length > 0 ? (
         <PaginationNav
           path="/attendance/admin/courses"
           page={Number(page)}

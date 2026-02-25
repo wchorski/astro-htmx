@@ -20,15 +20,11 @@ const { locations, page, perPage, totalCount, totalPages } = result;
     <header class="flex space-between">
       <h1>Locations - Page {page}</h1>
     </header>
+
+    <LocationsEditableTable locations={locations} />
+
     {
-      locations.length === 0 ? (
-        <p class="callout not-found">no locations found</p>
-      ) : (
-        <LocationsEditableTable locations={locations} />
-      )
-    }
-    {
-      locations ? (
+      locations.length > 0 ? (
         <PaginationNav
           path="/attendance/admin/locations"
           page={Number(page)}

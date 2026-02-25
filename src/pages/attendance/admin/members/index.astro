@@ -20,13 +20,7 @@ const { members, page, perPage, totalCount, totalPages } = result;
     <header class="flex space-between">
       <h1>Members - Page {page}</h1>
     </header>
-    {
-      members.length === 0 ? (
-        <p class="callout not-found">no members found</p>
-      ) : (
-        <MembersEditableTable members={members} />
-      )
-    }
+    <MembersEditableTable members={members} />
     {
       members ? (
         <PaginationNav

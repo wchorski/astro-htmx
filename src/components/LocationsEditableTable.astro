@@ -4,66 +4,88 @@ interface Props {
 }
 import type { LocationSelect } from "@ty/Schema";
 import TableEditable from "./TableEditable.astro";
-const { DATALIST_STATES, DATALIST_CITIES, DATALIST_TIMEZONES } = import.meta.env;
+import RowCreate from "./tables/RowCreate.astro";
+const { DATALIST_STATES, DATALIST_CITIES, DATALIST_TIMEZONES } = import.meta
+  .env;
 const { locations } = Astro.props;
----
 
-<TableEditable
-  rows={locations || []}
-  crud={"locations"}
-  endpoint="/attendance/admin/locations/id"
-  config={{
-    id: {
-      label: "ID",
-      type: "number",
-      required: true,
-      readonly: true,
-    },
-    name: {
-      type: "text",
-      required: true,
-      placeholder: "Union Hall...",
-    },
-    address: {
-      type: "text",
-      required: true,
-      placeholder: "123 West East St...",
-    },
-    city: {
-      type: "text",
-      required: true,
-      placeholder: "Naperville...",
-      datalist: DATALIST_CITIES?.split(",").map((li) => ({
-        value: li,
-        label: li,
-      })),
-    },
-    state: {
-      type: "text",
-      required: true,
-      placeholder: "Illinois...",
-      datalist: DATALIST_STATES?.split(",").map((li) => ({
-        value: li,
-        label: li,
-      })),
-    },
-    zip: {
-      type: "number",
-      required: true,
-      placeholder: "50505",
-    },
-    timezone: {
-      label: "Time Zone",
-      // TODO needs to be select input field
-      type: "text",
-      required: true,
-      datalist: DATALIST_TIMEZONES?.split(",").map((li) => ({
-        value: li,
-        label: li,
-      })),
-    },
-    description: {
-      type: "text",
-    },
-  }}
-/>
+const config = {
+  id: {
+    label: "ID",
+    type: "number",
+    required: true,
+    readonly: true,
+  },
+  name: {
+    type: "text",
+    required: true,
+    placeholder: "Union Hall...",
+  },
+  address: {
+    type: "text",
+    required: true,
+    placeholder: "123 West East St...",
+  },
+  city: {
+    type: "text",
+    required: true,
+    placeholder: "Naperville...",
+    datalist: DATALIST_CITIES?.split(",").map((li) => ({
+      value: li,
+      label: li,
+    })),
+  },
+  state: {
+    type: "text",
+    required: true,
+    placeholder: "Illinois...",
+    datalist: DATALIST_STATES?.split(",").map((li) => ({
+      value: li,
+      label: li,
+    })),
+  },
+  zip: {
+    type: "number",
+    required: true,
+    placeholder: "50505",
+  },
+  timezone: {
+    label: "Time Zone",
+    // TODO needs to be select input field
+    type: "text",
+    required: true,
+    datalist: DATALIST_TIMEZONES?.split(",").map((li) => ({
+      value: li,
+      label: li,
+    })),
+  },
+  description: {
+    type: "text",
+  },
+};
+
+const ctx = {
+  crud: "locations",
+  endpoint: "/attendance/admin/locations/id",
+  config,
+  headers: Object.keys(config)
+}
+---
+{
+  locations.length === 0 ? (
+    <p class="callout not-found">no locations found</p>
+    <table>
+    <tr class="highlight-green">
+      <RowCreate {...ctx} />
+    </tr>
+    </table>
+  ) : (
+    <TableEditable
+      crud={ctx.crud}
+      rows={locations}
+      endpoint={ctx.endpoint}
+      config={ctx.config}
+    />
+  )
+}
+
