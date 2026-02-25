@@ -32,7 +32,7 @@ const { courses, locations, perPage, totalCount, totalPages } = result;
     <hr />
     {
       courses?.length === 0 ? (
-        <p class="callout not-found">no member credits found</p>
+        <p class="callout not-found">no courses found</p>
       ) : (
         <CoursesEditableTable courses={courses} locations={locations} />
       )

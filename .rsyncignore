@@ -18,6 +18,9 @@ build/
 .tmp/
 .astro
 
+# repo
+.git
+
 # OS / misc
 Icon?
 *.swp

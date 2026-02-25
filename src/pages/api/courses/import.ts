@@ -1,9 +1,8 @@
 import type { WordpressEvent } from "@ty/WordpressEvent";
 import type { APIRoute } from "astro";
 import { Course, Location, db } from "astro:db";
-import eventJson from "../../../../private/l150-events.json";
+// import eventJson from "../../../../private/l150-events.json";
 import { removeHTMLfromString } from "@lib/sanatizers";
-import { toLocalDateTimeString } from "@lib/formatters";
 import type { CourseInsert } from "@ty/Schema";
 
 const { WORDPRESS_ENDPOINT, WP_USERNAME, WP_APP_PASSWORD, SERVER_TIMEZONE } =
@@ -16,7 +15,7 @@ export const GET: APIRoute = async ({ url }) => {
   const upstream = new URL(`${WORDPRESS_ENDPOINT}/wp-json/wchorski/v1/events`);
   if (after) upstream.searchParams.set("after", after);
 
-  let events: WordpressEvent[];
+  let wpPosts: WordpressEvent[];
 
   console.log({ upstream });
   try {
@@ -35,7 +34,7 @@ export const GET: APIRoute = async ({ url }) => {
       console.log({ status: res.status, body });
       throw new Error(`Upstream error: ${res.status}`);
     }
-    events = await res.json();
+    wpPosts = await res.json();
   } catch (err) {
     console.log("X api/courses/import wordpress fetch");
     console.log({ err });
@@ -53,10 +52,10 @@ export const GET: APIRoute = async ({ url }) => {
     // ✅ Fetch locations once
     const locations = await db.select().from(Location);
 
-    for (const event of events) {
-      const loc = findLocationForEvent(event.where, locations);
+    for (const wpPost of wpPosts) {
+      const loc = findLocationForEvent(wpPost.where, locations);
       if (!loc) {
-        const detail = `❌ No matching location for event ${event.id}: ${event.where}`;
+        const detail = `❌ No matching location for event ${wpPost.id}: ${wpPost.where}`;
         console.log(detail);
         return new Response(
           JSON.stringify({ error: "DB write failed", detail }),
@@ -68,18 +67,19 @@ export const GET: APIRoute = async ({ url }) => {
       }
 
       // ✅ Canonical local time from real_event_date
-      const dateCivil = realEventDateToLocalString(event.real_event_date);
+      const dateCivil = realEventDateToLocalString(wpPost.real_event_date);
 
       // ✅ Real Date (instant) derived from local+zone
       const realDate = localDateTimeToUtcDate(dateCivil, loc.timezone);
 
       const newCourse: CourseInsert = {
-        id: event.id,
-        subject: event.title,
-        description: event.event_description,
+        // id: wpPost.id,
+        wpPostId: wpPost.id,
+        subject: wpPost.title,
+        description: wpPost.event_description,
         date: realDate,
         dateCivil,
-        where: removeHTMLfromString(event.where),
+        where: removeHTMLfromString(wpPost.where),
         locationId: loc.id,
       };
       // @ts-ignore
@@ -101,7 +101,7 @@ export const GET: APIRoute = async ({ url }) => {
 
   console.log({ seedCoursesFormat });
 
-  return new Response(JSON.stringify({ ok: true, synced: events.length }), {
+  return new Response(JSON.stringify({ ok: true, synced: wpPosts.length }), {
     status: 200,
     headers: { "Content-Type": "application/json" },
   });

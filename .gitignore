@@ -1,6 +1,7 @@
 # build output
 dist/
 private
+db/data
 
 compose*.yml
 

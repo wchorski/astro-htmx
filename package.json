@@ -5,9 +5,11 @@
   "scripts": {
     "dev": "astro dev",
     "dev:host": "astro dev --host",
-    "build": "astro build",
+    "build": "astro build --remote",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "db:local:seed": "ASTRO_DB_REMOTE_URL=http://localhost:4320 astro db push --remote",
+    "db:remote:seed": "ASTRO_DB_REMOTE_URL=http://backupnas03:4320 astro db push --remote"
   },
   "dependencies": {
     "@astrojs/db": "^0.19.0",

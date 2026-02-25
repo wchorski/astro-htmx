@@ -1,14 +1,21 @@
 ---
+import { getCoursesPage } from "@lib/getCoursesPage";
 import Layout from "../../layouts/Layout.astro";
-import ClassList from "../partials/courses-list.astro"
-// import ClassCreditForm from "./ClassCreditForm.astro";
+import CoursesList from "../partials/courses-list.astro";
+const result = await getCoursesPage(1);
+
+if ("redirect" in result) {
+  return Astro.redirect("/attendance");
+}
+
+const { courses = [], page, perPage, totalCount, totalPages } = result;
 ---
 
 <Layout>
   <main>
     <h1>Attendance</h1>
     <h2>Course List</h2>
-    <ClassList />
+    {courses ? <CoursesList courses={courses} /> : <p>no courses found</p>}
 
     <!-- <ClassCreditForm /> -->
 

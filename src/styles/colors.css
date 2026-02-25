@@ -12,8 +12,8 @@
     --c-success: rgb(47, 141, 88);
   }
 }
-/* TODO debug w dark theme override for now */
-@media (prefers-color-scheme: light) {
+
+@media (prefers-color-scheme: dark) {
   :root {
     --c-bg: #0e0e0d;
     --c-txt: #ddccbb;

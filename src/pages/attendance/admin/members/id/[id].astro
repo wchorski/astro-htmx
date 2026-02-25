@@ -66,9 +66,10 @@ const tableRows = ownedCredits.map(({ credit, course, location }) => ({
     <h2>Course Credits</h2>
     {
       tableRows.length === 0 ? (
-        <p class="callout not-found">no member credits found</p>
+        <p class="callout not-found">no member found</p>
       ) : (
         <TableEditable
+          crud="members"
           rows={tableRows}
           endpoint="ownedCredits"
           config={{

@@ -7,10 +7,10 @@ import PaginationNav from "@components/navigation/PaginationNav.astro";
 const result = await getCoursesPage(1);
 
 if ("redirect" in result) {
-  return Astro.redirect("/courses");
+  return Astro.redirect("/attendance/courses");
 }
 
-const { courses, page, perPage, totalCount, totalPages } = result;
+const { courses = [], page, perPage, totalCount, totalPages } = result;
 ---
 
 <Layout>
@@ -21,7 +21,7 @@ const { courses, page, perPage, totalCount, totalPages } = result;
       {courses ? <CoursesList courses={courses} /> : <p>no courses found</p>}
     </div>
     {
-      courses ? (
+      courses.length > 0 ? (
         <PaginationNav
           path="/attendance/courses"
           page={Number(page)}
