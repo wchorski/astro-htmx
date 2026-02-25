@@ -14,13 +14,13 @@ import InputField from "@components/form/InputField.astro";
 interface Props {
   crud: CrudRegistryType;
   config: FieldConfig;
+  headers: string[];
   endpoint: string;
   error?: string | Record<string, any>;
   values?: Record<string, any>;
 }
 
-const { config, values, crud, endpoint, error } = Astro.props;
-const headers = Object.keys(config);
+const { config, values, crud, endpoint, headers, error } = Astro.props;
 
 const topLevelError =
   typeof error === "string"
@@ -30,7 +30,7 @@ const topLevelError =
       : null;
 ---
 
-<tr id="row-new" data-status="creating">
+<tr id="row-new" data-status="creating" class="highlight-green">
   <form
     id="create-form"
     style="display:none"
@@ -85,11 +85,11 @@ const topLevelError =
         typeof error === "object" ? error?.fieldErrors[key]?.[0] : null;
 
       if (key === "id") {
-        return <td />;
+        return <td data-type={type} />;
       }
       if (type === "select")
         return (
-          <td>
+          <td data-type={type}>
             <SelectField
               formId={"create-form"}
               name={key}
@@ -103,12 +103,12 @@ const topLevelError =
         );
       if (type === "textarea")
         return (
-          <td>
+          <td data-type={type}>
             <TextareaField />
           </td>
         );
       return (
-        <td>
+        <td data-type={type}>
           <InputField
             formId={"create-form"}
             name={key}
@@ -165,12 +165,6 @@ const topLevelError =
     ) : null
   }
 </tr>
-
-<style>
-  tr {
-    background-color: #3cb34d8c;
-  }
-</style>
 
 <script>
   document

@@ -1,5 +1,6 @@
 ---
 interface Props {
+  courseId: string,
   memberCredits: {
     member: MemberSelect;
     credit: CreditSelect;
@@ -8,11 +9,13 @@ interface Props {
 
 import TableEditable from "@components/TableEditable.astro";
 import type { CreditSelect, MemberSelect } from "@ty/Schema";
-const { memberCredits } = Astro.props;
+import RowCreate from "./tables/RowCreate.astro";
+const { memberCredits, courseId } = Astro.props;
 
 const tableRows = memberCredits.map(({ credit, member }) => ({
   id: credit.id,
   memberId: member.id,
+  courseId: credit.courseId,
   first_name: member.first_name,
   last_name: member.last_name,
   middle_initial: member.middle_initial,
@@ -24,83 +27,97 @@ const tableRows = memberCredits.map(({ credit, member }) => ({
   zip: member.zip,
   attended: credit.attended,
 }));
+
+const config = {
+  id: {
+    label: "ID",
+    type: "number",
+    required: true,
+    readonly: true,
+  },
+  memberId: {
+    label: "Member ID",
+    type: "number",
+  },
+  courseId: {
+    label: "Course ID",
+    type: "hidden",
+    value: courseId
+  },
+  first_name: {
+    label: "First Name",
+    type: "text",
+
+    placeholder: "Jane Doe...",
+  },
+  last_name: {
+    label: "Last Name",
+    type: "text",
+
+    placeholder: "Jane Doe...",
+  },
+  middle_initial: {
+    label: "Middle Init.",
+    type: "text",
+  },
+  email: {
+    label: "Email",
+    type: "email",
+
+    placeholder: "jane@example.com...",
+    autocomplete: "email",
+  },
+  phone: {
+    label: "Phone",
+    type: "tel",
+
+    autocomplete: "phone",
+  },
+  address1: {
+    label: "Address",
+    type: "text",
+  },
+  city: {
+    label: "city",
+    type: "text",
+  },
+  state: {
+    label: "state",
+    type: "text",
+  },
+  zip: {
+    label: "zip",
+    type: "number",
+  },
+  attended: {
+    label: "attended",
+    type: "checkbox",
+  },
+}
+const ctx = {
+  crud: "memberCredits",
+  endpoint: "memberCredits",
+  config,
+  headers: Object.keys(config)
+}
 ---
 
 {
   tableRows.length === 0 ? (
     <p class="callout not-found">no member credits found</p>
+    <table>
+    <tr class="highlight-green">
+      <RowCreate {...ctx} />
+    </tr>
+    </table>
   ) : (
     <TableEditable
-      crud={"memberCredits"}
+      crud={ctx.crud}
       rows={tableRows}
-      endpoint="memberCredits"
-      config={{
-        id: {
-          label: "ID",
-          type: "number",
-          required: true,
-          readonly: true,
-        },
-        memberId: {
-          label: "Member ID",
-          type: "number",
-          required: true,
-          readonly: true,
-        },
-        first_name: {
-          label: "First Name",
-          type: "text",
-          required: true,
-          placeholder: "Jane Doe...",
-        },
-        last_name: {
-          label: "Last Name",
-          type: "text",
-          required: true,
-          placeholder: "Jane Doe...",
-        },
-        middle_initial: {
-          label: "Middle Init.",
-          type: "text",
-        },
-        email: {
-          label: "Email",
-          type: "email",
-          required: true,
-          placeholder: "jane@example.com...",
-          autocomplete: "email",
-        },
-        phone: {
-          label: "Phone",
-          type: "tel",
-          required: true,
-          autocomplete: "phone",
-        },
-        address1: {
-          label: "Address",
-          type: "text",
-          required: true,
-        },
-        city: {
-          label: "city",
-          type: "text",
-          required: true,
-        },
-        state: {
-          label: "state",
-          type: "text",
-          required: true,
-        },
-        zip: {
-          label: "zip",
-          type: "number",
-          required: true,
-        },
-        attended: {
-          label: "attended",
-          type: "checkbox",
-        },
-      }}
+      endpoint={ctx.endpoint}
+      config={ctx.config}
     />
   )
 }
+
+

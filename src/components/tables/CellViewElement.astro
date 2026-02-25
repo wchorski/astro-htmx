@@ -1,6 +1,9 @@
 ---
 // components/tables/CellViewElement.astro
-import { prettyPlainCivilDateFull } from "@lib/formatters";
+import {
+  formatPhonePrettyManual,
+  prettyPlainCivilDateFull,
+} from "@lib/formatters";
 import type { FieldOption, FieldType, FieldValue } from "@ty/FieldConfig";
 
 interface Props {
@@ -21,6 +24,8 @@ const prettyVal = (() => {
       return name === "dateCivil"
         ? prettyPlainCivilDateFull(String(rawVal))
         : String(rawVal);
+    case type === "tel":
+      return formatPhonePrettyManual(String(rawVal));
     case type === "select":
       return (
         options?.find((opt) => String(opt.value) === String(rawVal))?.label ||
@@ -34,7 +39,7 @@ const prettyVal = (() => {
 ---
 
 {
-  name === "id" ? (
+  name === "id" && endpoint ? (
     <a href={`${endpoint}/${rawVal}`}>{prettyVal}</a>
   ) : type === "datetime-local" ? (
     <time datetime={String(rawVal)}>{prettyVal}</time>
@@ -42,7 +47,36 @@ const prettyVal = (() => {
     <data value={String(rawVal)}>{prettyVal}</data>
   ) : type === "select" ? (
     <span data-id={rawVal}>{prettyVal}</span>
+  ) : type === "checkbox" && !rawVal ? (
+    <span class="false">false</span>
+  ) : type === "checkbox" && rawVal === true ? (
+    <span class="true">true</span>
   ) : (
     <span>{prettyVal ?? "—"}</span>
   )
 }
+
+<style>
+  .true,
+  .false {
+    &::after {
+      display: inline-block;
+      margin-left: 2px;
+    }
+  }
+  .true {
+    color: var(--c-success);
+
+    &::after {
+      content: " ✔";
+    }
+  }
+  .false {
+    color: rgb(146, 113, 113);
+    opacity: 0.3;
+
+    &::after {
+      content: " ✘";
+    }
+  }
+</style>

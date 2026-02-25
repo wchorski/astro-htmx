@@ -1,4 +1,15 @@
-// phoneSanitizer.ts
+/**
+ * removes keys with empty strings completely
+ */
+export function parseFormPayload(
+  data: Record<string, FormDataEntryValue>,
+): Record<string, FormDataEntryValue> {
+  return Object.fromEntries(
+    Object.entries(data)
+      .map(([k, v]) => [k, typeof v === "string" ? v.trim() : v] as const)
+      .filter(([, v]) => v !== "" && v !== undefined),
+  );
+}
 
 export interface SanitizationResult {
   valid: string[];

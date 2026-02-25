@@ -54,12 +54,16 @@ const topLevelError = typeof error === "string" ? error.toString() : null;
       const field = config[key] ?? {};
       const { label, value: override, type, ...inputAttrs } = field;
 
+      // const checked = type === "checkbox" in field ? field.checked : undefined;
       const options =
         type === "select" && "options" in field ? field.options : undefined;
       const datalist =
         type && !["select", "textarea"].includes(type) && "datalist" in field
           ? field.datalist
           : undefined;
+
+      // TODO how do i add checked to input field?
+      // if (type === "checkbox") console.log("RowView, ", { checked });
 
       // TODO  may need to think about other input values
       // can i use parseFormFields()?
@@ -70,6 +74,7 @@ const topLevelError = typeof error === "string" ? error.toString() : null;
             ? (row[key] ?? false)
             : (row[key] ?? "");
 
+      
       const fieldError =
         typeof error === "object" ? error?.fieldErrors[key]?.[0] : null;
 
@@ -119,27 +124,6 @@ const topLevelError = typeof error === "string" ? error.toString() : null;
               datalist={datalist}
               inputAttrs={inputAttrs}
             />
-            {/* <label>
-              <span class="text">{label ?? key}</span>
-              <input
-                {...inputAttrs}
-                form={`edit-form-${row.id}`}
-                name={key}
-                type={type}
-                list={`datalist-${key}`}
-                {...(type === "checkbox"
-                  ? { checked: !!resolvedValue }
-                  : { value: resolvedValue as string | number | undefined })}
-              />
-              {datalist ? (
-                <datalist id={`datalist-${key}`}>
-                  {datalist.map((opt) => (
-                    <option value={opt.value}>{opt.label}</option>
-                  ))}
-                </datalist>
-              ) : null}
-              {fieldError && <span class="field-error">{fieldError}</span>}
-            </label> */}
           </td>
         );
       }

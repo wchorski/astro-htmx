@@ -321,32 +321,7 @@ export const crudRegistry = {
 
             if (!found) throw new NotFoundError(`Member ${memberId} not found`);
             member = found;
-          }
-          // --- Branch 2: create new member (but error if phone/email already exist) ---
-          else {
-            // TODO remove id not needed. unique conflict for phone/email check happens with ORM and bubbles up to client
-            // validated is memberCreateAndLink here
-            // const phone = validated.phone; // ideally already normalized by Zod
-            // const email = validated.email; // ideally trimmed + lowercased by Zod
-
-            // const existingByPhone = await tx
-            //   .select()
-            //   .from(Member)
-            //   .where(eq(Member.phone, phone))
-            //   .get();
-
-            // const existingByEmail = await tx
-            //   .select()
-            //   .from(Member)
-            //   .where(eq(Member.email, email))
-            //   .get();
-
-            // if (existingByPhone || existingByEmail) {
-            //   throw new ConflictError(
-            //     `Member already exists with ${existingByPhone ? "phone" : "email"} (${existingByPhone ? phone : email}). Select the existing member instead.`,
-            //   );
-            // }
-
+          } else {
             const [created] = await tx
               .insert(Member)
               .values({
@@ -383,41 +358,6 @@ export const crudRegistry = {
           // flat return: member + credit (ensure credit.id wins)
           return { ...member, ...credit, memberId: member.id, id: credit.id };
         });
-
-        // const validated = validate.memberCreditCreate.parse(row);
-
-        // const { courseId, attended } = validated;
-        // if (validated.memberId) {
-        //   // fetch the full row to return flat shape consistent with read()
-        //   const member = await db
-        //     .select()
-        //     .from(Member)
-        //     .where(eq(Member.id, validated.memberId))
-        //     .get();
-        //   if (!member) throw new NotFoundError(`Member ${validated.memberId} not found`);
-        // } else {
-        //   const member = validated.phone
-        //     ? await db
-        //         .select()
-        //         .from(Member)
-        //         .where(eq(Member.phone, validated.phone))
-        //         .get()
-        //     : await db
-        //         .select()
-        //         .from(Member)
-        //         .where(eq(Member.email, validated.email))
-        //         .get();
-
-        //   if (member) throw new ConflictError(`Member with ${validated.phone}/${validated.email} already in database`);
-        // }
-
-        // const [credit] = await db
-        //   .insert(Credit)
-        //   .values({ attended, memberId, courseId, date: new Date() })
-        //   .returning();
-        // if (!credit) throw new Error("Failed to create credit");
-
-        // return { ...member, ...credit, memberId: member.id, id: credit.id };
       } catch (e) {
         throwErrorsForCRUD(e);
       }

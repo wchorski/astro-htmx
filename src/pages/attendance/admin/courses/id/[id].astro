@@ -28,6 +28,43 @@ const memberCredits = await db
   .where(eq(Credit.courseId, Number(id)));
 
 const { subject, date, description } = course;
+
+const config = {
+  id: {
+    label: "ID",
+    type: "number",
+  },
+  first_name: {
+    label: "First Name",
+    type: "text",
+
+    placeholder: "John...",
+  },
+  last_name: {
+    label: "Last Name",
+    type: "text",
+
+    placeholder: "Doe...",
+  },
+  phone: {
+    label: "Phone",
+    type: "tel",
+
+    placeholder: "123-123-1234",
+  },
+  email: {
+    label: "Email",
+    type: "text",
+    placeholder: "john@mail.lan",
+  },
+};
+
+const ctx = {
+  config,
+  crud: "members",
+  endpoint: "",
+  headers: Object.keys(config),
+};
 ---
 
 <Layout>
@@ -50,24 +87,20 @@ const { subject, date, description } = course;
         <time datetime={date.toISOString()}>
           {
             date.toLocaleString("en-US", {
+              weekday: "long",
               year: "numeric",
               month: "short",
               day: "numeric",
             })
           }
-        </time>{description}
-        |
-        <span class="course-id">{id}</span>
+        </time>
+        <br />
+        {description}
       </p>
     </header>
 
     <hr />
-    <!-- <ClassForm course={foundCourse} /> -->
-    <!-- <CreditForm course={foundCourse} /> -->
-    <!-- TODO debug remove later -->
-    <!-- <CreditsForm courseId={foundCourse.id} /> -->
 
-    
     <div class="flex space-between">
       <h2>Member Credits</h2>
       <button hx-put={`/api/credits/export/${id}`}
@@ -75,18 +108,21 @@ const { subject, date, description } = course;
       >
     </div>
 
-    <MemberCreditsEditableTable memberCredits={memberCredits} />
+    <MemberCreditsEditableTable memberCredits={memberCredits} courseId={id} />
     <hr />
 
     <section>
-      <RowSearchMember />
-      <MembersSearchForm course={course} />
+      <RowSearchMember {...ctx} />
+      <!-- <MembersSearchForm course={course} /> -->
     </section>
     <hr />
     <footer>
       <a href={`/attendance/check-in/${id}`} class="btn"
         >Member Check-In for this course</a
       >
+      <p>
+        Used for <em>DAY OF</em> event Kiosk (barcode scanning or manual form field)
+      </p>
     </footer>
   </main>
 </Layout>
@@ -94,12 +130,6 @@ const { subject, date, description } = course;
 <style>
   main {
     padding: 1rem;
-  }
-  section {
-    margin-inline: auto;
-    max-width: 700px;
-    display: grid;
-    gap: 1rem;
   }
 
   footer {

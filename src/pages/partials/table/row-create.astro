@@ -1,18 +1,16 @@
 ---
 // partials/table/row-create.astro
-import type { BaseRow, FieldConfig, FieldValue } from "@ty/FieldConfig";
+import type { BaseRow, FieldConfig } from "@ty/FieldConfig";
 import type { CrudRegistryType } from "@lib/crudRegistry";
 import { crudRegistry } from "@lib/crudRegistry";
 import RowView from "@components/tables/RowView.astro";
 import RowCreateForm from "@components/tables/RowCreate.astro";
-import { ZodError } from "astro/zod";
 import {
-  ConflictError,
   errorHandlingOnSubmit,
   NotFoundError,
 } from "@lib/errors";
-import { parseFormFields } from "@lib/parseFormFields";
 import { getContext } from "@lib/context";
+import { parseFormPayload } from "@lib/sanatizers";
 
 let ctx: {
   config: FieldConfig;
@@ -39,7 +37,7 @@ if (Astro.request.method === "POST") {
 
     // TODO kinda hacky but it works. database assigns ID
     // delete fields.id;
-    newRow = await entry.create(submittedFields);
+    newRow = await entry.create(parseFormPayload(submittedFields));
   } catch (e) {
     console.log("❌ PUT partials/crud/row-create");
     console.log(JSON.stringify(e, null, 2));

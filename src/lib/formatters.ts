@@ -49,16 +49,10 @@ export function formatPhoneToE164Manual(input?: string): string | null {
 //   return e164;
 // }
 
-/**
- * Formats a phone number to a pretty format (manual implementation)
- * @param input - Phone number (preferably E.164 format)
- * @param options - Configuration options
- * @returns Formatted phone number like "+1 (123) 123-1234" or undefined
- */
 export function formatPhonePrettyManual(
-  input: string | undefined,
+  input: string | undefined | null,
   options: PrettyFormatOptions = { defaultCountryCode: "1" },
-): string | undefined {
+) {
   if (!input) return undefined;
   // if (input === undefined || input === null) {
   //   throw new Error("Formatter: Phone number is required");

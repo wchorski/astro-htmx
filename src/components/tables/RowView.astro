@@ -12,9 +12,18 @@ interface Props<TRow extends BaseRow = BaseRow> {
   crud: CrudRegistryType;
   endpoint: string;
   classList?: AstroBuiltinAttributes["class:list"];
+  disableEdit?: boolean;
 }
 
-const { row, headers, config, crud, endpoint, classList } = Astro.props;
+const {
+  row,
+  headers,
+  config,
+  crud,
+  endpoint,
+  classList,
+  disableEdit: isEditDisabled = false,
+} = Astro.props;
 if (!headers.includes("id")) throw new Error("header does not include ID");
 ---
 
@@ -27,7 +36,7 @@ if (!headers.includes("id")) throw new Error("header does not include ID");
         type === "select" && "options" in field ? field.options : undefined;
 
       return (
-        <td data-key={key} class="view-cell">
+        <td data-key={key} data-type={type} class="view-cell">
           <CellViewElement
             name={key}
             type={type}
@@ -40,34 +49,29 @@ if (!headers.includes("id")) throw new Error("header does not include ID");
     })
   }
 
-  {/* ── Action cell (view mode) ── */}
-  <td class="action-cell">
-    <button
-      class="edit"
-      type="button"
-      hx-put="/partials/table/row-edit"
-      hx-target={`#row-${row.id}`}
-      hx-swap="outerHTML"
-      hx-vals={JSON.stringify({
-        _row: JSON.stringify(row),
-        _config: JSON.stringify(config),
-        _crud: crud,
-        _endpoint: endpoint,
-      })}
-    >
-      Edit
-    </button>
-  </td>
+  {
+    !isEditDisabled ? (
+      <td class="action-cell">
+        <button
+          class="edit"
+          type="button"
+          hx-put="/partials/table/row-edit"
+          hx-target={`#row-${row.id}`}
+          hx-swap="outerHTML"
+          hx-vals={JSON.stringify({
+            _row: JSON.stringify(row),
+            _config: JSON.stringify(config),
+            _crud: crud,
+            _endpoint: endpoint,
+          })}
+        >
+          Edit
+        </button>
+      </td>
+    ) : (
+      <td />
+    )
+  }
 </tr>
 
 <tr id={`row-error-${row.id}`} hx-swap-oob="outerHTML" class="row-error"></tr>
-
-<style>
-  td.view-cell[data-key="attended"]:not(:empty) {
-    color: seagreen;
-
-    &::after {
-      content: "✔";
-    }
-  }
-</style>

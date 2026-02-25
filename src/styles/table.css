@@ -70,8 +70,8 @@ table tr.new-row {
     color: mediumslateblue;
     content: "✸";
     position: absolute;
-    left: -1%;
-    top: 25%;
+    left: 1%;
+    bottom: 50%;
   }
 }
 
@@ -85,3 +85,8 @@ th {
     display: none;
   }
 } */
+
+td[data-type="hidden"], th[data-type="hidden"] {
+  display: none;
+  outline: dotted red 3px;
+}

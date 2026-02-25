@@ -9,6 +9,7 @@
     --c-active: rgb(100, 160, 151);
     --c-primary: rgb(79, 79, 196);
     --c-error: rgb(166, 25, 25);
+    --c-success: rgb(47, 141, 88);
   }
 }
 /* TODO debug w dark theme override for now */
@@ -23,7 +24,13 @@
     --c-active: rgb(100, 160, 151);
     --c-primary: rgb(79, 79, 196);
     --c-error: rgb(255 73 73);
+    --c-success: rgb(47, 181, 105);
   }
+}
+
+/* TODO bad bad not good */
+.highlight-green {
+  background-color: #3cb34d8c !important;
 }
 .card {
   background-color: var(--c-txt-bg);
@@ -69,7 +76,8 @@ a:hover {
 }
 
 button,
-.btn,.btn:link {
+.btn,
+.btn:link {
   background-color: var(--c-interactive);
   color: var(--c-txt-rev);
 
@@ -78,7 +86,7 @@ button,
   }
 }
 
-.field-error {
+.field-error:not(:empty) {
   color: var(--c-error);
   border-bottom: dotted 2px var(--c-error);
 }

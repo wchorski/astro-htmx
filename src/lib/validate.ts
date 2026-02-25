@@ -4,6 +4,7 @@ import { formatPhoneToE164Manual } from "./formatters";
 export const validate = {
   id: z.coerce.number(),
 
+  // TODO i should prob use .strict() where i can as a lot of these data inputs usually contain all fields type
   member: z.object({
     id: z.coerce.number(),
     first_name: z.string().trim().min(3, "Must be more than 3 characters"),
@@ -47,7 +48,11 @@ export const validate = {
     memberId: z.coerce.number(),
     courseId: z.coerce.number(),
     grade: z.string().optional(),
-    attended: z.coerce.boolean(),
+    // attended: z.coerce.boolean(),
+    attended: z
+      .string()
+      .optional()
+      .transform((v) => v === "on"),
   }),
 
   get creditCreate() {
@@ -102,28 +107,43 @@ export const validate = {
     return this.course;
   },
 
-  memberLink: z.object({
-    memberId: z.coerce.number(),
-    courseId: z.coerce.number(),
-    attended: z.coerce.boolean(),
-  }).strict(),
+  memberLink: z
+    .object({
+      memberId: z.coerce.number(),
+      courseId: z.coerce.number(),
+      // attended: z.coerce.boolean(),
+      attended: z
+        .string()
+        .optional()
+        .transform((v) => v === "on"),
+    })
+    .strict(),
 
-  memberCreateAndLink: z.object({
-    first_name: z.string().min(3),
-    last_name: z.string().min(3),
-    phone: z
-      .string()
-      .trim()
-      .transform((val) => formatPhoneToE164Manual(val))
-      .refine((val) => val !== null, "Phone must be 10 digits or E.164 format"),
-    email: z.string().trim().toLowerCase().email(),
-    address1: z.string(),
-    city: z.string(),
-    state: z.string(),
-    zip: z.coerce.number(),
-    courseId: z.coerce.number(),
-    attended: z.coerce.boolean(),
-  }).strict(),
+  memberCreateAndLink: z
+    .object({
+      first_name: z.string().min(3),
+      last_name: z.string().min(3),
+      phone: z
+        .string()
+        .trim()
+        .transform((val) => formatPhoneToE164Manual(val))
+        .refine(
+          (val) => val !== null,
+          "Phone must be 10 digits or E.164 format",
+        ),
+      email: z.string().trim().toLowerCase().email(),
+      address1: z.string(),
+      city: z.string(),
+      state: z.string(),
+      zip: z.coerce.number(),
+      courseId: z.coerce.number(),
+      // attended: z.coerce.boolean(),
+      attended: z
+        .string()
+        .optional()
+        .transform((v) => v === "on"),
+    })
+    .strict(),
 
   get memberCreditCreate() {
     return z.union([this.memberLink, this.memberCreateAndLink]);

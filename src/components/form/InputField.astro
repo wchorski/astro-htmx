@@ -1,13 +1,18 @@
 ---
 // components/form/InputField.astro
 import type { HTMLAttributes } from "astro/types";
-import type { FieldOption, FieldSlot, FieldType, InputFieldType } from "@ty/FieldConfig";
+import type {
+  FieldOption,
+  FieldSlot,
+  FieldType,
+  InputFieldType,
+} from "@ty/FieldConfig";
 
 interface Props extends Omit<
   HTMLAttributes<"input">,
   "type" | "value" | "checked" | "name"
 > {
-  formId: string;
+  formId?: string;
   name: string;
   label?: string;
   type?: InputFieldType | null;
@@ -29,22 +34,31 @@ const {
   fieldError,
   datalist,
 } = Astro.props;
+
 ---
 
 <label>
   <span class="text">{label ?? name}</span>
-  {
+  <!-- {
     type === "checkbox" && (
-      <input type="hidden" name={name} form={formId} value="false" />
+      <input
+        type="hidden"
+        name={name}
+        {...(formId ? { form: formId } : {})}
+        value="false"
+      />
     )
-  }
+  } -->
   <input
     {...inputAttrs}
-    form={formId}
+    {...formId ? { form: formId } : {}}
     name={name}
     type={type}
+    {...value ? { value } : {}}
     {...datalist ? { list: `datalist-${name}` } : {}}
-    {...type === "checkbox" ? { checked: checked } : { value: value ?? "" }}
+    {...type === "checkbox"
+      ? { checked: value ? Boolean(value) : checked }
+      : undefined}
   />
   {fieldError && <span class="field-error">{fieldError}</span>}
   {

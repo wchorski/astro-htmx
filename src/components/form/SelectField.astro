@@ -6,7 +6,7 @@ interface Props extends Omit<
   HTMLAttributes<"select">,
   "type" | "value" | "checked" | "name"
 > {
-  formId: string;
+  formId?: string;
   name: string;
   label?: string;
   value?: string | number;

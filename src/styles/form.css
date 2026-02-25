@@ -32,6 +32,7 @@ input[name="memberId"],
 input[name="middle_initial"],
 input[name="courseId"] 
 input[name="locationId"],
+input[name="courseId"],
 select[name="locationId"] {
   max-width: 6ch;
 }
@@ -53,9 +54,9 @@ form {
     display: grid;
   }
 
-  button[type="submit"] {
+  /* button[type="submit"] {
     margin-top: 1.5rem;
-  }
+  } */
 
   label {
     display: grid;
