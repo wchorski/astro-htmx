@@ -9,6 +9,7 @@ interface ImportMetaEnv {
   readonly WP_USERNAME?: string;
   readonly WP_APP_PASSWORD?: string;
   readonly WORDPRESS_ENDPOINT?: string;
+  readonly LIBSQL_URL?: string;
 }
 
 interface ImportMeta {
