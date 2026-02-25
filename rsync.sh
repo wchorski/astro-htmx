@@ -6,7 +6,7 @@ set -a
 source .env
 set +a
 
-echo "source -> $SRC_DIR"
+echo "source      -> $SRC_DIR"
 echo "destination -> $DEST_DIR"
 
 # SRC="/Volumes/edata/vscode/moeits_staff-astro-htmx"

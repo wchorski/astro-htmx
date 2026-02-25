@@ -8,7 +8,9 @@
     "build": "astro build --remote",
     "preview": "astro preview",
     "astro": "astro",
+    "db:local:schema": "LIBSQL_URL=http://localhost:4320 node db/apply-schema-libsql.ts",
     "db:local:seed": "LIBSQL_URL=http://localhost:4320 node db/seed-libsql.ts",
+    "db:prod:schema": "LIBSQL_URL=http://backupnas03:4320 node db/apply-schema-libsql.ts",
     "db:prod:seed": "LIBSQL_URL=http://backupnas03:4320 node db/seed-libsql.ts"
   },
   "dependencies": {

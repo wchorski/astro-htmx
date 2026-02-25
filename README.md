@@ -1,4 +1,12 @@
+HOW to generate sql files and migrations with 
+```shell
+npx drizzle-kit generate   # generates SQL migration files
+npx drizzle-kit migrate    # runs them against your DB
+```
+
 #todo
+- [ ] delete button (with are you sure) for editable table
+- [ ] For production with auth enabled, generate a token and configure sqld with --auth-jwt-key-file or the SQLD_AUTH_JWT_KEY env var.
 - [ ] crudRegistry.memberCredits.create if member exists with (id, phone, email), then check all input fields to see if they match. if yes, then add existing member with new Credit
 - [ ] create mini member search form in tfooter of memberCredits table. 
 - [ ] ask how to bypass Cloudflare blocking. WP import is getting 403
@@ -29,6 +37,18 @@ Use MSAL or similar libraries to handle token lifecycle automatically.
 use with `custom-events-api.php` plugin
 
 endpoint example `${WORDPRESS_ENDPOINT}/wp-json/wchorski/v1/events?after=2024-01-01T00:00:00`
+
+## Docker's Named volumes
+because I'm not used to using named volumes (but i must use it to deploy on synology nas)
+```shell
+docker volume inspect libsql-data
+
+
+{
+  "Name": "libsql-data",
+  "Mountpoint": "/var/lib/docker/volumes/libsql-data/_data"
+}
+```
 
 # Astro Starter Kit: Basics
 
