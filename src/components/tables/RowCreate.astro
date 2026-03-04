@@ -36,6 +36,7 @@ const topLevelError =
     style="display:none"
     hx-post="/partials/table/row-create"
     hx-target="#row-new"
+    hx-target-error="#row-new"
     hx-swap="outerHTML"
     hx-vals={JSON.stringify({
       _config: JSON.stringify(config),

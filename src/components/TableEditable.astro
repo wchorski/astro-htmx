@@ -13,6 +13,7 @@ import ViewRow from "@components/tables/RowView.astro";
 import RowCreate from "./tables/RowCreate.astro";
 import type { CrudRegistryType } from "@lib/crudRegistry";
 import type { BaseRow, FieldConfig } from "@ty/FieldConfig";
+import DialogConfirm from "./DialogConfirm.astro";
 
 const { rows, config, crud, endpoint } = Astro.props;
 
@@ -75,6 +76,11 @@ function label(key: string) {
 </script>
 
 <style>
+  .window-actions{
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
   .table-scroll {
     width: 100%;
     overflow-x: auto;

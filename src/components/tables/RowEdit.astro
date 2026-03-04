@@ -34,10 +34,7 @@ const topLevelError = typeof error === "string" ? error.toString() : null;
     style="display:none"
     hx-put="/partials/table/row-save"
     hx-target={`#row-${row.id}`}
-    hx-target-422={`#row-error-${row.id}`}
-    hx-target-404={`#row-error-${row.id}`}
-    hx-target-409={`#row-error-${row.id}`}
-    hx-target-500={`#row-error-${row.id}`}
+    hx-target-error={`#row-error-${row.id}`}
     hx-swap="outerHTML"
     hx-vals={JSON.stringify({
       _row: JSON.stringify(row),
@@ -140,6 +137,7 @@ const topLevelError = typeof error === "string" ? error.toString() : null;
       class="cancel"
       hx-post="/partials/table/row-view"
       hx-target={`#row-${row.id}`}
+      hx-target-error={`#row-${row.id}`}
       hx-swap="outerHTML"
       hx-vals={JSON.stringify({
         _row: JSON.stringify(originalRow),

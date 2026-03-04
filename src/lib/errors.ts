@@ -2,7 +2,7 @@ import { ZodError, type typeToFlattenedError } from "astro:schema";
 import { LibsqlError } from "@libsql/client";
 
 // --- Error Classes ---
-
+// 422
 export class ValidationError<T = any> extends Error {
   flattened: typeToFlattenedError<T, string>;
   constructor(flattened: typeToFlattenedError<T, string>) {
@@ -11,31 +11,38 @@ export class ValidationError<T = any> extends Error {
     this.flattened = flattened;
   }
 }
-
+// 404
 export class NotFoundError extends Error {
   constructor(message: string) {
-    super(message);
+    super("Not Found: " + message);
     this.name = "NotFoundError";
   }
 }
-
+// 400
+export class BadRequestError extends Error {
+  constructor(message: string) {
+    super("Bad Request: " + message);
+    this.name = "BadRequestError";
+  }
+}
+// 409
 export class ConflictError extends Error {
   constructor(message: string) {
-    super(message);
+    super("Conflict: " + message);
     this.name = "ConflictError";
   }
 }
 // “you aren’t authenticated–either not authenticated at all or authenticated incorrectly–but please reauthenticate and try again.”
 export class UnauthorizedError extends Error {
   constructor(message: string) {
-    super(message);
+    super("Unauthorized: " + message);
     this.name = "UnauthorizedError";
   }
 }
 // “I’m sorry. I know who you are–I believe who you say you are–but you just don’t have permission to access this resource. Maybe if you ask the system administrator nicely, you’ll get permission. But please don’t bother me again until your predicament changes.”
 export class ForbiddenError extends Error {
   constructor(message: string) {
-    super(message);
+    super("Forbidden: " + message);
     this.name = "ForbiddenError";
   }
 }
@@ -103,6 +110,9 @@ export function errorHandlingOnSubmit(e: unknown): {
   err: string | typeToFlattenedError<any, string>;
   status: number;
 } {
+  if (e instanceof BadRequestError) {
+    return { status: 400, err: e.message };
+  }
   if (e instanceof UnauthorizedError) {
     return { status: 401, err: e.message };
   }

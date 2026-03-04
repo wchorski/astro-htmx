@@ -3,8 +3,10 @@
 import ViewRow from "@components/tables/RowView.astro";
 import { getContext } from "@lib/context";
 import type { CrudRegistryType } from "@lib/crudRegistry";
+import { errorHandlingOnSubmit } from "@lib/errors";
 import type { FieldConfig } from "@ty/FieldConfig";
 import type { TableRow } from "@ty/Table";
+import type { ZodError } from "astro/zod";
 
 let row: TableRow | null = null;
 let ctx: {
@@ -13,6 +15,7 @@ let ctx: {
   endpoint: string;
   headers: string[];
 } | null = null;
+let error: string | ReturnType<ZodError["flatten"]> | null = null;
 
 if (Astro.request.method === "POST") {
   try {
@@ -28,11 +31,12 @@ if (Astro.request.method === "POST") {
     // if (!config) throw new Error("config not found");
 
     row = JSON.parse(raw.get("_row") as string);
-  } catch (error) {
+  } catch (e) {
     console.log("partials/table/row-view");
-    if (error instanceof Error) {
-      console.error(error);
-    }
+    const { err, status } = errorHandlingOnSubmit(e);
+    Astro.response.status = status;
+    error = err;
+    // TODO add error condition view in template
   }
 }
 ---

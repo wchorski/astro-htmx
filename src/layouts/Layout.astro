@@ -3,6 +3,7 @@ import "@styles/global.css";
 import "@styles/colors.css";
 import "@styles/form.css";
 import "@styles/table.css";
+import DialogConfirm from "@components/DialogConfirm.astro";
 ---
 
 <!doctype html>
@@ -31,16 +32,18 @@ import "@styles/table.css";
         htmx.process(document.body);
       });
 
-      document.body.addEventListener("htmx:beforeSwap", ((evt: CustomEvent) => {
-        const status = evt.detail.xhr.status;
-        if (status >= 400 && status < 600) {
-          evt.detail.shouldSwap = true;
-          evt.detail.isError = false;
-        }
-      }) as EventListener);
+      //! <body hx-ext="response-targets"> should handle this for me
+      // document.body.addEventListener("htmx:beforeSwap", ((evt: CustomEvent) => {
+      //   const status = evt.detail.xhr.status;
+      //   if (status >= 400 && status < 600) {
+      //     evt.detail.shouldSwap = true;
+      //     evt.detail.isError = false;
+      //   }
+      // }) as EventListener);
     </script>
   </head>
-  <body>
+  <body hx-ext="response-targets">
     <slot />
+    <DialogConfirm />
   </body>
 </html>

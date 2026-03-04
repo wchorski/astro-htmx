@@ -39,20 +39,11 @@ if (Astro.request.method === "POST") {
     // delete fields.id;
     newRow = await entry.create(parseFormPayload(submittedFields));
   } catch (e) {
-    console.log("❌ PUT partials/crud/row-create");
-    console.log(JSON.stringify(e, null, 2));
+    // console.log("❌ PUT partials/crud/row-create");
+    // console.log(JSON.stringify(e, null, 2));
     const { err, status } = errorHandlingOnSubmit(e);
     Astro.response.status = status;
-    error = err;
-    // TODO i like the idea of swapping target to not touch form, but causes issues with inline field errors not rendering
-    // if (status === 422) {
-    //   // let normal swap happen
-    // } else {
-    //   // TODO add to other forms
-    //   Astro.response.headers.set("HX-Retarget", "#row-error-create");
-    //   Astro.response.headers.set("HX-Reswap", "innerHTML");
-    // }
-    
+    error = err;    
   }
 }
 ---

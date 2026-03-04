@@ -94,3 +94,9 @@ button,
 hr {
   border-color: var(--c-seperator);
 }
+
+.danger {
+  &:hover {
+    background-color: var(--c-error);
+  }
+}

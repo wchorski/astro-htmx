@@ -11,9 +11,7 @@ const {} = Astro.props;
     if(event.detail.successful)
       htmx.trigger('#events-list', 'refresh')
   "
-  hx-target-422={`#events-list`}
-  hx-target-404={`#events-list`}
-  hx-target-403={`#events-list`}
+  hx-target-error={`#events-list`}
 >
   Sync Events from Wordpress
 </button>

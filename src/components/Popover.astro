@@ -1,0 +1,39 @@
+---
+// https://web.dev/learn/css/popover-and-dialog
+interface Props {
+  id: string;
+}
+const { id } = Astro.props;
+---
+
+<dialog popover id={id} class="card" data-view="confirm">...</dialog>
+
+<!-- <script>
+  interface Elements {
+    error: HTMLElement;
+  }
+  class BarcodeScanner extends HTMLElement {
+    private elements!: Elements; // Add the ! to tell TypeScript we'll initialize it
+
+    connectedCallback() {
+      this.elements = this.getElements();
+    }
+
+    disconnectedCallback() {
+      // Cleanup when component is removed
+    }
+
+    private getElements(): Elements {
+      const query = <T extends HTMLElement>(selector: string): T => {
+        const el = this.querySelector<T>(selector);
+        if (!el) throw new Error(`Element not found: ${selector}`);
+        return el;
+      };
+
+      return {
+        error: query("[data-error]"),
+      };
+    }
+  }
+  customElements.define("barcode-scanner", BarcodeScanner);
+</script> -->

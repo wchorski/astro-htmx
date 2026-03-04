@@ -5,6 +5,7 @@ const { error, success } = Astro.props;
 <form
   hx-post="/api/confirm-credit"
   hx-target="#form-container"
+  hx-target-error="#form-container"
   hx-swap="outerHTML"
   hx-indicator="#loading"
   id="form-container"

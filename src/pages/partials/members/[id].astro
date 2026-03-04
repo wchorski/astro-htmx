@@ -1,0 +1,56 @@
+---
+// partials/members/[id].astro
+import RowView from "@components/tables/RowView.astro";
+import { BadRequestError, errorHandlingOnSubmit } from "@lib/errors";
+import type { MemberInsert } from "@ty/Schema";
+import type { ZodError } from "astro/zod";
+import { eq, Member } from "astro:db";
+import { db } from "astro:db";
+
+interface Params {
+  id: string | undefined;
+}
+
+let member: MemberInsert | null | undefined = null;
+let error: string | ReturnType<ZodError["flatten"]> | null = null;
+
+if (Astro.request.method === "DELETE") {
+  const { id } = Astro.params;
+  try {
+    if (!id) throw new BadRequestError("Missing required parameter: id");
+
+    const numericId = Number(id);
+
+    if (!Number.isInteger(numericId)) {
+      throw new BadRequestError("Parameter 'id' must be a valid integer");
+    }
+
+    member = await db
+      .delete(Member)
+      .where(eq(Member.id, numericId))
+      .returning()
+      .get();
+  } catch (e) {
+    // console.log("partials/members/:id");
+    // console.log(e);
+    const { err, status } = errorHandlingOnSubmit(e);
+    Astro.response.status = status;
+    error = err;
+  }
+}
+---
+
+{
+  error ? (
+    <p class="callout error">{JSON.stringify(error, null, 2)}</p>
+  ) : Astro.request.method === "DELETE" && member ? (
+    <>
+      <tr>
+        <td colspan="100%" class="danger">
+          DELETED MEMBER{" "}
+          {`${member.id} | ${member.first_name} ${member.last_name} ${member.phone} ${member.email}`}
+        </td>
+      </tr>
+    </>
+  ) : null
+}

@@ -84,7 +84,7 @@ button,
 
 button:has(.icon),
 .btn:has(.icon) {
-  padding: 0.1rem 0.3rem;
+  padding: 0.4rem 0.6rem;
 }
 
 button.save,
@@ -209,4 +209,80 @@ hr {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+@keyframes fall-out {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(12px); }
+}
+
+/* COMPONENTS */
+dialog {
+  /* transition:
+    transform 0.5s,
+    opacity 0.5s,
+    display 0.5s;
+  transition-behavior: allow-discrete; */
+
+  transform: translateY(20px);
+  opacity: 0;
+  border: none;
+  border-radius: 8px;
+  padding: 2rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  max-width: 500px;
+  color: var(--c-txt);
+  background-color: var(--c-txt-bg);
+}
+dialog[open] {
+  animation-name: raise-in;
+  animation-duration: 200ms;
+  animation-timing-function: linear;
+  animation-delay: 100ms;
+  animation-iteration-count: 1;
+  animation-direction: normal;
+  animation-fill-mode: forwards;
+}
+
+dialog[open]::backdrop {
+  background: rgba(0, 0, 0, 0.708);
+  backdrop-filter: blur(4px);
+}
+
+dialog.closing {
+  animation: fall-out 150ms ease-in forwards;
+}
+
+[popover] {
+  background: #333;
+  border: 2px solid #49c8fc;
+  padding: 20px;
+  max-width: 200px;
+  position: absolute;
+
+  position-anchor: --anchor_link;
+  top: anchor(--anchor_link bottom);
+  left: anchor(--anchor_link left);
+  margin: 10px 0 0 0;
+
+  transform: translateY(50px);
+  opacity: 0;
+  transition:
+    transform 0.5s,
+    opacity 0.5s,
+    display 0.5s;
+  transition-behavior: allow-discrete;
+}
+[popover]:popover-open {
+  transform: translateY(0);
+  opacity: 1;
+
+  @starting-style {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+}
+[popover] p {
+  font-size: 16px;
+  margin: 0 0 15px 0;
 }
