@@ -216,18 +216,18 @@ export const seedData: SeedData = {
     {
       id: 1,
 
-      roleId: 3,
-      first_name: "Clea",
-      last_name: "Orry",
+      roleId: 1,
+      first_name: "Admin",
+      last_name: "AAAttendance",
       middle_initial: null,
-      phone: "+12194273184",
-      email: "corry0@ehow.com",
-      address1: "36 Oakridge Pass",
+      phone: "+11111111111",
+      email: "admin@attendance.lan",
+      address1: "111 Admin Lane",
       address2: null,
 
-      city: "Gary",
-      state: "Indiana",
-      zip: 61167,
+      city: "Admin City",
+      state: "Adminland",
+      zip: 10101,
     },
     {
       id: 2,

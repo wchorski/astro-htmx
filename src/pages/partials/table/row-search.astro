@@ -10,7 +10,7 @@ import ViewRow from "@components/tables/RowView.astro";
 import type { CrudRegistryType } from "@lib/crudRegistry";
 import type { FieldConfig } from "@ty/FieldConfig";
 import type { TableRow } from "@ty/Table";
-import { parseFormPayload } from "@lib/sanatizers";
+import { parseOutUndefinedFormData } from "@lib/sanatizers";
 import RowSearchMember from "@components/tables/RowSearchMember.astro";
 import { getContext } from "@lib/context";
 
@@ -35,7 +35,7 @@ if (Astro.request.method === "POST") {
       [...formData.entries()].filter(([key]) => !key.startsWith("_")),
     );
 
-    searchResults = await searchForMembers(parseFormPayload(submittedFields));
+    searchResults = await searchForMembers(parseOutUndefinedFormData(submittedFields));
 
     // avoid adding to route history
     Astro.response.headers.set("Content-Type", "text/html");

@@ -60,7 +60,7 @@ const {
       ? { checked: value ? Boolean(value) : checked }
       : undefined}
   />
-  {fieldError && <span class="field-error">{fieldError}</span>}
+  <span id={`error-${name}`} class="field-error">{fieldError ?? ""}</span>
   {
     datalist ? (
       <datalist id={`datalist-${name}`}>

@@ -1,0 +1,75 @@
+---
+// partials/users/create.astro
+import RowView from "@components/tables/RowView.astro";
+import UserCard from "@components/UserCard.astro";
+import RowCreateForm from "@components/tables/RowCreate.astro";
+import { tableConfigs } from "@lib/tableConfigs";
+import { errorHandlingOnSubmit } from "@lib/errors";
+import { crudRegistry } from "@lib/crudRegistry";
+import { parseOutUndefinedFormData } from "@lib/sanatizers";
+import { TEST_ADMIN_SESSION } from "@lib/auth/session";
+
+type ViewType = "table-row" | "card";
+
+let newUser = null;
+let error = null;
+let view: ViewType = "table-row";
+const ctx = {
+  crud: "users" as const,
+  config: tableConfigs.users.essential,
+  endpoint: "/partials/users",
+  headers: Object.keys(tableConfigs.users.essential),
+};
+
+if (Astro.request.method === "POST") {
+  try {
+    // const session = await requirePermission(Astro.request, "users", "create");
+    const session = TEST_ADMIN_SESSION;
+
+    const formData = await Astro.request.formData();
+
+    view = (formData.get("_view") as ViewType) ?? "table-row"; // 👈 caller decides
+
+    const submitFields = Object.fromEntries(
+      [...formData.entries()].filter(([key]) => !key.startsWith("_")),
+    );
+
+    newUser = await crudRegistry.users.create(
+      parseOutUndefinedFormData(submitFields),
+      session,
+    );
+  } catch (e) {
+    const { err, status } = errorHandlingOnSubmit(e);
+    Astro.response.status = status;
+    error = err;
+    console.log({ err });
+    console.log(typeof error === "object" && "fieldErrors" in error);
+  }
+}
+---
+
+{
+  error && typeof error === "object" && "fieldErrors" in error ? (
+    // one oob fragment per field that failed
+    <>
+      {Object.entries(error.fieldErrors).map(([fieldName, messages]) => (
+        <span
+          id={`error-${fieldName}`}
+          hx-swap-oob="innerHTML"
+          class="field-error"
+        >
+          {messages?.[0]}
+        </span>
+      ))}
+    </>
+  ) : error ? (
+    <td class="callout error top-level" colspan={ctx.headers.length}>
+      {typeof error === "string" ? error : JSON.stringify(error)}
+    </td>
+  ) : newUser && view === "table-row" ? (
+    <>
+      <RowView row={newUser} {...ctx} classList={["new-row"]} />
+      <RowCreateForm {...ctx} />
+    </>
+  ) : null
+}

@@ -16,32 +16,34 @@ interface Props {
   config: FieldConfig;
   headers: string[];
   endpoint: string;
-  error?: string | Record<string, any>;
-  values?: Record<string, any>;
+  // error?: string | Record<string, any>;
+  // values?: Record<string, any>;
 }
 
-const { config, values, crud, endpoint, headers, error } = Astro.props;
+const { config, crud, endpoint, headers } = Astro.props;
 
-const topLevelError =
-  typeof error === "string"
-    ? error
-    : typeof error === "object" && error?.formErrors?.length
-      ? error.formErrors[0]
-      : null;
+// TODO can remove all errors (handle by partial swapping)
+// const topLevelError =
+//   typeof error === "string"
+//     ? error
+//     : typeof error === "object" && error?.formErrors?.length
+//       ? error.formErrors[0]
+//       : null;
 ---
 
 <tr id="row-new" data-status="creating" class="highlight-green">
   <form
     id="create-form"
     style="display:none"
-    hx-post="/partials/table/row-create"
-    hx-target="#row-new"
-    hx-target-error="#row-new"
-    hx-swap="outerHTML"
+    hx-post={`/partials/${crud}/create`}
+    hx-target="#table-footer"
+    hx-target-error="#row-error-create"
+    hx-swap="innerHTML"
     hx-vals={JSON.stringify({
       _config: JSON.stringify(config),
       _endpoint: endpoint,
       _crud: crud,
+      _view: "table-row",
     })}
   >
   </form>
@@ -59,34 +61,9 @@ const topLevelError =
       const { options } = field as SelectFieldSlot;
       delete (inputAttrs as any).datalist;
       const { datalist } = field as InputFieldSlot;
-      // const { label, value: override, type, datalist, options, ...inputAttrs } = field as any
-
-      // const options =
-      //   type === "select" && "options" in field ? field.options : undefined;
-      // const datalist =
-      //   type && !["select", "textarea"].includes(type) && "datalist" in field
-      //     ? field.datalist
-      //     : undefined;
-
-      const submittedValue = values?.[key];
-
-      const resolvedValue =
-        submittedValue !== undefined
-          ? submittedValue
-          : typeof override !== "boolean"
-            ? override
-            : undefined;
-
-      const resolvedCheckbox =
-        submittedValue !== undefined
-          ? submittedValue === "true" || submittedValue === true
-          : !!(override ?? false);
-
-      const fieldError =
-        typeof error === "object" ? error?.fieldErrors[key]?.[0] : null;
 
       if (key === "id") {
-        return <td data-type={type} />;
+        return <td data-type={type} class="background-success" />;
       }
       if (type === "select")
         return (
@@ -95,8 +72,6 @@ const topLevelError =
               formId={"create-form"}
               name={key}
               label={label}
-              value={resolvedValue}
-              fieldError={fieldError}
               inputAttrs={inputAttrs}
               options={options}
             />
@@ -114,11 +89,8 @@ const topLevelError =
             formId={"create-form"}
             name={key}
             label={label}
-            value={type === "checkbox" ? undefined : resolvedValue}
-            checked={type === "checkbox" ? resolvedCheckbox : undefined}
             type={type}
             datalist={datalist}
-            fieldError={fieldError}
             inputAttrs={inputAttrs}
           />
         </td>
@@ -157,15 +129,7 @@ const topLevelError =
   </td>
 </tr>
 
-<tr id={`row-error-create`} class="row-error">
-  {
-    topLevelError ? (
-      <td class="callout error top-level" colspan={headers.length}>
-        {topLevelError}
-      </td>
-    ) : null
-  }
-</tr>
+<tr id={`row-error-create`} class="row-error"></tr>
 
 <script>
   document

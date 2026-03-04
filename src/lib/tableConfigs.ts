@@ -71,7 +71,7 @@ const memberEssentialConfig = {
     required: true,
     placeholder: "50505...",
   },
-} as FieldConfig<BaseRow> | undefined;
+} as FieldConfig<BaseRow>;
 
 export const tableConfigs = {
   users: {

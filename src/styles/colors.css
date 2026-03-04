@@ -30,7 +30,14 @@
 
 /* TODO bad bad not good */
 .highlight-green {
-  background-color: #3cb34d8c !important;
+  background-color: #3cb34e1d !important;
+}
+
+.border-left-create {
+  border-left: solid var(--c-success) 20px;
+}
+.background-success {
+  background-color: var(--c-success);
 }
 .card {
   background-color: var(--c-txt-bg);

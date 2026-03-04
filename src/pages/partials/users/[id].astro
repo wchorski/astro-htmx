@@ -2,7 +2,7 @@
 // partials/users/[id].astro
 import RowView from "@components/tables/RowView.astro";
 import { BadRequestError, errorHandlingOnSubmit } from "@lib/errors";
-import type { MemberInsert } from "@ty/Schema";
+import type { UserInsert } from "@ty/Schema";
 import type { ZodError } from "astro/zod";
 import { eq, User } from "astro:db";
 import { db } from "astro:db";
@@ -11,7 +11,7 @@ interface Params {
   id: string | undefined;
 }
 
-let user: MemberInsert | null | undefined = null;
+let user: UserInsert | null | undefined = null;
 let error: string | ReturnType<ZodError["flatten"]> | null = null;
 
 if (Astro.request.method === "DELETE") {

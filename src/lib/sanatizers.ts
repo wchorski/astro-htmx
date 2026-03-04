@@ -1,7 +1,7 @@
 /**
  * removes keys with empty strings completely
  */
-export function parseFormPayload(
+export function parseOutUndefinedFormData(
   data: Record<string, FormDataEntryValue>,
 ): Record<string, FormDataEntryValue> {
   return Object.fromEntries(

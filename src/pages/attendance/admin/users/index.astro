@@ -1,5 +1,5 @@
 ---
-import MembersEditableTable from "@components/MembersEditableTable.astro";
+import UsersEditableTable from "@components/UsersEditableTable.astro";
 import AttendanceAdminNav from "@components/navigation/AttendanceAdminNav.astro";
 import Layout from "@layouts/Layout.astro";
 import { getMembersPage } from "@lib/getMembersPage";
@@ -20,7 +20,7 @@ const { users, page, perPage, totalCount, totalPages } = result;
     <header class="flex space-between">
       <h1>Users - Page {page}</h1>
     </header>
-    <MembersEditableTable users={users} />
+    <UsersEditableTable users={users} />
     {
       users ? (
         <PaginationNav

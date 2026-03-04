@@ -1,10 +1,10 @@
 ---
 import BarcodeScanner from "./BarcodeScanner.astro";
-import type { CourseInsert, MemberInsert } from "@ty/Schema";
+import type { CourseInsert, UserInsert } from "@ty/Schema";
 interface Props {
   course: CourseInsert;
   formId?: string;
-  member?: MemberInsert;
+  member?: UserInsert;
 }
 const { course, member, formId = "users-search-form" } = Astro.props;
 const errorTargetId = `${formId}-errors`;
@@ -179,17 +179,17 @@ const responseTargetId = `${formId}-response`;
   document.addEventListener("barcode-scanned", ((evt: CustomEvent) => {
     const scannedValue = evt.detail.value;
     const formId = "users-search-form"; // or get dynamically
-    const memberIdInput = document.getElementById(
+    const userIdInput = document.getElementById(
       `${formId}-userId`,
     ) as HTMLInputElement;
 
-    if (memberIdInput) {
-      memberIdInput.value = scannedValue;
+    if (userIdInput) {
+      userIdInput.value = scannedValue;
       // Optionally trigger input event for any listeners
-      memberIdInput.dispatchEvent(new Event("input", { bubbles: true }));
+      userIdInput.dispatchEvent(new Event("input", { bubbles: true }));
 
       // Optionally auto-submit the form
-      (memberIdInput.closest("form") as HTMLFormElement)?.requestSubmit();
+      (userIdInput.closest("form") as HTMLFormElement)?.requestSubmit();
     }
   }) as EventListener);
 

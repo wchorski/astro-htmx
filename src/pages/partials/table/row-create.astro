@@ -10,7 +10,7 @@ import {
   NotFoundError,
 } from "@lib/errors";
 import { getContext } from "@lib/context";
-import { parseFormPayload } from "@lib/sanatizers";
+import { parseOutUndefinedFormData } from "@lib/sanatizers";
 
 let ctx: {
   config: FieldConfig;
@@ -38,7 +38,7 @@ if (Astro.request.method === "POST") {
 
     // TODO kinda hacky but it works. database assigns ID
     // delete fields.id;
-    newRow = await entry.create(parseFormPayload(submittedFields));
+    newRow = await entry.create(parseOutUndefinedFormData(submittedFields));
   } catch (e) {
     // console.log("❌ PUT partials/crud/row-create");
     // console.log(JSON.stringify(e, null, 2));

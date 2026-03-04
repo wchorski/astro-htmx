@@ -1,6 +1,6 @@
 import { getMsToken } from "@lib/auth/msAuthentication";
 import { formatPhonePrettyManual } from "@lib/formatters";
-import type { CreditInsert, MemberInsert } from "@ty/Schema.d.ts";
+import type { CreditInsert, UserInsert } from "@ty/Schema.d.ts";
 import type { APIRoute } from "astro";
 import { Course, Credit, db, eq, User } from "astro:db";
 
@@ -151,8 +151,8 @@ export const PUT: APIRoute = async ({ params, request, redirect }) => {
 type CreditWithMember = Omit<CreditInsert, "id" | "date"> & {
   creditId: CreditInsert["id"];
   dateCreated: CreditInsert["date"];
-  user: Omit<MemberInsert, "id"> & {
-    userId: MemberInsert["id"];
+  user: Omit<UserInsert, "id"> & {
+    userId: UserInsert["id"];
     phone: string; // because you force "" as fallback
   };
 };

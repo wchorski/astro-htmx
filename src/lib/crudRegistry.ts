@@ -13,9 +13,13 @@ import {
   createWordpressEventPost,
   updateWordpressEventPost,
 } from "./getsetWordpressPost";
-import { userCan, sanatizeFields } from "./auth/permissions";
+import { userCan, sanitizeFields, userPolicy } from "./auth/permissions";
+import type { Session } from "./auth/session";
 
-type CreateFn = (row: Omit<TableRow, "id">) => Promise<TableRow>;
+type CreateFn = (
+  row: Omit<TableRow, "id">,
+  session: Session,
+) => Promise<TableRow>;
 type ReadFn = (id: string) => Promise<TableRow | null>;
 type UpdateFn = (row: Partial<TableRow> & { id: string }) => Promise<TableRow>;
 type DeleteFn = (id: string) => Promise<TableRow>;
@@ -30,21 +34,27 @@ type CrudEntry = {
 const { DEFAULT_ROLE_ID } = import.meta.env;
 
 export const crudRegistry = {
+  // TODO how to prevent create/update users from giving themselves elevated permissions?
   users: {
-    create: async (row) => {
-      console.log("crudRegistry.users.create");
+    create: async (row, session) => {
+      
       
       try {
-        const validated = validate.userCreate.parse(row);
-        
+        const fields = await userPolicy.writableFields(session, null);
+
+        const sanitized = sanitizeFields(row, fields);
+
+        const validated = validate.userCreate.parse(sanitized);
+
         const [result] = await db
           .insert(User)
+          // TODO move this to frontend form instead.
           .values({ ...validated, roleId: Number(DEFAULT_ROLE_ID) ?? null })
           .returning();
 
         return result;
-
       } catch (e) {
+        // console.log({ e });
         throwErrorsForCRUD(e);
       }
     },
