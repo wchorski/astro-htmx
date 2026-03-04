@@ -65,7 +65,7 @@ async function main() {
   // Insert in dependency order:
   await upsertRows("Location", seedData.locations);
   await upsertRows("Course", seedData.courses);
-  await upsertRows("Member", seedData.members);
+  await upsertRows("User", seedData.users);
   await upsertRows("Credit", seedData.credits);
 
   console.log("✅ Seed complete");

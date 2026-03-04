@@ -13,11 +13,11 @@ const courseId = Astro.url.searchParams.get('courseId') || '';
 
 <Layout>
   <main>
-    <h1>Member Credit</h1>
+    <h1>User Credit</h1>
     <ul>
       <li>Credit ID: {creditId}</li>
       <li>Course ID: {courseId}</li>
-      <li>Member: {`${first_name} ${last_name}`} | {userId}</li>
+      <li>User: {`${first_name} ${last_name}`} | {userId}</li>
     </ul>
   </main>
 </Layout>

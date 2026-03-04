@@ -4,29 +4,27 @@ import AttendanceAdminNav from "@components/navigation/AttendanceAdminNav.astro"
 import Layout from "@layouts/Layout.astro";
 import { getMembersPage } from "@lib/getMembersPage";
 import PaginationNav from "@components/navigation/PaginationNav.astro";
-const page = Number(Astro.params.page);
-const result = await getMembersPage(page);
+
+const result = await getMembersPage(1);
 
 if ("redirect" in result) {
-  return Astro.redirect("/attendance/admin/members");
+  return Astro.redirect("/attendance/admin/users");
 }
 
-const { members, perPage, totalCount, totalPages } = result;
+const { users, page, perPage, totalCount, totalPages } = result;
 ---
 
 <Layout>
   <AttendanceAdminNav />
   <main>
     <header class="flex space-between">
-      <h1>Members - Page {page}</h1>
+      <h1>Users - Page {page}</h1>
     </header>
-
-    <MembersEditableTable members={members} />
-
+    <MembersEditableTable users={users} />
     {
-      members ? (
+      users ? (
         <PaginationNav
-          path="/attendance/admin/members"
+          path="/attendance/admin/users"
           page={Number(page)}
           perPage={perPage}
           totalCount={totalCount}

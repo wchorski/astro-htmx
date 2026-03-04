@@ -1,6 +1,6 @@
 // src/lib/crudRegistry.ts
 import type { TableRow } from "@ty/Table";
-import { db, eq, Member, Course, Credit, Location } from "astro:db";
+import { db, eq, User, Course, Credit, Location } from "astro:db";
 import {
   ConflictError,
   ForbiddenError,
@@ -13,7 +13,7 @@ import {
   createWordpressEventPost,
   updateWordpressEventPost,
 } from "./getsetWordpressPost";
-import { memberPolicy, permission, sanatizeFields } from "./auth/permissions";
+import { userCan, sanatizeFields } from "./auth/permissions";
 
 type CreateFn = (row: Omit<TableRow, "id">) => Promise<TableRow>;
 type ReadFn = (id: string) => Promise<TableRow | null>;
@@ -27,14 +27,23 @@ type CrudEntry = {
   delete: DeleteFn;
 };
 
-export const crudRegistry = {
-  members: {
-    create: async (row) => {
-      try {
-        const validated = validate.memberCreate.parse(row);
+const { DEFAULT_ROLE_ID } = import.meta.env;
 
-        const [result] = await db.insert(Member).values(validated).returning();
+export const crudRegistry = {
+  users: {
+    create: async (row) => {
+      console.log("crudRegistry.users.create");
+      
+      try {
+        const validated = validate.userCreate.parse(row);
+        
+        const [result] = await db
+          .insert(User)
+          .values({ ...validated, roleId: Number(DEFAULT_ROLE_ID) ?? null })
+          .returning();
+
         return result;
+
       } catch (e) {
         throwErrorsForCRUD(e);
       }
@@ -44,10 +53,10 @@ export const crudRegistry = {
         const validId = validate.id.parse(id);
         const row = await db
           .select()
-          .from(Member)
-          .where(eq(Member.id, validId))
+          .from(User)
+          .where(eq(User.id, validId))
           .get();
-        if (!row) throw new NotFoundError(`Member ${id} not found`);
+        if (!row) throw new NotFoundError(`User ${id} not found`);
         return row;
       } catch (e) {
         throwErrorsForCRUD(e);
@@ -55,52 +64,50 @@ export const crudRegistry = {
     },
     update: async (row) => {
       try {
-        const validated = validate.memberUpdate.parse(row);
+        const validated = validate.userUpdate.parse(row);
 
         const [result] = await db
-          .update(Member)
+          .update(User)
           .set(validated)
-          .where(eq(Member.id, validated.id))
+          .where(eq(User.id, validated.id))
           .returning();
-        if (!result)
-          throw new NotFoundError(`Member ${validated.id} not found`);
+        if (!result) throw new NotFoundError(`User ${validated.id} not found`);
         return result;
       } catch (e) {
         throwErrorsForCRUD(e);
       }
     },
     // TODO authentication
-    update: async (row, session) => {
-      try {
-        
+    // update: async (row, session) => {
+    //   try {
 
-        if (!await memberPolicy.update(session, row))
-          throw new ForbiddenError("User not allowed");
-        const fields = await memberPolicy.writableFields(session, row);
-        const sanitizedRow = sanatizeFields(row, ["id", ...fields]);
+    //     if (!await userPolicy.update(session, row))
+    //       throw new ForbiddenError("User not allowed");
+    //     const fields = await userPolicy.writableFields(session, row);
+    //     const sanitizedRow = sanatizeFields(row, ["id", ...fields]);
 
-        const validated = validate.memberUpdate.parse(sanitizedRow);
+    //     const validated = validate.userUpdate.parse(sanitizedRow);
 
-        const [result] = await db
-          .update(Member)
-          .set(validated)
-          .where(eq(Member.id, validated.id))
-          .returning();
-        if (!result)
-          throw new NotFoundError(`Member ${validated.id} not found`);
-        return result;
-      } catch (e) {
-        throwErrorsForCRUD(e);
-      }
-    },
+    //     const [result] = await db
+    //       .update(User)
+    //       .set(validated)
+    //       .where(eq(User.id, validated.id))
+    //       .returning();
+    //     if (!result)
+    //       throw new NotFoundError(`User ${validated.id} not found`);
+    //     return result;
+    //   } catch (e) {
+    //     throwErrorsForCRUD(e);
+    //   }
+    // },
     delete: async (id) => {
       try {
         const validId = validate.id.parse(id);
         const [deleted] = await db
-          .delete(Member)
-          .where(eq(Member.id, validId))
+          .delete(User)
+          .where(eq(User.id, validId))
           .returning();
-        if (!deleted) throw new NotFoundError(`Member ${id} not found`);
+        if (!deleted) throw new NotFoundError(`User ${id} not found`);
         return deleted;
       } catch (e) {
         throwErrorsForCRUD(e);
@@ -320,40 +327,40 @@ export const crudRegistry = {
       try {
         const validId = validate.id.parse(id);
         const [deleted] = await db
-          .delete(Member)
-          .where(eq(Member.id, validId))
+          .delete(User)
+          .where(eq(User.id, validId))
           .returning();
-        if (!deleted) throw new NotFoundError(`Member ${id} not found`);
+        if (!deleted) throw new NotFoundError(`User ${id} not found`);
         return deleted;
       } catch (e) {
         throwErrorsForCRUD(e);
       }
     },
   },
-  memberCredits: {
+  userCredits: {
     create: async (row) => {
       try {
-        const validated = validate.memberCreditCreate.parse(row);
+        const validated = validate.userCreditCreate.parse(row);
 
         return await db.transaction(async (tx) => {
-          let member: typeof Member.$inferSelect;
+          let user: typeof User.$inferSelect;
           let userId: number;
 
-          // --- Branch 1: link to existing member ---
+          // --- Branch 1: link to existing user ---
           if ("userId" in validated) {
             userId = validated.userId;
 
             const found = await tx
               .select()
-              .from(Member)
-              .where(eq(Member.id, userId))
+              .from(User)
+              .where(eq(User.id, userId))
               .get();
 
-            if (!found) throw new NotFoundError(`Member ${userId} not found`);
-            member = found;
+            if (!found) throw new NotFoundError(`User ${userId} not found`);
+            user = found;
           } else {
             const [created] = await tx
-              .insert(Member)
+              .insert(User)
               .values({
                 first_name: validated.first_name,
                 last_name: validated.last_name,
@@ -366,9 +373,9 @@ export const crudRegistry = {
               })
               .returning();
 
-            if (!created) throw new Error("Failed to create member");
+            if (!created) throw new Error("Failed to create user");
 
-            member = created;
+            user = created;
             userId = created.id;
           }
 
@@ -385,8 +392,8 @@ export const crudRegistry = {
 
           if (!credit) throw new Error("Failed to create credit");
 
-          // flat return: member + credit (ensure credit.id wins)
-          return { ...member, ...credit, userId: member.id, id: credit.id };
+          // flat return: user + credit (ensure credit.id wins)
+          return { ...user, ...credit, userId: user.id, id: credit.id };
         });
       } catch (e) {
         throwErrorsForCRUD(e);
@@ -398,14 +405,14 @@ export const crudRegistry = {
         const row = await db
           .select()
           .from(Credit)
-          .innerJoin(Member, eq(Credit.userId, Member.id))
+          .innerJoin(User, eq(Credit.userId, User.id))
           .where(eq(Credit.id, validId))
           .get();
         if (!row) throw new NotFoundError(`Credit ${id} not found`);
         return {
-          ...row.Member,
+          ...row.User,
           ...row.Credit,
-          userId: row.Member.id, // preserve member id before Credit.id overwrites it
+          userId: row.User.id, // preserve user id before Credit.id overwrites it
           id: row.Credit.id,
         };
       } catch (e) {
@@ -415,8 +422,8 @@ export const crudRegistry = {
 
     update: async (row) => {
       try {
-        const { id, userId, courseId, attended, ...memberFields } =
-          validate.memberCreditUpdate.parse(row);
+        const { id, userId, courseId, attended, ...userFields } =
+          validate.userCreditUpdate.parse(row);
 
         // two updates but in a transaction so they succeed or fail together
         const result = await db.transaction(async (tx) => {
@@ -427,14 +434,14 @@ export const crudRegistry = {
             .returning();
           if (!credit) throw new NotFoundError(`Credit ${id} not found`);
 
-          const [member] = await tx
-            .update(Member)
-            .set(memberFields)
-            .where(eq(Member.id, userId))
+          const [user] = await tx
+            .update(User)
+            .set(userFields)
+            .where(eq(User.id, userId))
             .returning();
-          if (!member) throw new NotFoundError(`Member ${userId} not found`);
+          if (!user) throw new NotFoundError(`User ${userId} not found`);
 
-          return { ...credit, ...member };
+          return { ...credit, ...user };
         });
 
         return result;

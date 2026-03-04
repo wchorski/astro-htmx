@@ -1,12 +1,12 @@
 ---
 interface Props {
-  members: MemberSelect[];
+  users: UserSelect[];
 }
-import type { MemberSelect } from "@ty/Schema";
+import type { UserSelect } from "@ty/Schema";
 import TableEditable from "./TableEditable.astro";
 import RowCreate from "./tables/RowCreate.astro";
 const { DATALIST_STATES, DATALIST_CITIES } = import.meta.env;
-const { members } = Astro.props;
+const { users } = Astro.props;
 
 const config = {
     id: {
@@ -79,16 +79,16 @@ const config = {
   }
 
 const ctx = {
-  crud: "members",
-  endpoint: "/attendance/admin/members/id",
+  crud: "users",
+  endpoint: "/attendance/admin/users/id",
   config,
   headers: Object.keys(config)
 }
 ---
 
 {
-  members.length === 0 ? (
-    <p class="callout not-found">no members found</p>
+  users.length === 0 ? (
+    <p class="callout not-found">no users found</p>
     <table>
     <tr class="highlight-green">
       <RowCreate {...ctx} />
@@ -97,7 +97,7 @@ const ctx = {
   ) : (
     <TableEditable
       crud={ctx.crud}
-      rows={members}
+      rows={users}
       endpoint={ctx.endpoint}
       config={ctx.config}
     />

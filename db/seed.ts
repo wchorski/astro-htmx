@@ -1,4 +1,4 @@
-import { db, Member, Course, Credit, Location } from "astro:db";
+import { db, User, Course, Credit, Location, Role } from "astro:db";
 import { seedData } from "./seed-data";
 
 export default async function () {
@@ -11,8 +11,8 @@ export default async function () {
   await db.insert(Course).values(seedData.courses);
 
   //! MOCK DATA, do not enter sensative data into seed
-  await db.insert(Member).values(seedData.members);
+  await db.insert(User).values(seedData.users);
 
-  // mock credits need to be added after members are added
+  // mock credits need to be added after users are added
   await db.insert(Credit).values(seedData.credits);
 }

@@ -2,7 +2,7 @@
 interface Params {
   id: string;
 }
-import { Credit, db, eq, Member, Course, Location } from "astro:db";
+import { Credit, db, eq, User, Course, Location } from "astro:db";
 import Layout from "@layouts/Layout.astro";
 import AttendanceAdminNav from "@components/navigation/AttendanceAdminNav.astro";
 import TableEditable from "@components/TableEditable.astro";
@@ -11,8 +11,8 @@ const { id } = Astro.params;
 if (!id) throw new Error("no id found. throw 404");
 const member = await db
   .select()
-  .from(Member)
-  .where(eq(Member.id, Number(id)))
+  .from(User)
+  .where(eq(User.id, Number(id)))
   .get();
 if (!member) return Astro.redirect("/404");
 
@@ -69,7 +69,7 @@ const tableRows = ownedCredits.map(({ credit, course, location }) => ({
         <p class="callout not-found">no member found</p>
       ) : (
         <TableEditable
-          crud="members"
+          crud="users"
           rows={tableRows}
           endpoint="ownedCredits"
           config={{

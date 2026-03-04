@@ -2,7 +2,7 @@
 import { formatPhoneToE164Manual } from '@lib/formatters';
 import { z } from 'astro/zod';
 import { formatPhonePrettyManual } from '@lib/formatters';
-import { db, eq, Member, or } from 'astro:db';
+import { db, eq, User, or } from 'astro:db';
 import CreditsForm from '@components/CreditsForm.astro'
 
 class NotFoundError extends Error {
@@ -35,7 +35,7 @@ const formSchema = z.object({
 
 let errors = null;
 let formData = null;
-let formId = 'members-search-form'; // default
+let formId = 'users-search-form'; // default
 let existingMember = null
 
 if (Astro.request.method === 'POST') {
@@ -45,7 +45,7 @@ if (Astro.request.method === 'POST') {
     // const courseId = url.searchParams.get("courseId"); // read from URL
     
     // Get the formId to scope OOB swaps
-    // formId = formInputs.get('formId')?.toString() || 'members-search-form';
+    // formId = formInputs.get('formId')?.toString() || 'users-search-form';
     
     const courseId = Number(formInputs.get('courseId'));
     const userId = Number(formInputs.get('userId')) || undefined;
@@ -59,16 +59,16 @@ if (Astro.request.method === 'POST') {
     // TODO find member and set as attended
     existingMember = 
       validated.userId 
-        ? await db.select().from(Member).where(eq(Member.id, validated.userId)).get()
+        ? await db.select().from(User).where(eq(User.id, validated.userId)).get()
         : validated.phone 
-          ? await db.select().from(Member).where(eq(Member.phone, validated.phone)).get() 
+          ? await db.select().from(User).where(eq(User.phone, validated.phone)).get() 
           : validated.email 
-            ? await db.select().from(Member).where(eq(Member.email, validated.email)).get() 
+            ? await db.select().from(User).where(eq(User.email, validated.email)).get() 
             : null
     
     if(!existingMember){
       // TODO how to fill in other form if member is found?
-      throw new NotFoundError('Member was not found with matching phone or email')
+      throw new NotFoundError('User was not found with matching phone or email')
     }
 
     existingMember = {
@@ -93,7 +93,7 @@ if (Astro.request.method === 'POST') {
       Astro.response.status = 422;
     } 
     else if(error instanceof NotFoundError){
-      errors = [{ field: 'not_found', message: 'Member was not found with matching phone or email' }];
+      errors = [{ field: 'not_found', message: 'User was not found with matching phone or email' }];
       Astro.response.status = 404
     } 
     else {
@@ -131,7 +131,7 @@ if (Astro.request.method === 'POST') {
 ) : formData && existingMember && <>
   <div class="success-state card status" data-status="success" role="status">
     
-    <h2><img src="/icons/eye.svg" alt="eyeball icon" width="50" height="50"/> Member Found!</h2>
+    <h2><img src="/icons/eye.svg" alt="eyeball icon" width="50" height="50"/> User Found!</h2>
     <p>Confirm your details and press "Confirm Course Credit" to finish</p>
     {/* <div class="submitted-data">
       <p><strong>Course ID:</strong> {formData.courseId}</p>
@@ -143,7 +143,7 @@ if (Astro.request.method === 'POST') {
       </ul>
     </div> */}
   </div>
-  <form id="members-search-form" hx-swap-oob="outerHTML" style="display: none;">
+  <form id="users-search-form" hx-swap-oob="outerHTML" style="display: none;">
     <!-- Empty or hidden form -->
   </form>
   <CreditsForm courseId={formData.courseId} member={existingMember}/>

@@ -5,7 +5,7 @@ export const validate = {
   id: z.coerce.number(),
 
   // TODO i should prob use .strict() where i can as a lot of these data inputs usually contain all fields type
-  member: z.object({
+  user: z.object({
     id: z.coerce.number(),
     first_name: z.string().trim().min(3, "Must be more than 3 characters"),
     last_name: z.string().trim().min(3, "Must be more than 3 characters"),
@@ -35,12 +35,12 @@ export const validate = {
     zip: z.coerce.number().min(10000).max(99999, "Invalid ZIP code"),
   }),
 
-  get memberCreate() {
-    return this.member.omit({ id: true });
+  get userCreate() {
+    return this.user.omit({ id: true });
   },
 
-  get memberUpdate() {
-    return this.member;
+  get userUpdate() {
+    return this.user;
   },
 
   credit: z.object({
@@ -63,12 +63,12 @@ export const validate = {
   },
 
   //   MUTATIONS
-  // get memberCreditCreate() {
+  // get userCreditCreate() {
   //   return this.credit.omit({ id: true });
   // },
 
-  get memberCreditUpdate() {
-    return this.credit.merge(this.member);
+  get userCreditUpdate() {
+    return this.credit.merge(this.user);
   },
 
   location: z.object({
@@ -107,7 +107,7 @@ export const validate = {
     return this.course;
   },
 
-  memberLink: z
+  userLink: z
     .object({
       userId: z.coerce.number(),
       courseId: z.coerce.number(),
@@ -119,7 +119,7 @@ export const validate = {
     })
     .strict(),
 
-  memberCreateAndLink: z
+  userCreateAndLink: z
     .object({
       first_name: z.string().min(3),
       last_name: z.string().min(3),
@@ -145,7 +145,7 @@ export const validate = {
     })
     .strict(),
 
-  get memberCreditCreate() {
-    return z.union([this.memberLink, this.memberCreateAndLink]);
+  get userCreditCreate() {
+    return z.union([this.userLink, this.userCreateAndLink]);
   },
 };

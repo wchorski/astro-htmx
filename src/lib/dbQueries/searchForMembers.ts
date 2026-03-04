@@ -1,7 +1,7 @@
 import { throwErrorsForCRUD, ValidationError } from "@lib/errors";
-import type { MemberSelect } from "@ty/Schema";
+import type { UserSelect } from "@ty/Schema";
 import { z } from "astro/zod";
-import { or, eq, like, sql, db, Member } from "astro:db";
+import { or, eq, like, sql, db, User } from "astro:db";
 
 //? needs special validation because everything can be partial string ('fuzzy')
 export const MemberSearchSchema = z
@@ -33,7 +33,7 @@ export const MemberSearchSchema = z
     },
   );
 
-export async function searchForMembers(member: Partial<MemberSelect>) {
+export async function searchForMembers(user: Partial<UserSelect>) {
   //! must convert any empty strings "" to undefined
   try {
     const validated = MemberSearchSchema.safeParse(member);
@@ -47,18 +47,18 @@ export async function searchForMembers(member: Partial<MemberSelect>) {
 
     const conditions = [];
 
-    if (id) conditions.push(eq(Member.id, id));
-    // if (email) conditions.push(eq(Member.email, email));
+    if (id) conditions.push(eq(User.id, id));
+    // if (email) conditions.push(eq(User.email, email));
     //? if partial string checking instead of full email (not exact like above)
-    if (email) conditions.push(like(sql`lower(${Member.email})`, `%${email}%`));
-    // if (phone) conditions.push(eq(Member.phone, phone));
-    if (phone) conditions.push(like(sql`${Member.phone}`, `%${phone}%`));
+    if (email) conditions.push(like(sql`lower(${User.email})`, `%${email}%`));
+    // if (phone) conditions.push(eq(User.phone, phone));
+    if (phone) conditions.push(like(sql`${User.phone}`, `%${phone}%`));
     if (first_name)
       conditions.push(
-        like(sql`lower(${Member.first_name})`, `%${first_name}%`),
+        like(sql`lower(${User.first_name})`, `%${first_name}%`),
       );
     if (last_name)
-      conditions.push(like(sql`lower(${Member.last_name})`, `%${last_name}%`));
+      conditions.push(like(sql`lower(${User.last_name})`, `%${last_name}%`));
 
     // Safety: should never be empty because schema requires at least one,
     // but keep a guard anyway to avoid accidental full-table scans.
@@ -69,13 +69,13 @@ export async function searchForMembers(member: Partial<MemberSelect>) {
       });
     }
 
-    const members = await db
+    const users = await db
       .select()
-      .from(Member)
+      .from(User)
       .where(or(...conditions))
       .limit(25);
 
-    return members;
+    return users;
   } catch (e) {
     throwErrorsForCRUD(e);
   }

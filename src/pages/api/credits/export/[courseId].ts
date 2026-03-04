@@ -2,7 +2,7 @@ import { getMsToken } from "@lib/auth/msAuthentication";
 import { formatPhonePrettyManual } from "@lib/formatters";
 import type { CreditInsert, MemberInsert } from "@ty/Schema.d.ts";
 import type { APIRoute } from "astro";
-import { Course, Credit, db, eq, Member } from "astro:db";
+import { Course, Credit, db, eq, User } from "astro:db";
 
 const {
   MS_SHAREPOINT_KYU_DRIVE_ID,
@@ -31,13 +31,13 @@ export const PUT: APIRoute = async ({ params, request, redirect }) => {
     // 1️⃣ Fetch the flattened rows
     const rows = await db
       .select({
-        member: Member,
+        user: User,
         course: Course,
         credit: Credit,
       })
       .from(Course)
       .innerJoin(Credit, eq(Credit.courseId, Course.id))
-      .innerJoin(Member, eq(Member.id, Credit.userId))
+      .innerJoin(User, eq(User.id, Credit.userId))
       .where(eq(Course.id, Number(courseId)));
 
     // reformat
@@ -48,7 +48,7 @@ export const PUT: APIRoute = async ({ params, request, redirect }) => {
         const { id: creditId, date: creditDate, ...creditRest } = row.credit; // pull id out, keep everything else
         const { id: userId, ...memberRest } = row.member;
         return {
-          member: {
+          user: {
             ...memberRest,
             userId,
             phone: formatPhonePrettyManual(row.member.phone) || "",
@@ -145,13 +145,13 @@ export const PUT: APIRoute = async ({ params, request, redirect }) => {
 };
 
 // type CreditWithMember = typeof Credit.$inferInsert & {
-//   member: typeof Member.$inferInsert;
+//   user: typeof User.$inferInsert;
 // };
 
 type CreditWithMember = Omit<CreditInsert, "id" | "date"> & {
   creditId: CreditInsert["id"];
   dateCreated: CreditInsert["date"];
-  member: Omit<MemberInsert, "id"> & {
+  user: Omit<MemberInsert, "id"> & {
     userId: MemberInsert["id"];
     phone: string; // because you force "" as fallback
   };

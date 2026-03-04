@@ -1,5 +1,5 @@
 // @lib/permissions.ts
-import { and, db, eq, Member, Role } from "astro:db";
+import { and, db, eq, User, Role } from "astro:db";
 
 export const PERMISSIONS = {
   manageAllMembers:  "manageAllMembers",
@@ -17,9 +17,9 @@ export type Permission = keyof typeof PERMISSIONS;
 export async function userCan(userId: number, permission: Permission): Promise<boolean> {
   const result = await db
     .select({ permissions: Role.permissions })
-    .from(Member)
-    .innerJoin(Role, eq(Role.id, Member.roleId))
-    .where(eq(Member.id, userId))
+    .from(User)
+    .innerJoin(Role, eq(Role.id, User.roleId))
+    .where(eq(User.id, userId))
     .get();
 
   const permissions = result?.permissions as Permission[] | null;;

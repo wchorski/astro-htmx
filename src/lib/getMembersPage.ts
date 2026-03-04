@@ -1,9 +1,9 @@
-import { db, count, Member, desc, asc } from "astro:db";
+import { db, count, User, desc, asc } from "astro:db";
 
 export async function getMembersPage(page: number, perPage = 12) {
   if (page < 1) page = 1;
 
-  const totalResult = await db.select({ count: count(Member.id) }).from(Member);
+  const totalResult = await db.select({ count: count(User.id) }).from(User);
 
   const totalCount = totalResult[0].count;
   const totalPages = Math.ceil(totalCount / perPage);
@@ -12,15 +12,15 @@ export async function getMembersPage(page: number, perPage = 12) {
     return { redirect: true };
   }
 
-  const members = await db
+  const users = await db
     .select()
-    .from(Member)
-    .orderBy(asc(Member.last_name))
+    .from(User)
+    .orderBy(asc(User.last_name))
     .limit(perPage)
     .offset((page - 1) * perPage);
 
   return {
-    members,
+    users,
     page,
     totalCount,
     totalPages,

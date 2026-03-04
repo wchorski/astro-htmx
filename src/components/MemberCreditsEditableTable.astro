@@ -1,18 +1,18 @@
 ---
 interface Props {
   courseId: string,
-  memberCredits: {
-    member: MemberSelect;
+  userCredits: {
+    user: UserSelect;
     credit: CreditSelect;
   }[];
 }
 
 import TableEditable from "@components/TableEditable.astro";
-import type { CreditSelect, MemberSelect } from "@ty/Schema";
+import type { CreditSelect, UserSelect } from "@ty/Schema";
 import RowCreate from "./tables/RowCreate.astro";
-const { memberCredits, courseId } = Astro.props;
+const { userCredits, courseId } = Astro.props;
 
-const tableRows = memberCredits.map(({ credit, member }) => ({
+const tableRows = userCredits.map(({ credit, member }) => ({
   id: credit.id,
   userId: member.id,
   courseId: credit.courseId,
@@ -36,7 +36,7 @@ const config = {
     readonly: true,
   },
   userId: {
-    label: "Member ID",
+    label: "User ID",
     type: "number",
   },
   courseId: {
@@ -95,8 +95,8 @@ const config = {
   },
 }
 const ctx = {
-  crud: "memberCredits",
-  endpoint: "memberCredits",
+  crud: "userCredits",
+  endpoint: "userCredits",
   config,
   headers: Object.keys(config)
 }

@@ -1,5 +1,5 @@
 ---
-import {Credit, db, eq, and, Member} from "astro:db"
+import {Credit, db, eq, and, User} from "astro:db"
 import { formatPhoneToE164Manual } from '@lib/formatters';
 import { z } from 'astro/zod';
 import { formatPhonePrettyManual } from '@lib/formatters';
@@ -55,19 +55,19 @@ if (Astro.request.method === 'POST') {
 
     existingMember = 
       validated.phone 
-        ? await db.select().from(Member).where(eq(Member.phone, validated.phone)).get() 
+        ? await db.select().from(User).where(eq(User.phone, validated.phone)).get() 
         : validated.email 
-          ? await db.select().from(Member).where(eq(Member.email, validated.email)).get() 
+          ? await db.select().from(User).where(eq(User.email, validated.email)).get() 
           : null
 
     // TODO add back in when registration form is implimented
     // if(!existingMember){
-    //   throw new NotFoundError('Member was not found with matching phone or email')
+    //   throw new NotFoundError('User was not found with matching phone or email')
     // }
 
     // if member doesn't exist, create a new one
     if(!validated.phone) throw new Error('!validated.phone')
-    const targetMember = existingMember ?? await db.insert(Member).values({
+    const targetMember = existingMember ?? await db.insert(User).values({
       asipId: 0,
       regNum: 0,
       first_name: validated.first_name,
@@ -86,7 +86,7 @@ if (Astro.request.method === 'POST') {
 
     // TODO if the credit exists at all (meaning they register) throw an error
     if(existingCredit?.attended){
-      throw new ConflictError(`Member ${targetMember.id} ${targetMember.first_name} ${targetMember.last_name} already attended and confirmed credit for this scourse`)
+      throw new ConflictError(`User ${targetMember.id} ${targetMember.first_name} ${targetMember.last_name} already attended and confirmed credit for this scourse`)
     }
 
     existingCredit ? await db.update(Credit).set({

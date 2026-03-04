@@ -1,17 +1,17 @@
 ---
-// partials/members/[id].astro
+// partials/users/[id].astro
 import RowView from "@components/tables/RowView.astro";
 import { BadRequestError, errorHandlingOnSubmit } from "@lib/errors";
 import type { MemberInsert } from "@ty/Schema";
 import type { ZodError } from "astro/zod";
-import { eq, Member } from "astro:db";
+import { eq, User } from "astro:db";
 import { db } from "astro:db";
 
 interface Params {
   id: string | undefined;
 }
 
-let member: MemberInsert | null | undefined = null;
+let user: MemberInsert | null | undefined = null;
 let error: string | ReturnType<ZodError["flatten"]> | null = null;
 
 if (Astro.request.method === "DELETE") {
@@ -26,12 +26,12 @@ if (Astro.request.method === "DELETE") {
     }
 
     member = await db
-      .delete(Member)
-      .where(eq(Member.id, numericId))
+      .delete(User)
+      .where(eq(User.id, numericId))
       .returning()
       .get();
   } catch (e) {
-    // console.log("partials/members/:id");
+    // console.log("partials/users/:id");
     // console.log(e);
     const { err, status } = errorHandlingOnSubmit(e);
     Astro.response.status = status;

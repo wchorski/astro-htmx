@@ -74,7 +74,7 @@ const memberEssentialConfig = {
 } as FieldConfig<BaseRow> | undefined;
 
 export const tableConfigs = {
-  members: {
+  users: {
     // all: memberAllConfig,
     essential: memberEssentialConfig,
   },
@@ -87,7 +87,7 @@ export const tableConfigs = {
   locations: {
     // all: creditAllConfig,
   },
-  memberCredits: {
+  userCredits: {
     // all: creditAllConfig,
   },
 } satisfies Record<

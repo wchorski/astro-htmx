@@ -10,6 +10,7 @@ interface ImportMetaEnv {
   readonly WP_APP_PASSWORD?: string;
   readonly WORDPRESS_ENDPOINT?: string;
   readonly LIBSQL_URL?: string;
+  readonly DEFAULT_ROLE_ID?: string;
 }
 
 interface ImportMeta {

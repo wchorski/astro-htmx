@@ -16,7 +16,10 @@ const User = defineTable({
   columns: {
     id: column.number({ primaryKey: true }),
     // TODO auth
-    roleId: column.number({ references: () => Role.columns.id }),
+    roleId: column.number({
+      references: () => Role.columns.id,
+      optional: true,
+    }),
     // asipId: column.number(),
     // regNum: column.number(),
     first_name: column.text(),

@@ -1,7 +1,7 @@
 // src/pages/api/confirm-credit.ts
 import { PhoneSanitizer } from "@lib/sanatizers";
 import type { APIRoute } from "astro";
-import { db, Credit, Course, Member } from "astro:db";
+import { db, Credit, Course, User } from "astro:db";
 import { eq, or } from "astro:db";
 import { z } from "astro/zod";
 
@@ -88,16 +88,16 @@ export const POST: APIRoute = async ({ request, redirect }) => {
     }
 
     const memberExists = userId
-      ? await db.select().from(Member).where(eq(Member.id, userId)).get()
+      ? await db.select().from(User).where(eq(User.id, userId)).get()
       : await db
           .select()
-          .from(Member)
-          .where(eq(Member.phone, phoneSanatized))
+          .from(User)
+          .where(eq(User.phone, phoneSanatized))
           .get();
     // TODO member may not exist yet (if this app doesn't also register them)
     // if (!memberExists) {
     //   return redirect(
-    //     `/partials/credit-form?error=${encodeURIComponent(`Member with ID ${memberExists} does not exist`)}`,
+    //     `/partials/credit-form?error=${encodeURIComponent(`User with ID ${memberExists} does not exist`)}`,
     //   );
     // }
 
@@ -107,7 +107,7 @@ export const POST: APIRoute = async ({ request, redirect }) => {
 
     if (!memberExists) {
       const [newMember] = await db
-        .insert(Member)
+        .insert(User)
         .values({
           asipId,
           regNum,
@@ -140,7 +140,7 @@ export const POST: APIRoute = async ({ request, redirect }) => {
       if (memberCredit && memberCredit.attended)
         return new Response(
           `
-            Member ${memberExists.id} ${memberExists.first_name}
+            User ${memberExists.id} ${memberExists.first_name}
             already attended: ${memberCredit.attended}
           `,
           { status: 411 },

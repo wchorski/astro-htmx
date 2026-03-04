@@ -6,7 +6,7 @@ interface Props {
   formId?: string;
   member?: MemberInsert;
 }
-const { course, member, formId = "members-search-form" } = Astro.props;
+const { course, member, formId = "users-search-form" } = Astro.props;
 const errorTargetId = `${formId}-errors`;
 const responseTargetId = `${formId}-response`;
 ---
@@ -17,14 +17,14 @@ const responseTargetId = `${formId}-response`;
   id={formId}
   class="card"
   hx-ext="response-targets"
-  hx-post="/partials/members-search-submit"
+  hx-post="/partials/users-search-submit"
   hx-target={`#${responseTargetId}`}
   hx-target-error={`#${errorTargetId}`}
   hx-vals={JSON.stringify({ formId })}
   hx-swap="innerHTML"
   data-status="idle"
 >
-  <caption>Members Search</caption>
+  <caption>Users Search</caption>
   <!-- <div id={errorTargetId}></div> -->
 
   <!-- TODO make hidden field (or grab it from url in submit.astro partial) -->
@@ -45,7 +45,7 @@ const responseTargetId = `${formId}-response`;
   <fieldset>
     <div class="flex gap-m">
       <label class="form-field">
-        <span class="text">Member Id</span>
+        <span class="text">User Id</span>
 
         <input
           type="number"
@@ -91,7 +91,7 @@ const responseTargetId = `${formId}-response`;
   </fieldset>
 
   <button type="submit">
-    <span class="button-text">Search for Member</span>
+    <span class="button-text">Search for User</span>
     <span class="htmx-indicator">Submitting...</span>
   </button>
 </form>
@@ -156,7 +156,7 @@ const responseTargetId = `${formId}-response`;
   document.addEventListener("htmx:afterRequest", function (evt: CustomEvent) {
     const form = evt.detail.elt;
 
-    if (!form.classList.contains("members-search-form")) return;
+    if (!form.classList.contains("users-search-form")) return;
 
     if (evt.detail.successful) {
       const formId = form.id;
@@ -178,7 +178,7 @@ const responseTargetId = `${formId}-response`;
 
   document.addEventListener("barcode-scanned", ((evt: CustomEvent) => {
     const scannedValue = evt.detail.value;
-    const formId = "members-search-form"; // or get dynamically
+    const formId = "users-search-form"; // or get dynamically
     const memberIdInput = document.getElementById(
       `${formId}-userId`,
     ) as HTMLInputElement;

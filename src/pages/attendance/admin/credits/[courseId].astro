@@ -2,7 +2,7 @@
 interface Params {
   courseId: string;
 }
-import { db, eq, Course, Credit, Member } from "astro:db";
+import { db, eq, Course, Credit, User } from "astro:db";
 import Layout from "@layouts/Layout.astro";
 import MemberCreditsEditableTable from "@components/MemberCreditsEditableTable.astro";
 export const prerender = false; // Not needed in 'server' mode
@@ -14,13 +14,13 @@ const foundCourse = await db
   .where(eq(Course.id, Number(courseId)))
   .get();
 
-const memberCredits = await db
+const userCredits = await db
   .select({
     credit: Credit,
-    member: Member,
+    user: User,
   })
   .from(Credit)
-  .innerJoin(Member, eq(Credit.userId, Member.id))
+  .innerJoin(User, eq(Credit.userId, User.id))
   .where(eq(Credit.courseId, Number(courseId)));
 
 if (!foundCourse) return Astro.redirect("/404");
@@ -63,13 +63,13 @@ const { subject, date, description } = foundCourse;
     </ul>
 
     <div class="flex space-between">
-      <h2>Member Credits</h2>
+      <h2>User Credits</h2>
       <button
         onclick="alert('In the works. Will be implimented later')"
         hx-put="/api/credits/export">Export CSV to Sharepoint</button
       >
     </div>
 
-    <MemberCreditsEditableTable memberCredits={memberCredits} />
+    <MemberCreditsEditableTable userCredits={userCredits} />
   </main>
 </Layout>

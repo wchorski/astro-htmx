@@ -11,7 +11,7 @@ export default defineConfig({
     "/attendance/courses/1": "/attendance/courses",
     "/attendance/admin/courses/1": "/attendance/admin/courses",
     "/attendance/admin/locations/1": "/attendance/admin/locations",
-    "/attendance/admin/members/1": "/attendance/admin/members",
+    "/attendance/admin/users/1": "/attendance/admin/users",
   },
   output: 'server',
 

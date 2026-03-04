@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS Course (
   FOREIGN KEY (locationId) REFERENCES Location(id)
 );
 
-CREATE TABLE IF NOT EXISTS Member (
+CREATE TABLE IF NOT EXISTS User (
   id INTEGER PRIMARY KEY,
   first_name TEXT NOT NULL,
   last_name TEXT NOT NULL,
@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS Credit (
   date TEXT NOT NULL,
   grade TEXT,
   attended INTEGER DEFAULT 0,
-  FOREIGN KEY (userId) REFERENCES Member(id),
+  FOREIGN KEY (userId) REFERENCES User(id),
   FOREIGN KEY (courseId) REFERENCES Course(id),
   UNIQUE (courseId, userId)
 );

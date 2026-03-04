@@ -2,7 +2,7 @@
 interface Params {
   id: string;
 }
-import { db, eq, Course, Credit, Member } from "astro:db";
+import { db, eq, Course, Credit, User } from "astro:db";
 import Layout from "@layouts/Layout.astro";
 import AttendanceAdminNav from "@components/navigation/AttendanceAdminNav.astro";
 import MembersSearchForm from "@components/MembersSearchForm.astro";
@@ -18,13 +18,13 @@ const course = await db
   .get();
 if (!course) return Astro.redirect("/404");
 
-const memberCredits = await db
+const userCredits = await db
   .select({
     credit: Credit,
-    member: Member,
+    user: User,
   })
   .from(Credit)
-  .innerJoin(Member, eq(Credit.userId, Member.id))
+  .innerJoin(User, eq(Credit.userId, User.id))
   .where(eq(Credit.courseId, Number(id)));
 
 const { subject, date, description } = course;
@@ -61,7 +61,7 @@ const config = {
 
 const ctx = {
   config,
-  crud: "members",
+  crud: "users",
   endpoint: "",
   headers: Object.keys(config),
 };
@@ -102,13 +102,13 @@ const ctx = {
     <hr />
 
     <div class="flex space-between">
-      <h2>Member Credits</h2>
+      <h2>User Credits</h2>
       <button hx-put={`/api/credits/export/${id}`}
         >Export CSV to Sharepoint</button
       >
     </div>
 
-    <MemberCreditsEditableTable memberCredits={memberCredits} courseId={id} />
+    <MemberCreditsEditableTable userCredits={userCredits} courseId={id} />
     <hr />
 
     <section>
@@ -118,7 +118,7 @@ const ctx = {
     <hr />
     <footer>
       <a href={`/attendance/check-in/${id}`} class="btn"
-        >Member Check-In for this course</a
+        >User Check-In for this course</a
       >
       <p>
         Used for <em>DAY OF</em> event Kiosk (barcode scanning or manual form field)

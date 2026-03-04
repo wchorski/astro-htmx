@@ -1,8 +1,8 @@
 ---
-import type { Member, Course } from "astro:db";
+import type { User, Course } from "astro:db";
 interface Props {
   courseId: number;
-  member?: typeof Member.$inferInsert;
+  member?: typeof User.$inferInsert;
   formId?: string;
 }
 const { courseId, member, formId = "credits-form" } = Astro.props;

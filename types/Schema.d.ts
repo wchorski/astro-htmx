@@ -1,18 +1,20 @@
-import type { Course, Credit, Member, Location } from "astro:db";
+import type { Course, Credit, User, Location, Role } from "astro:db";
+export type RoleInsert = typeof Role.$inferInsert;
+export type RoleSelect = typeof Role.$inferSelect;
 export type CreditInsert = typeof Credit.$inferInsert;
 export type CreditSelect = typeof Credit.$inferSelect;
-export type MemberInsert = typeof Member.$inferInsert;
-export type MemberSelect = typeof Member.$inferSelect;
+export type MemberInsert = typeof User.$inferInsert;
+export type UserSelect = typeof User.$inferSelect;
 export type CourseInsert = typeof Course.$inferInsert;
 export type CourseSelect = typeof Course.$inferSelect;
 export type LocationInsert = typeof Location.$inferInsert;
 export type LocationSelect = typeof Location.$inferSelect;
-export type MemberCreditSelect = {
+export type UserCreditSelect = {
   credit: CreditSelect,
-  member: MemberSelect,
+  user: UserSelect,
 }
 
-export type MemberCredit = {
+export type UserCredit = {
   id: number;
   userId: number;
   first_name: string;
