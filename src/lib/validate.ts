@@ -45,7 +45,7 @@ export const validate = {
 
   credit: z.object({
     id: z.coerce.number(),
-    memberId: z.coerce.number(),
+    userId: z.coerce.number(),
     courseId: z.coerce.number(),
     grade: z.string().optional(),
     // attended: z.coerce.boolean(),
@@ -109,7 +109,7 @@ export const validate = {
 
   memberLink: z
     .object({
-      memberId: z.coerce.number(),
+      userId: z.coerce.number(),
       courseId: z.coerce.number(),
       // attended: z.coerce.boolean(),
       attended: z

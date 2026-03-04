@@ -1,10 +1,9 @@
-import type { CourseInsert, CreditInsert, LocationInsert, MemberInsert } from "@ty/Schema";
 import { db, Member, Course, Credit, Location } from "astro:db";
 import { seedData } from "./seed-data";
-import { setDefaultAutoSelectFamily } from "node:net";
 
 export default async function () {
   await db.insert(Location).values(seedData.locations);
+  await db.insert(Role).values(seedData.roles);
 
   // find and replace date
   // find: date:\s*'([^']+)',

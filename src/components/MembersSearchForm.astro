@@ -49,11 +49,11 @@ const responseTargetId = `${formId}-response`;
 
         <input
           type="number"
-          name="memberId"
-          id={`${formId}-memberId`}
+          name="userId"
+          id={`${formId}-userId`}
           value={member?.id}
         />
-        <span class="field-error" id={`${formId}-error-memberId`}></span>
+        <span class="field-error" id={`${formId}-error-userId`}></span>
       </label>
 
       <BarcodeScanner />
@@ -180,7 +180,7 @@ const responseTargetId = `${formId}-response`;
     const scannedValue = evt.detail.value;
     const formId = "members-search-form"; // or get dynamically
     const memberIdInput = document.getElementById(
-      `${formId}-memberId`,
+      `${formId}-userId`,
     ) as HTMLInputElement;
 
     if (memberIdInput) {

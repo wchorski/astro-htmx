@@ -82,7 +82,7 @@ if (Astro.request.method === 'POST') {
       zip: validated.zip,
     }).returning().get();
 
-    existingCredit = await db.select().from(Credit).where(and(eq(Credit.memberId, targetMember.id), eq(Credit.courseId, validated.courseId))).get()
+    existingCredit = await db.select().from(Credit).where(and(eq(Credit.userId, targetMember.id), eq(Credit.courseId, validated.courseId))).get()
 
     // TODO if the credit exists at all (meaning they register) throw an error
     if(existingCredit?.attended){
@@ -90,14 +90,14 @@ if (Astro.request.method === 'POST') {
     }
 
     existingCredit ? await db.update(Credit).set({
-      memberId: targetMember.id,
+      userId: targetMember.id,
       courseId: validated.courseId,
       date: new Date(),
       attended: true,
     }).where(eq(Credit.id, existingCredit.id)) 
     // TODO later don't allow member to insert Credit if they didn't register
     : await db.insert(Credit).values({
-      memberId: targetMember.id,
+      userId: targetMember.id,
       courseId: validated.courseId,
       date: new Date(),
       attended: true,

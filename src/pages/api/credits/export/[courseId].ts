@@ -37,7 +37,7 @@ export const PUT: APIRoute = async ({ params, request, redirect }) => {
       })
       .from(Course)
       .innerJoin(Credit, eq(Credit.courseId, Course.id))
-      .innerJoin(Member, eq(Member.id, Credit.memberId))
+      .innerJoin(Member, eq(Member.id, Credit.userId))
       .where(eq(Course.id, Number(courseId)));
 
     // reformat
@@ -46,11 +46,11 @@ export const PUT: APIRoute = async ({ params, request, redirect }) => {
 
       credits: rows.map((row) => {
         const { id: creditId, date: creditDate, ...creditRest } = row.credit; // pull id out, keep everything else
-        const { id: memberId, ...memberRest } = row.member;
+        const { id: userId, ...memberRest } = row.member;
         return {
           member: {
             ...memberRest,
-            memberId,
+            userId,
             phone: formatPhonePrettyManual(row.member.phone) || "",
           },
           ...creditRest,
@@ -152,7 +152,7 @@ type CreditWithMember = Omit<CreditInsert, "id" | "date"> & {
   creditId: CreditInsert["id"];
   dateCreated: CreditInsert["date"];
   member: Omit<MemberInsert, "id"> & {
-    memberId: MemberInsert["id"];
+    userId: MemberInsert["id"];
     phone: string; // because you force "" as fallback
   };
 };

@@ -14,7 +14,7 @@ const { memberCredits, courseId } = Astro.props;
 
 const tableRows = memberCredits.map(({ credit, member }) => ({
   id: credit.id,
-  memberId: member.id,
+  userId: member.id,
   courseId: credit.courseId,
   first_name: member.first_name,
   last_name: member.last_name,
@@ -35,7 +35,7 @@ const config = {
     required: true,
     readonly: true,
   },
-  memberId: {
+  userId: {
     label: "Member ID",
     type: "number",
   },

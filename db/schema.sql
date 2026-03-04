@@ -39,12 +39,12 @@ CREATE TABLE IF NOT EXISTS Member (
 
 CREATE TABLE IF NOT EXISTS Credit (
   id INTEGER PRIMARY KEY,
-  memberId INTEGER NOT NULL,
+  userId INTEGER NOT NULL,
   courseId INTEGER NOT NULL,
   date TEXT NOT NULL,
   grade TEXT,
   attended INTEGER DEFAULT 0,
-  FOREIGN KEY (memberId) REFERENCES Member(id),
+  FOREIGN KEY (userId) REFERENCES Member(id),
   FOREIGN KEY (courseId) REFERENCES Course(id),
-  UNIQUE (courseId, memberId)
+  UNIQUE (courseId, userId)
 );

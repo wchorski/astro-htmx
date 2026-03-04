@@ -17,18 +17,18 @@ export const prerender = false;
 
 const formSchema = z.object({
   courseId: z.number(),
-  memberId: z.number().optional(),
+  userId: z.number().optional(),
   email: z.string().email({ message: "Invalid email address" }).trim().optional(),
   phone: z.string().regex(/^\+[1-9]\d{1,14}$/, {
     message: "Invalid E.164 phone number format"
   }).min(10, { message: "Phone number must be at least 10 digits" }).trim().optional()
 }).refine(  
   (values) => {
-    // At least one of memberId, email, or phone must be present
-    return Boolean(values.memberId) || Boolean(values.email) || Boolean(values.phone);
+    // At least one of userId, email, or phone must be present
+    return Boolean(values.userId) || Boolean(values.email) || Boolean(values.phone);
   },
   {
-    message: "At least one of 'memberId', 'email', or 'phone' must be provided",
+    message: "At least one of 'userId', 'email', or 'phone' must be provided",
     path: [], // Error at root level
   } 
 ); 
@@ -48,18 +48,18 @@ if (Astro.request.method === 'POST') {
     // formId = formInputs.get('formId')?.toString() || 'members-search-form';
     
     const courseId = Number(formInputs.get('courseId'));
-    const memberId = Number(formInputs.get('memberId')) || undefined;
+    const userId = Number(formInputs.get('userId')) || undefined;
     const email = formInputs.get('email')?.toString().trim() || undefined;
     const phoneE16 = formatPhoneToE164Manual(formInputs.get('phone')?.toString().trim());
     const phoneFormated = formatPhonePrettyManual(phoneE16)
-    console.log({email, phoneE16, memberId});
-    const validated = formSchema.parse({ memberId, email, phone: phoneE16, courseId });
+    console.log({email, phoneE16, userId});
+    const validated = formSchema.parse({ userId, email, phone: phoneE16, courseId });
     console.log({validated});
 
     // TODO find member and set as attended
     existingMember = 
-      validated.memberId 
-        ? await db.select().from(Member).where(eq(Member.id, validated.memberId)).get()
+      validated.userId 
+        ? await db.select().from(Member).where(eq(Member.id, validated.userId)).get()
         : validated.phone 
           ? await db.select().from(Member).where(eq(Member.phone, validated.phone)).get() 
           : validated.email 

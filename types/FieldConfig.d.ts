@@ -41,7 +41,7 @@ export type FieldType = FieldSlot["type"];
 type InputFieldType = Exclude<FieldType, "select" | "textarea">;
 type SelectFieldType = Exclude<FieldType, "input" | "textarea">;
 
-export type BaseRow = Record<string, unknown> & { id: number };
+export type BaseRow = Record<string, unknown> & { id: unknown };
 
 export type FieldConfig<TRow extends BaseRow = BaseRow> = {
   [K in keyof TRow]?: FieldSlot;

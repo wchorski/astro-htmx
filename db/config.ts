@@ -1,8 +1,22 @@
 import { column, defineDb, defineTable } from "astro:db";
 
-const Member = defineTable({
+// TOOD add in permissions later
+
+const Role = defineTable({
   columns: {
     id: column.number({ primaryKey: true }),
+    label: column.text(), // "admin", "staff", "readonly"
+    description: column.text({ optional: true }),
+    permissions: column.json({ default: [] }),
+  },
+  indexes: [{ on: ["label"], unique: true }],
+});
+
+const User = defineTable({
+  columns: {
+    id: column.number({ primaryKey: true }),
+    // TODO auth
+    roleId: column.number({ references: () => Role.columns.id }),
     // asipId: column.number(),
     // regNum: column.number(),
     first_name: column.text(),
@@ -56,7 +70,7 @@ const Location = defineTable({
 const Credit = defineTable({
   columns: {
     id: column.number({ primaryKey: true }),
-    memberId: column.number({ references: () => Member.columns.id }),
+    userId: column.number({ references: () => User.columns.id }),
     courseId: column.number({ references: () => Course.columns.id }),
     date: column.date(),
     // date: column.date({ default: NOW }),
@@ -64,15 +78,16 @@ const Credit = defineTable({
     attended: column.boolean({ default: false }),
   },
   //? a member can not have more than one credit on any one course (avoid duplicates)
-  indexes: [{ on: ["courseId", "memberId"], unique: true }],
+  indexes: [{ on: ["courseId", "userId"], unique: true }],
 });
 
 // https://astro.build/db/config
 export default defineDb({
   tables: {
-    Member,
-    Course,
+    Role,
     Location,
+    User,
+    Course,
     Credit,
   },
 });

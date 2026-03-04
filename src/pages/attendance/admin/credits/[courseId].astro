@@ -20,7 +20,7 @@ const memberCredits = await db
     member: Member,
   })
   .from(Credit)
-  .innerJoin(Member, eq(Credit.memberId, Member.id))
+  .innerJoin(Member, eq(Credit.userId, Member.id))
   .where(eq(Credit.courseId, Number(courseId)));
 
 if (!foundCourse) return Astro.redirect("/404");

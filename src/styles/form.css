@@ -28,7 +28,7 @@ label .text {
 }
 
 input[name="id"],
-input[name="memberId"],
+input[name="userId"],
 input[name="middle_initial"],
 input[name="courseId"] 
 input[name="locationId"],

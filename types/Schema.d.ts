@@ -14,7 +14,7 @@ export type MemberCreditSelect = {
 
 export type MemberCredit = {
   id: number;
-  memberId: number;
+  userId: number;
   first_name: string;
   last_name: string;
   middle_initial: string;

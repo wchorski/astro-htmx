@@ -7,7 +7,7 @@ import Layout from "@layouts/Layout.astro";
 const { creditId } = Astro.params;
 const first_name = Astro.url.searchParams.get('first_name') || '';
 const last_name = Astro.url.searchParams.get('last_name') || '';
-const memberId = Astro.url.searchParams.get('memberId') || '';
+const userId = Astro.url.searchParams.get('userId') || '';
 const courseId = Astro.url.searchParams.get('courseId') || '';
 ---
 
@@ -17,7 +17,7 @@ const courseId = Astro.url.searchParams.get('courseId') || '';
     <ul>
       <li>Credit ID: {creditId}</li>
       <li>Course ID: {courseId}</li>
-      <li>Member: {`${first_name} ${last_name}`} | {memberId}</li>
+      <li>Member: {`${first_name} ${last_name}`} | {userId}</li>
     </ul>
   </main>
 </Layout>

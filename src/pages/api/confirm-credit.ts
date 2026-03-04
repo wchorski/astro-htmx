@@ -6,7 +6,7 @@ import { eq, or } from "astro:db";
 import { z } from "astro/zod";
 
 const formSchema = z.object({
-  memberId: z.coerce.number().optional(),
+  userId: z.coerce.number().optional(),
   courseId: z.coerce.number(),
   asipId: z.coerce.number(),
   regNum: z.coerce.number(),
@@ -46,7 +46,7 @@ export const POST: APIRoute = async ({ request, redirect }) => {
     }
 
     const {
-      memberId,
+      userId,
       courseId,
       asipId,
       regNum,
@@ -87,8 +87,8 @@ export const POST: APIRoute = async ({ request, redirect }) => {
       );
     }
 
-    const memberExists = memberId
-      ? await db.select().from(Member).where(eq(Member.id, memberId)).get()
+    const memberExists = userId
+      ? await db.select().from(Member).where(eq(Member.id, userId)).get()
       : await db
           .select()
           .from(Member)
@@ -125,7 +125,7 @@ export const POST: APIRoute = async ({ request, redirect }) => {
         .returning();
 
       await db.insert(Credit).values({
-        memberId: newMember.id,
+        userId: newMember.id,
         courseId,
         date: new Date(),
         attended: true,
@@ -133,7 +133,7 @@ export const POST: APIRoute = async ({ request, redirect }) => {
     } else {
       // member does exist
       const memberCredit = courseCredits.find(
-        (credit) => credit.memberId === memberExists.id,
+        (credit) => credit.userId === memberExists.id,
       );
       console.log({ memberCredit });
 
@@ -147,7 +147,7 @@ export const POST: APIRoute = async ({ request, redirect }) => {
         );
 
       await db.insert(Credit).values({
-        memberId: memberExists.id,
+        userId: memberExists.id,
         courseId,
         date: new Date(),
         attended: true,
