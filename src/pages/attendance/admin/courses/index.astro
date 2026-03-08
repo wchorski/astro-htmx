@@ -5,8 +5,8 @@ import AttendanceAdminNav from "@components/navigation/AttendanceAdminNav.astro"
 import Layout from "@layouts/Layout.astro";
 import { getCoursesPage } from "@lib/getCoursesPage";
 import PaginationNav from "@components/navigation/PaginationNav.astro";
-import RowCreate from "@components/tables/RowCreate.astro";
 
+const { WORDPRESS_ENDPOINT } = import.meta.env;
 const result = await getCoursesPage(1);
 
 if ("redirect" in result) {
@@ -22,18 +22,14 @@ const { courses, locations, page, perPage, totalCount, totalPages } = result;
     <header class="flex space-between">
       <h1>Courses - Page {page}</h1>
       <ButtonCoursesImport />
-      <!-- <button
-        onclick="alert('In the works. Will be implimented later')"
-        hx-put="/api/courses/import">Import Events from Wordpress</button
-      > -->
     </header>
     <div class="callout warning">
       <p>
         Created/Updated Courses here will create/update an accompanying
-        Wordpress event set as DRAFT.
-      </p>
-      <p>
-        To become viewable on the Wordpress site, it must be set to PUBLISH.
+        Wordpress event set as DRAFT. To become viewable on the <a
+          href={WORDPRESS_ENDPOINT + "/wp-admin/edit.php?post_type=event"}
+          >Wordpress site</a
+        >, it must be set to PUBLISH.
       </p>
     </div>
     <hr />

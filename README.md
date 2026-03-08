@@ -5,6 +5,7 @@ npx drizzle-kit migrate    # runs them against your DB
 ```
 
 #todo
+- [ ] for RowEdit instead of replacing the targeted RowView, how about just hide it and insert the RowEdit. the cancel button should just remove the RowEdit re-reveal the hidden row. No need to pass old values back and forth
 - [ ] delete button (with are you sure) for editable table
 - [ ] For production with auth enabled, generate a token and configure sqld with --auth-jwt-key-file or the SQLD_AUTH_JWT_KEY env var.
 - [ ] crudRegistry.userCredits.create if member exists with (id, phone, email), then check all input fields to see if they match. if yes, then add existing member with new Credit

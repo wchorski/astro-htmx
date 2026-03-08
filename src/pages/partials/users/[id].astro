@@ -1,7 +1,9 @@
 ---
 // partials/users/[id].astro
-import RowView from "@components/tables/RowView.astro";
+import { crudRegistry } from "@lib/crudRegistry";
 import { BadRequestError, errorHandlingOnSubmit } from "@lib/errors";
+import { tableConfigs } from "@lib/tableConfigs";
+import RowView from "@components/tables/RowView.astro";
 import type { UserInsert } from "@ty/Schema";
 import type { ZodError } from "astro/zod";
 import { eq, User } from "astro:db";
@@ -12,7 +14,43 @@ interface Params {
 }
 
 let user: UserInsert | null | undefined = null;
+let submittedFields: Record<string, any> | null = null;
 let error: string | ReturnType<ZodError["flatten"]> | null = null;
+const ctx = {
+  crud: "users" as const,
+  config: tableConfigs.users.required,
+  endpoint: "/attendance/users",
+  headers: Object.keys(tableConfigs.users.required),
+};
+
+if (Astro.request.method === "PATCH") {
+  console.log("PATCH. lets update this user");
+  const { id } = Astro.params;
+  try {
+    if (!id) throw new BadRequestError("Missing required parameter: id");
+    const formData = await Astro.request.formData();
+    if (!formData) return new Response("Bad Request", { status: 400 });
+
+    const numericId = Number(id);
+
+    if (!Number.isInteger(numericId)) {
+      throw new BadRequestError("Parameter 'id' must be a valid integer");
+    }
+
+    submittedFields = Object.fromEntries(
+      [...formData.entries()].filter(([key]) => !key.startsWith("_")),
+    );
+
+    console.log({ submittedFields });
+    user = await crudRegistry.users.update(submittedFields);
+  } catch (e) {
+    // console.log("partials/users/:id");
+    // console.log(e);
+    const { err, status } = errorHandlingOnSubmit(e);
+    Astro.response.status = status;
+    error = err;
+  }
+}
 
 if (Astro.request.method === "DELETE") {
   const { id } = Astro.params;
@@ -25,11 +63,7 @@ if (Astro.request.method === "DELETE") {
       throw new BadRequestError("Parameter 'id' must be a valid integer");
     }
 
-    member = await db
-      .delete(User)
-      .where(eq(User.id, numericId))
-      .returning()
-      .get();
+    user = await crudRegistry.users.delete(id);
   } catch (e) {
     // console.log("partials/users/:id");
     // console.log(e);
@@ -41,16 +75,32 @@ if (Astro.request.method === "DELETE") {
 ---
 
 {
-  error ? (
-    <p class="callout error">{JSON.stringify(error, null, 2)}</p>
-  ) : Astro.request.method === "DELETE" && member ? (
+  error && typeof error === "object" && "fieldErrors" in error ? (
     <>
-      <tr>
-        <td colspan="100%" class="danger">
-          DELETED MEMBER{" "}
-          {`${member.id} | ${member.first_name} ${member.last_name} ${member.phone} ${member.email}`}
-        </td>
-      </tr>
+      {Object.entries(error.fieldErrors).map(([fieldName, messages]) => (
+        <span
+          id={`error-${fieldName}`}
+          hx-swap-oob="innerHTML"
+          class="field-error"
+        >
+          {messages?.[0]}
+        </span>
+      ))}
     </>
-  ) : null
+  ) : error ? (
+    <td class="callout error top-level" colspan={ctx.headers.length}>
+      {typeof error === "string" ? error : JSON.stringify(error)}
+    </td>
+  ) : Astro.request.method === "DELETE" && user ? (
+    <tr>
+      <td colspan="100%" class="danger">
+        DELETED user{" "}
+        {`${user.id} | ${user.first_name} ${user.last_name} ${user.phone} ${user.email}`}
+      </td>
+    </tr>
+  ) : Astro.request.method === "PATCH" && user ? (
+    <RowView row={user} {...ctx} classList={["updated-row"]} />
+  ) : (
+    <p class="callout error">unknown error occured on partials/users/:id </p>
+  )
 }

@@ -82,8 +82,8 @@ const { users } = Astro.props;
 const ctx = {
   crud: "users",
   endpoint: "/attendance/admin/users/id",
-  config: tableConfigs.users.essential,
-  headers: Object.keys(tableConfigs.users.essential)
+  config: tableConfigs.users.required,
+  headers: Object.keys(tableConfigs.users.required)
 }
 ---
 

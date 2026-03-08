@@ -21,7 +21,7 @@ if (Astro.request.method === "POST") {
   try {
     const raw = await Astro.request.formData();
     if (!raw) return new Response("Bad Request", { status: 400 });
-    ctx = getContext(raw)
+    ctx = getContext(raw);
     // const endpoint = raw.get("_endpoint") as string;
     // const headers = Object.keys(config);
     // ctx = { config, crud, endpoint, headers };
@@ -39,6 +39,7 @@ if (Astro.request.method === "POST") {
     // TODO add error condition view in template
   }
 }
+// TODO i don't think i'll need this partial once i just hide and reveal the old RowView w RowEdit
 ---
 
 {

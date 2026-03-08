@@ -76,7 +76,7 @@ const memberEssentialConfig = {
 export const tableConfigs = {
   users: {
     // all: memberAllConfig,
-    essential: memberEssentialConfig,
+    required: memberEssentialConfig,
   },
   course: {
     // all: courseAllConfig,
@@ -92,5 +92,5 @@ export const tableConfigs = {
   },
 } satisfies Record<
   CrudRegistryType,
-  Partial<Record<"all" | "essential", FieldConfig>>
+  Partial<Record<"all" | "required", FieldConfig>>
 >;

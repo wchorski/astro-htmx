@@ -16,9 +16,9 @@ let error = null;
 let view: ViewType = "table-row";
 const ctx = {
   crud: "users" as const,
-  config: tableConfigs.users.essential,
-  endpoint: "/partials/users",
-  headers: Object.keys(tableConfigs.users.essential),
+  config: tableConfigs.users.required,
+  endpoint: "/attendance/users",
+  headers: Object.keys(tableConfigs.users.required),
 };
 
 if (Astro.request.method === "POST") {
@@ -50,7 +50,6 @@ if (Astro.request.method === "POST") {
 
 {
   error && typeof error === "object" && "fieldErrors" in error ? (
-    // one oob fragment per field that failed
     <>
       {Object.entries(error.fieldErrors).map(([fieldName, messages]) => (
         <span

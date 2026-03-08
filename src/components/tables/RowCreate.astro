@@ -40,8 +40,6 @@ const { config, crud, endpoint, headers } = Astro.props;
     hx-target-error="#row-error-create"
     hx-swap="innerHTML"
     hx-vals={JSON.stringify({
-      _config: JSON.stringify(config),
-      _endpoint: endpoint,
       _crud: crud,
       _view: "table-row",
     })}
