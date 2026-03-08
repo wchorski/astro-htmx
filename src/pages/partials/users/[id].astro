@@ -6,14 +6,14 @@ import { tableConfigs } from "@lib/tableConfigs";
 import RowView from "@components/tables/RowView.astro";
 import type { UserInsert } from "@ty/Schema";
 import type { ZodError } from "astro/zod";
-import { eq, User } from "astro:db";
-import { db } from "astro:db";
+import type { BaseRow } from "@ty/FieldConfig";
 
 interface Params {
   id: string | undefined;
 }
 
-let user: UserInsert | null | undefined = null;
+let id: string | null | undefined = null;
+let user: UserInsert | BaseRow | null | undefined = null;
 let submittedFields: Record<string, any> | null = null;
 let error: string | ReturnType<ZodError["flatten"]> | null = null;
 const ctx = {
@@ -23,9 +23,20 @@ const ctx = {
   headers: Object.keys(tableConfigs.users.required),
 };
 
+if (Astro.request.method === "GET") {
+  id = Astro.params.id;
+  try {
+    if (!id) throw new BadRequestError("Missing required parameter: id");
+    user = await crudRegistry.users.read(id);
+  } catch (e) {
+    const { err, status } = errorHandlingOnSubmit(e);
+    Astro.response.status = status;
+    error = err;
+  }
+}
+
 if (Astro.request.method === "PATCH") {
-  console.log("PATCH. lets update this user");
-  const { id } = Astro.params;
+  id = Astro.params.id;
   try {
     if (!id) throw new BadRequestError("Missing required parameter: id");
     const formData = await Astro.request.formData();
@@ -41,11 +52,8 @@ if (Astro.request.method === "PATCH") {
       [...formData.entries()].filter(([key]) => !key.startsWith("_")),
     );
 
-    console.log({ submittedFields });
     user = await crudRegistry.users.update(submittedFields);
   } catch (e) {
-    // console.log("partials/users/:id");
-    // console.log(e);
     const { err, status } = errorHandlingOnSubmit(e);
     Astro.response.status = status;
     error = err;
@@ -53,7 +61,7 @@ if (Astro.request.method === "PATCH") {
 }
 
 if (Astro.request.method === "DELETE") {
-  const { id } = Astro.params;
+  id = Astro.params.id;
   try {
     if (!id) throw new BadRequestError("Missing required parameter: id");
 
@@ -77,29 +85,51 @@ if (Astro.request.method === "DELETE") {
 {
   error && typeof error === "object" && "fieldErrors" in error ? (
     <>
-      {Object.entries(error.fieldErrors).map(([fieldName, messages]) => (
-        <span
-          id={`error-${fieldName}`}
-          hx-swap-oob="innerHTML"
-          class="field-error"
-        >
-          {messages?.[0]}
-        </span>
-      ))}
+      {ctx.headers.map((fieldName) => {
+        const messages = error.fieldErrors[fieldName];
+        return (
+          <span
+            id={`field-error-${id}-${fieldName}`}
+            hx-swap-oob="outerHTML"
+            class="anim-vibrate field-error"
+          >
+            {messages?.[0] ?? ""}
+          </span>
+        );
+      })}
+      <tr id={`row-edit-error-${id}`} />
     </>
   ) : error ? (
-    <td class="callout error top-level" colspan={ctx.headers.length}>
-      {typeof error === "string" ? error : JSON.stringify(error)}
-    </td>
+    <>
+      <td class="callout error top-level" colspan={ctx.headers.length}>
+        {typeof error === "string" ? error : JSON.stringify(error)}
+      </td>
+
+      {ctx.headers.map((fieldName) => (
+        <span
+          id={`field-error-${id}-${fieldName}`}
+          hx-swap-oob="outerHTML"
+          class="field-error"
+        />
+      ))}
+    </>
   ) : Astro.request.method === "DELETE" && user ? (
-    <tr>
+    <tr id={`row-${id}`} hx-swap-oob="outerHTML">
       <td colspan="100%" class="danger">
         DELETED user{" "}
         {`${user.id} | ${user.first_name} ${user.last_name} ${user.phone} ${user.email}`}
       </td>
     </tr>
   ) : Astro.request.method === "PATCH" && user ? (
-    <RowView row={user} {...ctx} classList={["updated-row"]} />
+    <>
+      <RowView row={user} {...ctx} classList={["updated-row"]} oob />
+      <tr id={`row-edit-error-${id}`} hx-swap-oob="outerHTML" />
+    </>
+  ) : Astro.request.method === "GET" && user ? (
+    <>
+      <RowView row={user} {...ctx} oob />
+      <tr id={`row-edit-error-${id}`} hx-swap-oob="outerHTML" />
+    </>
   ) : (
     <p class="callout error">unknown error occured on partials/users/:id </p>
   )

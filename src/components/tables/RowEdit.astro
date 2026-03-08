@@ -25,7 +25,7 @@ const {
   error,
 } = Astro.props;
 
-const topLevelError = typeof error === "string" ? error.toString() : null;
+const topLevelError = typeof error === "string" ? error : null;
 ---
 
 <tr id={`row-${row.id}`} data-status="editing">
@@ -55,7 +55,9 @@ const topLevelError = typeof error === "string" ? error.toString() : null;
             : (row[key] ?? "");
 
       const fieldError =
-        typeof error === "object" ? error?.fieldErrors[key]?.[0] : null;
+        error && typeof error === "object" && "fieldErrors" in error
+          ? error?.fieldErrors[key]?.[0]
+          : null;
 
       if (type === "select") {
         return (
@@ -72,7 +74,7 @@ const topLevelError = typeof error === "string" ? error.toString() : null;
                   </option>
                 ))}
               </select>
-              {fieldError && <span class="field-error">{fieldError}</span>}
+              <span class="field-error">{fieldError}</span>
             </label>
           </td>
         );
@@ -86,7 +88,7 @@ const topLevelError = typeof error === "string" ? error.toString() : null;
                 form={`edit-form-${row.id}`}
                 name={key}
               />
-              {fieldError && <span class="field-error">{fieldError}</span>}
+              <span class="field-error">{fieldError}</span>
             </label>
           </td>
         );
@@ -95,6 +97,7 @@ const topLevelError = typeof error === "string" ? error.toString() : null;
           <td>
             <InputField
               formId={`edit-form-${row.id}`}
+              errorId={`field-error-${row.id}-${key}`}
               name={key}
               label={label}
               type={type}
@@ -115,12 +118,8 @@ const topLevelError = typeof error === "string" ? error.toString() : null;
       style="display:none"
       hx-patch={`/partials/${crud}/${row.id}`}
       hx-target={`#row-${row.id}`}
-      hx-target-error={`#row-error-${row.id}`}
-      hx-swap="outerHTML"
-      hx-vals={JSON.stringify({
-        _row: JSON.stringify(row),
-        _crud: crud,
-      })}
+      hx-target-error={`#row-edit-error-${row.id}`}
+      hx-swap="innerHTML"
     >
     </form>
 
@@ -136,23 +135,17 @@ const topLevelError = typeof error === "string" ? error.toString() : null;
       type="reset"
       title="cancel"
       class="cancel"
-      hx-post="/partials/table/row-view"
+      hx-get={`/partials/${crud}/${row.id}`}
       hx-target={`#row-${row.id}`}
-      hx-target-error={`#row-${row.id}`}
+      hx-target-error={`#row-edit-error-${row.id}`}
       hx-swap="outerHTML"
-      hx-vals={JSON.stringify({
-        _row: JSON.stringify(originalRow),
-        _config: JSON.stringify(config),
-        _endpoint: endpoint,
-        _crud: crud,
-      })}
     >
       ⌀
     </button>
   </td>
 </tr>
 
-<tr id={`row-error-${row.id}`} class="row-error">
+<tr id={`row-edit-error-${row.id}`} class="row-error">
   {
     topLevelError ? (
       <td class="callout error top-level" colspan={headers.length}>

@@ -15,12 +15,11 @@ interface Props {
   crud: CrudRegistryType;
   config: FieldConfig;
   headers: string[];
-  endpoint: string;
   // error?: string | Record<string, any>;
   // values?: Record<string, any>;
 }
 
-const { config, crud, endpoint, headers } = Astro.props;
+const { config, crud, headers } = Astro.props;
 
 // TODO can remove all errors (handle by partial swapping)
 // const topLevelError =
@@ -85,6 +84,7 @@ const { config, crud, endpoint, headers } = Astro.props;
         <td data-type={type}>
           <InputField
             formId={"create-form"}
+            errorId={`field-error-create-${key}`}
             name={key}
             label={label}
             type={type}
@@ -127,7 +127,7 @@ const { config, crud, endpoint, headers } = Astro.props;
   </td>
 </tr>
 
-<tr id={`row-error-create`} class="row-error"></tr>
+<tr id={`row-create-error`} class="row-error"></tr>
 
 <script>
   document

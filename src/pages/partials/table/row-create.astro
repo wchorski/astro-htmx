@@ -58,15 +58,15 @@ if (Astro.request.method === "POST") {
     <>
       <RowView row={newRow} {...ctx} classList={["new-row"]} />
       <RowCreateForm {...ctx} />
-      <tr hx-swap-oob="innerHTML:#row-error-create" />
+      <tr hx-swap-oob="innerHTML:#row-create-error" />
     </>
   ) : error ? (
     <RowCreateForm {...ctx} error={error} values={submittedFields} />
-    <tr hx-swap-oob="innerHTML:#row-error-create" />
+    <tr hx-swap-oob="innerHTML:#row-create-error" />
   ) : (
     <>
       <RowCreateForm {...ctx} />
-      <tr hx-swap-oob="innerHTML:#row-error-create" />
+      <tr hx-swap-oob="innerHTML:#row-create-error" />
     </>
   )
 }

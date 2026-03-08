@@ -8,10 +8,12 @@ import { errorHandlingOnSubmit } from "@lib/errors";
 import { crudRegistry } from "@lib/crudRegistry";
 import { parseOutUndefinedFormData } from "@lib/sanatizers";
 import { TEST_ADMIN_SESSION } from "@lib/auth/session";
+import type { BaseRow } from "@ty/FieldConfig";
+import type { UserInsert } from "@ty/Schema";
 
 type ViewType = "table-row" | "card";
 
-let newUser = null;
+let newUser: UserInsert | BaseRow | null | undefined = null;
 let error = null;
 let view: ViewType = "table-row";
 const ctx = {
@@ -51,20 +53,25 @@ if (Astro.request.method === "POST") {
 {
   error && typeof error === "object" && "fieldErrors" in error ? (
     <>
-      {Object.entries(error.fieldErrors).map(([fieldName, messages]) => (
-        <span
-          id={`error-${fieldName}`}
-          hx-swap-oob="innerHTML"
-          class="field-error"
-        >
-          {messages?.[0]}
-        </span>
-      ))}
+      {ctx.headers.map((fieldName) => {
+        const messages = error.fieldErrors[fieldName];
+        return (
+          <span
+            id={`field-error-create-${fieldName}`}
+            hx-swap-oob="outerHTML"
+            class="anim-vibrate field-error"
+          >
+            {messages?.[0] ?? ""}
+          </span>
+        );
+      })}
     </>
   ) : error ? (
-    <td class="callout error top-level" colspan={ctx.headers.length}>
-      {typeof error === "string" ? error : JSON.stringify(error)}
-    </td>
+    <tr id={"row-error-create"}>
+      <td class="callout error top-level" colspan={ctx.headers.length}>
+        {typeof error === "string" ? error : JSON.stringify(error)}
+      </td>
+    </tr>
   ) : newUser && view === "table-row" ? (
     <>
       <RowView row={newUser} {...ctx} classList={["new-row"]} />

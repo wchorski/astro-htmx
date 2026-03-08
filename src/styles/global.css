@@ -174,6 +174,15 @@ hr {
   animation-direction: normal;
 }
 
+.anim-vibrate {
+  animation-name: vibrate;
+  animation-duration: 100ms;
+  animation-timing-function: linear;
+  animation-delay: 0;
+  animation-iteration-count: 3;
+  animation-direction: normal;
+}
+
 @keyframes vibrate {
   0% {
     opacity: 0.3;
@@ -212,8 +221,14 @@ hr {
 }
 
 @keyframes fall-out {
-  from { opacity: 1; transform: translateY(0); }
-  to   { opacity: 0; transform: translateY(12px); }
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(12px);
+  }
 }
 
 /* COMPONENTS */
