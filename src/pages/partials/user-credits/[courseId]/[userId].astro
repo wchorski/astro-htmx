@@ -1,5 +1,6 @@
 ---
-// partials/users/create.astro
+// partials/user-credits/[courseId]/[userId].astro
+// TODO keeping around in case I want a simple API for inline user credit creation (without form)
 import RowView from "@components/tables/RowView.astro";
 import UserCard from "@components/UserCard.astro";
 import RowCreateForm from "@components/tables/RowCreate.astro";
@@ -8,24 +9,29 @@ import { BadRequestError, errorHandlingOnSubmit } from "@lib/errors";
 import { crud, type CrudRegistryType } from "@lib/crudRegistry";
 import { parseOutUndefinedFormData } from "@lib/sanatizers";
 import { TEST_ADMIN_SESSION } from "@lib/auth/session";
-import type { UserSelect } from "@ty/Schema";
+import type { UserCreditFlat } from "@ty/Schema";
 
 type ViewType = "table-row" | "card";
 
-let newUser: UserSelect | null | undefined = null;
+let newUserCredit: UserCreditFlat | null | undefined = null;
 let error = null;
 let view: ViewType = "table-row";
 const ctx = {
-  crud: "users" as CrudRegistryType,
-  config: tableConfigs.users.required,
-  endpoint: "/attendance/users",
-  headers: Object.keys(tableConfigs.users.required),
+  crud: "userCredits" as CrudRegistryType,
+  config: tableConfigs.userCredits.required,
+  endpoint: "/attendance/user-credits",
+  headers: Object.keys(tableConfigs.userCredits.required),
 };
+
+console.log(JSON.stringify(ctx, null, 2));
 
 if (Astro.request.method === "POST") {
   try {
     // const session = await requirePermission(Astro.request, "users", "create");
     // TODO
+    const { courseId, userId } = Astro.params;
+    console.log({ courseId, userId });
+
     const session = TEST_ADMIN_SESSION;
 
     const formData = await Astro.request.formData();
@@ -33,14 +39,17 @@ if (Astro.request.method === "POST") {
     // TODO may remove later
     view = (formData.get("_view") as ViewType) ?? "table-row"; // caller decides
 
+    // TODO shouldn't need to filter out _
     const submitFields = Object.fromEntries(
       [...formData.entries()].filter(([key]) => !key.startsWith("_")),
     );
 
-    newUser = await crud.users.create(
+    newUserCredit = await crud.userCredits.create(
       parseOutUndefinedFormData(submitFields),
       session,
     );
+
+    console.log({ newUserCredit });
   } catch (e) {
     const { err, status } = errorHandlingOnSubmit(e);
     Astro.response.status = status;
@@ -55,6 +64,15 @@ if (Astro.request.method === "POST") {
 {
   error && typeof error === "object" && "fieldErrors" in error ? (
     <>
+      {error.formErrors.length ? (
+        <tr id="row-create-error">
+          <td class="callout error top-level" colspan={ctx.headers.length}>
+            {error.formErrors[0]}
+          </td>
+        </tr>
+      ) : (
+        <tr id="row-create-error" />
+      )}
       {ctx.headers.map((fieldName) => {
         const messages = error.fieldErrors[fieldName];
         return (
@@ -67,7 +85,6 @@ if (Astro.request.method === "POST") {
           </span>
         );
       })}
-      <tr id={`row-create-error`} />
     </>
   ) : error ? (
     <>
@@ -82,11 +99,13 @@ if (Astro.request.method === "POST") {
         />
       ))}
     </>
-  ) : newUser && view === "table-row" ? (
+  ) : newUserCredit && view === "table-row" ? (
     <>
-      <RowView row={newUser} {...ctx} classList={["new-row"]} />
+      <RowView row={newUserCredit} {...ctx} classList={["new-row"]} />
       <RowCreateForm {...ctx} />
       <tr id={`row-create-error`} hx-swap-oob="outerHTML" />
     </>
-  ) : <p>unknown error occured</p>
+  ) : (
+    <p>unknown error occured</p>
+  )
 }

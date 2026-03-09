@@ -6,7 +6,7 @@ import { db, eq, Course, Credit, User } from "astro:db";
 import Layout from "@layouts/Layout.astro";
 import AttendanceAdminNav from "@components/navigation/AttendanceAdminNav.astro";
 import MembersSearchForm from "@components/MembersSearchForm.astro";
-import RowSearchMember from "@components/tables/RowSearchMember.astro";
+import RowSearchUser from "@components/tables/RowSearchUser.astro";
 import UserCreditsEditableTable from "@components/UserCreditsEditableTable.astro";
 export const prerender = false; // Not needed in 'server' mode
 const { id } = Astro.params;
@@ -112,7 +112,7 @@ const ctx = {
     <hr />
 
     <section>
-      <RowSearchMember {...ctx} />
+      <RowSearchUser {...ctx} />
       <!-- <MembersSearchForm course={course} /> -->
     </section>
     <hr />

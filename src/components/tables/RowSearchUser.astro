@@ -72,6 +72,8 @@ const topLevelError =
 
             const submittedValue = values?.[key];
 
+            // TODO whata mess, i feel like i shouldn't have to do all this crap just to render some <input>
+            // const resolvedValue = override ?? (row[key] != null ? String(row[key]) : "");
             const resolvedValue =
               submittedValue !== undefined
                 ? submittedValue

@@ -5,6 +5,7 @@ npx drizzle-kit migrate    # runs them against your DB
 ```
 
 #todo
+- [ ] fix all db `config.ts` fields to use snakecase
 - [ ] how to handle `createMany` `createOne` `readMany` `readOne`?
 - [ ] for RowEdit instead of replacing the targeted RowView, how about just hide it and insert the RowEdit. the cancel button should just remove the RowEdit re-reveal the hidden row. No need to pass old values back and forth
 - [ ] delete button (with are you sure) for editable table

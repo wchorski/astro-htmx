@@ -80,7 +80,7 @@ const { users } = Astro.props;
 //   }
 
 const ctx = {
-  crud: "users",
+  crud: "users" as const,
   endpoint: "/attendance/admin/users/id",
   config: tableConfigs.users.required,
   headers: Object.keys(tableConfigs.users.required)
@@ -91,9 +91,9 @@ const ctx = {
   users.length === 0 ? (
     <p class="callout not-found">no users found</p>
     <table>
-    <tr class="highlight-green">
-      <RowCreate {...ctx} />
-    </tr>
+      <tfoot>
+        <RowCreate {...ctx} class:list={"highlight-green"} />
+      </tfoot>
     </table>
   ) : (
     <TableEditable

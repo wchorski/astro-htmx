@@ -81,7 +81,6 @@ export function throwErrorsForCRUD(e: unknown): never {
   throw new Error("An unexpected error occurred: " + msg);
 }
 
-
 // function isUniqueConstraintError(e: unknown): { field?: string } | null {
 //   // SQLite / libSQL (Astro DB default)
 //   if (e instanceof LibsqlError && e.extendedCode === "SQLITE_CONSTRAINT_UNIQUE") {
@@ -101,7 +100,6 @@ export function throwErrorsForCRUD(e: unknown): never {
 
 //   return null;
 // }
-
 
 // --- For use in partials ---
 // Maps domain errors to { err, status } for the response
@@ -124,6 +122,9 @@ export function errorHandlingOnSubmit(e: unknown): {
   }
   if (e instanceof ConflictError) {
     return { status: 409, err: e.message };
+  }
+  if (e instanceof ZodError) {
+    return { err: e.flatten(), status: 422 };
   }
   if (e instanceof ValidationError) {
     return { status: 422, err: e.flattened };

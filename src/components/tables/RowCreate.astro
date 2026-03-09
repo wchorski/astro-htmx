@@ -10,16 +10,24 @@ import type { CrudRegistryType } from "@lib/crudRegistry";
 import SelectField from "@components/form/SelectField.astro";
 import TextareaField from "@components/form/TextareaField.astro";
 import InputField from "@components/form/InputField.astro";
+import { slugify } from "@lib/formatters";
+import { undefined } from "astro:schema";
 
 interface Props {
   crud: CrudRegistryType;
   config: FieldConfig;
   headers: string[];
+  actionUrl?: string;
   // error?: string | Record<string, any>;
   // values?: Record<string, any>;
 }
 
-const { config, crud, headers } = Astro.props;
+const {
+  config,
+  crud,
+  headers,
+  actionUrl = `/partials/${slugify(crud)}/create`,
+} = Astro.props;
 
 // TODO can remove all errors (handle by partial swapping)
 // const topLevelError =
@@ -35,9 +43,9 @@ const { config, crud, headers } = Astro.props;
     headers.map((key) => {
       const field = config[key] ?? {};
       const {
-        label,
         value: override,
         type,
+        label,
         ...inputAttrs
       } = field as FieldSlot;
       delete (inputAttrs as any).options;
@@ -71,11 +79,14 @@ const { config, crud, headers } = Astro.props;
       return (
         <td data-type={type}>
           <InputField
+            {...inputAttrs}
+            checked={false}
             formId={"create-form"}
             errorId={`field-error-create-${key}`}
             name={key}
             label={label}
             type={type}
+            value={override}
             datalist={datalist}
             inputAttrs={inputAttrs}
           />
@@ -88,7 +99,7 @@ const { config, crud, headers } = Astro.props;
     <form
       id="create-form"
       style="display:none"
-      hx-post={`/partials/${crud}/create`}
+      hx-post={actionUrl}
       hx-target="#table-footer"
       hx-target-error="#row-create-error"
       hx-swap="innerHTML"

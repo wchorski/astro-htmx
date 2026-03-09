@@ -10,21 +10,26 @@ export type CourseSelect = typeof Course.$inferSelect;
 export type LocationInsert = typeof Location.$inferInsert;
 export type LocationSelect = typeof Location.$inferSelect;
 export type UserCreditSelect = {
-  credit: CreditSelect,
-  user: UserSelect,
-}
+  credit: CreditSelect;
+  user: UserSelect;
+};
 
-export type UserCredit = {
-  id: number;
+export type UserCreditFlat = {
   userId: number;
+  id: number;
+  date: Date;
+  courseId: number;
+  grade: string | null;
+  attended: boolean;
+  roleId: number | null;
   first_name: string;
   last_name: string;
-  middle_initial: string;
-  email: string;
+  middle_initial: string | null;
   phone: string;
+  email: string;
   address1: string;
+  address2: string | null;
   city: string;
   state: string;
   zip: number;
-  attended: boolean;
 };

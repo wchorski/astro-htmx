@@ -146,6 +146,25 @@ export const validate = {
     .strict(),
 
   get userCreditCreate() {
-    return z.union([this.userLink, this.userCreateAndLink]);
+    return z.any().superRefine((data, ctx) => {
+      const isLinking = !!data.userId;
+      const schema = isLinking ? validate.userLink : validate.userCreateAndLink;
+
+      if (
+        isLinking &&
+        (data.first_name || data.last_name || data.email || data.phone)
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "If linking by userId, other fields must be left blank.",
+        });
+        return;
+      }
+
+      const result = schema.safeParse(data);
+      if (!result.success) {
+        result.error.issues.forEach((issue) => ctx.addIssue(issue));
+      }
+    });
   },
 };

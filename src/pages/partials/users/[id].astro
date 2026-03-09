@@ -1,6 +1,6 @@
 ---
 // partials/users/[id].astro
-import { crud } from "@lib/crudRegistry";
+import { crud, type CrudRegistryType } from "@lib/crudRegistry";
 import { BadRequestError, errorHandlingOnSubmit } from "@lib/errors";
 import { tableConfigs } from "@lib/tableConfigs";
 import RowView from "@components/tables/RowView.astro";
@@ -18,7 +18,7 @@ let user: UserSelect | null | undefined = null;
 let submittedFields: Partial<TableRow> & { id: string; } | null = null;
 let error: string | ReturnType<ZodError["flatten"]> | null = null;
 const ctx = {
-  crud: "users" as const,
+  crud: "users" as CrudRegistryType,
   config: tableConfigs.users.required,
   endpoint: "/attendance/users",
   headers: Object.keys(tableConfigs.users.required),

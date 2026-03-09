@@ -73,72 +73,74 @@ const userRequiredConfig = {
   },
 } as FieldConfig<BaseRow>;
 
-const userCreditsRequiredConfig = (courseId:string) =>({
-  id: {
-    label: "ID",
-    type: "number",
-    required: true,
-    readonly: true,
-  },
-  userId: {
-    label: "User ID",
-    type: "number",
-  },
-  courseId: {
-    label: "Course ID",
-    type: "hidden",
-    value: courseId
-  },
-  first_name: {
-    label: "First Name",
-    type: "text",
+const userCreditsRequiredConfig = (courseId: string) =>
+  ({
+    id: {
+      label: "ID",
+      type: "number",
+      required: true,
+      readonly: true,
+    },
+    userId: {
+      label: "User ID",
+      type: "number",
+    },
+    courseId: {
+      label: "Course ID",
+      type: "number",
+      value: courseId,
+      readonly: true,
+    },
+    first_name: {
+      label: "First Name",
+      type: "text",
 
-    placeholder: "Jane Doe...",
-  },
-  last_name: {
-    label: "Last Name",
-    type: "text",
+      placeholder: "Jane Doe...",
+    },
+    last_name: {
+      label: "Last Name",
+      type: "text",
 
-    placeholder: "Jane Doe...",
-  },
-  middle_initial: {
-    label: "Middle Init.",
-    type: "text",
-  },
-  email: {
-    label: "Email",
-    type: "email",
+      placeholder: "Jane Doe...",
+    },
+    middle_initial: {
+      label: "Middle Init.",
+      type: "text",
+    },
+    email: {
+      label: "Email",
+      type: "email",
 
-    placeholder: "jane@example.com...",
-    autocomplete: "email",
-  },
-  phone: {
-    label: "Phone",
-    type: "tel",
+      placeholder: "jane@example.com...",
+      autocomplete: "email",
+    },
+    phone: {
+      label: "Phone",
+      type: "tel",
 
-    autocomplete: "phone",
-  },
-  address1: {
-    label: "Address",
-    type: "text",
-  },
-  city: {
-    label: "city",
-    type: "text",
-  },
-  state: {
-    label: "state",
-    type: "text",
-  },
-  zip: {
-    label: "zip",
-    type: "number",
-  },
-  attended: {
-    label: "attended",
-    type: "checkbox",
-  },
-} as FieldConfig<BaseRow>)
+      autocomplete: "phone",
+    },
+    address1: {
+      label: "Address",
+      type: "text",
+    },
+    city: {
+      label: "city",
+      type: "text",
+    },
+    state: {
+      label: "state",
+      type: "text",
+    },
+    zip: {
+      label: "zip",
+      type: "number",
+    },
+    attended: {
+      label: "attended",
+      type: "checkbox",
+    },
+  }) as FieldConfig<BaseRow>;
 
 export const tableConfigs = {
   users: {
@@ -156,9 +158,11 @@ export const tableConfigs = {
   },
   userCredits: {
     // all: creditAllConfig,
-    required: userCreditsRequiredConfig
+    required: userCreditsRequiredConfig,
   },
 } satisfies Record<
   CrudRegistryType,
-  Partial<Record<"all" | "required", FieldConfig | ((arg: string) => FieldConfig)>>
+  Partial<
+    Record<"all" | "required", FieldConfig | ((arg: string) => FieldConfig)>
+  >
 >;

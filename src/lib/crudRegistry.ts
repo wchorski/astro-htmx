@@ -13,7 +13,12 @@ import {
   createWordpressEventPost,
   updateWordpressEventPost,
 } from "./getsetWordpressPost";
-import { userCan, sanitizeFields, userPolicy } from "./auth/permissions";
+import {
+  userCan,
+  sanitizeFields,
+  userPolicy,
+  creditPolicy,
+} from "./auth/permissions";
 import type { Session } from "./auth/session";
 
 type CreateFn = (
@@ -37,8 +42,6 @@ export const crud = {
   // TODO how to prevent create/update users from giving themselves elevated permissions?
   users: {
     create: async (row, session) => {
-      
-      
       try {
         const fields = await userPolicy.writableFields(session, null);
 
@@ -348,8 +351,11 @@ export const crud = {
     },
   },
   userCredits: {
-    create: async (row) => {
+    create: async (row, session) => {
       try {
+        // TODO add in auth. mutation for credit and user maybe tricky
+        // const fields = await creditPolicy.writableFields(session, null);
+        // const sanitized = sanitizeFields(row, fields);
         const validated = validate.userCreditCreate.parse(row);
 
         return await db.transaction(async (tx) => {

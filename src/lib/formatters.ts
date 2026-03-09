@@ -16,6 +16,10 @@ export function formatPhoneToE164Manual(input?: string): string | null {
   return null; // too short
 }
 
+export function slugify(text: string) {
+  return text.replace(/([A-Z])/g, "-$1").toLowerCase();
+}
+
 // export function formatPhoneToE164Manual(
 //   input?: string,
 //   options: FormatPhoneOptions = { defaultCountryCode: "1" },

@@ -41,7 +41,7 @@ export type FieldType = FieldSlot["type"];
 type InputFieldType = Exclude<FieldType, "select" | "textarea">;
 type SelectFieldType = Exclude<FieldType, "input" | "textarea">;
 
-export type BaseRow = Record<string, string> & { id: string };
+export type BaseRow = Record<string, string | number | boolean | Date | null | undefined> & { id: string | number };
 
 export type FieldConfig<TRow extends BaseRow = BaseRow> = {
   [K in keyof TRow]?: FieldSlot;
@@ -49,4 +49,4 @@ export type FieldConfig<TRow extends BaseRow = BaseRow> = {
 
 // TODO full send into HTML fields only being strings. Value coersion happens in validation
 // export type FieldValue = string | number | boolean | Date | File | null;
-export type FieldValue = string | null;
+export type FieldValue = string | null | undefined;

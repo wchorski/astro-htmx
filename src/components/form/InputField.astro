@@ -47,7 +47,7 @@ const {
     name={name}
     type={type}
     value={type !== "checkbox" ? value : undefined}
-    checked={checked}
+    checked={checked ?? undefined}
     list={datalist ? `datalist-${name}` : undefined}
   />
   <span id={errorId} class="anim-vibrate field-error">{fieldError ?? ""}</span>

@@ -34,7 +34,7 @@ export async function userCan(
 }
 
 export const WRITABLE_FIELDS = {
-  memberSelf: [
+  userSelf: [
     "first_name",
     "last_name",
     "email",
@@ -45,7 +45,7 @@ export const WRITABLE_FIELDS = {
     "state",
     "zip",
   ],
-  memberFull: [
+  userFull: [
     "first_name",
     "last_name",
     "email",
@@ -57,7 +57,8 @@ export const WRITABLE_FIELDS = {
     "zip",
     "attended",
     "courseId",
-  ], // admin can touch credits fields
+  ],
+  creditFull: ["userId", "courseId", "grade", "attended"],
 } as const;
 
 export type WritableScope = keyof typeof WRITABLE_FIELDS;
@@ -71,8 +72,26 @@ export const userPolicy = {
     (await userCan(session.userId, PERMISSIONS.manageAllMembers)),
   writableFields: async (session: Session, row: BaseRow) => {
     if (await userCan(session.userId, "manageAllMembers"))
-      return WRITABLE_FIELDS.memberFull;
-    if (session.userId === row.id) return WRITABLE_FIELDS.memberSelf;
+      return WRITABLE_FIELDS.userFull;
+
+    if (session.userId === row.id) return WRITABLE_FIELDS.userSelf;
+    return [];
+  },
+};
+
+export const creditPolicy = {
+  read: async (session: Session, row: BaseRow) =>
+    session.userId === row.id ||
+    (await userCan(session.userId, PERMISSIONS.manageAllCredits)),
+  update: async (session: Session, row: BaseRow) =>
+    session.userId === row.id ||
+    (await userCan(session.userId, PERMISSIONS.manageAllCredits)),
+  writableFields: async (session: Session, row: BaseRow) => {
+    if (await userCan(session.userId, "manageAllCredits"))
+      return WRITABLE_FIELDS.creditFull;
+
+    //? do not allow members to edit their own credit
+    // if (session.userId === row.id) return WRITABLE_FIELDS.ownedCredit;
     return [];
   },
 };

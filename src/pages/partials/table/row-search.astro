@@ -11,7 +11,7 @@ import type { CrudRegistryType } from "@lib/crudRegistry";
 import type { FieldConfig } from "@ty/FieldConfig";
 import type { TableContext, TableRow } from "@ty/Table";
 import { parseOutUndefinedFormData } from "@lib/sanatizers";
-import RowSearchMember from "@components/tables/RowSearchMember.astro";
+import RowSearchUser from "@components/tables/RowSearchUser.astro";
 import { getContext } from "@lib/context";
 
 let row: TableRow | null = null;
@@ -56,7 +56,7 @@ function label(key: string) {
     </tr>
   ) : searchResults.length > 0 ? (
     <>
-      <RowSearchMember {...ctx} />
+      <RowSearchUser {...ctx} />
       <table class="anim-raise-in">
         <thead>
           <tr>
@@ -74,17 +74,17 @@ function label(key: string) {
     </>
   ) : error ? (
     <>
-      <RowSearchMember {...ctx} error={error} />
+      <RowSearchUser {...ctx} error={error} />
       <p class="callout not-found">no matching results found</p>
     </>
   ) : searchResults.length === 0 ? (
     <>
-      <RowSearchMember {...ctx} />
+      <RowSearchUser {...ctx} />
       <p class="callout not-found">no matching results found</p>
     </>
   ) : (
     <>
-      <RowSearchMember {...ctx} />
+      <RowSearchUser {...ctx} />
       <p class="callout error">unkown error</p>
     </>
   )

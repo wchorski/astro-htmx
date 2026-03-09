@@ -4,6 +4,7 @@ import type { BaseRow, FieldConfig } from "@ty/FieldConfig";
 import CellViewElement from "./CellViewElement.astro";
 import type { AstroBuiltinAttributes } from "astro";
 import type { CrudRegistryType } from "@lib/crudRegistry";
+import { slugify } from "@lib/formatters";
 
 interface Props<TRow extends BaseRow = BaseRow> {
   row: TRow;
@@ -14,8 +15,10 @@ interface Props<TRow extends BaseRow = BaseRow> {
   classList?: AstroBuiltinAttributes["class:list"];
   oob?: boolean;
   disableEdit?: boolean;
+  actionUrl?: string | ((id: string | number) => string);
 }
-
+// TODO Edit need to get away from 'partials/table/row-edit' for dedicated routes
+// TODO how to pass `actionUrl` to RowEdit component?
 const {
   row,
   headers,
@@ -24,6 +27,7 @@ const {
   endpoint,
   classList,
   oob,
+  actionUrl = `/partials/${slugify(crud)}/${row.id}}`,
   disableEdit: isEditDisabled = false,
 } = Astro.props;
 if (!headers.includes("id")) throw new Error("header does not include ID");
@@ -48,7 +52,7 @@ if (!headers.includes("id")) throw new Error("header does not include ID");
           <CellViewElement
             name={key}
             type={type}
-            rawVal={row[key] as string | number}
+            rawVal={row[key]}
             options={options}
             endpoint={endpoint}
           />
@@ -80,7 +84,7 @@ if (!headers.includes("id")) throw new Error("header does not include ID");
           title="delete"
           type="button"
           class="btn delete primary danger"
-          hx-delete={`/partials/${crud}/${row.id}`}
+          hx-delete={`/partials/${slugify(crud)}/${row.id}`}
           hx-target={`#row-${row.id}`}
           hx-target-error={`#confirm-dialog-error`}
           hx-swap="outerHTML"

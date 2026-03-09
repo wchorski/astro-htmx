@@ -5,6 +5,8 @@ interface Props<TRow extends BaseRow = BaseRow> {
   config: FieldConfig<TRow>;
   crud: CrudRegistryType;
   endpoint: string;
+  createUrl?: string;
+  editUrl?: (id: string | number) => string;
   // TODO passed down from page
   // headers: string[]
 }
@@ -13,9 +15,8 @@ import ViewRow from "@components/tables/RowView.astro";
 import RowCreate from "./tables/RowCreate.astro";
 import type { CrudRegistryType } from "@lib/crudRegistry";
 import type { BaseRow, FieldConfig } from "@ty/FieldConfig";
-import DialogConfirm from "./DialogConfirm.astro";
 
-const { rows, config, crud, endpoint } = Astro.props;
+const { rows, config, crud, endpoint, editUrl, createUrl } = Astro.props;
 
 const headers = Object.keys(config);
 
@@ -48,6 +49,7 @@ function label(key: string) {
             config={config}
             endpoint={endpoint}
             crud={crud}
+            actionUrl={editUrl}
           />
         ))
       }
@@ -55,9 +57,9 @@ function label(key: string) {
     <tfoot id="table-footer">
       <RowCreate
         config={config}
-        endpoint={endpoint}
         crud={crud}
         headers={headers}
+        actionUrl={createUrl}
       />
     </tfoot>
   </table>
@@ -76,7 +78,7 @@ function label(key: string) {
 </script>
 
 <style>
-  .window-actions{
+  .window-actions {
     position: absolute;
     top: 0;
     right: 0;
