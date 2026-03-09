@@ -1,20 +1,21 @@
 ---
 // partials/users/[id].astro
-import { crudRegistry } from "@lib/crudRegistry";
+import { crud } from "@lib/crudRegistry";
 import { BadRequestError, errorHandlingOnSubmit } from "@lib/errors";
 import { tableConfigs } from "@lib/tableConfigs";
 import RowView from "@components/tables/RowView.astro";
-import type { UserInsert } from "@ty/Schema";
+import type { UserSelect } from "@ty/Schema";
 import type { ZodError } from "astro/zod";
 import type { BaseRow } from "@ty/FieldConfig";
+import type { TableRow } from "@ty/Table";
 
 interface Params {
   id: string | undefined;
 }
 
 let id: string | null | undefined = null;
-let user: UserInsert | BaseRow | null | undefined = null;
-let submittedFields: Record<string, any> | null = null;
+let user: UserSelect | null | undefined = null;
+let submittedFields: Partial<TableRow> & { id: string; } | null = null;
 let error: string | ReturnType<ZodError["flatten"]> | null = null;
 const ctx = {
   crud: "users" as const,
@@ -27,7 +28,7 @@ if (Astro.request.method === "GET") {
   id = Astro.params.id;
   try {
     if (!id) throw new BadRequestError("Missing required parameter: id");
-    user = await crudRegistry.users.read(id);
+    user = await crud.users.read(id);
   } catch (e) {
     const { err, status } = errorHandlingOnSubmit(e);
     Astro.response.status = status;
@@ -50,9 +51,9 @@ if (Astro.request.method === "PATCH") {
 
     submittedFields = Object.fromEntries(
       [...formData.entries()].filter(([key]) => !key.startsWith("_")),
-    );
+    ) as Partial<TableRow> & { id: string; };
 
-    user = await crudRegistry.users.update(submittedFields);
+    user = await crud.users.update(submittedFields);
   } catch (e) {
     const { err, status } = errorHandlingOnSubmit(e);
     Astro.response.status = status;
@@ -71,7 +72,7 @@ if (Astro.request.method === "DELETE") {
       throw new BadRequestError("Parameter 'id' must be a valid integer");
     }
 
-    user = await crudRegistry.users.delete(id);
+    user = await crud.users.delete(id);
   } catch (e) {
     // console.log("partials/users/:id");
     // console.log(e);

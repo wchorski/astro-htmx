@@ -8,13 +8,13 @@ export type InputTypeAttr = InputProps["type"] | (string & {});
 type BaseInputAttrs = Omit<HTMLAttributes<"input">, "value">;
 
 export type FieldOption = {
-  value: string | number;
+  value: string;
   label: string;
 };
 
 type BaseFieldSlot = {
   label?: string;
-  value?: string | number | boolean;
+  value?: string;
 };
 
 
@@ -41,10 +41,12 @@ export type FieldType = FieldSlot["type"];
 type InputFieldType = Exclude<FieldType, "select" | "textarea">;
 type SelectFieldType = Exclude<FieldType, "input" | "textarea">;
 
-export type BaseRow = Record<string, unknown> & { id: unknown };
+export type BaseRow = Record<string, string> & { id: string };
 
 export type FieldConfig<TRow extends BaseRow = BaseRow> = {
   [K in keyof TRow]?: FieldSlot;
 };
 
-export type FieldValue = string | number | boolean | Date | File | null;
+// TODO full send into HTML fields only being strings. Value coersion happens in validation
+// export type FieldValue = string | number | boolean | Date | File | null;
+export type FieldValue = string | null;

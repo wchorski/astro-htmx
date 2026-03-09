@@ -31,20 +31,6 @@ const { config, crud, headers } = Astro.props;
 ---
 
 <tr id="row-new" data-status="creating" class="highlight-green">
-  <form
-    id="create-form"
-    style="display:none"
-    hx-post={`/partials/${crud}/create`}
-    hx-target="#table-footer"
-    hx-target-error="#row-error-create"
-    hx-swap="innerHTML"
-    hx-vals={JSON.stringify({
-      _crud: crud,
-      _view: "table-row",
-    })}
-  >
-  </form>
-
   {
     headers.map((key) => {
       const field = config[key] ?? {};
@@ -66,7 +52,9 @@ const { config, crud, headers } = Astro.props;
         return (
           <td data-type={type}>
             <SelectField
+              {...inputAttrs}
               formId={"create-form"}
+              errorId={`field-error-create-${key}`}
               name={key}
               label={label}
               inputAttrs={inputAttrs}
@@ -97,6 +85,18 @@ const { config, crud, headers } = Astro.props;
   }
 
   <td class="action-cell">
+    <form
+      id="create-form"
+      style="display:none"
+      hx-post={`/partials/${crud}/create`}
+      hx-target="#table-footer"
+      hx-target-error="#row-create-error"
+      hx-swap="innerHTML"
+      hx-vals={JSON.stringify({
+        _view: "table-row",
+      })}
+    >
+    </form>
     <button
       type="submit"
       form="create-form"
@@ -147,7 +147,7 @@ const { config, crud, headers } = Astro.props;
         else input.value = "";
       });
 
-      const errorRow = document.getElementById("row-error-create");
+      const errorRow = document.getElementById("row-create-error");
       if (errorRow) errorRow.innerHTML = "";
     });
 </script>

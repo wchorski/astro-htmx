@@ -1,5 +1,5 @@
 // src/lib/crudRegistry.ts
-import type { TableRow } from "@ty/Table";
+import type { TableContext, TableRow } from "@ty/Table";
 import { db, eq, User, Course, Credit, Location } from "astro:db";
 import {
   ConflictError,
@@ -33,7 +33,7 @@ type CrudEntry = {
 
 const { DEFAULT_ROLE_ID } = import.meta.env;
 
-export const crudRegistry = {
+export const crud = {
   // TODO how to prevent create/update users from giving themselves elevated permissions?
   users: {
     create: async (row, session) => {
@@ -475,4 +475,4 @@ export const crudRegistry = {
   },
 } satisfies Record<string, CrudEntry>;
 
-export type CrudRegistryType = keyof typeof crudRegistry;
+export type CrudRegistryType = keyof typeof crud;

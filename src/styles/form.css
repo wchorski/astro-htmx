@@ -29,12 +29,13 @@ label .text {
 
 input[name="id"],
 input[name="userId"],
+input[name="wpPostId"],
 input[name="middle_initial"],
 input[name="courseId"] 
 input[name="locationId"],
 input[name="courseId"],
 select[name="locationId"] {
-  max-width: 6ch;
+  max-width: 10ch;
 }
 
 form {

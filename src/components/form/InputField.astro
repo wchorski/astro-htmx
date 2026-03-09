@@ -13,14 +13,14 @@ interface Props extends Omit<
   "type" | "value" | "checked" | "name"
 > {
   formId?: string;
+  errorId:string,
   name: string;
   label?: string;
   type?: InputFieldType | null;
-  value?: string | number;
+  value?: string;
   checked?: boolean;
-  fieldError?: string | null;
+  fieldError?: string | unknown | null;
   datalist?: FieldOption[];
-  errorId:string,
   inputAttrs?: Omit<FieldSlot, "label" | "value" | "type">;
 }
 
@@ -43,14 +43,12 @@ const {
   <span class="text">{label ?? name}</span>
   <input
     {...inputAttrs}
-    {...formId ? { form: formId } : {}}
+    form={formId}
     name={name}
     type={type}
-    {...value ? { value } : {}}
-    {...datalist ? { list: `datalist-${name}` } : {}}
-    {...type === "checkbox"
-      ? { checked: value ? Boolean(value) : checked }
-      : undefined}
+    value={type !== "checkbox" ? value : undefined}
+    checked={checked}
+    list={datalist ? `datalist-${name}` : undefined}
   />
   <span id={errorId} class="anim-vibrate field-error">{fieldError ?? ""}</span>
   {

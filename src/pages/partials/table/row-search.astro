@@ -9,18 +9,13 @@ import { searchForMembers } from "@lib/dbQueries/searchForMembers";
 import ViewRow from "@components/tables/RowView.astro";
 import type { CrudRegistryType } from "@lib/crudRegistry";
 import type { FieldConfig } from "@ty/FieldConfig";
-import type { TableRow } from "@ty/Table";
+import type { TableContext, TableRow } from "@ty/Table";
 import { parseOutUndefinedFormData } from "@lib/sanatizers";
 import RowSearchMember from "@components/tables/RowSearchMember.astro";
 import { getContext } from "@lib/context";
 
 let row: TableRow | null = null;
-let ctx: {
-  config: FieldConfig;
-  crud: CrudRegistryType;
-  endpoint: string;
-  headers: string[];
-} | null = null;
+let ctx: TableContext | null = null;
 let submittedFields: Record<string, any> | null = null;
 let searchResults: Row[] = [];
 let error: string | Record<string, any> | null = null;

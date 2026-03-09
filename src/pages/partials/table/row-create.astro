@@ -1,8 +1,9 @@
 ---
+// TODO: delete this when comfy with dedicate schema endpoints like `partials/users/create.astro`
 // partials/table/row-create.astro
 import type { BaseRow, FieldConfig } from "@ty/FieldConfig";
 import type { CrudRegistryType } from "@lib/crudRegistry";
-import { crudRegistry } from "@lib/crudRegistry";
+import { crud } from "@lib/crudRegistry";
 import RowView from "@components/tables/RowView.astro";
 import RowCreateForm from "@components/tables/RowCreate.astro";
 import {
@@ -11,13 +12,9 @@ import {
 } from "@lib/errors";
 import { getContext } from "@lib/context";
 import { parseOutUndefinedFormData } from "@lib/sanatizers";
+import type { TableContext } from "@ty/Table";
 
-let ctx: {
-  config: FieldConfig;
-  crud: CrudRegistryType;
-  endpoint: string;
-  headers: string[];
-} | null = null;
+let ctx: TableContext | null = null;
 let submittedFields: Record<string, any> | null = null;
 let error: string | Record<string, any> | null = null;
 let newRow: BaseRow | null = null;
@@ -32,7 +29,7 @@ if (Astro.request.method === "POST") {
       [...formData.entries()].filter(([key]) => !key.startsWith("_")),
     );
 
-    const entry = crudRegistry[ctx.crud];
+    const entry = crud[ctx.crud];
     if (!entry)
       throw new NotFoundError(`No handler registered for crud: ${ctx.crud}`);
 

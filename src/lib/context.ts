@@ -1,5 +1,6 @@
 import type { CrudRegistryType } from "./crudRegistry";
 
+// TODO remove if not needed
 export function getContext(formData: FormData) {
     const crud = formData.get("_crud") as CrudRegistryType;
     if (!crud) throw new Error("crud not found");

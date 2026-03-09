@@ -1,8 +1,10 @@
 ---
 // components/tables/RowEdit.astro
 import InputField from "@components/form/InputField.astro";
+import SelectField from "@components/form/SelectField.astro";
+import TextareaField from "@components/form/TextareaField.astro";
 import type { CrudRegistryType } from "@lib/crudRegistry";
-import type { BaseRow, FieldConfig } from "@ty/FieldConfig";
+import type { BaseRow, FieldConfig, FieldSlot } from "@ty/FieldConfig";
 import type { ZodError } from "astro/zod";
 
 interface Props<TRow extends BaseRow = BaseRow> {
@@ -15,6 +17,7 @@ interface Props<TRow extends BaseRow = BaseRow> {
   error?: string | ReturnType<ZodError["flatten"]> | null;
 }
 
+// TODO remove unused
 const {
   row,
   originalRow = row,
@@ -31,9 +34,10 @@ const topLevelError = typeof error === "string" ? error : null;
 <tr id={`row-${row.id}`} data-status="editing">
   {
     headers.map((key) => {
-      const field = config[key] ?? {};
+      const field: FieldSlot = config[key] ?? {};
       const { label, value: override, type, ...inputAttrs } = field;
 
+      // TODO can i get rid of this maddness? must debug with form that select, textarea, or checkbox
       // const checked = type === "checkbox" in field ? field.checked : undefined;
       const options =
         type === "select" && "options" in field ? field.options : undefined;
@@ -42,17 +46,14 @@ const topLevelError = typeof error === "string" ? error : null;
           ? field.datalist
           : undefined;
 
+      const isChecked =
+        type === "checkbox" ? Boolean(override ?? row[key]) : undefined;
       // TODO how do i add checked to input field?
       // if (type === "checkbox") console.log("RowView, ", { checked });
 
       // TODO  may need to think about other input values
       // can i use parseFormFields()?
-      const resolvedValue =
-        override !== undefined
-          ? override
-          : type === "checkbox"
-            ? (row[key] ?? false)
-            : (row[key] ?? "");
+      const resolvedValue = override ?? row[key] ?? "";
 
       const fieldError =
         error && typeof error === "object" && "fieldErrors" in error
@@ -62,34 +63,21 @@ const topLevelError = typeof error === "string" ? error : null;
       if (type === "select") {
         return (
           <td>
-            <label>
-              <span class="text">{label ?? key}</span>
-              <select {...inputAttrs} form={`edit-form-${row.id}`} name={key}>
-                {options?.map((opt) => (
-                  <option
-                    value={opt.value}
-                    selected={resolvedValue === opt.value}
-                  >
-                    {opt.label}
-                  </option>
-                ))}
-              </select>
-              <span class="field-error">{fieldError}</span>
-            </label>
+            <SelectField
+              {...inputAttrs}
+              formId={"create-form"}
+              errorId={`field-error-${row.id}-${key}`}
+              name={key}
+              label={label}
+              inputAttrs={inputAttrs}
+              options={options}
+            />
           </td>
         );
       } else if (type === "textarea") {
         return (
           <td>
-            <label>
-              <span class="text">{label ?? key}</span>
-              <textarea
-                {...inputAttrs}
-                form={`edit-form-${row.id}`}
-                name={key}
-              />
-              <span class="field-error">{fieldError}</span>
-            </label>
+            <TextareaField />
           </td>
         );
       } else {
@@ -102,6 +90,7 @@ const topLevelError = typeof error === "string" ? error : null;
               label={label}
               type={type}
               value={resolvedValue}
+              checked={isChecked}
               fieldError={fieldError}
               datalist={datalist}
               inputAttrs={inputAttrs}

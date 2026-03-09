@@ -4,7 +4,7 @@ interface Params {
 }
 import { db, eq, Course, Credit, User } from "astro:db";
 import Layout from "@layouts/Layout.astro";
-import MemberCreditsEditableTable from "@components/MemberCreditsEditableTable.astro";
+import UserCreditsEditableTable from "@components/UserCreditsEditableTable.astro";
 export const prerender = false; // Not needed in 'server' mode
 const { courseId } = Astro.params;
 if (!courseId) throw new Error("no id found. throw 404");
@@ -70,6 +70,6 @@ const { subject, date, description } = foundCourse;
       >
     </div>
 
-    <MemberCreditsEditableTable userCredits={userCredits} />
+    <UserCreditsEditableTable userCredits={userCredits} />
   </main>
 </Layout>

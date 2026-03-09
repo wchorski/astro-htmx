@@ -1,7 +1,7 @@
 ---
 // partials/table/row-edit.astro
 import type { FieldConfig } from "@ty/FieldConfig";
-import type { TableRow } from "@ty/Table";
+import type { TableContext, TableRow } from "@ty/Table";
 import RowEditComponent from "@components/tables/RowEdit.astro";
 import type { CrudRegistryType } from "@lib/crudRegistry";
 import { ZodError } from "astro/zod";
@@ -17,12 +17,7 @@ import { getContext } from "@lib/context";
 // let table: CrudRegistryType | null = null;
 // let config: FieldConfig | null = null;
 // let headers: string[] = [];
-let ctx: {
-  config: FieldConfig;
-  crud: CrudRegistryType;
-  endpoint: string;
-  headers: string[];
-} | null = null;
+let ctx: TableContext | null = null;
 let row: TableRow | null = null;
 let submittedFields: Record<string, any> | null = null;
 let error: string | ReturnType<ZodError["flatten"]> | null = null;

@@ -93,6 +93,7 @@ const topLevelError =
             if (type === "select")
               return (
                 <SelectField
+                  errorId={`field-error-search-${key}`}
                   name={key}
                   label={label}
                   value={resolvedValue}
@@ -104,6 +105,7 @@ const topLevelError =
             if (type === "textarea") return <TextareaField />;
             return (
               <InputField
+                errorId={`field-error-search-${key}`}
                 name={key}
                 label={label}
                 value={type === "checkbox" ? undefined : resolvedValue}
@@ -166,7 +168,7 @@ const topLevelError =
         else input.value = "";
       });
 
-      const errorRow = document.getElementById("row-error-create");
+      const errorRow = document.getElementById("row-create-error");
       if (errorRow) errorRow.innerHTML = "";
     });
 </script>

@@ -7,6 +7,7 @@ interface Props extends Omit<
   "type" | "value" | "checked" | "name"
 > {
   formId?: string;
+  errorId:string,
   name: string;
   label?: string;
   value?: string | number;
@@ -14,7 +15,7 @@ interface Props extends Omit<
   inputAttrs?: Omit<FieldSlot, "label" | "value" | "type">;
   options: FieldOption[] | undefined;
 }
-const { formId, inputAttrs, name, label, value, fieldError, options } =
+const { formId, errorId, inputAttrs, name, label, value, fieldError, options } =
   Astro.props;
 ---
 
@@ -25,12 +26,12 @@ const { formId, inputAttrs, name, label, value, fieldError, options } =
       options?.map((opt) => (
         <option
           value={opt.value}
-          {...(value && opt.value === value ? { selected: true } : {})}
+          selected={value && opt.value === value ? true : undefined}
         >
           {opt.label}
         </option>
       ))
     }
   </select>
-  {fieldError && <span class="field-error">{fieldError}</span>}
+  <span id={errorId} class="anim-vibrate field-error">{fieldError ?? ""}</span>
 </label>

@@ -2,19 +2,12 @@
 // partials/table/row-view.astro
 import ViewRow from "@components/tables/RowView.astro";
 import { getContext } from "@lib/context";
-import type { CrudRegistryType } from "@lib/crudRegistry";
 import { errorHandlingOnSubmit } from "@lib/errors";
-import type { FieldConfig } from "@ty/FieldConfig";
-import type { TableRow } from "@ty/Table";
+import type { TableContext, TableRow } from "@ty/Table";
 import type { ZodError } from "astro/zod";
 
 let row: TableRow | null = null;
-let ctx: {
-  config: FieldConfig;
-  crud: CrudRegistryType;
-  endpoint: string;
-  headers: string[];
-} | null = null;
+let ctx: TableContext | null = null;
 let error: string | ReturnType<ZodError["flatten"]> | null = null;
 
 if (Astro.request.method === "POST") {

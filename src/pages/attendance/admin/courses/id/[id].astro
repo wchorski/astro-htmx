@@ -7,7 +7,7 @@ import Layout from "@layouts/Layout.astro";
 import AttendanceAdminNav from "@components/navigation/AttendanceAdminNav.astro";
 import MembersSearchForm from "@components/MembersSearchForm.astro";
 import RowSearchMember from "@components/tables/RowSearchMember.astro";
-import MemberCreditsEditableTable from "@components/MemberCreditsEditableTable.astro";
+import UserCreditsEditableTable from "@components/UserCreditsEditableTable.astro";
 export const prerender = false; // Not needed in 'server' mode
 const { id } = Astro.params;
 if (!id) throw new Error("no id found. throw 404");
@@ -108,7 +108,7 @@ const ctx = {
       >
     </div>
 
-    <MemberCreditsEditableTable userCredits={userCredits} courseId={id} />
+    <UserCreditsEditableTable userCredits={userCredits} courseId={id} />
     <hr />
 
     <section>
