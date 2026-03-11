@@ -1,3 +1,4 @@
+// /api/credits/export/:id
 import { getMsToken } from "@lib/auth/msAuthentication";
 import { formatPhonePrettyManual } from "@lib/formatters";
 import type { CreditInsert, UserInsert } from "@ty/Schema.d.ts";
@@ -10,7 +11,7 @@ const {
   MS_TOKEN_SITE_UPLOAD,
   TENANT_ID,
   MS_SITES_READWRITE_ALL_APP_ID,
-  MS_SITES_READWRITE_ALL_SECRET_VALUE
+  MS_SITES_READWRITE_ALL_SECRET_VALUE,
 } = import.meta.env;
 
 export const PUT: APIRoute = async ({ params, request, redirect }) => {
@@ -46,12 +47,12 @@ export const PUT: APIRoute = async ({ params, request, redirect }) => {
 
       credits: rows.map((row) => {
         const { id: creditId, date: creditDate, ...creditRest } = row.credit; // pull id out, keep everything else
-        const { id: userId, ...memberRest } = row.member;
+        const { id: userId, ...memberRest } = row.user;
         return {
           user: {
             ...memberRest,
             userId,
-            phone: formatPhonePrettyManual(row.member.phone) || "",
+            phone: formatPhonePrettyManual(row.user.phone) || "",
           },
           ...creditRest,
           creditId,
@@ -85,11 +86,11 @@ export const PUT: APIRoute = async ({ params, request, redirect }) => {
     const url = `https://graph.microsoft.com/v1.0/drives/${MS_SHAREPOINT_KYU_DRIVE_ID}/items/${MS_SHAREPOINT_KYU_ATTENDENCE_FOLDER_ID}:/${folderYear}/${encodeURIComponent(filename)}:/content`;
 
     const accessToken = await getMsToken(
-        TENANT_ID,
-        MS_SITES_READWRITE_ALL_APP_ID,
-        MS_SITES_READWRITE_ALL_SECRET_VALUE,
-      );
-    
+      TENANT_ID,
+      MS_SITES_READWRITE_ALL_APP_ID,
+      MS_SITES_READWRITE_ALL_SECRET_VALUE,
+    );
+
     const res = await fetch(url, {
       method: "PUT",
       headers: {
@@ -111,6 +112,14 @@ export const PUT: APIRoute = async ({ params, request, redirect }) => {
     }
 
     const driveItem = await res.json();
+
+    const isHtmx = request.headers.get("HX-Request") === "true";
+
+    if (isHtmx) {
+      return new Response(`<button disabled>Export Complete ✓</button>`, {
+        headers: { "Content-Type": "text/html" },
+      });
+    }
 
     return new Response(
       JSON.stringify({
@@ -162,7 +171,6 @@ type CreditWithMember = Omit<CreditInsert, "id" | "date"> & {
  * including nested 'member' object keys.
  */
 export function generateCreditsCsv(credits: CreditWithMember[]): string {
-  
   if (!credits.length) return "";
 
   // Flatten a single credit into a flat object with nested member keys prefixed
@@ -171,10 +179,10 @@ export function generateCreditsCsv(credits: CreditWithMember[]): string {
 
     // TODO format as much as you can in the `courseData` first. Do i need the member if statement check?
     for (const key in credit) {
-      if (key === "member" && credit.member) {
-        for (const mKey in credit.member) {
-          const typedKey = mKey as keyof typeof credit.member;
-          flat[mKey] = credit.member[typedKey];
+      if (key === "member" && credit.user) {
+        for (const mKey in credit.user) {
+          const typedKey = mKey as keyof typeof credit.user;
+          flat[mKey] = credit.user[typedKey];
         }
       } else {
         const typedKey = key as keyof CreditWithMember;

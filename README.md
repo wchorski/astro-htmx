@@ -5,13 +5,14 @@ npx drizzle-kit migrate    # runs them against your DB
 ```
 
 #todo
+- [ ] use css grid to keep all field-errors in same height (and keep input fields from getting pushed up)
 - [ ] fix all db `config.ts` fields to use snakecase
 - [ ] how to handle `createMany` `createOne` `readMany` `readOne`?
 - [ ] for RowEdit instead of replacing the targeted RowView, how about just hide it and insert the RowEdit. the cancel button should just remove the RowEdit re-reveal the hidden row. No need to pass old values back and forth
 - [ ] delete button (with are you sure) for editable table
 - [ ] For production with auth enabled, generate a token and configure sqld with --auth-jwt-key-file or the SQLD_AUTH_JWT_KEY env var.
-- [ ] crudRegistry.userCredits.create if member exists with (id, phone, email), then check all input fields to see if they match. if yes, then add existing member with new Credit
-- [ ] create mini member search form in tfooter of userCredits table. 
+- [ ] crudRegistry.courseCredits.create if member exists with (id, phone, email), then check all input fields to see if they match. if yes, then add existing member with new Credit
+- [ ] create mini member search form in tfooter of courseCredits table. 
 - [ ] ask how to bypass Cloudflare blocking. WP import is getting 403
 - [ ] css style construction theme (road signs, asphalt, road paint, concrete, gerders, tire tracks, scafolding)
 - [ ] composable and editable table Component!!!!

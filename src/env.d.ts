@@ -11,6 +11,7 @@ interface ImportMetaEnv {
   readonly WORDPRESS_ENDPOINT?: string;
   readonly LIBSQL_URL?: string;
   readonly DEFAULT_ROLE_ID?: string;
+  readonly MS_SHAREPOINT_KYU_FOLDER_URL?: string;
 }
 
 interface ImportMeta {

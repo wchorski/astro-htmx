@@ -15,7 +15,7 @@ interface Props<TRow extends BaseRow = BaseRow> {
   config: FieldConfig<TRow>;
   crud: CrudRegistryType;
   endpoint: string;
-  actionUrl?:string,
+  submitUrl?: string | ((row: TRow) => string);
   error?: string | ReturnType<ZodError["flatten"]> | null;
 }
 
@@ -27,7 +27,7 @@ const {
   config,
   endpoint,
   crud,
-  actionUrl = `/partials/${slugify(crud)}/${row.id}`,
+  submitUrl = `/partials/${slugify(crud)}/${row.id}`,
   error,
 } = Astro.props;
 
@@ -69,7 +69,7 @@ const topLevelError = typeof error === "string" ? error : null;
           <td>
             <SelectField
               {...inputAttrs}
-              formId={"create-form"}
+              formId={`edit-form-${row.id}`}
               errorId={`field-error-${row.id}-${key}`}
               name={key}
               label={label}
@@ -110,10 +110,10 @@ const topLevelError = typeof error === "string" ? error : null;
     <form
       id={`edit-form-${row.id}`}
       style="display:none"
-      hx-patch={actionUrl}
+      hx-patch={submitUrl}
       hx-target={`#row-${row.id}`}
       hx-target-error={`#row-edit-error-${row.id}`}
-      hx-swap="innerHTML"
+      hx-swap="outerHTML"
     >
     </form>
 

@@ -1,7 +1,7 @@
 ---
 interface Props {
   courseId: string,
-  userCredits: {
+  courseCredits: {
     user: UserSelect;
     credit: CreditSelect;
   }[];
@@ -10,29 +10,15 @@ interface Props {
 import TableEditable from "@components/TableEditable.astro";
 import type { CreditSelect, UserSelect } from "@ty/Schema";
 import RowCreate from "./tables/RowCreate.astro";
-import { tableConfigs } from "@lib/tableConfigs";
-const { userCredits, courseId } = Astro.props;
+import { tableConfigs, userCreditMap } from "@lib/tableConfigs";
+const { courseCredits, courseId } = Astro.props;
 
-const tableRows = userCredits.map(({ credit, user }) => ({
-  id: credit.id,
-  userId: user.id,
-  courseId: credit.courseId,
-  first_name: user.first_name,
-  last_name: user.last_name,
-  middle_initial: user.middle_initial,
-  phone: user.phone,
-  email: user.email,
-  address1: user.address1,
-  city: user.city,
-  state: user.state,
-  zip: user.zip,
-  attended: credit.attended,
-}));
+const tableRows = courseCredits.map(({ credit, user }) => userCreditMap(credit, user));
 
-const config = tableConfigs.userCredits.required(courseId);
+const config = tableConfigs.courseCredits.required;
 
 const ctx = {
-  crud: "userCredits" as const,
+  crud: "courseCredits" as const,
   endpoint: "/attendance/admin/credits/id",
   config,
   headers: Object.keys(config)
@@ -53,7 +39,7 @@ const ctx = {
       rows={tableRows}
       endpoint={ctx.endpoint}
       config={ctx.config}
-      createUrl={`/partials/user-credits/${courseId}`}
+      createUrl={`/partials/course-credits/course/${courseId}`}
     />
   )
 }

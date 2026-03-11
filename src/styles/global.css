@@ -97,9 +97,13 @@ button.cancel,
   color: #475569;
 }
 
-button:hover,
+button:not(:disabled):hover,
 .btn:hover {
   background: #25a2eb;
+}
+button:disabled {
+  background-color: gray;
+  cursor: not-allowed;
 }
 
 .result {

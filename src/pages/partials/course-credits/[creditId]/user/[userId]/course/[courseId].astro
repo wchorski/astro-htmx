@@ -1,32 +1,36 @@
 ---
-// partials/user-credits/[courseId].astro
+// partials/course-credits/:id/user/:userId/course/:courseId
 import RowView from "@components/tables/RowView.astro";
-// import UserCard from "@components/UserCard.astro";
-import RowCreateForm from "@components/tables/RowCreate.astro";
 import { tableConfigs } from "@lib/tableConfigs";
 import { BadRequestError, errorHandlingOnSubmit } from "@lib/errors";
 import { crud, type CrudRegistryType } from "@lib/crudRegistry";
 import { parseOutUndefinedFormData } from "@lib/sanatizers";
 import { TEST_ADMIN_SESSION } from "@lib/auth/session";
 import type { UserCreditFlat } from "@ty/Schema";
+import type { ZodError } from "astro/zod";
+import type { FormFields } from "@ty/Form";
 
 type ViewType = "table-row" | "card";
 
-let newUserCredit: UserCreditFlat | null | undefined = null;
-let error = null;
+const { creditId, userId, courseId } = Astro.params;
+if (!creditId) throw new BadRequestError("credit ID missing in request");
+if (!userId) throw new BadRequestError("user ID missing in request");
+if (!courseId) throw new BadRequestError("course ID missing in request");
+
+let rowId = creditId;
+let row: UserCreditFlat | null = null;
+let error: string | ReturnType<ZodError["flatten"]> | null = null;
 let view: ViewType = "table-row";
 
-const { courseId } = Astro.params;
-if (!courseId) throw new BadRequestError("Course ID missing in request");
-const config = tableConfigs.userCredits.required(courseId);
+const config = tableConfigs.courseCredits.required;
 const ctx = {
-  crud: "userCredits" as CrudRegistryType,
+  crud: "courseCredits" as CrudRegistryType,
   config,
-  endpoint: "/attendance/user-credits",
+  endpoint: "/attendance/course-credits",
   headers: Object.keys(config),
 };
 
-if (Astro.request.method === "POST") {
+if (Astro.request.method === "PATCH") {
   try {
     // const session = await requirePermission(Astro.request, "users", "create");
     // TODO
@@ -43,10 +47,14 @@ if (Astro.request.method === "POST") {
       [...formData.entries()].filter(([key]) => !key.startsWith("_")),
     );
 
-    newUserCredit = await crud.userCredits.create(
-      parseOutUndefinedFormData(submitFields),
-      session,
-    );
+    const payload = {
+      ...submitFields,
+      id: creditId,
+      userId,
+      courseId,
+    };
+
+    row = await crud.courseCredits.update(payload, session);
   } catch (e) {
     const { err, status } = errorHandlingOnSubmit(e);
     Astro.response.status = status;
@@ -54,7 +62,7 @@ if (Astro.request.method === "POST") {
     console.log(JSON.stringify(err, null, 2));
   }
 } else {
-  throw new BadRequestError(`Method ${Astro.request.method} not allowed`);
+  return new Response("Method Not Allowed", { status: 405 });
 }
 ---
 
@@ -66,13 +74,13 @@ if (Astro.request.method === "POST") {
           {error.formErrors[0]}
         </td>
       ) : (
-        <tr id="row-create-error" hx-swap-oob="outerHTML" />
+        <tr id={`row-edit-error-${rowId}`} hx-swap-oob="outerHTML" />
       )}
       {ctx.headers.map((fieldName) => {
         const messages = error.fieldErrors[fieldName];
         return (
           <span
-            id={`field-error-create-${fieldName}`}
+            id={`field-error-${rowId}-${fieldName}`}
             hx-swap-oob="outerHTML"
             class="anim-vibrate field-error"
           >
@@ -83,22 +91,23 @@ if (Astro.request.method === "POST") {
     </>
   ) : error ? (
     <>
-      <td class="callout error top-level" colspan={ctx.headers.length}>
-        {typeof error === "string" ? error : JSON.stringify(error)}
-      </td>
+      <tr id={`row-edit-error-${rowId}`}>
+        <td class="callout error top-level" colspan={ctx.headers.length}>
+          {typeof error === "string" ? error : JSON.stringify(error)}
+        </td>
+      </tr>
       {ctx.headers.map((fieldName) => (
         <span
-          id={`field-error-create-${fieldName}`}
+          id={`field-error-${rowId}-${fieldName}`}
           hx-swap-oob="outerHTML"
           class="field-error"
         />
       ))}
     </>
-  ) : newUserCredit && view === "table-row" ? (
+  ) : row && view === "table-row" ? (
     <>
-      <RowView row={newUserCredit} {...ctx} classList={["new-row"]} />
-      <RowCreateForm {...ctx} />
-      <tr id={`row-create-error`} hx-swap-oob="outerHTML" />
+      <RowView row={row} {...ctx} classList={["updated-row"]} />
+      <tr id={`row-edit-error-${rowId}`} hx-swap-oob="outerHTML" />
     </>
   ) : (
     <p>unknown error occured</p>

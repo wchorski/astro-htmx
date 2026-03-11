@@ -1,5 +1,5 @@
 ---
-// partials/user-credits/[courseId]/[userId].astro
+// partials/course-credits/[courseId]/[userId].astro
 // TODO keeping around in case I want a simple API for inline user credit creation (without form)
 import RowView from "@components/tables/RowView.astro";
 import UserCard from "@components/UserCard.astro";
@@ -17,10 +17,10 @@ let newUserCredit: UserCreditFlat | null | undefined = null;
 let error = null;
 let view: ViewType = "table-row";
 const ctx = {
-  crud: "userCredits" as CrudRegistryType,
-  config: tableConfigs.userCredits.required,
-  endpoint: "/attendance/user-credits",
-  headers: Object.keys(tableConfigs.userCredits.required),
+  crud: "courseCredits" as CrudRegistryType,
+  config: tableConfigs.courseCredits.required,
+  endpoint: "/attendance/course-credits",
+  headers: Object.keys(tableConfigs.courseCredits.required),
 };
 
 console.log(JSON.stringify(ctx, null, 2));
@@ -44,7 +44,7 @@ if (Astro.request.method === "POST") {
       [...formData.entries()].filter(([key]) => !key.startsWith("_")),
     );
 
-    newUserCredit = await crud.userCredits.create(
+    newUserCredit = await crud.courseCredits.create(
       parseOutUndefinedFormData(submitFields),
       session,
     );
@@ -57,7 +57,7 @@ if (Astro.request.method === "POST") {
     console.log(JSON.stringify(err, null, 2));
   }
 } else {
-  throw new BadRequestError(`Method ${Astro.request.method} not allowed`);
+  return new Response("Method Not Allowed", { status: 405 });
 }
 ---
 

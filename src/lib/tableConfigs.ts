@@ -1,5 +1,6 @@
 import type { BaseRow, FieldConfig } from "@ty/FieldConfig";
 import type { CrudRegistryType } from "./crudRegistry";
+import type { CreditSelect, UserSelect } from "@ty/Schema";
 
 const { DATALIST_CITIES, DATALIST_STATES } = import.meta.env;
 
@@ -73,8 +74,9 @@ const userRequiredConfig = {
   },
 } as FieldConfig<BaseRow>;
 
-const userCreditsRequiredConfig = (courseId: string) =>
-  ({
+const courseCreditsRequiredConfig =
+  // const courseCreditsRequiredConfig = (courseId: string) =>
+  {
     id: {
       label: "ID",
       type: "number",
@@ -84,13 +86,16 @@ const userCreditsRequiredConfig = (courseId: string) =>
     userId: {
       label: "User ID",
       type: "number",
-    },
-    courseId: {
-      label: "Course ID",
-      type: "number",
-      value: courseId,
+      required: true,
       readonly: true,
     },
+    //? don't need it if passed with URL
+    // courseId: {
+    //   label: "Course ID",
+    //   type: "hidden",
+    //   value: courseId,
+    //   readonly: true,
+    // },
     first_name: {
       label: "First Name",
       type: "text",
@@ -140,7 +145,7 @@ const userCreditsRequiredConfig = (courseId: string) =>
       label: "attended",
       type: "checkbox",
     },
-  }) as FieldConfig<BaseRow>;
+  } as FieldConfig<BaseRow>;
 
 export const tableConfigs = {
   users: {
@@ -156,9 +161,9 @@ export const tableConfigs = {
   locations: {
     // all: creditAllConfig,
   },
-  userCredits: {
+  courseCredits: {
     // all: creditAllConfig,
-    required: userCreditsRequiredConfig,
+    required: courseCreditsRequiredConfig,
   },
 } satisfies Record<
   CrudRegistryType,
@@ -166,3 +171,19 @@ export const tableConfigs = {
     Record<"all" | "required", FieldConfig | ((arg: string) => FieldConfig)>
   >
 >;
+
+export const userCreditMap = (credit: CreditSelect, user: UserSelect) => ({
+  id: credit.id,
+  userId: user.id,
+  // courseId: credit.courseId,
+  first_name: user.first_name,
+  last_name: user.last_name,
+  middle_initial: user.middle_initial,
+  phone: user.phone,
+  email: user.email,
+  address1: user.address1,
+  city: user.city,
+  state: user.state,
+  zip: user.zip,
+  attended: credit.attended,
+});

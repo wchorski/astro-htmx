@@ -15,7 +15,7 @@ interface Props<TRow extends BaseRow = BaseRow> {
   classList?: AstroBuiltinAttributes["class:list"];
   oob?: boolean;
   disableEdit?: boolean;
-  actionUrl?: string | ((id: string | number) => string);
+  editUrl?: string | ((id: string | number) => string);
 }
 // TODO Edit need to get away from 'partials/table/row-edit' for dedicated routes
 // TODO how to pass `actionUrl` to RowEdit component?
@@ -27,7 +27,7 @@ const {
   endpoint,
   classList,
   oob,
-  actionUrl = `/partials/${slugify(crud)}/${row.id}}`,
+  editUrl = `/partials/${slugify(crud)}/${row.id}/edit`,
   disableEdit: isEditDisabled = false,
 } = Astro.props;
 if (!headers.includes("id")) throw new Error("header does not include ID");
@@ -67,16 +67,11 @@ if (!headers.includes("id")) throw new Error("header does not include ID");
         <button
           class="edit"
           type="button"
-          hx-put="/partials/table/row-edit"
+          hx-get={editUrl}
           hx-target={`#row-${row.id}`}
           hx-target-error={`#row-${row.id}`}
           hx-swap="outerHTML"
-          hx-vals={JSON.stringify({
-            _row: JSON.stringify(row),
-            _config: JSON.stringify(config),
-            _crud: crud,
-            _endpoint: endpoint,
-          })}
+
         >
           Edit
         </button>

@@ -17,18 +17,18 @@ export type UserCreditSelect = {
 export type UserCreditFlat = {
   userId: number;
   id: number;
-  date: Date;
-  courseId: number;
-  grade: string | null;
+  date?: Date;
+  courseId?: number;
+  grade?: string;
   attended: boolean;
-  roleId: number | null;
+  roleId?: number;
   first_name: string;
   last_name: string;
   middle_initial: string | null;
   phone: string;
   email: string;
   address1: string;
-  address2: string | null;
+  address2?: string;
   city: string;
   state: string;
   zip: number;

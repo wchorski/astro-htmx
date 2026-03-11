@@ -7,8 +7,9 @@ import Layout from "@layouts/Layout.astro";
 import AttendanceAdminNav from "@components/navigation/AttendanceAdminNav.astro";
 import MembersSearchForm from "@components/MembersSearchForm.astro";
 import RowSearchUser from "@components/tables/RowSearchUser.astro";
-import UserCreditsEditableTable from "@components/UserCreditsEditableTable.astro";
+import CourseCreditsEditableTable from "@components/CourseCreditsEditableTable.astro";
 export const prerender = false; // Not needed in 'server' mode
+const { MS_SHAREPOINT_KYU_FOLDER_URL } = import.meta.env;
 const { id } = Astro.params;
 if (!id) throw new Error("no id found. throw 404");
 const course = await db
@@ -18,7 +19,7 @@ const course = await db
   .get();
 if (!course) return Astro.redirect("/404");
 
-const userCredits = await db
+const courseCredits = await db
   .select({
     credit: Credit,
     user: User,
@@ -102,13 +103,17 @@ const ctx = {
     <hr />
 
     <div class="flex space-between">
-      <h2>User Credits</h2>
-      <button hx-put={`/api/credits/export/${id}`}
-        >Export CSV to Sharepoint</button
-      >
+      <h2>Course Credits</h2>
+      <div>
+        <button hx-put={`/api/credits/export/${id}`} hx-swap="outerHTML">
+          Export CSV to Sharepoint
+        </button>
+        <br>
+        <a href={MS_SHAREPOINT_KYU_FOLDER_URL}>View Sharepoint Folder</a>
+      </div>
     </div>
 
-    <UserCreditsEditableTable userCredits={userCredits} courseId={id} />
+    <CourseCreditsEditableTable courseCredits={courseCredits} courseId={id} />
     <hr />
 
     <section>

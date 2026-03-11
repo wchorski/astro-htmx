@@ -20,19 +20,35 @@ import {
   creditPolicy,
 } from "./auth/permissions";
 import type { Session } from "./auth/session";
+import { userCreditMap } from "./tableConfigs";
+import type { FormFields } from "@ty/Form";
+import type {
+  CourseSelect,
+  CreditSelect,
+  LocationSelect,
+  UserCreditFlat as CourseCreditFlat,
+  UserSelect,
+} from "@ty/Schema";
 
 type CreateFn = (
   row: Omit<TableRow, "id">,
   session: Session,
 ) => Promise<TableRow>;
-type ReadFn = (id: string) => Promise<TableRow | null>;
-type UpdateFn = (row: Partial<TableRow> & { id: string }) => Promise<TableRow>;
+type ReadFn = (id: string, session: Session) => Promise<TableRow | null>;
+// type UpdateFn = (
+//   row: Partial<TableRow> & { id: string },
+//   session: Session,
+// ) => Promise<TableRow>;
+type UpdateFn<T> = (
+  inputFields: FormFields<T> & { id: string },
+  session: Session,
+) => Promise<T>;
 type DeleteFn = (id: string) => Promise<TableRow>;
 
-type CrudEntry = {
+type CrudEntry<T = TableRow> = {
   create: CreateFn;
   read: ReadFn;
-  update: UpdateFn;
+  update: UpdateFn<T>;
   delete: DeleteFn;
 };
 
@@ -43,6 +59,7 @@ export const crud = {
   users: {
     create: async (row, session) => {
       try {
+        // permissions for individual fields verses whole schema... what a pain...
         const fields = await userPolicy.writableFields(session, null);
 
         const sanitized = sanitizeFields(row, fields);
@@ -350,7 +367,7 @@ export const crud = {
       }
     },
   },
-  userCredits: {
+  courseCredits: {
     create: async (row, session) => {
       try {
         // TODO add in auth. mutation for credit and user maybe tricky
@@ -415,9 +432,14 @@ export const crud = {
         throwErrorsForCRUD(e);
       }
     },
-    read: async (id) => {
+    read: async (id, session) => {
       try {
+        // TODO add in auth. mutation for credit and user maybe tricky
+        // const fields = await creditPolicy.writableFields(session, null);
+        // const sanitized = sanitizeFields(row, fields);
+
         const validId = validate.id.parse(id);
+
         const row = await db
           .select()
           .from(Credit)
@@ -436,10 +458,13 @@ export const crud = {
       }
     },
 
-    update: async (row) => {
+    update: async (inputFields: FormFields<CourseCreditFlat> & { id: string }, session) => {
       try {
+        // TODO add in auth. mutation for credit and user maybe tricky
+        // const fields = await creditPolicy.writableFields(session, null);
+        // const sanitized = sanitizeFields(row, fields);
         const { id, userId, courseId, attended, ...userFields } =
-          validate.userCreditUpdate.parse(row);
+          validate.userCreditUpdate.parse(inputFields);
 
         // two updates but in a transaction so they succeed or fail together
         const result = await db.transaction(async (tx) => {
@@ -457,7 +482,8 @@ export const crud = {
             .returning();
           if (!user) throw new NotFoundError(`User ${userId} not found`);
 
-          return { ...credit, ...user };
+          // return { ...credit, ...user };
+          return userCreditMap(credit, user);
         });
 
         return result;
@@ -479,6 +505,15 @@ export const crud = {
       }
     },
   },
-} satisfies Record<string, CrudEntry>;
+} satisfies CrudRegistry;
+// } satisfies Record<string, CrudEntry>;
 
+type CrudRegistry = {
+  courseCredits: CrudEntry<CourseCreditFlat>;
+  locations: CrudEntry<LocationSelect>;
+  users: CrudEntry<UserSelect>;
+  course: CrudEntry<CourseSelect>;
+  credits: CrudEntry<CreditSelect>;
+  // ...
+};
 export type CrudRegistryType = keyof typeof crud;

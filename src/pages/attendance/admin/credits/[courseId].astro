@@ -4,7 +4,7 @@ interface Params {
 }
 import { db, eq, Course, Credit, User } from "astro:db";
 import Layout from "@layouts/Layout.astro";
-import UserCreditsEditableTable from "@components/UserCreditsEditableTable.astro";
+import CourseCreditsEditableTable from "@components/CourseCreditsEditableTable.astro";
 export const prerender = false; // Not needed in 'server' mode
 const { courseId } = Astro.params;
 if (!courseId) throw new Error("no id found. throw 404");
@@ -14,7 +14,7 @@ const foundCourse = await db
   .where(eq(Course.id, Number(courseId)))
   .get();
 
-const userCredits = await db
+const courseCredits = await db
   .select({
     credit: Credit,
     user: User,
@@ -63,13 +63,13 @@ const { subject, date, description } = foundCourse;
     </ul>
 
     <div class="flex space-between">
-      <h2>User Credits</h2>
+      <h2>Course Credits</h2>
       <button
         onclick="alert('In the works. Will be implimented later')"
         hx-put="/api/credits/export">Export CSV to Sharepoint</button
       >
     </div>
 
-    <UserCreditsEditableTable userCredits={userCredits} />
+    <CourseCreditsEditableTable courseCredits={courseCredits} />
   </main>
 </Layout>
