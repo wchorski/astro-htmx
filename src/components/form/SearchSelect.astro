@@ -1,0 +1,743 @@
+---
+// todo make this into web component <search-select>
+/**
+ * SearchSelect.astro
+ * ─────────────────────────────────────────────────────────────────────────────
+ * Schema-agnostic searchable combobox. Supports two modes:
+ *
+ *   STATIC  — pass `items` array; all filtering happens in the browser.
+ *             Best for < ~2,000 records.
+ *
+ *   ASYNC   — pass `endpoint`; component debounces keystrokes and fetches
+ *             filtered results from your API. Scales to any dataset size.
+ *
+ * ── Templates ────────────────────────────────────────────────────────────────
+ * All template props use {fieldName} tokens that map to keys in your data.
+ *
+ *   valueKey          — field whose value goes into the hidden <input>
+ *   primaryTemplate   — bold top line in each dropdown option
+ *   secondaryTemplate — (optional) dimmer subtitle line
+ *   inputTemplate     — text shown in the input after selection
+ *                       defaults to primaryTemplate
+ *   metaTemplate      — (optional) right-side pill  e.g. "#{id}" or "${price}"
+ *   searchKeys        — fields to match against in static mode
+ *                       defaults to all keys found across all templates
+ *
+ * ── Async props ──────────────────────────────────────────────────────────────
+ *   endpoint    — API URL. The component appends ?q=<query>&limit=<limit>
+ *                 Your endpoint must return: Array<Record<string, unknown>>
+ *                 (same shape as items in static mode)
+ *   limit       — max results to request per query       (default: 20)
+ *   minChars    — chars required before first fetch       (default: 2)
+ *   debounce    — ms to wait after last keystroke         (default: 300)
+ *   preloadItem — in async mode with a pre-selected value, pass the full
+ *                 item object here so the label can be shown on first render
+ *                 e.g. preloadItem={await db.users.findById(value)}
+ *
+ * ── Examples ─────────────────────────────────────────────────────────────────
+ *
+ *  Static — users
+ *  --------------
+ *  <SearchSelect
+ *    items={users}
+ *    valueKey="id"
+ *    primaryTemplate="{firstName} {lastName}"
+ *    secondaryTemplate="{email}"
+ *    inputTemplate="{firstName} {lastName} <{email}>"
+ *    metaTemplate="#{id}"
+ *  />
+ *
+ *  Async — users  (endpoint returns same shape)
+ *  --------------------------------------------
+ *  <SearchSelect
+ *    endpoint="/api/users/search"
+ *    valueKey="id"
+ *    primaryTemplate="{firstName} {lastName}"
+ *    secondaryTemplate="{email}"
+ *    inputTemplate="{firstName} {lastName} <{email}>"
+ *    metaTemplate="#{id}"
+ *    minChars={2}
+ *    debounce={300}
+ *    value={existingUserId}
+ *    preloadItem={existingUser}
+ *  />
+ *
+ *  Async — courses
+ *  ---------------
+ *  <SearchSelect
+ *    endpoint="/api/courses/search"
+ *    valueKey="courseId"
+ *    primaryTemplate="{subject}"
+ *    secondaryTemplate="{date}"
+ *    inputTemplate="{subject} | {date}"
+ *    metaTemplate="{courseId}"
+ *    searchKeys={["subject", "date", "instructor"]}
+ *  />
+ *
+ * ── API contract ─────────────────────────────────────────────────────────────
+ *  GET {endpoint}?q=<string>&limit=<number>
+ *  Response: JSON array  →  [{ id, firstName, ... }, ...]
+ *
+ *  Example Astro API route  (src/pages/api/users/search.ts):
+ *
+ *    export const GET: APIRoute = async ({ url }) => {
+ *      const q     = url.searchParams.get('q') ?? '';
+ *      const limit = Number(url.searchParams.get('limit') ?? 20);
+ *      const users = await db.users.findMany({
+ *        where: {
+ *          OR: [
+ *            { firstName: { contains: q, mode: 'insensitive' } },
+ *            { lastName:  { contains: q, mode: 'insensitive' } },
+ *            { email:     { contains: q, mode: 'insensitive' } },
+ *          ],
+ *        },
+ *        take: limit,
+ *        select: { id: true, firstName: true, lastName: true, email: true },
+ *      });
+ *      return new Response(JSON.stringify(users), {
+ *        headers: { 'Content-Type': 'application/json' },
+ *      });
+ *    };
+ *
+ * ── Events ───────────────────────────────────────────────────────────────────
+ *  root element emits  "ss:change"
+ *    e.detail  →  full raw item object on selection, or null when cleared
+ *
+ * ── Other props ──────────────────────────────────────────────────────────────
+ *   name        — hidden <input> name          (default: "value")
+ *   label       — visible label text           (default: "Select")
+ *   placeholder — input placeholder            (default: "Search…")
+ *   value       — pre-selected value key
+ *   required    — marks hidden input required  (default: false)
+ *   id          — base element id — MUST be unique per page  (default: "ss")
+ */
+
+type AnyRecord = Record<string, unknown>;
+
+type FieldOption = { value: string; label: string };
+
+interface Props {
+  // data — one of these three is required
+  options?:           FieldOption[];  // pre-mapped pairs, same as SelectField
+  items?:             AnyRecord[];    // raw records + templates (static)
+  endpoint?:          string;         // async API
+  // templates — required when using `items` or `endpoint`, not needed for `options`
+  valueKey?:          string;
+  primaryTemplate?:   string;
+  secondaryTemplate?: string;
+  inputTemplate?:     string;
+  metaTemplate?:      string;
+  searchKeys?:        string[];
+  // async options
+  limit?:             number;
+  minChars?:          number;
+  debounce?:          number;
+  preloadItem?:       AnyRecord;
+  // form / display
+  name?:              string;
+  label?:             string;
+  placeholder?:       string;
+  value?:             string | number;
+  required?:          boolean;
+  id?:                string;
+}
+
+const {
+  options,
+  items       = [],
+  endpoint,
+  valueKey    = '',
+  primaryTemplate = '',
+  secondaryTemplate,
+  inputTemplate,
+  metaTemplate,
+  searchKeys,
+  limit       = 20,
+  minChars    = 2,
+  debounce    = 300,
+  preloadItem,
+  name        = 'value',
+  label       = 'Select',
+  placeholder = 'Search…',
+  value,
+  required    = false,
+  id          = 'ss',
+} = Astro.props;
+
+const isAsync = Boolean(endpoint);
+
+// ── Server-side helpers ────────────────────────────────────────────────────
+function extractKeys(tpl: string): string[] {
+  return [...tpl.matchAll(/\{(\w+)\}/g)].map(m => m[1]);
+}
+function applyTemplate(tpl: string, item: AnyRecord): string {
+  return tpl.replace(/\{(\w+)\}/g, (_, k) => String(item[k] ?? ''));
+}
+
+const allTemplateKeys = [
+  ...extractKeys(primaryTemplate),
+  ...(secondaryTemplate ? extractKeys(secondaryTemplate) : []),
+  ...(inputTemplate     ? extractKeys(inputTemplate)     : []),
+].filter((k, i, a) => a.indexOf(k) === i);
+
+const resolvedSearchKeys = searchKeys ?? allTemplateKeys;
+const resolvedInputTpl   = inputTemplate ?? primaryTemplate;
+
+// ── Build the serialised item list ────────────────────────────────────────
+// options path: pre-mapped { value, label } pairs — no templates needed
+// items path:   raw records resolved through templates
+const serialisedItems = isAsync ? '[]' : JSON.stringify(
+  options
+    ? options.map(o => ({
+        _value:     o.value,
+        _primary:   o.label,
+        _secondary: '',
+        _input:     o.label,
+        _meta:      '',
+        _search:    o.label,
+        _raw:       o,
+      }))
+    : items.map(item => ({
+        _value:     String(item[valueKey] ?? ''),
+        _primary:   applyTemplate(primaryTemplate, item),
+        _secondary: secondaryTemplate ? applyTemplate(secondaryTemplate, item) : '',
+        _input:     applyTemplate(resolvedInputTpl, item),
+        _meta:      metaTemplate ? applyTemplate(metaTemplate, item) : '',
+        _search:    resolvedSearchKeys.map(k => String(item[k] ?? '')).join(' '),
+        _raw:       item,
+      }))
+);
+
+// Resolve pre-selected display label
+const preItemSource = isAsync
+  ? preloadItem
+  : options
+    ? options.find(o => o.value === String(value))
+    : items.find(i => String(i[valueKey]) === String(value));
+const preInput = preItemSource
+  ? (options ? (preItemSource as FieldOption).label : applyTemplate(resolvedInputTpl, preItemSource as AnyRecord))
+  : '';
+const preValue = preItemSource
+  ? (options ? (preItemSource as FieldOption).value : String((preItemSource as AnyRecord)[valueKey]))
+  : (value !== undefined ? String(value) : '');
+
+// Config passed to client
+const clientConfig = JSON.stringify({
+  isAsync,
+  endpoint:          endpoint ?? '',
+  limit,
+  minChars,
+  debounce,
+  primaryTemplate,
+  secondaryTemplate: secondaryTemplate ?? '',
+  inputTemplate:     resolvedInputTpl,
+  metaTemplate:      metaTemplate ?? '',
+  searchKeys:        resolvedSearchKeys,
+  valueKey,
+});
+---
+
+<div
+  class="ss-root"
+  id={id}
+  data-items={serialisedItems}
+  data-config={clientConfig}
+  data-pre-value={preValue}
+>
+  <div class="ss-label-row">
+    <label class="ss-label" for={`${id}-input`}>{label}</label>
+    <span class="ss-badge" id={`${id}-badge`}>
+      {isAsync ? 'type to search' : `${items.length} ${items.length === 1 ? 'option' : 'options'}`}
+    </span>
+  </div>
+
+  <div class="ss-combobox" id={`${id}-combobox`}>
+    <input type="hidden" id={`${id}-hidden`} name={name} value={preValue} required={required} />
+
+    <div class="ss-trigger">
+      <svg class="ss-icon ss-search-icon" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+      </svg>
+      <!-- spinner shown during fetch -->
+      <svg class="ss-icon ss-spinner" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+        <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+      </svg>
+
+      <input
+        class="ss-input"
+        id={`${id}-input`}
+        type="text"
+        placeholder={placeholder}
+        autocomplete="off"
+        spellcheck="false"
+        role="combobox"
+        aria-expanded="false"
+        aria-autocomplete="list"
+        aria-haspopup="listbox"
+        aria-controls={`${id}-listbox`}
+        value={preInput}
+      />
+
+      <button class="ss-clear" id={`${id}-clear`} type="button" aria-label="Clear" tabindex="-1">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M18 6 6 18M6 6l12 12"/>
+        </svg>
+      </button>
+
+      <svg class="ss-chevron" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="m6 9 6 6 6-6"/>
+      </svg>
+    </div>
+
+    <div class="ss-dropdown" id={`${id}-listbox`} role="listbox" aria-label={label}>
+      <div class="ss-drop-header" id={`${id}-drop-header`}></div>
+      <div class="ss-list" id={`${id}-list`}></div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── Styles ──────────────────────────────────────────────────────────── -->
+<style>
+  .ss-root {
+    --surface:     #141418;
+    --surface2:    #1c1c22;
+    --surface3:    #24242c;
+    --border:      #2a2a36;
+    --border-hi:   #5b54f0;
+    --text:        #ededf2;
+    --text-2:      #8888a0;
+    --text-3:      #3e3e52;
+    --accent:      #5b54f0;
+    --accent-soft: rgba(91,84,240,.13);
+    --accent-glow: rgba(91,84,240,.25);
+    --warn:        #e8a030;
+    --mono:        'DM Mono', 'Fira Mono', ui-monospace, monospace;
+    --sans:        'DM Sans', system-ui, sans-serif;
+    --r:           10px;
+    font-family: var(--sans);
+    color: var(--text);
+    width: 100%;
+  }
+
+  /* label row */
+  .ss-label-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 7px; }
+  .ss-label { font-size: 11.5px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--text-2); }
+  .ss-badge { font-family: var(--mono); font-size: 10.5px; color: var(--text-3); transition: color .2s; }
+  .ss-badge.loading { color: var(--accent); }
+  .ss-badge.error   { color: var(--warn); }
+
+  /* combobox */
+  .ss-combobox { position: relative; }
+  .ss-trigger {
+    display: flex; align-items: center; gap: 9px;
+    background: var(--surface); border: 1.5px solid var(--border);
+    border-radius: var(--r); padding: 11px 13px; cursor: text;
+    transition: border-color .18s, box-shadow .18s;
+  }
+  .ss-combobox.open .ss-trigger,
+  .ss-trigger:focus-within { border-color: var(--border-hi); box-shadow: 0 0 0 3px var(--accent-glow); }
+  .ss-combobox.err .ss-trigger { border-color: var(--warn); box-shadow: 0 0 0 3px rgba(232,160,48,.2); }
+
+  .ss-icon { flex-shrink: 0; color: var(--text-2); transition: color .18s; }
+  .ss-combobox.open .ss-search-icon { color: var(--accent); }
+
+  /* spinner */
+  .ss-spinner { display: none; }
+  .ss-combobox.fetching .ss-search-icon { display: none; }
+  .ss-combobox.fetching .ss-spinner { display: block; color: var(--accent); animation: ss-spin .75s linear infinite; }
+  @keyframes ss-spin { to { transform: rotate(360deg); } }
+
+  .ss-input {
+    flex: 1; min-width: 0; background: none; border: none; outline: none;
+    font-family: var(--sans); font-size: 14px; color: var(--text); caret-color: var(--accent);
+  }
+  .ss-input::placeholder { color: var(--text-2); }
+
+  .ss-clear {
+    flex-shrink: 0; background: none; border: none; cursor: pointer;
+    color: var(--text-2); padding: 2px; border-radius: 4px; display: flex;
+    align-items: center; opacity: 0; pointer-events: none;
+    transition: opacity .15s, color .15s, background .15s;
+  }
+  .ss-combobox.has-value .ss-clear { opacity: 1; pointer-events: auto; }
+  .ss-clear:hover { color: var(--text); background: var(--surface2); }
+
+  .ss-chevron { flex-shrink: 0; color: var(--text-2); transition: transform .2s, color .18s; }
+  .ss-combobox.open .ss-chevron { transform: rotate(180deg); color: var(--accent); }
+
+  /* dropdown */
+  .ss-dropdown {
+    position: absolute; top: calc(100% + 6px); left: 0; right: 0;
+    background: var(--surface); border: 1.5px solid var(--border);
+    border-radius: var(--r);
+    box-shadow: 0 16px 48px rgba(0,0,0,.6), 0 0 0 1px rgba(91,84,240,.06);
+    overflow: hidden; z-index: 200; opacity: 0; transform: translateY(-6px);
+    pointer-events: none; transition: opacity .15s, transform .15s;
+  }
+  .ss-combobox.open .ss-dropdown { opacity: 1; transform: translateY(0); pointer-events: auto; }
+
+  .ss-drop-header {
+    padding: 7px 12px 5px; font-family: var(--mono); font-size: 10.5px;
+    letter-spacing: .04em; color: var(--text-3); border-bottom: 1px solid var(--border);
+    min-height: 28px; display: flex; align-items: center; gap: 6px;
+  }
+
+  /* animated dots for "searching…" */
+  .ss-dots { display: inline-flex; gap: 3px; align-items: center; }
+  .ss-dots span { width: 4px; height: 4px; background: var(--accent); border-radius: 50%; animation: ss-bounce .9s ease-in-out infinite; }
+  .ss-dots span:nth-child(2) { animation-delay: .15s; }
+  .ss-dots span:nth-child(3) { animation-delay: .30s; }
+  @keyframes ss-bounce { 0%,80%,100%{transform:scaleY(.4);opacity:.4} 40%{transform:scaleY(1);opacity:1} }
+
+  .ss-list { max-height: 300px; overflow-y: auto; padding: 4px; scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
+  .ss-list::-webkit-scrollbar { width: 4px; }
+  .ss-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  /* option */
+  .ss-option {
+    display: grid; grid-template-columns: 34px 1fr auto;
+    align-items: center; gap: 8px; padding: 7px 8px 7px 6px;
+    border-radius: 7px; cursor: pointer; transition: background .1s; user-select: none;
+  }
+  .ss-option:hover, .ss-option.hl  { background: var(--surface2); }
+  .ss-option.sel                   { background: var(--accent-soft); }
+
+  .ss-avatar {
+    width: 30px; height: 30px; border-radius: 8px;
+    background: var(--surface3); border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10.5px; font-weight: 700; color: var(--text-2);
+    flex-shrink: 0; text-transform: uppercase; letter-spacing: .04em; font-family: var(--mono);
+  }
+  .ss-option.sel .ss-avatar { background: var(--accent); color: #fff; border-color: transparent; }
+
+  .ss-option-body { min-width: 0; }
+  .ss-primary { font-size: 13.5px; font-weight: 500; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.3; }
+  .ss-option.sel .ss-primary { color: var(--accent); }
+  .ss-secondary { font-family: var(--mono); font-size: 11px; color: var(--text-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; line-height: 1.3; }
+  .ss-option.sel .ss-secondary { color: rgba(91,84,240,.65); }
+
+  mark { background: none; color: var(--accent); font-weight: 700; }
+
+  .ss-meta {
+    font-family: var(--mono); font-size: 10px; color: var(--text-3);
+    background: var(--surface3); border: 1px solid var(--border);
+    padding: 2px 6px; border-radius: 5px; white-space: nowrap; flex-shrink: 0; align-self: center;
+  }
+  .ss-option.sel .ss-meta { background: rgba(91,84,240,.15); border-color: rgba(91,84,240,.25); color: rgba(91,84,240,.7); }
+
+  /* skeleton shimmer */
+  .ss-skeleton { padding: 4px; display: flex; flex-direction: column; gap: 3px; }
+  .ss-skel-row { display: grid; grid-template-columns: 30px 1fr 48px; align-items: center; gap: 8px; padding: 7px 8px 7px 6px; border-radius: 7px; }
+  .ss-skel-avatar { width: 30px; height: 30px; border-radius: 8px; background: var(--surface3); animation: ss-shimmer 1.4s ease-in-out infinite; }
+  .ss-skel-lines { display: flex; flex-direction: column; gap: 5px; }
+  .ss-skel-line { height: 9px; border-radius: 4px; background: var(--surface3); animation: ss-shimmer 1.4s ease-in-out infinite; }
+  .ss-skel-line.short { width: 55%; animation-delay: .1s; }
+  .ss-skel-pill { height: 18px; width: 44px; border-radius: 5px; background: var(--surface3); animation: ss-shimmer 1.4s ease-in-out infinite; animation-delay: .05s; }
+  @keyframes ss-shimmer { 0%{opacity:.35} 50%{opacity:.7} 100%{opacity:.35} }
+
+  /* empty / error / prompt */
+  .ss-empty { padding: 28px 16px; text-align: center; font-size: 13px; color: var(--text-2); }
+  .ss-empty small { display: block; margin-top: 5px; font-size: 11px; color: var(--text-3); }
+  .ss-empty.warn { color: var(--warn); }
+  .ss-empty.warn small { color: rgba(232,160,48,.55); }
+</style>
+
+<!-- ─── Client script ────────────────────────────────────────────────────── -->
+<script>
+  type SerialisedItem = {
+    _value: string; _primary: string; _secondary: string;
+    _input: string; _meta: string;    _search: string;
+    _raw: Record<string, unknown>;
+  };
+
+  type Cfg = {
+    isAsync: boolean; endpoint: string; limit: number;
+    minChars: number; debounce: number;
+    primaryTemplate: string; secondaryTemplate: string;
+    inputTemplate: string;   metaTemplate: string;
+    searchKeys: string[];    valueKey: string;
+  };
+
+  // ── Template helpers ───────────────────────────────────────────────────────
+  function applyTpl(tpl: string, item: Record<string, unknown>) {
+    return tpl.replace(/\{(\w+)\}/g, (_, k) => String(item[k] ?? ''));
+  }
+
+  function toItem(raw: Record<string, unknown>, cfg: Cfg): SerialisedItem {
+    return {
+      _value:     String(raw[cfg.valueKey] ?? ''),
+      _primary:   applyTpl(cfg.primaryTemplate, raw),
+      _secondary: cfg.secondaryTemplate ? applyTpl(cfg.secondaryTemplate, raw) : '',
+      _input:     applyTpl(cfg.inputTemplate, raw),
+      _meta:      cfg.metaTemplate ? applyTpl(cfg.metaTemplate, raw) : '',
+      _search:    cfg.searchKeys.map(k => String(raw[k] ?? '')).join(' '),
+      _raw:       raw,
+    };
+  }
+
+  function initials(text: string) {
+    return text.trim().split(/\s+/).slice(0, 2).map(w => w[0] ?? '').join('').toUpperCase();
+  }
+
+  function hlText(text: string, q: string) {
+    if (!q) return text;
+    const i = text.toLowerCase().indexOf(q.toLowerCase());
+    if (i === -1) return text;
+    return text.slice(0, i) + `<mark>${text.slice(i, i + q.length)}</mark>` + text.slice(i + q.length);
+  }
+
+  function skeletonHTML(n = 5) {
+    return `<div class="ss-skeleton">${Array.from({length: n}, () => `
+      <div class="ss-skel-row">
+        <div class="ss-skel-avatar"></div>
+        <div class="ss-skel-lines"><div class="ss-skel-line"></div><div class="ss-skel-line short"></div></div>
+        <div class="ss-skel-pill"></div>
+      </div>`).join('')}</div>`;
+  }
+
+  // ── Mount each instance ────────────────────────────────────────────────────
+  document.querySelectorAll<HTMLElement>('.ss-root').forEach(root => {
+    const rootId = root.id;
+    const cfg    = JSON.parse(root.dataset.config ?? '{}') as Cfg;
+    const pool   = JSON.parse(root.dataset.items  ?? '[]') as SerialisedItem[]; // static only
+
+    const cb      = root.querySelector<HTMLElement>(`#${rootId}-combobox`)!;
+    const input   = root.querySelector<HTMLInputElement>(`#${rootId}-input`)!;
+    const hidden  = root.querySelector<HTMLInputElement>(`#${rootId}-hidden`)!;
+    const clearEl = root.querySelector<HTMLButtonElement>(`#${rootId}-clear`)!;
+    const list    = root.querySelector<HTMLElement>(`#${rootId}-list`)!;
+    const hdr     = root.querySelector<HTMLElement>(`#${rootId}-drop-header`)!;
+    const badge   = root.querySelector<HTMLElement>(`#${rootId}-badge`)!;
+
+    let selVal  = root.dataset.preValue ?? '';
+    let hlIdx   = -1;
+    let results : SerialisedItem[] = cfg.isAsync ? [] : [...pool];
+
+    // async housekeeping
+    let timer   : ReturnType<typeof setTimeout> | null = null;
+    let ctrl    : AbortController | null = null;
+    const cache = new Map<string, SerialisedItem[]>();
+
+    // ── UI helpers ───────────────────────────────────────────────
+    function setHdr(text: string, dots = false) {
+      hdr.innerHTML = dots
+        ? `${text} <span class="ss-dots"><span></span><span></span><span></span></span>`
+        : text;
+    }
+
+    function setBadge(text: string, cls: ''|'loading'|'error' = '') {
+      badge.textContent = text;
+      badge.className   = 'ss-badge' + (cls ? ` ${cls}` : '');
+    }
+
+    // ── Render list ──────────────────────────────────────────────
+    function render(items: SerialisedItem[], q: string) {
+      if (items.length === 0) {
+        const need = cfg.isAsync && q.length < cfg.minChars;
+        const rem  = cfg.minChars - q.length;
+        list.innerHTML = `<div class="ss-empty${need ? '' : ''}">
+          ${need
+            ? `Type ${rem} more character${rem === 1 ? '' : 's'} to search`
+            : 'No matches found'}
+          ${need ? '' : '<small>Try a different search term</small>'}
+        </div>`;
+        return;
+      }
+
+      list.innerHTML = items.map((item, i) => `
+        <div
+          class="ss-option${item._value === selVal ? ' sel' : ''}${i === hlIdx ? ' hl' : ''}"
+          data-value="${item._value}" data-idx="${i}"
+          role="option" aria-selected="${item._value === selVal}"
+        >
+          <div class="ss-avatar">${initials(item._primary)}</div>
+          <div class="ss-option-body">
+            <div class="ss-primary">${hlText(item._primary, q)}</div>
+            ${item._secondary ? `<div class="ss-secondary">${hlText(item._secondary, q)}</div>` : ''}
+          </div>
+          ${item._meta ? `<span class="ss-meta">${item._meta}</span>` : ''}
+        </div>`).join('');
+
+      if (hlIdx >= 0)
+        list.querySelector<HTMLElement>(`[data-idx="${hlIdx}"]`)?.scrollIntoView({ block: 'nearest' });
+    }
+
+    // ── Static mode ──────────────────────────────────────────────
+    function renderStatic() {
+      const q = input.value.trim();
+      results = pool.filter(it => it._search.toLowerCase().includes(q.toLowerCase()));
+      setHdr(q
+        ? `${results.length} result${results.length !== 1 ? 's' : ''} for "${q}"`
+        : `${pool.length} option${pool.length !== 1 ? 's' : ''}`);
+      setBadge(q
+        ? `${results.length} / ${pool.length}`
+        : `${pool.length} option${pool.length !== 1 ? 's' : ''}`);
+      render(results, q);
+    }
+
+    // ── Async fetch ──────────────────────────────────────────────
+    async function doFetch(q: string) {
+      // serve from cache first
+      if (cache.has(q)) {
+        results = cache.get(q)!;
+        hlIdx   = -1;
+        setHdr(`${results.length} result${results.length !== 1 ? 's' : ''} for "${q}"`);
+        setBadge(`${results.length} results`);
+        cb.classList.remove('fetching', 'err');
+        render(results, q);
+        return;
+      }
+
+      ctrl?.abort();
+      ctrl = new AbortController();
+
+      cb.classList.add('fetching');
+      cb.classList.remove('err');
+      setHdr('Searching', true);
+      setBadge('searching…', 'loading');
+      list.innerHTML = skeletonHTML(5);
+
+      try {
+        const res  = await fetch(`${cfg.endpoint}?q=${encodeURIComponent(q)}&limit=${cfg.limit}`, { signal: ctrl.signal });
+        if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
+
+        const raw: Record<string, unknown>[] = await res.json();
+        const items = raw.map(r => toItem(r, cfg));
+
+        cache.set(q, items);
+        results = items;
+        hlIdx   = -1;
+
+        cb.classList.remove('fetching');
+        setHdr(`${items.length} result${items.length !== 1 ? 's' : ''} for "${q}"`);
+        setBadge(`${items.length} results`);
+        render(items, q);
+
+      } catch (e: unknown) {
+        if ((e as Error).name === 'AbortError') return;
+        cb.classList.remove('fetching');
+        cb.classList.add('err');
+        setHdr('Request failed');
+        setBadge('error', 'error');
+        list.innerHTML = `<div class="ss-empty warn">Could not load results<small>${(e as Error).message}</small></div>`;
+      }
+    }
+
+    function scheduleSearch(q: string) {
+      if (timer) clearTimeout(timer);
+      if (q.length < cfg.minChars) {
+        cb.classList.remove('fetching', 'err');
+        results = []; hlIdx = -1;
+        setHdr('Type to search');
+        setBadge('type to search');
+        render([], q);
+        return;
+      }
+      timer = setTimeout(() => doFetch(q), cfg.debounce);
+    }
+
+    // ── Open / close ─────────────────────────────────────────────
+    function open() {
+      cb.classList.add('open');
+      input.setAttribute('aria-expanded', 'true');
+      if (cfg.isAsync) {
+        const q = input.value.trim();
+        if (results.length > 0) render(results, q);
+        else { render([], q); if (q.length < cfg.minChars) setHdr('Type to search'); }
+      } else {
+        hlIdx = selVal ? results.findIndex(it => it._value === selVal) : -1;
+        renderStatic();
+      }
+    }
+
+    function close() {
+      cb.classList.remove('open');
+      input.setAttribute('aria-expanded', 'false');
+      hlIdx = -1;
+    }
+
+    // ── Select / clear ───────────────────────────────────────────
+    function select(val: string) {
+      const item = results.find(it => it._value === val) ?? pool.find(it => it._value === val);
+      if (!item) return;
+      selVal = val; hidden.value = val; input.value = item._input;
+      cb.classList.add('has-value');
+      cb.classList.remove('err');
+      close();
+      root.dispatchEvent(new CustomEvent('ss:change', { bubbles: true, detail: item._raw }));
+    }
+
+    function clear() {
+      if (timer) clearTimeout(timer);
+      ctrl?.abort();
+      selVal = ''; hidden.value = ''; input.value = '';
+      results = cfg.isAsync ? [] : [...pool];
+      cb.classList.remove('has-value', 'fetching', 'err');
+      if (cfg.isAsync) { setHdr('Type to search'); setBadge('type to search'); render([], ''); }
+      else renderStatic();
+      input.focus();
+      root.dispatchEvent(new CustomEvent('ss:change', { bubbles: true, detail: null }));
+    }
+
+    // ── Events ───────────────────────────────────────────────────
+    input.addEventListener('focus', open);
+    input.addEventListener('click', open);
+
+    input.addEventListener('input', () => {
+      if (!cb.classList.contains('open')) open();
+      selVal = ''; hidden.value = '';
+      cb.classList.remove('err');
+      cb.classList.toggle('has-value', input.value.length > 0);
+      hlIdx = -1;
+      cfg.isAsync ? scheduleSearch(input.value.trim()) : renderStatic();
+    });
+
+    input.addEventListener('keydown', e => {
+      if (!cb.classList.contains('open')) { open(); return; }
+      if (e.key === 'ArrowDown') {
+        e.preventDefault(); hlIdx = Math.min(hlIdx + 1, results.length - 1);
+        cfg.isAsync ? render(results, input.value.trim()) : renderStatic();
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault(); hlIdx = Math.max(hlIdx - 1, 0);
+        cfg.isAsync ? render(results, input.value.trim()) : renderStatic();
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        const t = hlIdx >= 0 ? results[hlIdx] : results.length === 1 ? results[0] : null;
+        if (t) select(t._value);
+      } else if (e.key === 'Escape') {
+        const all = cfg.isAsync ? results : pool;
+        const hit = all.find(it => it._value === selVal);
+        input.value = hit ? hit._input : '';
+        if (!hit) cb.classList.remove('has-value');
+        close();
+      } else if (e.key === 'Tab') {
+        close();
+      }
+    });
+
+    list.addEventListener('mousedown', e => {
+      const opt = (e.target as Element).closest<HTMLElement>('.ss-option');
+      if (opt) { e.preventDefault(); select(opt.dataset.value!); }
+    });
+
+    list.addEventListener('mousemove', e => {
+      const opt = (e.target as Element).closest<HTMLElement>('.ss-option');
+      if (opt) {
+        const i = parseInt(opt.dataset.idx!);
+        if (i !== hlIdx) { hlIdx = i; cfg.isAsync ? render(results, input.value.trim()) : renderStatic(); }
+      }
+    });
+
+    clearEl.addEventListener('mousedown', e => { e.preventDefault(); clear(); });
+
+    document.addEventListener('mousedown', e => {
+      if (!root.contains(e.target as Node)) close();
+    });
+
+    // ── Init ─────────────────────────────────────────────────────
+    if (selVal) cb.classList.add('has-value');
+    if (!cfg.isAsync) renderStatic();
+    else { setHdr('Type to search'); render([], ''); }
+  });
+</script>

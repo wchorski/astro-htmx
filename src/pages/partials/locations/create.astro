@@ -1,31 +1,31 @@
 ---
 // partials/users/create.astro
 import RowView from "@components/tables/RowView.astro";
-import UserCard from "@components/UserCard.astro";
 import RowCreateForm from "@components/tables/RowCreate.astro";
 import { tableConfigs } from "@lib/tableConfigs";
 import { BadRequestError, errorHandlingOnSubmit } from "@lib/errors";
 import { crud, type CrudRegistryType } from "@lib/crudRegistry";
 import { parseOutUndefinedFormData } from "@lib/sanatizers";
 import { TEST_ADMIN_SESSION } from "@lib/auth/session";
-import type { UserSelect } from "@ty/Schema";
+import type { LocationSelect } from "@ty/Schema";
 
 type ViewType = "table-row" | "card";
 
-let newUser: UserSelect | null | undefined = null;
+let location: LocationSelect | null | undefined = null;
 let error = null;
 let view: ViewType = "table-row";
-const config = tableConfigs.users.required;
+const crudKey =  "locations" as const
+const config = tableConfigs[crudKey].required;
 const ctx = {
-  crud: "users" as CrudRegistryType,
+  crud: crudKey,
   config,
-  endpoint: "/attendance/users",
+  endpoint: "/attendance/locations",
   headers: Object.keys(config),
 };
 
 if (Astro.request.method === "POST") {
   try {
-    // const session = await requirePermission(Astro.request, "users", "create");
+    // const session = await requirePermission(Astro.request, "locations", "create");
     // TODO
     const session = TEST_ADMIN_SESSION;
 
@@ -38,7 +38,8 @@ if (Astro.request.method === "POST") {
       [...formData.entries()].filter(([key]) => !key.startsWith("_")),
     );
 
-    newUser = await crud.users.create(submitFields, session);
+    const entry = crud[crudKey]
+    location = await entry.create(submitFields, session);
   } catch (e) {
     const { err, status } = errorHandlingOnSubmit(e);
     Astro.response.status = status;
@@ -80,9 +81,9 @@ if (Astro.request.method === "POST") {
         />
       ))}
     </>
-  ) : newUser && view === "table-row" ? (
+  ) : location && view === "table-row" ? (
     <>
-      <RowView row={newUser} {...ctx} classList={["new-row"]} />
+      <RowView row={location} {...ctx} classList={["new-row"]} />
       <RowCreateForm {...ctx} />
       <tr id={`row-create-error`} hx-swap-oob="outerHTML" />
     </>

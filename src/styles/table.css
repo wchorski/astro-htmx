@@ -86,7 +86,13 @@ th {
   }
 } */
 
-td[data-type="hidden"], th[data-type="hidden"] {
+td[data-type="hidden"],
+th[data-type="hidden"] {
   display: none;
   outline: dotted red 3px;
+}
+
+data[value="null"]::before {
+  content: "-";
+  color: var(--c-seperator, grey);
 }

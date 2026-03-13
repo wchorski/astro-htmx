@@ -1,0 +1,37 @@
+---
+import UsersEditableTable from "@components/UsersEditableTable.astro";
+import AttendanceAdminNav from "@components/navigation/AttendanceAdminNav.astro";
+import Layout from "@layouts/Layout.astro";
+import { getMembersPage } from "@lib/getMembersPage";
+import PaginationNav from "@components/navigation/PaginationNav.astro";
+const page = Number(Astro.params.page);
+const result = await getMembersPage(page);
+
+if ("redirect" in result) {
+  return Astro.redirect("/attendance/admin/users");
+}
+
+const { users, perPage, totalCount, totalPages } = result;
+---
+
+<Layout>
+  <AttendanceAdminNav />
+  <main>
+    <header class="flex space-between">
+      <h1>Users - Page {page}</h1>
+    </header>
+
+    <UsersEditableTable users={users} />
+
+    {
+      users ? (
+        <PaginationNav
+          path="/attendance/admin/users"
+          page={Number(page)}
+          perPage={perPage}
+          totalCount={totalCount}
+        />
+      ) : null
+    }
+  </main>
+</Layout>

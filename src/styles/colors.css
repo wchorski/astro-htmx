@@ -28,6 +28,10 @@
   }
 }
 
+.sub-text {
+  color: var(--c-seperator);
+}
+
 /* TODO bad bad not good */
 .highlight-green {
   background-color: #3cb34e1d !important;

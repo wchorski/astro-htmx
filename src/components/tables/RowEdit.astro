@@ -31,12 +31,13 @@ const {
   error,
 } = Astro.props;
 
+console.log(Astro.props);
 const topLevelError = typeof error === "string" ? error : null;
 ---
 
 <tr id={`row-${row.id}`} data-status="editing">
   {
-    headers.map((key) => {
+    headers.map((key, i) => {
       const field: FieldSlot = config[key] ?? {};
       const { label, value: override, type, ...inputAttrs } = field;
 
@@ -69,6 +70,7 @@ const topLevelError = typeof error === "string" ? error : null;
           <td>
             <SelectField
               {...inputAttrs}
+              autofocus={i === 0}
               formId={`edit-form-${row.id}`}
               errorId={`field-error-${row.id}-${key}`}
               name={key}
@@ -81,7 +83,7 @@ const topLevelError = typeof error === "string" ? error : null;
       } else if (type === "textarea") {
         return (
           <td>
-            <TextareaField {...inputAttrs}/>
+            <TextareaField {...inputAttrs} autofocus={i === 0} />
           </td>
         );
       } else {
@@ -89,6 +91,7 @@ const topLevelError = typeof error === "string" ? error : null;
           <td>
             <InputField
               {...inputAttrs}
+              autofocus={i === 0}
               formId={`edit-form-${row.id}`}
               errorId={`field-error-${row.id}-${key}`}
               name={key}

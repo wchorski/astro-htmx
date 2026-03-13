@@ -4,6 +4,7 @@ import Layout from "@layouts/Layout.astro";
 import { getCoursesPage } from "@lib/getCoursesPage";
 import PaginationNav from "@components/navigation/PaginationNav.astro";
 import AttendanceAdminNav from "@components/navigation/AttendanceAdminNav.astro";
+import ButtonCoursesImport from "@components/ButtonCoursesImport.astro";
 const { WORDPRESS_ENDPOINT } = import.meta.env;
 const page = Number(Astro.params.page);
 const result = await getCoursesPage(page);
@@ -18,18 +19,22 @@ const { courses, locations, perPage, totalCount, totalPages } = result;
 <Layout>
   <AttendanceAdminNav />
   <main>
-    <header>
+    <header class="flex space-between">
       <h1>Courses - Page {page}</h1>
-      <div class="callout warning">
-        <p>
-          Created/Updated Courses here will create/update an accompanying
-          Wordpress event set as DRAFT. To become viewable on the <a
-            href={WORDPRESS_ENDPOINT + "/wp-admin/edit.php?post_type=event"}
-            >Wordpress site</a
-          >, it must be set to PUBLISH.
-        </p>
+      <div>
+        <ButtonCoursesImport />
+        <a href={WORDPRESS_ENDPOINT + "/events"}>View Wordpress Events</a>
       </div>
     </header>
+    <div class="callout warning">
+      <p>
+        Created/Updated Courses here will create/update an accompanying
+        Wordpress event set as DRAFT. To become viewable on the <a
+          href={WORDPRESS_ENDPOINT + "/wp-admin/edit.php?post_type=event"}
+          >Wordpress site</a
+        >, it must be set to PUBLISH.
+      </p>
+    </div>
     <hr />
     {
       locations.length === 0 ? (

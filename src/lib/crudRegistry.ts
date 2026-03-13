@@ -35,6 +35,7 @@ type CreateFn = (
   session: Session,
 ) => Promise<TableRow>;
 type ReadFn<T> = (id: string, session: Session) => Promise<T>;
+type ReadManyFn<T> = (session: Session) => Promise<T[]>;
 // type UpdateFn = (
 //   row: Partial<TableRow> & { id: string },
 //   session: Session,
@@ -43,16 +44,17 @@ type UpdateFn<T> = (
   inputFields: FormFields<T> & { id: string },
   session: Session,
 ) => Promise<T>;
-type DeleteFn = (id: string) => Promise<TableRow>;
+type DeleteFn<T> = (id: string, session: Session) => Promise<T>;
 
 type CrudEntry<T = TableRow> = {
   create: CreateFn;
   read: ReadFn<T>;
+  readMany: ReadManyFn<T>;
   update: UpdateFn<T>;
-  delete: DeleteFn;
+  delete: DeleteFn<T>;
 };
 
-const { DEFAULT_ROLE_ID } = import.meta.env;
+const { DEFAULT_ROLE_ID, WP_USERNAME, WP_APP_PASSWORD } = import.meta.env;
 
 export const crud = {
   // TODO how to prevent create/update users from giving themselves elevated permissions?
@@ -91,6 +93,16 @@ export const crud = {
           .get();
         if (!row) throw new NotFoundError(`User ${id} not found`);
         return row;
+      } catch (e) {
+        throwErrorsForCRUD(e);
+      }
+    },
+    readMany: async (session) => {
+      try {
+        const users = await db.select().from(User);
+        // .limit(perPage)
+        // .offset((page - 1) * perPage);
+        return users;
       } catch (e) {
         throwErrorsForCRUD(e);
       }
@@ -150,8 +162,8 @@ export const crud = {
       }
     },
   },
-  course: {
-    create: async (row) => {
+  courses: {
+    create: async (row, session) => {
       try {
         const validated = validate.courseCreate.parse(row);
 
@@ -171,17 +183,18 @@ export const crud = {
           location.timezone,
         );
 
-        const wpPost = await createWordpressEventPost({
-          ...validated,
-          date: realDate,
-        });
+        const wpPostId =
+          WP_USERNAME && WP_APP_PASSWORD
+            ? (await createWordpressEventPost({ ...validated, date: realDate }))
+                .id
+            : null;
 
         const [result] = await db
           .insert(Course)
           .values({
             ...validated,
             date: realDate,
-            wpPostId: wpPost.id,
+            wpPostId,
           })
           .returning();
         return result;
@@ -189,7 +202,7 @@ export const crud = {
         throwErrorsForCRUD(e);
       }
     },
-    read: async (id) => {
+    read: async (id, session) => {
       try {
         const validId = validate.id.parse(id);
         const row = await db
@@ -203,7 +216,17 @@ export const crud = {
         throwErrorsForCRUD(e);
       }
     },
-    update: async (row) => {
+    readMany: async (session) => {
+      try {
+        const courses = await db.select().from(Course);
+        // .limit(perPage)
+        // .offset((page - 1) * perPage);
+        return courses;
+      } catch (e) {
+        throwErrorsForCRUD(e);
+      }
+    },
+    update: async (row, session) => {
       try {
         const validated = validate.courseUpdate.parse(row);
 
@@ -221,16 +244,17 @@ export const crud = {
           validated.dateCivil,
           location.timezone,
         );
-        const wpPost = await updateWordpressEventPost({
-          ...validated,
-          date: realDate,
-        });
+        const wpPostId =
+          WP_USERNAME && WP_APP_PASSWORD
+            ? (await createWordpressEventPost({ ...validated, date: realDate }))
+                .id
+            : null;
         const [result] = await db
           .update(Course)
           .set({
             ...validated,
             date: realDate,
-            wpPostId: wpPost.id,
+            wpPostId,
           })
           .where(eq(Course.id, validated.id))
           .returning();
@@ -240,7 +264,7 @@ export const crud = {
         throwErrorsForCRUD(e);
       }
     },
-    delete: async (id) => {
+    delete: async (id, session) => {
       try {
         const validId = validate.id.parse(id);
         const [deleted] = await db
@@ -286,6 +310,16 @@ export const crud = {
         throwErrorsForCRUD(e);
       }
     },
+    readMany: async (session) => {
+      try {
+        const credits = await db.select().from(Credit);
+        // .limit(perPage)
+        // .offset((page - 1) * perPage);
+        return credits;
+      } catch (e) {
+        throwErrorsForCRUD(e);
+      }
+    },
     update: async (row) => {
       try {
         const validated = validate.creditUpdate.parse(row);
@@ -301,6 +335,7 @@ export const crud = {
         throwErrorsForCRUD(e);
       }
     },
+    
     delete: async (id) => {
       try {
         const validId = validate.id.parse(id);
@@ -316,7 +351,7 @@ export const crud = {
     },
   },
   locations: {
-    create: async (row) => {
+    create: async (row, session) => {
       try {
         const validated = validate.locationCreate.parse(row);
 
@@ -329,7 +364,17 @@ export const crud = {
         throwErrorsForCRUD(e);
       }
     },
-    read: async (id) => {
+    readMany: async (session) => {
+      try {
+        const locations = await db.select().from(Location);
+        // .limit(perPage)
+        // .offset((page - 1) * perPage);
+        return locations;
+      } catch (e) {
+        throwErrorsForCRUD(e);
+      }
+    },
+    read: async (id, session) => {
       try {
         const validId = validate.id.parse(id);
         const row = await db
@@ -344,7 +389,7 @@ export const crud = {
       }
     },
 
-    update: async (row) => {
+    update: async (row, session) => {
       try {
         const validated = validate.locationUpdate.parse(row);
         const validId = validate.id.parse(row.id);
@@ -363,10 +408,10 @@ export const crud = {
       try {
         const validId = validate.id.parse(id);
         const [deleted] = await db
-          .delete(User)
-          .where(eq(User.id, validId))
+          .delete(Location)
+          .where(eq(Location.id, validId))
           .returning();
-        if (!deleted) throw new NotFoundError(`User ${id} not found`);
+        if (!deleted) throw new NotFoundError(`Location ${id} not found`);
         return deleted;
       } catch (e) {
         throwErrorsForCRUD(e);
@@ -464,7 +509,10 @@ export const crud = {
       }
     },
 
-    update: async (inputFields: FormFields<CourseCreditFlat> & { id: string }, session) => {
+    update: async (
+      inputFields: FormFields<CourseCreditFlat> & { id: string },
+      session,
+    ) => {
       try {
         // TODO add in auth. mutation for credit and user maybe tricky
         // const fields = await creditPolicy.writableFields(session, null);
@@ -497,7 +545,7 @@ export const crud = {
         throwErrorsForCRUD(e);
       }
     },
-    delete: async (id) => {
+    delete: async (id, session) => {
       try {
         const validId = validate.id.parse(id);
         const [deleted] = await db
@@ -518,7 +566,7 @@ type CrudRegistry = {
   courseCredits: CrudEntry<CourseCreditFlat>;
   locations: CrudEntry<LocationSelect>;
   users: CrudEntry<UserSelect>;
-  course: CrudEntry<CourseSelect>;
+  courses: CrudEntry<CourseSelect>;
   credits: CrudEntry<CreditSelect>;
   // ...
 };

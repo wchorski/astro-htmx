@@ -7,46 +7,12 @@ interface Props {
 import type { CourseSelect, LocationSelect } from "@ty/Schema";
 import TableEditable from "./TableEditable.astro";
 import RowCreate from "./tables/RowCreate.astro";
+import { courseConfigRequired, tableConfigs } from "@lib/tableConfigs";
 const { courses, locations } = Astro.props;
 
-const config = {
-    id: {
-      label: "ID",
-      type: "number",
-      required: true,
-      readonly: true,
-    },
-    wpPostId: {
-      type: "number",
-      required: true,
-      readonly: true,
-    },
-    subject: {
-      label: "subject",
-      type: "text",
-      required: true,
-      placeholder: "Course Studies IV...",
-    },
-    description: {
-      label: "description",
-      type: "text",
-      placeholder: "...",
-    },
-    dateCivil: {
-      label: "Civil Date",
-      type: "datetime-local",
-      required: true,
-    },
-    locationId: {
-      label: "Locations",
-      type: "select",
-      required: true,
-      options: locations.map((loc) => ({ value: loc.id, label: loc.name })),
-    },
-  }
-
+const config = courseConfigRequired(locations)
 const ctx = {
-  crud: "course",
+  crud: "courses" as const,
   endpoint: "/attendance/admin/courses/id",
   config,
   headers: Object.keys(config)

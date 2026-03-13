@@ -91,7 +91,7 @@ export const validate = {
 
   course: z.object({
     id: z.coerce.number(),
-    wpPostId: z.coerce.number(),
+    wpPostId: z.coerce.number().optional(),
     subject: z.string().min(3, "Must be more than 3 characters"),
     description: z.string().optional(),
     // handles by crud

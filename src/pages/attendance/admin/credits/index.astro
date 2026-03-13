@@ -1,0 +1,38 @@
+---
+import UsersEditableTable from "@components/UsersEditableTable.astro";
+import AttendanceAdminNav from "@components/navigation/AttendanceAdminNav.astro";
+import Layout from "@layouts/Layout.astro";
+import PaginationNav from "@components/navigation/PaginationNav.astro";
+import CreditsEditableTable from "@components/CreditsEditableTable.astro";
+import { getCreditsPage } from "@lib/getCreditsPage";
+
+const result = await getCreditsPage(1);
+
+if ("redirect" in result) {
+  return Astro.redirect("/attendance/admin/credits");
+}
+
+const { credits, courses, users, page, perPage, totalCount, totalPages } =
+  result;
+---
+
+<Layout>
+  <AttendanceAdminNav />
+  <main>
+    <header>
+      <h1>Credits - Page {page}</h1>
+      <p class="sub-text">List of all credits from all courses.</p>
+    </header>
+    <CreditsEditableTable credits={credits} courses={courses} users={users} />
+    {
+      credits ? (
+        <PaginationNav
+          path="/attendance/admin/credits"
+          page={Number(page)}
+          perPage={perPage}
+          totalCount={totalCount}
+        />
+      ) : null
+    }
+  </main>
+</Layout>

@@ -110,7 +110,7 @@ export async function createWordpressEventPost(
 
     const post = JSON.parse(text);
     // console.log("Created event:", { post });
-    return post;
+    return post.id;
 
     //     curl -i -X POST "https://local150.org/wp-json/wp/v2/event" \
     //   -H "Authorization: Basic $AUTH" \

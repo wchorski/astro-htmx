@@ -2,9 +2,9 @@
 // partials/users/[id].astro
 import { crud, type CrudRegistryType } from "@lib/crudRegistry";
 import { BadRequestError, errorHandlingOnSubmit } from "@lib/errors";
-import { courseConfigRequired, tableConfigs } from "@lib/tableConfigs";
+import { tableConfigs } from "@lib/tableConfigs";
 import RowView from "@components/tables/RowView.astro";
-import type { CourseSelect, } from "@ty/Schema";
+import type { LocationSelect, } from "@ty/Schema";
 import type { ZodError } from "astro/zod";
 import { TEST_ADMIN_SESSION } from "@lib/auth/session";
 
@@ -12,26 +12,24 @@ interface Params {
   id: string | undefined;
 }
 
-// let id: string | null | undefined = null;
-const { id } = Astro.params;
-if (!id) throw new BadRequestError("course ID missing in request");
-const session = TEST_ADMIN_SESSION;
-const locations = await crud.locations.readMany(session);
-let course: CourseSelect | null | undefined = null;
+let id: string | null | undefined = null;
+let location: LocationSelect | null | undefined = null;
 let error: string | ReturnType<ZodError["flatten"]> | null = null;
-const crudKey =  "courses" as const
-const config = courseConfigRequired(locations);
+const config = tableConfigs.locations.required
 const ctx = {
-  crud: crudKey,
+  crud: "locations" as CrudRegistryType,
   config,
-  endpoint: "/attendance/courses",
-  headers: Object.keys(config) as (keyof CourseSelect & string)[],
+  endpoint: "/attendance/locations",
+  headers: Object.keys(config),
 };
 
+const session = TEST_ADMIN_SESSION;
+
 if (Astro.request.method === "GET") {
+  id = Astro.params.id;
   try {
     if (!id) throw new BadRequestError("Missing required parameter: id");
-    course = await crud[crudKey].read(id, session);
+    location = await crud.locations.read(id, session);
   } catch (e) {
     const { err, status } = errorHandlingOnSubmit(e);
     Astro.response.status = status;
@@ -40,6 +38,7 @@ if (Astro.request.method === "GET") {
 }
 
 if (Astro.request.method === "PATCH") {
+  id = Astro.params.id;
   try {
     if (!id) throw new BadRequestError("Missing required parameter: id");
     const formData = await Astro.request.formData();
@@ -60,7 +59,7 @@ if (Astro.request.method === "PATCH") {
       id
     };
 
-    course = await crud[crudKey].update(payload, session);
+    location = await crud.locations.update(payload, session);
   } catch (e) {
     const { err, status } = errorHandlingOnSubmit(e);
     Astro.response.status = status;
@@ -70,6 +69,7 @@ if (Astro.request.method === "PATCH") {
 }
 
 if (Astro.request.method === "DELETE") {
+  id = Astro.params.id;
   try {
     if (!id) throw new BadRequestError("Missing required parameter: id");
 
@@ -79,7 +79,7 @@ if (Astro.request.method === "DELETE") {
       throw new BadRequestError("Parameter 'id' must be a valid integer");
     }
 
-    course = await crud[crudKey].delete(id, session);
+    location = await crud.locations.delete(id);
   } catch (e) {
     const { err, status } = errorHandlingOnSubmit(e);
     Astro.response.status = status;
@@ -119,24 +119,24 @@ if (Astro.request.method === "DELETE") {
         />
       ))}
     </>
-  ) : Astro.request.method === "DELETE" && course ? (
+  ) : Astro.request.method === "DELETE" && location ? (
     <tr id={`row-${id}`} hx-swap-oob="outerHTML">
       <td colspan="100%" class="danger">
-        DELETED {crudKey}{" "}
-        {`${course.id} | ${course.subject} ${course.dateCivil}`}
+        DELETED location{" "}
+        {`${location.id} | ${location.address} ${location.city} ${location.state}, ${location.zip}`}
       </td>
     </tr>
-  ) : Astro.request.method === "PATCH" && course ? (
+  ) : Astro.request.method === "PATCH" && location ? (
     <>
-      <RowView row={course} {...ctx} classList={["updated-row"]} oob />
+      <RowView row={location} {...ctx} classList={["updated-row"]} oob />
       <tr id={`row-edit-error-${id}`} hx-swap-oob="outerHTML" />
     </>
-  ) : Astro.request.method === "GET" && course ? (
+  ) : Astro.request.method === "GET" && location ? (
     <>
-      <RowView row={course} {...ctx} oob />
+      <RowView row={location} {...ctx} oob />
       <tr id={`row-edit-error-${id}`} hx-swap-oob="outerHTML" />
     </>
   ) : (
-    <p class="callout error">unknown error occured on partials/courses/:id </p>
+    <p class="callout error">unknown error occured on partials/locations/:id </p>
   )
 }

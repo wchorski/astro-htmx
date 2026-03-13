@@ -12,6 +12,7 @@ export async function getCoursesPage(page: number, perPage = 12) {
     return { redirect: true };
   }
 
+  // TODO where is the auth?
   const courses = await db
     .select()
     .from(Course)

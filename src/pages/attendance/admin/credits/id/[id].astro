@@ -6,12 +6,12 @@ import { db, eq, Course, Credit, User } from "astro:db";
 import Layout from "@layouts/Layout.astro";
 import CourseCreditsEditableTable from "@components/CourseCreditsEditableTable.astro";
 export const prerender = false; // Not needed in 'server' mode
-const { courseId } = Astro.params;
-if (!courseId) throw new Error("no id found. throw 404");
+const { id } = Astro.params;
+if (!id) throw new Error("no id found. throw 404");
 const foundCourse = await db
   .select()
   .from(Course)
-  .where(eq(Course.id, Number(courseId)))
+  .where(eq(Course.id, Number(id)))
   .get();
 
 const courseCredits = await db
@@ -21,7 +21,7 @@ const courseCredits = await db
   })
   .from(Credit)
   .innerJoin(User, eq(Credit.userId, User.id))
-  .where(eq(Credit.courseId, Number(courseId)));
+  .where(eq(Credit.courseId, Number(id)));
 
 if (!foundCourse) return Astro.redirect("/404");
 const { subject, date, description } = foundCourse;
@@ -53,7 +53,7 @@ const { subject, date, description } = foundCourse;
           }
         </time>{description}
         |
-        <span class="course-id">{courseId}</span>
+        <span class="course-id">{id}</span>
       </p>
     </header>
 
@@ -70,6 +70,9 @@ const { subject, date, description } = foundCourse;
       >
     </div>
 
-    <CourseCreditsEditableTable courseCredits={courseCredits} />
+    <CourseCreditsEditableTable
+      courseCredits={courseCredits}
+      courseId={id}
+    />
   </main>
 </Layout>

@@ -3,7 +3,14 @@ import type { HTMLAttributes } from "astro/types";
 import type { JSX } from "astro/jsx-runtime";
 
 type InputProps = JSX.IntrinsicElements["input"];
-export type InputTypeAttr = InputProps["type"] | (string & {});
+type ReservedTypes = "select" | "textarea" | "searchSelect";
+// InputTypeAttr keeps string & {} for component prop usage (autocomplete + escape hatch)
+export type InputTypeAttr =
+  | Exclude<InputProps["type"], ReservedTypes>
+  | (string & {});
+
+// KnownInputTypes — no string & {}, so the discriminant can actually work
+type KnownInputTypes = Exclude<InputProps["type"], ReservedTypes>;
 
 type BaseInputAttrs = Omit<HTMLAttributes<"input">, "value">;
 
@@ -17,31 +24,53 @@ type BaseFieldSlot = {
   value?: string;
 };
 
-
 export type InputFieldSlot = BaseFieldSlot &
-BaseInputAttrs & {
-  type?: InputTypeAttr;
-  datalist?: FieldOption[];
-};
+  BaseInputAttrs & {
+    type?: KnownInputTypes; // ← was InputTypeAttr, string & {} killed the discriminant
+    datalist?: FieldOption[];
+  };
 
 export type SelectFieldSlot = BaseFieldSlot &
-Omit<HTMLAttributes<"select">, "value"> & {
-  type: "select";
-  options: FieldOption[];
-};
-export type FieldType = FieldSlot["type"];
+  Omit<HTMLAttributes<"select">, "value"> & {
+    type: "select";
+    options: FieldOption[];
+  };
 
 export type TextareaFieldSlot = BaseFieldSlot &
-Omit<HTMLAttributes<"textarea">, "value"> & {
-  type: "textarea";
-};
+  Omit<HTMLAttributes<"textarea">, "value"> & {
+    type: "textarea";
+  };
 
-export type FieldSlot = InputFieldSlot | SelectFieldSlot | TextareaFieldSlot;
+export type SearchSelectFieldSlot = BaseFieldSlot &
+  Omit<HTMLAttributes<"input">, "value"> & {
+    type: "searchSelect";
+    options?: FieldOption[];
+    endpoint?: string;
+    valueKey?: string;
+    primaryTemplate?: string;
+    secondaryTemplate?: string;
+    inputTemplate?: string;
+    metaTemplate?: string;
+    searchKeys?: string[];
+    limit?: number;
+    minChars?: number;
+    debounce?: number;
+    preloadItem?: Record<string, unknown>;
+  };
+
+export type FieldSlot =
+  | InputFieldSlot
+  | SelectFieldSlot
+  | TextareaFieldSlot
+  | SearchSelectFieldSlot;
 export type FieldType = FieldSlot["type"];
 type InputFieldType = Exclude<FieldType, "select" | "textarea">;
 type SelectFieldType = Exclude<FieldType, "input" | "textarea">;
 
-export type BaseRow = Record<string, string | number | boolean | Date | null | undefined> & { id: string | number };
+export type BaseRow = Record<
+  string,
+  string | number | boolean | Date | null | undefined
+> & { id: string | number };
 
 export type FieldConfig<TRow extends BaseRow = BaseRow> = {
   [K in keyof TRow]?: FieldSlot;

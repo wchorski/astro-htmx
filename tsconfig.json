@@ -10,6 +10,11 @@
       "@lib/*": ["./src/lib/*"],
       "@ty/*": ["./types/*"],
       "@layouts/*": ["./src/layouts/*"]
-    }
+    },
+    "plugins": [
+      {
+        "name": "typescript-plugin-css-modules"
+      }
+    ],
   }
 }

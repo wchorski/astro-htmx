@@ -17,11 +17,12 @@ interface Params {
 let id: string | null | undefined = null;
 let user: UserSelect | null | undefined = null;
 let error: string | ReturnType<ZodError["flatten"]> | null = null;
+const config = tableConfigs.users.required;
 const ctx = {
   crud: "users" as CrudRegistryType,
-  config: tableConfigs.users.required,
+  config,
   endpoint: "/attendance/users",
-  headers: Object.keys(tableConfigs.users.required),
+  headers: Object.keys(config),
 };
 
 const session = TEST_ADMIN_SESSION;
@@ -57,7 +58,7 @@ if (Astro.request.method === "PATCH") {
 
     const payload = {
       ...submitFields,
-      id
+      id,
     };
 
     user = await crud.users.update(payload, session);

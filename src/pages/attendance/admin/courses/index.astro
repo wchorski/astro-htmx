@@ -21,7 +21,10 @@ const { courses, locations, page, perPage, totalCount, totalPages } = result;
   <main>
     <header class="flex space-between">
       <h1>Courses - Page {page}</h1>
-      <ButtonCoursesImport />
+      <div>
+        <ButtonCoursesImport />
+        <a href={WORDPRESS_ENDPOINT + "/events"}>View Wordpress Events</a>
+      </div>
     </header>
     <div class="callout warning">
       <p>

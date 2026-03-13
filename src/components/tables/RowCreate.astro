@@ -4,6 +4,7 @@ import type {
   FieldConfig,
   FieldSlot,
   InputFieldSlot,
+  SearchSelectFieldSlot,
   SelectFieldSlot,
 } from "@ty/FieldConfig";
 import type { CrudRegistryType } from "@lib/crudRegistry";
@@ -12,6 +13,7 @@ import TextareaField from "@components/form/TextareaField.astro";
 import InputField from "@components/form/InputField.astro";
 import { slugify } from "@lib/formatters";
 import { undefined } from "astro:schema";
+import SearchSelect from "@components/form/SearchSelect.astro";
 
 interface Props {
   crud: CrudRegistryType;
@@ -76,6 +78,25 @@ const {
             <TextareaField />
           </td>
         );
+      if (type === "searchSelect") {
+        const {
+          type: _,
+          label: _l,
+          value: _v,
+          ...ssProps
+        } = field as SearchSelectFieldSlot;
+        return (
+          <td data-type={type}>
+            <SearchSelect
+              {...ssProps}
+              id={`ss-create-${key}`}
+              name={key}
+              label={label ?? key}
+              value={override}
+            />
+          </td>
+        );
+      }
       return (
         <td data-type={type}>
           <InputField

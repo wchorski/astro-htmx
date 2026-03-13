@@ -49,10 +49,12 @@ const prettyVal = (() => {
     <span data-id={rawVal}>{prettyVal}</span>
   ) : type === "checkbox" && !rawVal ? (
     <span class="false">false</span>
-  ) : type === "checkbox" && rawVal === true ? (
+  ) : type === "checkbox" && Boolean(rawVal) === true ? (
     <span class="true">true</span>
+  ) : prettyVal ? (
+    <span>{prettyVal}</span>
   ) : (
-    <span>{prettyVal ?? "—"}</span>
+    <span class="sub-text">-</span>
   )
 }
 

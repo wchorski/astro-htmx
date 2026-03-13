@@ -1,40 +1,36 @@
 ---
-// partials/users/:id/edit
-import RowView from "@components/tables/RowView.astro";
-// import UserCard from "@components/UserCard.astro";
-import RowCreateForm from "@components/tables/RowCreate.astro";
+// partials/locations/:id/edit
 import { tableConfigs } from "@lib/tableConfigs";
 import { BadRequestError, errorHandlingOnSubmit } from "@lib/errors";
 import { crud, type CrudRegistryType } from "@lib/crudRegistry";
-import { parseOutUndefinedFormData } from "@lib/sanatizers";
 import { TEST_ADMIN_SESSION } from "@lib/auth/session";
-import type { UserCreditFlat, UserSelect } from "@ty/Schema";
+import type { LocationSelect } from "@ty/Schema";
 import RowEditComponent from "@components/tables/RowEdit.astro";
 
 type ViewType = "table-row" | "card";
 
-let user: UserSelect | null | undefined = null;
+let location: LocationSelect | null | undefined = null;
 let error = null;
 let view: ViewType = "table-row";
 
 const { id } = Astro.params;
-if (!id) throw new BadRequestError("user ID missing in request");
-const config = tableConfigs.users.required;
+if (!id) throw new BadRequestError("location ID missing in request");
+const config = tableConfigs.locations.required;
 const ctx = {
-  crud: "users" as CrudRegistryType,
+  crud: "locations" as CrudRegistryType,
   config,
-  endpoint: "/attendance/users",
+  endpoint: "/attendance/locations",
   headers: Object.keys(config),
 };
 
 if (Astro.request.method === "GET") {
   try {
-    // const session = await requirePermission(Astro.request, "users", "create");
+    // const session = await requirePermission(Astro.request, "locations", "create");
     // TODO
 
     const session = TEST_ADMIN_SESSION;
 
-    user = await crud.users.read(id, session);
+    location = await crud.locations.read(id, session);
   } catch (e) {
     const { err, status } = errorHandlingOnSubmit(e);
     Astro.response.status = status;
@@ -53,13 +49,9 @@ if (Astro.request.method === "GET") {
         {typeof error === "string" ? error : JSON.stringify(error)}
       </td>
     </tr>
-  ) : user && view === "table-row" ? (
+  ) : location && view === "table-row" ? (
     <>
-      <RowEditComponent
-        {...ctx}
-        row={user}
-        error={error}
-      />
+      <RowEditComponent {...ctx} row={location} error={error} />
       <tr id={`row-create-error`} hx-swap-oob="outerHTML" />
     </>
   ) : (

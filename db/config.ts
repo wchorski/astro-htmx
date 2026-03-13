@@ -54,7 +54,12 @@ const Course = defineTable({
     dateCivil: column.text(),
     locationId: column.number({ references: () => Location.columns.id }),
   },
-  indexes: [{ on: ["wpPostId"], unique: true }],
+  // TODO make a joined subject and date
+  indexes: [
+    { on: ["wpPostId"], unique: true },
+    // prevent duplicate entry of same subject, date, and locaiton
+    { on: ["subject", "dateCivil", "locationId"], unique: true },
+  ],
 });
 const Location = defineTable({
   columns: {
