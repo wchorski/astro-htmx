@@ -34,7 +34,7 @@ type CreateFn = (
   row: Omit<TableRow, "id">,
   session: Session,
 ) => Promise<TableRow>;
-type ReadFn = (id: string, session: Session) => Promise<TableRow | null>;
+type ReadFn<T> = (id: string, session: Session) => Promise<T>;
 // type UpdateFn = (
 //   row: Partial<TableRow> & { id: string },
 //   session: Session,
@@ -47,7 +47,7 @@ type DeleteFn = (id: string) => Promise<TableRow>;
 
 type CrudEntry<T = TableRow> = {
   create: CreateFn;
-  read: ReadFn;
+  read: ReadFn<T>;
   update: UpdateFn<T>;
   delete: DeleteFn;
 };
@@ -78,8 +78,11 @@ export const crud = {
         throwErrorsForCRUD(e);
       }
     },
-    read: async (id) => {
+    read: async (id, session) => {
       try {
+        // TODO add in auth. mutation for credit and user maybe tricky
+        // const fields = await creditPolicy.writableFields(session, null);
+        // const sanitized = sanitizeFields(row, fields);
         const validId = validate.id.parse(id);
         const row = await db
           .select()
@@ -92,8 +95,11 @@ export const crud = {
         throwErrorsForCRUD(e);
       }
     },
-    update: async (row) => {
+    update: async (row, session) => {
       try {
+        // TODO add in auth. mutation for credit and user maybe tricky
+        // const fields = await creditPolicy.writableFields(session, null);
+        // const sanitized = sanitizeFields(row, fields);
         const validated = validate.userUpdate.parse(row);
 
         const [result] = await db
