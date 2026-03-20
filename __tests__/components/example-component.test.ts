@@ -1,5 +1,6 @@
 import { experimental_AstroContainer as AstroContainer } from "astro/container";
 import { expect, test } from "vitest";
+// @ts-expect-error
 import Card from "@components/Card.astro";
 
 test("Card with slots", async () => {

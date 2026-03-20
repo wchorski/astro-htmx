@@ -9,6 +9,7 @@
     "preview": "astro preview",
     "astro": "astro",
     "test": "vitest",
+    "test:e2e": "npm run build && playwright test",
     "db:local:schema": "LIBSQL_URL=http://localhost:4320 node db/apply-schema-libsql.ts",
     "db:local:seed": "LIBSQL_URL=http://localhost:4320 node db/seed-libsql.ts",
     "db:prod:schema": "LIBSQL_URL=http://backupnas03:4320 node db/apply-schema-libsql.ts",
@@ -25,6 +26,7 @@
     "htmx.org": "^2.0.8"
   },
   "devDependencies": {
+    "@playwright/test": "^1.58.2",
     "@types/node": "^25.0.10",
     "typescript-plugin-css-modules": "^5.2.0",
     "vitest": "^4.1.0"
