@@ -26,8 +26,6 @@ const ctx = {
   headers: Object.keys(config) as (keyof CourseSelect & string)[],
 };
 
-// console.log({ ctx });
-
 if (Astro.request.method === "GET") {
   try {
     // const session = await requirePermission(Astro.request, "courses", "create");

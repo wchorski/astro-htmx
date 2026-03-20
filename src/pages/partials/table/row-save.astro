@@ -51,7 +51,7 @@ if (Astro.request.method === "PUT") {
     );
   } catch (e) {
     // console.log("❌ partials/table/row-save");
-    // console.log({ e });
+    
     const { err, status } = errorHandlingOnSubmit(e);
     Astro.response.status = status;
     error = err;

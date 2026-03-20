@@ -209,7 +209,7 @@ export const creditConfigRequired = (
       required: true,
       options: users.map((item) => ({
         value: String(item.id),
-        label: item.first_name + " " + item.last_name,
+        label: item.first_name + " " + item.last_name + ` <${item.email}>`,
       })),
     },
     // TODO if user data set is gt 5000, switch to dyamicaly searched and loaded data

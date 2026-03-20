@@ -76,7 +76,6 @@ export const crud = {
 
         return result;
       } catch (e) {
-        // console.log({ e });
         throwErrorsForCRUD(e);
       }
     },

@@ -35,7 +35,6 @@ if (Astro.request.method === "PUT") {
     
   } catch (e) {
     console.log("XXX partials/table/row-edit");
-    console.log({ e });
     const { err, status } = errorHandlingOnSubmit(e);
     Astro.response.status = status;
     error = err;

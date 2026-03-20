@@ -8,23 +8,25 @@
     "build": "astro build --remote",
     "preview": "astro preview",
     "astro": "astro",
+    "test": "vitest",
     "db:local:schema": "LIBSQL_URL=http://localhost:4320 node db/apply-schema-libsql.ts",
     "db:local:seed": "LIBSQL_URL=http://localhost:4320 node db/seed-libsql.ts",
     "db:prod:schema": "LIBSQL_URL=http://backupnas03:4320 node db/apply-schema-libsql.ts",
     "db:prod:seed": "LIBSQL_URL=http://backupnas03:4320 node db/seed-libsql.ts"
   },
   "dependencies": {
-    "@astrojs/db": "^0.19.0",
-    "@astrojs/node": "^9.5.2",
+    "@astrojs/db": "^0.20.1",
+    "@astrojs/node": "^10.0.3",
     "@azure/msal-node": "^5.0.3",
     "@js-temporal/polyfill": "^0.5.1",
-    "astro": "^5.16.12",
+    "astro": "^6.0.7",
     "fast-xml-parser": "^5.3.3",
     "htmx-ext-response-targets": "^2.0.4",
     "htmx.org": "^2.0.8"
   },
   "devDependencies": {
     "@types/node": "^25.0.10",
-    "typescript-plugin-css-modules": "^5.2.0"
+    "typescript-plugin-css-modules": "^5.2.0",
+    "vitest": "^4.1.0"
   }
 }

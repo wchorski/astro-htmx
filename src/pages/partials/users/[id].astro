@@ -83,8 +83,6 @@ if (Astro.request.method === "DELETE") {
 
     user = await crud.users.delete(id);
   } catch (e) {
-    // console.log("partials/users/:id");
-    // console.log(e);
     const { err, status } = errorHandlingOnSubmit(e);
     Astro.response.status = status;
     error = err;

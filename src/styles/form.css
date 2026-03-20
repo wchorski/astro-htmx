@@ -34,6 +34,7 @@ input[name="middle_initial"],
 input[name="courseId"] 
 input[name="locationId"],
 input[name="courseId"],
+input[name="grade"],
 select[name="locationId"] {
   max-width: 10ch;
 }

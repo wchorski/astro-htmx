@@ -132,16 +132,15 @@ export const POST: APIRoute = async ({ request, redirect }) => {
       });
     } else {
       // member does exist
-      const memberCredit = courseCredits.find(
+      const userCredit = courseCredits.find(
         (credit) => credit.userId === memberExists.id,
       );
-      console.log({ memberCredit });
 
-      if (memberCredit && memberCredit.attended)
+      if (userCredit && userCredit.attended)
         return new Response(
           `
             User ${memberExists.id} ${memberExists.first_name}
-            already attended: ${memberCredit.attended}
+            already attended: ${userCredit.attended}
           `,
           { status: 411 },
         );

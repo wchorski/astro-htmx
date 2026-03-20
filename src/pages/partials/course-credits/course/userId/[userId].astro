@@ -23,14 +23,11 @@ const ctx = {
   headers: Object.keys(tableConfigs.courseCredits.required),
 };
 
-console.log(JSON.stringify(ctx, null, 2));
-
 if (Astro.request.method === "POST") {
   try {
     // const session = await requirePermission(Astro.request, "users", "create");
     // TODO
     const { courseId, userId } = Astro.params;
-    console.log({ courseId, userId });
 
     const session = TEST_ADMIN_SESSION;
 
@@ -48,8 +45,6 @@ if (Astro.request.method === "POST") {
       parseOutUndefinedFormData(submitFields),
       session,
     );
-
-    console.log({ newUserCredit });
   } catch (e) {
     const { err, status } = errorHandlingOnSubmit(e);
     Astro.response.status = status;
