@@ -1,5 +1,5 @@
 import { z } from "astro/zod";
-import { formatPhoneToE164Manual } from "./formatters";
+import { normalizePhoneToE164Manual } from "./formatters";
 
 export const validate = {
   id: z.coerce.number(),
@@ -17,7 +17,7 @@ export const validate = {
     phone: z
       .string()
       .trim()
-      .transform((val) => formatPhoneToE164Manual(val))
+      .transform((val) => normalizePhoneToE164Manual(val))
       .refine((val) => val !== null, "Phone must be 10 digits or E.164 format"),
     email: z.string().trim().toLowerCase().email("Invalid email address"),
     address1: z.string().trim().min(3, "Must be more than 3 characters"),
@@ -32,7 +32,10 @@ export const validate = {
       .trim()
       .toLowerCase()
       .min(3, "Must be more than 3 characters"),
-    zip: z.coerce.number().min(10000).max(99999, "Invalid ZIP code"),
+    zip: z.coerce
+      .number()
+      .min(10000, "Invalid ZIP code")
+      .max(99999, "Invalid ZIP code"),
   }),
 
   get userCreate() {
@@ -77,7 +80,7 @@ export const validate = {
     address: z.string().min(3, "Must be more than 3 characters"),
     city: z.string().min(3, "Must be more than 3 characters"),
     state: z.string().min(2, "Must be more than 3 characters"),
-    zip: z.coerce.number().min(10000).max(99999, "Invalid ZIP code"),
+    zip: z.coerce.number().min(10000, "Invalid ZIP code").max(99999, "Invalid ZIP code"),
     timezone: z.string().min(8, "Must be more than 8 characters"),
     description: z.string().optional(),
   }),
@@ -126,7 +129,7 @@ export const validate = {
       phone: z
         .string()
         .trim()
-        .transform((val) => formatPhoneToE164Manual(val))
+        .transform((val) => normalizePhoneToE164Manual(val))
         .refine(
           (val) => val !== null,
           "Phone must be 10 digits or E.164 format",

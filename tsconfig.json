@@ -9,6 +9,7 @@
       "@partials/*": ["./src/pages/partials/*"],
       "@lib/*": ["./src/lib/*"],
       "@ty/*": ["./types/*"],
+      "@db/*": ["./db/*"],
       "@layouts/*": ["./src/layouts/*"]
     },
     "plugins": [

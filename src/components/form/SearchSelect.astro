@@ -1,5 +1,4 @@
 ---
-// todo make this into web component <search-select>
 /**
  * SearchSelect.astro
  * ─────────────────────────────────────────────────────────────────────────────
@@ -78,71 +77,41 @@
  *  GET {endpoint}?q=<string>&limit=<number>
  *  Response: JSON array  →  [{ id, firstName, ... }, ...]
  *
- *  Example Astro API route  (src/pages/api/users/search.ts):
- *
- *    export const GET: APIRoute = async ({ url }) => {
- *      const q     = url.searchParams.get('q') ?? '';
- *      const limit = Number(url.searchParams.get('limit') ?? 20);
- *      const users = await db.users.findMany({
- *        where: {
- *          OR: [
- *            { firstName: { contains: q, mode: 'insensitive' } },
- *            { lastName:  { contains: q, mode: 'insensitive' } },
- *            { email:     { contains: q, mode: 'insensitive' } },
- *          ],
- *        },
- *        take: limit,
- *        select: { id: true, firstName: true, lastName: true, email: true },
- *      });
- *      return new Response(JSON.stringify(users), {
- *        headers: { 'Content-Type': 'application/json' },
- *      });
- *    };
- *
  * ── Events ───────────────────────────────────────────────────────────────────
  *  root element emits  "ss:change"
  *    e.detail  →  full raw item object on selection, or null when cleared
- *
- * ── Other props ──────────────────────────────────────────────────────────────
- *   name        — hidden <input> name          (default: "value")
- *   label       — visible label text           (default: "Select")
- *   placeholder — input placeholder            (default: "Search…")
- *   value       — pre-selected value key
- *   required    — marks hidden input required  (default: false)
- *   id          — base element id — MUST be unique per page  (default: "ss")
  */
 
-type AnyRecord = Record<string, unknown>;
+import type { HTMLAttributes } from "astro/types";
 
+type AnyRecord = Record<string, unknown>;
 type FieldOption = { value: string; label: string };
 
-interface Props {
+// Extend <input> — omit value/type since we control those ourselves
+type Props = {
   // data — one of these three is required
-  options?: FieldOption[]; // pre-mapped pairs, same as SelectField
-  items?: AnyRecord[]; // raw records + templates (static)
-  endpoint?: string; // async API
-  // templates — required when using `items` or `endpoint`, not needed for `options`
+  options?: FieldOption[]; // pre-mapped { value, label } pairs
+  items?: AnyRecord[]; // raw records + templates (static mode)
+  endpoint?: string; // async API URL
+  // templates — required when using `items` or `endpoint`
   valueKey?: string;
   primaryTemplate?: string;
   secondaryTemplate?: string;
   inputTemplate?: string;
   metaTemplate?: string;
   searchKeys?: string[];
-  // async options
+  // async knobs
   limit?: number;
   minChars?: number;
   debounce?: number;
   preloadItem?: AnyRecord;
-  // form / display
-  name?: string;
+  // display
   label?: string;
-  placeholder?: string;
   value?: string | number;
-  required?: boolean;
-  id?: string;
-}
+} & Omit<HTMLAttributes<"input">, "value" | "type">;
 
 const {
+  // SearchSelect-specific logic props
   options,
   items = [],
   endpoint,
@@ -156,12 +125,14 @@ const {
   minChars = 2,
   debounce = 300,
   preloadItem,
-  name = "value",
   label = "Select",
-  placeholder = "Search…",
   value,
-  required = false,
+  // Native attrs needed server-side (id builds element IDs; name/required split across inputs)
   id = "ss",
+  name = "value",
+  required,
+  // Everything else (placeholder, disabled, data-*, aria-*, class…) spreads onto the visible input
+  ...inputAttrs
 } = Astro.props;
 
 const isAsync = Boolean(endpoint);
@@ -184,13 +155,11 @@ const resolvedSearchKeys = searchKeys ?? allTemplateKeys;
 const resolvedInputTpl = inputTemplate ?? primaryTemplate;
 
 // ── Build the serialised item list ────────────────────────────────────────
-// options path: pre-mapped { value, label } pairs — no templates needed
-// items path:   raw records resolved through templates
 const serialisedItems = isAsync
   ? "[]"
   : JSON.stringify(
       options
-        ? options.map((o) => ({
+        ? options.map((o: { value: string; label: string }) => ({
             _value: o.value,
             _primary: o.label,
             _secondary: "",
@@ -199,7 +168,7 @@ const serialisedItems = isAsync
             _search: o.label,
             _raw: o,
           }))
-        : items.map((item) => ({
+        : items.map((item: AnyRecord) => ({
             _value: String(item[valueKey] ?? ""),
             _primary: applyTemplate(primaryTemplate, item),
             _secondary: secondaryTemplate
@@ -208,7 +177,7 @@ const serialisedItems = isAsync
             _input: applyTemplate(resolvedInputTpl, item),
             _meta: metaTemplate ? applyTemplate(metaTemplate, item) : "",
             _search: resolvedSearchKeys
-              .map((k) => String(item[k] ?? ""))
+              .map((k: string) => String(item[k] ?? ""))
               .join(" "),
             _raw: item,
           })),
@@ -218,8 +187,10 @@ const serialisedItems = isAsync
 const preItemSource = isAsync
   ? preloadItem
   : options
-    ? options.find((o) => o.value === String(value))
-    : items.find((i) => String(i[valueKey]) === String(value));
+    ? options.find(
+        (o: { value: string; label: string }) => o.value === String(value),
+      )
+    : items.find((item: AnyRecord) => String(item[valueKey]) === String(value));
 const preInput = preItemSource
   ? options
     ? (preItemSource as FieldOption).label
@@ -247,9 +218,12 @@ const clientConfig = JSON.stringify({
   searchKeys: resolvedSearchKeys,
   valueKey,
 });
+
+const badgeCount = options?.length ?? items.length;
+// console.log({ options, items });
 ---
 
-<div
+<search-select
   class="ss-root"
   id={id}
   data-items={serialisedItems}
@@ -262,12 +236,13 @@ const clientConfig = JSON.stringify({
       {
         isAsync
           ? "type to search"
-          : `${items.length} ${items.length === 1 ? "option" : "options"}`
+          : `${badgeCount} ${badgeCount === 1 ? "option" : "options"}`
       }
     </span>
   </div>
 
   <div class="ss-combobox" id={`${id}-combobox`}>
+    <!-- Hidden input carries the real value for form submission -->
     <input
       type="hidden"
       id={`${id}-hidden`}
@@ -306,13 +281,18 @@ const clientConfig = JSON.stringify({
         ></path>
       </svg>
 
+      <!--
+        Visible combobox input — spreads all remaining native <input> attrs
+        (placeholder, disabled, data-*, aria-*, class overrides, etc.).
+        Explicit attrs after the spread win, so class/type/id/value are safe.
+      -->
       <input
+        {...inputAttrs}
         class="ss-input"
         id={`${id}-input`}
         type="text"
-        placeholder={placeholder}
         autocomplete="off"
-        spellcheck="false"
+        spellcheck={false}
         role="combobox"
         aria-expanded="false"
         aria-autocomplete="list"
@@ -362,12 +342,408 @@ const clientConfig = JSON.stringify({
       aria-label={label}
     >
       <div class="ss-drop-header" id={`${id}-drop-header`}></div>
-      <div class="ss-list" id={`${id}-list`}></div>
+      <ul class="ss-list" id={`${id}-list`}></ul>
     </div>
   </div>
-</div>
 
-<!-- ─── Styles ──────────────────────────────────────────────────────────── -->
+  <template data-tpl="option">
+    <li class="ss-option" role="option">
+      <div class="ss-option-body">
+        <div class="ss-avatar pill"></div>
+        <div>
+          <div class="ss-primary"></div>
+          <div class="ss-secondary"></div>
+        </div>
+      </div>
+      <span class="ss-meta"></span>
+    </li>
+  </template>
+
+  <template data-tpl="empty">
+    <div class="ss-empty">
+      <div class="ss-empty-text"></div>
+      <small class="ss-empty-sub"></small>
+    </div>
+  </template>
+
+  <template data-tpl="skeleton">
+    <div class="ss-skeleton">
+      <div class="ss-skel-row">
+        <div class="ss-skel-avatar"></div>
+        <div class="ss-skel-lines">
+          <div class="ss-skel-line"></div>
+          <div class="ss-skel-line short"></div>
+        </div>
+        <div class="ss-skel-pill"></div>
+      </div>
+    </div>
+  </template>
+</search-select>
+
+<script>
+import { undefined } from "astro:schema";
+
+  type AnyRecord = Record<string, unknown>;
+
+  type SerialisedItem = {
+    _value: string;
+    _primary: string;
+    _secondary: string;
+    _input: string;
+    _meta: string;
+    _search: string;
+    _raw: AnyRecord;
+  };
+
+  type Config = {
+    isAsync: boolean;
+    endpoint: string;
+    limit: number;
+    minChars: number;
+    debounce: number;
+    primaryTemplate: string;
+    secondaryTemplate: string;
+    inputTemplate: string;
+    metaTemplate: string;
+    searchKeys: string[];
+    valueKey: string;
+  };
+
+  type State = {
+    results: SerialisedItem[];
+    pool: SerialisedItem[];
+    selVal: string;
+    hlIdx: number;
+    timer: ReturnType<typeof setTimeout> | null;
+    ctrl: AbortController | null;
+    cache: Map<string, SerialisedItem[]>;
+  };
+
+  class SearchSelect extends HTMLElement {
+    private cfg!: Config;
+    private state: State;
+
+    private cb!: HTMLElement;
+    private input!: HTMLInputElement;
+    private hidden!: HTMLInputElement;
+    private clearBtn!: HTMLButtonElement;
+    private list!: HTMLElement;
+    private hdr!: HTMLElement;
+    private badge!: HTMLElement;
+
+    private tpl!: {
+      option: HTMLTemplateElement;
+      empty: HTMLTemplateElement;
+      skeleton: HTMLTemplateElement;
+    };
+
+    constructor() {
+      super();
+
+      this.state = {
+        results: [],
+        pool: [],
+        selVal: "",
+        hlIdx: -1,
+        timer: null,
+        ctrl: null,
+        cache: new Map(),
+      };
+    }
+
+    connectedCallback() {
+      this.cfg = JSON.parse(this.dataset.config ?? "{}");
+      this.state.pool = JSON.parse(this.dataset.items ?? "[]");
+      this.state.selVal = this.dataset.preValue ?? "";
+
+      // ✅ scoped queries ONLY inside this component
+      this.cb = this.querySelector(".ss-combobox");
+      this.input = this.querySelector(".ss-input");
+      this.hidden = this.querySelector('input[type="hidden"]');
+      this.clearBtn = this.querySelector(".ss-clear");
+      this.list = this.querySelector(".ss-list");
+      this.hdr = this.querySelector(".ss-drop-header");
+      this.badge = this.querySelector(".ss-badge");
+
+      // templates
+      this.tpl = {
+        option: this.querySelector('template[data-tpl="option"]'),
+        empty: this.querySelector('template[data-tpl="empty"]'),
+        skeleton: this.querySelector('template[data-tpl="skeleton"]'),
+      };
+
+      if (!this.cfg.isAsync) {
+        this.state.results = [...this.state.pool];
+        this.renderStatic();
+      } else {
+        this.setHdr("Type to search");
+        this.renderEmpty("Type to search", "");
+      }
+
+      this.bindEvents();
+    }
+
+    disconnectedCallback() {
+      document.removeEventListener("mousedown", this.handleClickOutside);
+    }
+
+    // ── helpers ─────────────────────────────────────
+    setHdr(text) {
+      this.hdr.textContent = text;
+    }
+
+    setBadge(text) {
+      this.badge.textContent = text;
+    }
+
+    initials(text) {
+      return text
+        .trim()
+        .split(/\s+/)
+        .slice(0, 2)
+        .map((w) => w[0] ?? "")
+        .join("")
+        .toUpperCase();
+    }
+
+    // ── render ──────────────────────────────────────
+    renderList(items, q = "") {
+      this.list.innerHTML = "";
+
+      if (!items.length) {
+        this.renderEmpty("No matches found", "Try a different search term");
+        return;
+      }
+
+      items.forEach((item, i) => {
+        const node = this.tpl.option.content.cloneNode(true);
+        const el = node.querySelector(".ss-option");
+
+        el.dataset.value = item._value;
+        el.dataset.idx = i;
+
+        if (item._value === this.state.selVal) el.classList.add("sel");
+        if (i === this.state.hlIdx) el.classList.add("hl");
+
+        node.querySelector(".ss-avatar").textContent = this.initials(
+          item._primary,
+        );
+
+        node.querySelector(".ss-primary").textContent = item._primary;
+
+        const sec = node.querySelector(".ss-secondary");
+        if (item._secondary) sec.textContent = item._secondary;
+        else sec.remove();
+
+        const meta = node.querySelector(".ss-meta");
+        if (item._meta) meta.textContent = item._meta;
+        else meta.remove();
+
+        this.list.appendChild(node);
+      });
+    }
+
+    renderEmpty(text, sub) {
+      this.list.innerHTML = "";
+      const node = this.tpl.empty.content.cloneNode(true);
+      node.querySelector(".ss-empty-text").textContent = text;
+      node.querySelector(".ss-empty-sub").textContent = sub;
+      this.list.appendChild(node);
+    }
+
+    renderSkeleton() {
+      this.list.innerHTML = "";
+      for (let i = 0; i < 5; i++) {
+        this.list.appendChild(this.tpl.skeleton.content.cloneNode(true));
+      }
+    }
+
+    renderStatic() {
+      const q = this.input.value.trim().toLowerCase();
+      this.state.results = this.state.pool.filter((it) =>
+        it._search.toLowerCase().includes(q),
+      );
+
+      this.setHdr(`${this.state.results.length} results`);
+      this.setBadge(`${this.state.results.length}`);
+
+      this.renderList(this.state.results, q);
+    }
+
+    async fetchAsync(q) {
+      if (this.state.cache.has(q)) {
+        this.state.results = this.state.cache.get(q);
+        this.renderList(this.state.results, q);
+        return;
+      }
+
+      this.state.ctrl?.abort();
+      this.state.ctrl = new AbortController();
+
+      this.renderSkeleton();
+
+      try {
+        const res = await fetch(
+          `${this.cfg.endpoint}?q=${encodeURIComponent(q)}&limit=${this.cfg.limit}`,
+          { signal: this.state.ctrl.signal },
+        );
+
+        const raw = await res.json();
+        this.state.results = raw.map((r) => this.toItem(r));
+        this.state.cache.set(q, this.state.results);
+
+        this.renderList(this.state.results, q);
+      } catch {
+        this.renderEmpty("Request failed", "");
+      }
+    }
+
+    toItem(raw) {
+      const cfg = this.cfg;
+
+      const apply = (tpl) => tpl.replace(/\{(\w+)\}/g, (_, k) => raw[k] ?? "");
+
+      return {
+        _value: String(raw[cfg.valueKey] ?? ""),
+        _primary: apply(cfg.primaryTemplate),
+        _secondary: cfg.secondaryTemplate ? apply(cfg.secondaryTemplate) : "",
+        _input: apply(cfg.inputTemplate),
+        _meta: cfg.metaTemplate ? apply(cfg.metaTemplate) : "",
+        _search: cfg.searchKeys.map((k) => raw[k] ?? "").join(" "),
+        _raw: raw,
+      };
+    }
+
+    // ── actions ─────────────────────────────────────
+    select(val) {
+      const item = this.state.results.find((i) => i._value === val);
+      if (!item) return;
+
+      this.state.selVal = val;
+      this.hidden.value = val;
+      this.input.value = item._input;
+
+      this.dispatchEvent(new CustomEvent("ss:change", { detail: item._raw }));
+    }
+
+    clear() {
+      this.state.selVal = "";
+      this.hidden.value = "";
+      this.input.value = "";
+      this.renderStatic();
+    }
+
+    private open() {
+      this.cb.classList.add("open");
+      this.input.setAttribute("aria-expanded", "true");
+
+      if (!this.cfg.isAsync) {
+        this.renderStatic();
+      } else {
+        const q = this.input.value.trim();
+        if (this.state.results.length) {
+          this.renderList(this.state.results);
+        } else {
+          this.renderEmpty("Type to search", "");
+        }
+      }
+    }
+
+    private close() {
+      this.cb.classList.remove("open");
+      this.input.setAttribute("aria-expanded", "false");
+      this.state.hlIdx = -1;
+    }
+
+    private handleClickOutside = (e: MouseEvent) => {
+      if (!this.contains(e.target as Node)) {
+        this.close();
+      }
+    };
+
+    // ── events ──────────────────────────────────────
+    private bindEvents() {
+      // ── open ─────────────────────────────
+      this.input.addEventListener("focus", () => {
+        if (this.input.hasAttribute("data-locked")) return;
+        this.open();
+      });
+
+      this.input.addEventListener("click", () => {
+        if (this.input.hasAttribute("data-locked")) return;
+        this.open();
+      });
+
+      // ── typing ───────────────────────────
+      this.input.addEventListener("input", () => {
+        if (!this.cb.classList.contains("open")) this.open();
+
+        this.state.selVal = "";
+        this.hidden.value = "";
+
+        if (this.cfg.isAsync) {
+          const q = this.input.value.trim();
+          if (q.length < this.cfg.minChars) {
+            this.renderEmpty("Type to search", "");
+            return;
+          }
+          this.fetchAsync(q);
+        } else {
+          this.renderStatic();
+        }
+      });
+
+      // ── keyboard ─────────────────────────
+      this.input.addEventListener("keydown", (e: KeyboardEvent) => {
+        if (!this.cb.classList.contains("open")) {
+          this.open();
+          return;
+        }
+
+        if (e.key === "Escape") {
+          const all = this.cfg.isAsync ? this.state.results : this.state.pool;
+
+          const hit = all.find((it) => it._value === this.state.selVal);
+
+          this.input.value = hit ? hit._input : "";
+          this.close();
+        }
+
+        if (e.key === "Tab") {
+          this.close();
+        }
+      });
+
+      // ── select ───────────────────────────
+      this.list.addEventListener("mousedown", (e) => {
+        const opt = (e.target as HTMLElement).closest(".ss-option");
+        if (opt) {
+          e.preventDefault();
+          this.select(opt.dataset.value!);
+          this.cb.classList.add("has-value");
+          this.input.dataset.locked = "true"
+          this.input.disabled = true
+          this.close();
+        }
+      });
+
+      // ── clear ────────────────────────────
+      this.clearBtn.addEventListener("mousedown", (e) => {
+        e.preventDefault();
+        this.cb.classList.remove("has-value");
+        this.input.disabled = false
+        delete this.input.dataset.locked
+        this.clear();
+      });
+
+      // ── outside click (CRITICAL FIX) ─────
+      document.addEventListener("mousedown", this.handleClickOutside);
+    }
+  }
+
+  customElements.define("search-select", SearchSelect);
+</script>
+
 <style>
   .ss-root {
     --surface: #141418;
@@ -508,12 +884,8 @@ const clientConfig = JSON.stringify({
     opacity: 1;
     pointer-events: auto;
   }
-  .ss-combobox.has-value .ss-input {
-    cursor: default;
-  }
 
   .ss-combobox.has-value .ss-trigger {
-    /* subtle locked appearance — still looks selected, not disabled */
     border-color: rgba(91, 84, 240, 0.4);
   }
   .ss-combobox:has(input[data-locked]) {
@@ -546,7 +918,7 @@ const clientConfig = JSON.stringify({
 
   /* dropdown */
   .ss-dropdown {
-    width: fit-content;
+    /* width: auto; */
     position: absolute;
     top: calc(100% + 6px);
     left: 0;
@@ -625,6 +997,7 @@ const clientConfig = JSON.stringify({
     scrollbar-color: var(--border) transparent;
     display: grid;
     gap: 0.3rem;
+    list-style: none;
   }
   .ss-list::-webkit-scrollbar {
     width: 4px;
@@ -654,7 +1027,7 @@ const clientConfig = JSON.stringify({
     background: var(--accent-soft);
   }
 
-  .ss-avatar {
+  :global(.ss-avatar) {
     width: 30px;
     height: 30px;
     border-radius: 8px;
@@ -677,7 +1050,7 @@ const clientConfig = JSON.stringify({
     border-color: transparent;
   }
 
-  .ss-option-body {
+  :global(.ss-option-body) {
     min-width: 0;
     display: flex;
     gap: 0.5rem;
@@ -809,401 +1182,3 @@ const clientConfig = JSON.stringify({
     color: rgba(232, 160, 48, 0.55);
   }
 </style>
-
-<!-- ─── Client script ────────────────────────────────────────────────────── -->
-<script>
-  type SerialisedItem = {
-    _value: string;
-    _primary: string;
-    _secondary: string;
-    _input: string;
-    _meta: string;
-    _search: string;
-    _raw: Record<string, unknown>;
-  };
-
-  type Cfg = {
-    isAsync: boolean;
-    endpoint: string;
-    limit: number;
-    minChars: number;
-    debounce: number;
-    primaryTemplate: string;
-    secondaryTemplate: string;
-    inputTemplate: string;
-    metaTemplate: string;
-    searchKeys: string[];
-    valueKey: string;
-  };
-
-  // ── Template helpers ───────────────────────────────────────────────────────
-  function applyTpl(tpl: string, item: Record<string, unknown>) {
-    return tpl.replace(/\{(\w+)\}/g, (_, k) => String(item[k] ?? ""));
-  }
-
-  function toItem(raw: Record<string, unknown>, cfg: Cfg): SerialisedItem {
-    return {
-      _value: String(raw[cfg.valueKey] ?? ""),
-      _primary: applyTpl(cfg.primaryTemplate, raw),
-      _secondary: cfg.secondaryTemplate
-        ? applyTpl(cfg.secondaryTemplate, raw)
-        : "",
-      _input: applyTpl(cfg.inputTemplate, raw),
-      _meta: cfg.metaTemplate ? applyTpl(cfg.metaTemplate, raw) : "",
-      _search: cfg.searchKeys.map((k) => String(raw[k] ?? "")).join(" "),
-      _raw: raw,
-    };
-  }
-
-  function initials(text: string) {
-    return text
-      .trim()
-      .split(/\s+/)
-      .slice(0, 2)
-      .map((w) => w[0] ?? "")
-      .join("")
-      .toUpperCase();
-  }
-
-  function hlText(text: string, q: string) {
-    if (!q) return text;
-    const i = text.toLowerCase().indexOf(q.toLowerCase());
-    if (i === -1) return text;
-    return (
-      text.slice(0, i) +
-      `<mark>${text.slice(i, i + q.length)}</mark>` +
-      text.slice(i + q.length)
-    );
-  }
-
-  function skeletonHTML(n = 5) {
-    return `<div class="ss-skeleton">${Array.from(
-      { length: n },
-      () => `
-      <div class="ss-skel-row">
-        <div class="ss-skel-avatar"></div>
-        <div class="ss-skel-lines"><div class="ss-skel-line"></div><div class="ss-skel-line short"></div></div>
-        <div class="ss-skel-pill"></div>
-      </div>`,
-    ).join("")}</div>`;
-  }
-
-  // ── Mount each instance ────────────────────────────────────────────────────
-  document.querySelectorAll<HTMLElement>(".ss-root").forEach((root) => {
-    const rootId = root.id;
-    const cfg = JSON.parse(root.dataset.config ?? "{}") as Cfg;
-    const pool = JSON.parse(root.dataset.items ?? "[]") as SerialisedItem[]; // static only
-
-    const cb = root.querySelector<HTMLElement>(`#${rootId}-combobox`)!;
-    const input = root.querySelector<HTMLInputElement>(`#${rootId}-input`)!;
-    const hidden = root.querySelector<HTMLInputElement>(`#${rootId}-hidden`)!;
-    const clearEl = root.querySelector<HTMLButtonElement>(`#${rootId}-clear`)!;
-    const list = root.querySelector<HTMLElement>(`#${rootId}-list`)!;
-    const hdr = root.querySelector<HTMLElement>(`#${rootId}-drop-header`)!;
-    const badge = root.querySelector<HTMLElement>(`#${rootId}-badge`)!;
-
-    let selVal = root.dataset.preValue ?? "";
-    let hlIdx = -1;
-    let results: SerialisedItem[] = cfg.isAsync ? [] : [...pool];
-
-    // async housekeeping
-    let timer: ReturnType<typeof setTimeout> | null = null;
-    let ctrl: AbortController | null = null;
-    const cache = new Map<string, SerialisedItem[]>();
-
-    // ── UI helpers ───────────────────────────────────────────────
-    function setHdr(text: string, dots = false) {
-      hdr.innerHTML = dots
-        ? `${text} <span class="ss-dots"><span></span><span></span><span></span></span>`
-        : text;
-    }
-
-    function setBadge(text: string, cls: "" | "loading" | "error" = "") {
-      badge.textContent = text;
-      badge.className = "ss-badge" + (cls ? ` ${cls}` : "");
-    }
-
-    // ── Render list ──────────────────────────────────────────────
-    function render(items: SerialisedItem[], q: string) {
-      if (items.length === 0) {
-        const need = cfg.isAsync && q.length < cfg.minChars;
-        const rem = cfg.minChars - q.length;
-        list.innerHTML = `<div class="ss-empty${need ? "" : ""}">
-          ${
-            need
-              ? `Type ${rem} more character${rem === 1 ? "" : "s"} to search`
-              : "No matches found"
-          }
-          ${need ? "" : "<small>Try a different search term</small>"}
-        </div>`;
-        return;
-      }
-
-      list.innerHTML = items
-        .map(
-          (item, i) => `
-        <div
-          class="ss-option${item._value === selVal ? " sel" : ""}${i === hlIdx ? " hl" : ""}"
-          data-value="${item._value}" data-idx="${i}"
-          role="option" aria-selected="${item._value === selVal}"
-        >
-          
-          <div class="ss-option-body">
-            <div class="ss-avatar pill">${initials(item._primary)}</div>
-            <div class="ss-primary">${hlText(item._primary, q)}</div>
-            ${item._secondary ? `<div class="ss-secondary">${hlText(item._secondary, q)}</div>` : ""}
-          </div>
-          ${item._meta ? `<span class="ss-meta">${item._meta}</span>` : ""}
-        </div>`,
-        )
-        .join("");
-
-      if (hlIdx >= 0)
-        list
-          .querySelector<HTMLElement>(`[data-idx="${hlIdx}"]`)
-          ?.scrollIntoView({ block: "nearest" });
-    }
-
-    // ── Static mode ──────────────────────────────────────────────
-    function renderStatic() {
-      const q = input.value.trim();
-      results = pool.filter((it) =>
-        it._search.toLowerCase().includes(q.toLowerCase()),
-      );
-      setHdr(
-        q
-          ? `${results.length} result${results.length !== 1 ? "s" : ""} for "${q}"`
-          : `${pool.length} option${pool.length !== 1 ? "s" : ""}`,
-      );
-      setBadge(
-        q
-          ? `${results.length} / ${pool.length}`
-          : `${pool.length} option${pool.length !== 1 ? "s" : ""}`,
-      );
-      render(results, q);
-    }
-
-    // ── Async fetch ──────────────────────────────────────────────
-    async function doFetch(q: string) {
-      // serve from cache first
-      if (cache.has(q)) {
-        results = cache.get(q)!;
-        hlIdx = -1;
-        setHdr(
-          `${results.length} result${results.length !== 1 ? "s" : ""} for "${q}"`,
-        );
-        setBadge(`${results.length} results`);
-        cb.classList.remove("fetching", "err");
-        render(results, q);
-        return;
-      }
-
-      ctrl?.abort();
-      ctrl = new AbortController();
-
-      cb.classList.add("fetching");
-      cb.classList.remove("err");
-      setHdr("Searching", true);
-      setBadge("searching…", "loading");
-      list.innerHTML = skeletonHTML(5);
-
-      try {
-        const res = await fetch(
-          `${cfg.endpoint}?q=${encodeURIComponent(q)}&limit=${cfg.limit}`,
-          { signal: ctrl.signal },
-        );
-        if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
-
-        const raw: Record<string, unknown>[] = await res.json();
-        const items = raw.map((r) => toItem(r, cfg));
-
-        cache.set(q, items);
-        results = items;
-        hlIdx = -1;
-
-        cb.classList.remove("fetching");
-        setHdr(
-          `${items.length} result${items.length !== 1 ? "s" : ""} for "${q}"`,
-        );
-        setBadge(`${items.length} results`);
-        render(items, q);
-      } catch (e: unknown) {
-        if ((e as Error).name === "AbortError") return;
-        cb.classList.remove("fetching");
-        cb.classList.add("err");
-        setHdr("Request failed");
-        setBadge("error", "error");
-        list.innerHTML = `<div class="ss-empty warn">Could not load results<small>${(e as Error).message}</small></div>`;
-      }
-    }
-
-    function scheduleSearch(q: string) {
-      if (timer) clearTimeout(timer);
-      if (q.length < cfg.minChars) {
-        cb.classList.remove("fetching", "err");
-        results = [];
-        hlIdx = -1;
-        setHdr("Type to search");
-        setBadge("type to search");
-        render([], q);
-        return;
-      }
-      timer = setTimeout(() => doFetch(q), cfg.debounce);
-    }
-
-    // ── Open / close ─────────────────────────────────────────────
-    function open() {
-      cb.classList.add("open");
-      input.setAttribute("aria-expanded", "true");
-      if (cfg.isAsync) {
-        const q = input.value.trim();
-        if (results.length > 0) render(results, q);
-        else {
-          render([], q);
-          if (q.length < cfg.minChars) setHdr("Type to search");
-        }
-      } else {
-        hlIdx = selVal ? results.findIndex((it) => it._value === selVal) : -1;
-        renderStatic();
-      }
-    }
-
-    function close() {
-      cb.classList.remove("open");
-      input.setAttribute("aria-expanded", "false");
-      hlIdx = -1;
-    }
-
-    // ── Select / clear ───────────────────────────────────────────
-    function select(val: string) {
-      const item =
-        results.find((it) => it._value === val) ??
-        pool.find((it) => it._value === val);
-      if (!item) return;
-      selVal = val;
-      hidden.value = val;
-      input.value = item._input;
-      cb.classList.add("has-value");
-      cb.classList.remove("err");
-      input.setAttribute("readonly", ""); // ← lock
-      input.setAttribute("data-locked", "");
-      cb.classList.add("has-value");
-      close();
-      root.dispatchEvent(
-        new CustomEvent("ss:change", { bubbles: true, detail: item._raw }),
-      );
-    }
-
-    function clear() {
-      if (timer) clearTimeout(timer);
-      ctrl?.abort();
-      selVal = "";
-      hidden.value = "";
-      input.value = "";
-      results = cfg.isAsync ? [] : [...pool];
-      cb.classList.remove("has-value", "fetching", "err");
-      if (cfg.isAsync) {
-        setHdr("Type to search");
-        setBadge("type to search");
-        render([], "");
-      } else renderStatic();
-      input.removeAttribute("readonly"); // ← unlock
-      input.removeAttribute("data-locked");
-
-      input.focus();
-      root.dispatchEvent(
-        new CustomEvent("ss:change", { bubbles: true, detail: null }),
-      );
-    }
-
-    // ── Events ───────────────────────────────────────────────────
-    input.addEventListener("focus", () => {
-      if (input.hasAttribute("data-locked")) return; // ← ignore if locked
-      open();
-    });
-
-    input.addEventListener("click", () => {
-      if (input.hasAttribute("data-locked")) return; // ← ignore if locked
-      open();
-    });
-
-    input.addEventListener("input", () => {
-      if (!cb.classList.contains("open")) open();
-      selVal = "";
-      hidden.value = "";
-      cb.classList.remove("err");
-      cb.classList.toggle("has-value", input.value.length > 0);
-      hlIdx = -1;
-      cfg.isAsync ? scheduleSearch(input.value.trim()) : renderStatic();
-    });
-
-    input.addEventListener("keydown", (e) => {
-      if (!cb.classList.contains("open")) {
-        open();
-        return;
-      }
-      if (e.key === "ArrowDown") {
-        e.preventDefault();
-        hlIdx = Math.min(hlIdx + 1, results.length - 1);
-        cfg.isAsync ? render(results, input.value.trim()) : renderStatic();
-      } else if (e.key === "ArrowUp") {
-        e.preventDefault();
-        hlIdx = Math.max(hlIdx - 1, 0);
-        cfg.isAsync ? render(results, input.value.trim()) : renderStatic();
-      } else if (e.key === "Enter") {
-        e.preventDefault();
-        const t =
-          hlIdx >= 0
-            ? results[hlIdx]
-            : results.length === 1
-              ? results[0]
-              : null;
-        if (t) select(t._value);
-      } else if (e.key === "Escape") {
-        const all = cfg.isAsync ? results : pool;
-        const hit = all.find((it) => it._value === selVal);
-        input.value = hit ? hit._input : "";
-        if (!hit) cb.classList.remove("has-value");
-        close();
-      } else if (e.key === "Tab") {
-        close();
-      }
-    });
-
-    list.addEventListener("mousedown", (e) => {
-      const opt = (e.target as Element).closest<HTMLElement>(".ss-option");
-      if (opt) {
-        e.preventDefault();
-        select(opt.dataset.value!);
-      }
-    });
-
-    list.addEventListener("mousemove", (e) => {
-      const opt = (e.target as Element).closest<HTMLElement>(".ss-option");
-      if (opt) {
-        const i = parseInt(opt.dataset.idx!);
-        if (i !== hlIdx) {
-          hlIdx = i;
-          cfg.isAsync ? render(results, input.value.trim()) : renderStatic();
-        }
-      }
-    });
-
-    clearEl.addEventListener("mousedown", (e) => {
-      e.preventDefault();
-      clear();
-    });
-
-    document.addEventListener("mousedown", (e) => {
-      if (!root.contains(e.target as Node)) close();
-    });
-
-    // ── Init ─────────────────────────────────────────────────────
-    if (selVal) cb.classList.add("has-value");
-    if (!cfg.isAsync) renderStatic();
-    else {
-      setHdr("Type to search");
-      render([], "");
-    }
-  });
-</script>

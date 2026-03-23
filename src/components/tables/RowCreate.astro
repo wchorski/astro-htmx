@@ -20,8 +20,6 @@ interface Props {
   config: FieldConfig;
   headers: string[];
   actionUrl?: string;
-  // error?: string | Record<string, any>;
-  // values?: Record<string, any>;
 }
 
 const {
@@ -30,14 +28,6 @@ const {
   headers,
   actionUrl = `/partials/${slugify(crud)}/create`,
 } = Astro.props;
-
-// TODO can remove all errors (handle by partial swapping)
-// const topLevelError =
-//   typeof error === "string"
-//     ? error
-//     : typeof error === "object" && error?.formErrors?.length
-//       ? error.formErrors[0]
-//       : null;
 ---
 
 <tr id="row-new" data-status="creating" class="highlight-green">
@@ -67,7 +57,7 @@ const {
               errorId={`field-error-create-${key}`}
               name={key}
               label={label}
-              inputAttrs={inputAttrs}
+              // inputAttrs={inputAttrs}
               options={options}
             />
           </td>
@@ -89,7 +79,7 @@ const {
           <td data-type={type}>
             <SearchSelect
               {...ssProps}
-              id={`ss-create-${key}`}
+              id={`ss-create-${crud}-${key}`}
               name={key}
               label={label ?? key}
               value={override}

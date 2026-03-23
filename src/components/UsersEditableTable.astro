@@ -9,11 +9,12 @@ import { tableConfigs } from "@lib/tableConfigs";
 const { DATALIST_STATES, DATALIST_CITIES } = import.meta.env;
 const { users } = Astro.props;
 
+const config = tableConfigs.users.required
 const ctx = {
   crud: "users" as const,
   endpoint: "/attendance/admin/users/id",
-  config: tableConfigs.users.required,
-  headers: Object.keys(tableConfigs.users.required)
+  config,
+  headers: Object.keys(config)
 }
 ---
 

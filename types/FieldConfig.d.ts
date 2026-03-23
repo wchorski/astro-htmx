@@ -12,7 +12,7 @@ export type InputTypeAttr =
 // KnownInputTypes — no string & {}, so the discriminant can actually work
 type KnownInputTypes = Exclude<InputProps["type"], ReservedTypes>;
 
-type BaseInputAttrs = Omit<HTMLAttributes<"input">, "value">;
+type BaseInputAttrs = Omit<HTMLAttributes<"input">, "value" | "type">;
 
 export type FieldOption = {
   value: string;
@@ -31,18 +31,18 @@ export type InputFieldSlot = BaseFieldSlot &
   };
 
 export type SelectFieldSlot = BaseFieldSlot &
-  Omit<HTMLAttributes<"select">, "value"> & {
+  Omit<HTMLAttributes<"select">, "value" | "type"> & {
     type: "select";
     options: FieldOption[];
   };
 
 export type TextareaFieldSlot = BaseFieldSlot &
-  Omit<HTMLAttributes<"textarea">, "value"> & {
+  Omit<HTMLAttributes<"textarea">, "value" | "type"> & {
     type: "textarea";
   };
 
 export type SearchSelectFieldSlot = BaseFieldSlot &
-  Omit<HTMLAttributes<"input">, "value"> & {
+  Omit<HTMLAttributes<"input">, "value" | "type"> & {
     type: "searchSelect";
     options?: FieldOption[];
     endpoint?: string;

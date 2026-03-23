@@ -209,7 +209,7 @@ export const creditConfigRequired = (
       required: true,
       options: users.map((item) => ({
         value: String(item.id),
-        label: item.first_name + " " + item.last_name + ` <${item.email}>`,
+        label: `${item.first_name} ${item.middle_initial ?? ""} ${item.last_name} <${item.email}>`,
       })),
     },
     // TODO if user data set is gt 5000, switch to dyamicaly searched and loaded data
@@ -235,7 +235,7 @@ export const creditConfigRequired = (
       label: "Attended Date",
       type: "datetime-local",
     },
-    grade: {},
+    grade: { type: "text" },
     attended: {
       type: "checkbox",
     },
@@ -303,11 +303,11 @@ export const tableConfigs = {
   },
   courses: {
     // all: courseAllConfig,
-    required: {},
+    // required: {},
   },
   credits: {
     // all: creditAllConfig,
-    required: {},
+    // required: creditConfigRequired(users, courses),
   },
   locations: {
     // all: creditAllConfig,

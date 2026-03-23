@@ -1,26 +1,27 @@
 ---
-// partials/users/:id/edit
-import { tableConfigs } from "@lib/tableConfigs";
+// partials/credits/:id/edit
+import { creditConfigRequired } from "@lib/tableConfigs";
 import { BadRequestError, errorHandlingOnSubmit } from "@lib/errors";
 import { crud, type CrudRegistryType } from "@lib/crudRegistry";
-import { parseOutUndefinedFormData } from "@lib/sanatizers";
 import { TEST_ADMIN_SESSION } from "@lib/auth/session";
-import type { UserSelect } from "@ty/Schema";
+import type { CreditSelect } from "@ty/Schema";
 import RowEdit from "@components/tables/RowEdit.astro";
 
 type ViewType = "table-row" | "card";
 
-let user: UserSelect | null | undefined = null;
+let credit: CreditSelect | null | undefined = null;
 let error = null;
 let view: ViewType = "table-row";
 
 const { id } = Astro.params;
-if (!id) throw new BadRequestError("user ID missing in request");
-const config = tableConfigs.users.required;
+if (!id) throw new BadRequestError("ID missing in request");
+const users = await crud.users.readMany(TEST_ADMIN_SESSION);
+const courses = await crud.courses.readMany(TEST_ADMIN_SESSION);
+const config = creditConfigRequired(users, courses);
 const ctx = {
-  crud: "users" as CrudRegistryType,
+  crud: "credits" as CrudRegistryType,
   config,
-  endpoint: "/attendance/users",
+  endpoint: "/attendance/admin/credits",
   headers: Object.keys(config),
 };
 
@@ -31,7 +32,7 @@ if (Astro.request.method === "GET") {
 
     const session = TEST_ADMIN_SESSION;
 
-    user = await crud.users.read(id, session);
+    credit = await crud.credits.read(id);
   } catch (e) {
     const { err, status } = errorHandlingOnSubmit(e);
     Astro.response.status = status;
@@ -50,14 +51,10 @@ if (Astro.request.method === "GET") {
         {typeof error === "string" ? error : JSON.stringify(error)}
       </td>
     </tr>
-  ) : user && view === "table-row" ? (
+  ) : credit && view === "table-row" ? (
     <>
-      <RowEdit
-        {...ctx}
-        row={user}
-        error={error}
-      />
-      <tr id={`row-edit-${crud}-${id}-error`} hx-swap-oob="outerHTML" />
+      <RowEdit {...ctx} row={credit} error={error} />
+      <tr id={`row-edit-error`} hx-swap-oob="outerHTML" />
     </>
   ) : (
     <p>unknown error occured</p>

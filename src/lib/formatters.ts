@@ -7,61 +7,78 @@ interface FormatPhoneOptions {
 
 import { Temporal } from "@js-temporal/polyfill";
 
-export function formatPhoneToE164Manual(input?: string): string | null {
-  if (!input) return null;
-  let digitsOnly = input.replace(/\D/g, "");
-  if (input.startsWith("+") && digitsOnly.length === 11)
-    return "+" + digitsOnly;
-  if (digitsOnly.length === 10) return `+1${digitsOnly}`;
-  return null; // too short
-}
-
-export function slugify(text: string) {
-  return text.replace(/([A-Z])/g, "-$1").toLowerCase();
-}
-
-// export function formatPhoneToE164Manual(
-//   input?: string,
-//   options: FormatPhoneOptions = { defaultCountryCode: "1" },
-// ) {
-//   // TODO how to make validation work with other forms
-//   // if (!input) {
-//   //   throw new Error("Formatter: Phone number is required");
-//   // }
-//   if (!input) return undefined;
-
-//   const { defaultCountryCode = "1" } = options;
-
-//   // Step 1: Remove all non-digit characters
+// export function formatPhoneToE164Manual(input?: string): string | null {
+//   if (!input) return null;
 //   let digitsOnly = input.replace(/\D/g, "");
-
-//   // Step 2: Handle country code
-//   let e164: string;
-
-//   //? must have `+` in front if prefix country code
-//   if (input.startsWith("+") && digitsOnly.length === 11) {
-//     // Already has a + prefix, just clean it
-//     e164 = "+" + digitsOnly;
-//   } else if (digitsOnly.length === 10) {
-//     // US number without country code (e.g., 1231231234)
-//     e164 = `+${defaultCountryCode}${digitsOnly}`;
-//   } else {
-//     // Too short return empty string (which will cause validation error)
-//     throw new Error("Phone Formatter: Too short, must have missed a number");
-//   }
-
-//   return e164;
+//   if (input.startsWith("+") && digitsOnly.length === 11)
+//     return "+" + digitsOnly;
+//   if (digitsOnly.length === 10) return `+1${digitsOnly}`;
+//   return null; // too short
 // }
+
+interface E164Options {
+  defaultCountryCode?: string; // e.g. "1"
+}
+
+interface E164Options {
+  defaultCountryCode?: string;
+}
+
+export function normalizePhoneToE164Manual(
+  input?: string,
+  options: E164Options = { defaultCountryCode: "1" },
+): string | null {
+  if (!input) return null;
+
+  const { defaultCountryCode = "1" } = options;
+
+  const trimmed = input.trim(); // ✅ FIX 1
+  const digits = trimmed.replace(/\D/g, "");
+
+  // ✅ FIX 2: use trimmed, not input
+  if (trimmed.startsWith("+")) {
+    if (digits.length >= 8 && digits.length <= 15) {
+      return `+${digits}`;
+    }
+    return null;
+  }
+
+  // ✅ FIX 3: remove hardcoded "1" condition
+  if (digits.length === 10) {
+    return `+${defaultCountryCode}${digits}`;
+  }
+
+  if (digits.length > 10 && digits.length <= 15) {
+    return `+${digits}`;
+  }
+
+  return null;
+}
+
+export function slugify(text: string): string {
+  return text
+    .normalize("NFD") // decompose accents
+    .replace(/[\u0300-\u036f]/g, "") // remove diacritics
+    .trim()
+    // insert dash between lowercase/number and uppercase (handles camelCase)
+    .replace(/([a-z0-9])([A-Z])/g, "$1-$2")
+    // insert dash between consecutive uppercase letters followed by lowercase (e.g., "URLPath" -> "URL-Path")
+    .replace(/([A-Z]+)([A-Z][a-z0-9])/g, "$1-$2")
+    // replace spaces, underscores, and non-alphanumeric with dash
+    .replace(/[\s_]+/g, "-")
+    .replace(/[^a-zA-Z0-9-]+/g, "-") // treat special characters as separators
+    .replace(/-+/g, "-") // collapse multiple dashes
+    .replace(/^-+/, "") // trim leading dash
+    .replace(/-+$/, "") // trim trailing dash
+    .toLowerCase();
+}
+
 
 export function formatPhonePrettyManual(
   input: string | undefined | null,
   options: PrettyFormatOptions = { defaultCountryCode: "1" },
 ) {
   if (!input) return undefined;
-  // if (input === undefined || input === null) {
-  //   throw new Error("Formatter: Phone number is required");
-  // }
-  // if (input === "") return "";
 
   const { defaultCountryCode = "1" } = options;
 
@@ -121,26 +138,6 @@ export function localDateTimeToRealDate(localString: string, timezone: string) {
 
   return new Date(zoned.epochMilliseconds);
 }
-
-// TODO do i even need this?
-// export function plainDateTime(date: Date) {
-//   let plain: Temporal.PlainDateTime;
-//   try {
-//     plain = Temporal.PlainDateTime.from(date);
-//   } catch {
-//     throw new Error(
-//       `Invalid calendar date/time: ${date}`
-//     );
-//   }
-
-//   return plain.toLocaleString("en-CA", {
-//     year: "numeric",
-//     month: "numeric",
-//     day: "numeric",
-//     hour: "numeric",
-//     minute: "2-digit",
-//   });
-// }
 
 const LOCAL_DATE_TIME_REGEX = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/;
 

@@ -7,3 +7,8 @@ private
 .rsyncignore
 *.example
 rsync.sh
+__e23__
+__tests__
+tests
+*.test.*
+*.spec.*

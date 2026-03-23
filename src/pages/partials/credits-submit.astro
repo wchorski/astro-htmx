@@ -1,6 +1,6 @@
 ---
 import {Credit, db, eq, and, User} from "astro:db"
-import { formatPhoneToE164Manual } from '@lib/formatters';
+import { normalizePhoneToE164Manual } from '@lib/formatters';
 import { z } from 'astro/zod';
 import { formatPhonePrettyManual } from '@lib/formatters';
 import { ConflictError, NotFoundError } from "@lib/errors";
@@ -11,10 +11,10 @@ export const prerender = false;
 const formSchema = z.object({
   courseId: z.preprocess((val) => Number(val), z.number()),
   email: z.string().email({ message: "Invalid email address" }),
-  phone: z.string().refine(val => !!formatPhoneToE164Manual(val), {
+  phone: z.string().refine(val => !!normalizePhoneToE164Manual(val), {
       message: "Invalid phone number",
     }) 
-    .transform(val => formatPhoneToE164Manual(val)),
+    .transform(val => normalizePhoneToE164Manual(val)),
   first_name: z.string(),
   last_name: z.string(),
   middle_initial: z.string().optional(),

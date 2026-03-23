@@ -18,7 +18,7 @@ const tableRows = credits;
 const config = creditConfigRequired(users, courses);
 
 const ctx = {
-  crud: "courseCredits" as const,
+  crud: "credits" as const,
   endpoint: "/attendance/admin/credits/id",
   config,
   headers: Object.keys(config)
