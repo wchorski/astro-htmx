@@ -4,7 +4,7 @@ import { crud, type CrudRegistryType } from "@lib/crudRegistry";
 import { BadRequestError, errorHandlingOnSubmit } from "@lib/errors";
 import { tableConfigs } from "@lib/tableConfigs";
 import RowView from "@components/tables/RowView.astro";
-import type { LocationSelect, } from "@ty/Schema";
+import type { LocationSelect } from "@ty/Schema";
 import type { ZodError } from "astro/zod";
 import { TEST_ADMIN_SESSION } from "@lib/auth/session";
 
@@ -15,7 +15,7 @@ interface Params {
 let id: string | null | undefined = null;
 let location: LocationSelect | null | undefined = null;
 let error: string | ReturnType<ZodError["flatten"]> | null = null;
-const config = tableConfigs.locations.required
+const config = tableConfigs.locations.required;
 const ctx = {
   crud: "locations" as CrudRegistryType,
   config,
@@ -56,7 +56,7 @@ if (Astro.request.method === "PATCH") {
 
     const payload = {
       ...submitFields,
-      id
+      id,
     };
 
     location = await crud.locations.update(payload, session);
@@ -103,13 +103,16 @@ if (Astro.request.method === "DELETE") {
           </span>
         );
       })}
-      <tr id={`row-edit-error-${id}`} />
+      <div id={`row-edit-error-${ctx.crud}-${id}`} />
     </>
   ) : error ? (
     <>
-      <td class="callout error top-level" colspan={ctx.headers.length}>
+      <div
+        id={`row-edit-error-${ctx.crud}-${id}`}
+        class="row-error callout error top-level"
+      >
         {typeof error === "string" ? error : JSON.stringify(error)}
-      </td>
+      </div>
 
       {ctx.headers.map((fieldName) => (
         <span
@@ -127,16 +130,12 @@ if (Astro.request.method === "DELETE") {
       </td>
     </tr>
   ) : Astro.request.method === "PATCH" && location ? (
-    <>
-      <RowView row={location} {...ctx} classList={["updated-row"]} oob />
-      <tr id={`row-edit-error-${id}`} hx-swap-oob="outerHTML" />
-    </>
+    <RowView row={location} {...ctx} classList={["updated-row"]} oob />
   ) : Astro.request.method === "GET" && location ? (
-    <>
-      <RowView row={location} {...ctx} oob />
-      <tr id={`row-edit-error-${id}`} hx-swap-oob="outerHTML" />
-    </>
+    <RowView row={location} {...ctx} oob />
   ) : (
-    <p class="callout error">unknown error occured on partials/locations/:id </p>
+    <p class="callout error">
+      unknown error occured on partials/locations/:id{" "}
+    </p>
   )
 }

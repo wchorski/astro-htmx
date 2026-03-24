@@ -45,16 +45,14 @@ if (Astro.request.method === "GET") {
 
 {
   error ? (
-    <tr>
-      <td class="callout error top-level" colspan={ctx.headers.length}>
-        {typeof error === "string" ? error : JSON.stringify(error)}
-      </td>
-    </tr>
+    <div
+      id={`row-edit-error-${ctx.crud}-${id}`}
+      class="row-error callout error top-level"
+    >
+      {typeof error === "string" ? error : JSON.stringify(error)}
+    </div>
   ) : course && view === "table-row" ? (
-    <>
-      <RowEdit {...ctx} row={course} error={error} />
-      <tr id={`row-create-error`} hx-swap-oob="outerHTML" />
-    </>
+    <RowEdit {...ctx} row={course} error={error} />
   ) : (
     <p>unknown error occured</p>
   )

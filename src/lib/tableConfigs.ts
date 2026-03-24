@@ -6,6 +6,7 @@ import type {
   LocationSelect,
   UserSelect,
 } from "@ty/Schema";
+import { prettyDateToLocale } from "./formatters";
 
 const { DATALIST_CITIES, DATALIST_STATES, DATALIST_TIMEZONES } = import.meta
   .env;
@@ -205,7 +206,8 @@ export const creditConfigRequired = (
     },
     userId: {
       label: "User",
-      type: "searchSelect",
+      // type: "searchSelect",
+      type: "select",
       required: true,
       options: users.map((item) => ({
         value: String(item.id),
@@ -228,12 +230,13 @@ export const creditConfigRequired = (
       required: true,
       options: courses.map((item) => ({
         value: String(item.id),
-        label: item.subject + " " + item.dateCivil,
+        label: item.subject + " | " + prettyDateToLocale(new Date(item.dateCivil)),
       })),
     },
     date: {
       label: "Attended Date",
       type: "datetime-local",
+      readonly: true,
     },
     grade: { type: "text" },
     attended: {

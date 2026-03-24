@@ -105,13 +105,16 @@ if (Astro.request.method === "DELETE") {
           </span>
         );
       })}
-      <tr id={`row-edit-error-${id}`} />
+      <div id={`row-edit-error-${ctx.crud}-${id}`} />
     </>
   ) : error ? (
     <>
-      <td class="callout error top-level" colspan={ctx.headers.length}>
+      <div
+        id={`row-edit-error-${ctx.crud}-${id}`}
+        class="row-error callout error top-level"
+      >
         {typeof error === "string" ? error : JSON.stringify(error)}
-      </td>
+      </div>
 
       {ctx.headers.map((fieldName) => (
         <span
@@ -129,15 +132,9 @@ if (Astro.request.method === "DELETE") {
       </td>
     </tr>
   ) : Astro.request.method === "PATCH" && user ? (
-    <>
-      <RowView row={user} {...ctx} classList={["updated-row"]} oob />
-      <tr id={`row-edit-error-${id}`} hx-swap-oob="outerHTML" />
-    </>
+    <RowView row={user} {...ctx} classList={["updated-row"]} oob />
   ) : Astro.request.method === "GET" && user ? (
-    <>
-      <RowView row={user} {...ctx} oob />
-      <tr id={`row-edit-error-${id}`} hx-swap-oob="outerHTML" />
-    </>
+    <RowView row={user} {...ctx} oob />
   ) : (
     <p class="callout error">unknown error occured on partials/users/:id </p>
   )

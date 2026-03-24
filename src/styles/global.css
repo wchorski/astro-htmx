@@ -156,7 +156,7 @@ hr {
   padding: 1rem;
 }
 .error {
-  background-color: rgba(255, 0, 0, 0.192) !important;
+  background-color: rgba(var(--c-error), 0.192);
   border: solid red 3px;
   border-left-style: dashed;
 
@@ -304,4 +304,14 @@ dialog.closing {
 [popover] p {
   font-size: 16px;
   margin: 0 0 15px 0;
+}
+
+/* TYPEOGRAPY */
+code[aria-readonly="true"]::before {
+  content: "read-only";
+  background-color: var(--c-error);
+  padding-inline: 0.1rem;
+  border-radius: 0.3rem;
+  margin-right: 0.2rem;
+  display: inline-block;
 }

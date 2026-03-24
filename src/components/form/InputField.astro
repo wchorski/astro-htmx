@@ -13,12 +13,12 @@ interface Props extends Omit<
   "type" | "value" | "checked" | "name"
 > {
   formId?: string;
-  errorId:string,
+  errorId: string;
   name: string;
   label?: string;
   type?: InputFieldType | null;
   value?: string;
-  checked?: boolean;
+  checked?: string | boolean | null;
   fieldError?: string | unknown | null;
   datalist?: FieldOption[];
   inputAttrs?: Omit<FieldSlot, "label" | "value" | "type">;
@@ -35,32 +35,40 @@ const {
   value,
   fieldError,
   datalist,
-  readonly
+  readonly,
 } = Astro.props;
 
+if (type === "searchSelect")
+  throw new Error("InputField cannot be of type searchSelect");
 ---
-{readonly ? <code class="text">{value}</code> : (
 
-  <label>
-    <span class="text">{label ?? name}</span>
-    <input
-      {...inputAttrs}
-      form={formId}
-      name={name}
-      type={type}
-      value={type !== "checkbox" ? value : undefined}
-      checked={checked ?? undefined}
-      list={datalist ? `datalist-${name}` : undefined}
-    />
-    <span id={errorId} class="anim-vibrate field-error">{fieldError ?? ""}</span>
-    {
-      datalist ? (
+{
+  readonly ? (
+    <code class="text" aria-readonly="true">
+      {value}
+    </code>
+  ) : (
+    <label>
+      <span class="text">{label ?? name}</span>
+      <input
+        {...inputAttrs}
+        form={formId}
+        name={name}
+        type={type}
+        value={type !== "checkbox" ? value : undefined}
+        checked={checked ?? undefined}
+        list={datalist ? `datalist-${name}` : undefined}
+      />
+      <span id={errorId} class="anim-vibrate field-error">
+        {fieldError ?? ""}
+      </span>
+      {datalist ? (
         <datalist id={`datalist-${name}`}>
           {datalist.map((opt) => (
             <option value={opt.value}>{opt.label}</option>
           ))}
         </datalist>
-      ) : null
-    }
-  </label>
-)}
+      ) : null}
+    </label>
+  )
+}

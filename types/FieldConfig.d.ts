@@ -30,6 +30,12 @@ export type InputFieldSlot = BaseFieldSlot &
     datalist?: FieldOption[];
   };
 
+export type CheckboxFieldSlot = BaseFieldSlot &
+  BaseInputAttrs & {
+    type: "checkbox";
+    checked?: boolean;
+  };
+
 export type SelectFieldSlot = BaseFieldSlot &
   Omit<HTMLAttributes<"select">, "value" | "type"> & {
     type: "select";

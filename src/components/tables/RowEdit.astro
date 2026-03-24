@@ -40,103 +40,132 @@ const {
 } = Astro.props;
 
 const topLevelError = typeof error === "string" ? error : null;
+console.log({ row });
 ---
 
 <tr id={`row-${row.id}`} data-status="editing">
   {
     headers.map((key, i) => {
       const field: FieldSlot = config[key] ?? {};
-      const { label, value: override, type, ...inputAttrs } = field;
-      delete (inputAttrs as any).options;
-      const { options } = field as SelectFieldSlot;
-      delete (inputAttrs as any).datalist;
-      const { datalist, checked } = field as InputFieldSlot;
-
-      // TODO can i get rid of this maddness? must debug with form that select, textarea, or checkbox
-      // const checked = type === "checkbox" in field ? field.checked : undefined;
-      // const options =
-      //   type === "select" && "options" in field ? field.options : undefined;
-      // const datalist =
-      //   type && !["select", "textarea"].includes(type) && "datalist" in field
-      //     ? field.datalist
-      //     : undefined;
-
-      // const isChecked =
-      //   type === "checkbox" ? Boolean(override ?? row[key]) : undefined;
-      // // TODO how do i add checked to input field?
-      // // if (type === "checkbox") console.log("RowView, ", { checked });
-
-      // // TODO  may need to think about other input values
-      // // can i use parseFormFields()?
-      // const resolvedValue =
-      //   override ?? (row[key] != null ? String(row[key]) : "");
-
+      const resolvedValue =
+        field.value ?? (row[key] != null ? String(row[key]) : "");
       const fieldError =
         error && typeof error === "object" && "fieldErrors" in error
-          ? error?.fieldErrors[key]?.[0]
+          ? (error as any).fieldErrors[key]?.[0]
           : null;
+      const autofocus = i === 0;
 
-      if (type === "select") {
-        return (
-          <td>
-            <SelectField
-              {...inputAttrs}
-              autofocus={i === 0}
-              formId={`edit-form-${row.id}`}
-              errorId={`field-error-${row.id}-${key}`}
-              name={key}
-              label={label}
-              inputAttrs={inputAttrs}
-              options={options}
-            />
-          </td>
-        );
+      switch (field.type) {
+        case "select": {
+          const {
+            type: _,
+            label,
+            value: _v,
+            options,
+            ...inputAttrs
+          } = field as SelectFieldSlot;
+          return (
+            <td>
+              <SelectField
+                {...inputAttrs}
+                value={resolvedValue}
+                autofocus={autofocus}
+                formId={`edit-form-${row.id}`}
+                errorId={`field-error-${row.id}-${key}`}
+                name={key}
+                label={label}
+                options={options}
+              />
+            </td>
+          );
+        }
+
+        case "textarea": {
+          const { type: _, label: _l, value: _v, ...inputAttrs } = field;
+          return (
+            <td>
+              <TextareaField
+                {...inputAttrs}
+                autofocus={autofocus}
+                value={resolvedValue}
+              />
+            </td>
+          );
+        }
+
+        case "searchSelect": {
+          const {
+            type: _,
+            label,
+            value: _v,
+            options,
+            ...ssProps
+          } = field as SearchSelectFieldSlot;
+          return (
+            <td data-type="searchSelect">
+              <SearchSelect
+                {...ssProps}
+                id={`ss-row-edit-${crud}-${row.id}-${key}`}
+                name={key}
+                label={label ?? key}
+                value={resolvedValue}
+                options={options}
+              />
+            </td>
+          );
+        }
+
+        case "checkbox": {
+          const {
+            type: _,
+            label,
+            value: _v,
+            checked = Boolean(row[key]),
+            ...inputAttrs
+          } = field as InputFieldSlot;
+          return (
+            <td>
+              <InputField
+                {...inputAttrs}
+                autofocus={autofocus}
+                formId={`edit-form-${row.id}`}
+                errorId={`field-error-${row.id}-${key}`}
+                name={key}
+                label={label}
+                type="checkbox"
+                checked={checked}
+                fieldError={fieldError}
+              />
+            </td>
+          );
+        }
+
+        default: {
+          const {
+            type,
+            label,
+            value: _v,
+            datalist,
+            ...inputAttrs
+          } = field as InputFieldSlot;
+          return (
+            <td>
+              <InputField
+                {...inputAttrs}
+                autofocus={autofocus}
+                formId={`edit-form-${row.id}`}
+                errorId={`field-error-${row.id}-${key}`}
+                name={key}
+                label={label}
+                type={type}
+                value={resolvedValue}
+                fieldError={fieldError}
+                datalist={datalist}
+              />
+            </td>
+          );
+        }
       }
-      if (type === "textarea") {
-        return (
-          <td>
-            <TextareaField {...inputAttrs} autofocus={i === 0} />
-          </td>
-        );
-      }
-      if (type === "searchSelect") {
-        const {
-          type: _,
-          label: _l,
-          value: _v,
-          ...ssProps
-        } = field as SearchSelectFieldSlot;
-        return (
-          <td data-type={type}>
-            <SearchSelect
-              {...ssProps}
-              id={`ss-row-edit-${crud}-${row.id}-${key}`}
-              name={key}
-              label={label ?? key}
-              value={override}
-              options={options}
-            />
-          </td>
-        );
-      }
-      return (
-        <td>
-          <InputField
-            {...inputAttrs}
-            autofocus={i === 0}
-            formId={`edit-form-${row.id}`}
-            errorId={`field-error-${row.id}-${key}`}
-            name={key}
-            label={label}
-            type={type}
-            value={override}
-            checked={checked ? true : false}
-            fieldError={fieldError}
-            datalist={datalist}
-            inputAttrs={inputAttrs}
-          />
-        </td>
-      );
     })
   }
 
@@ -146,7 +175,7 @@ const topLevelError = typeof error === "string" ? error : null;
       style="display:none"
       hx-patch={submitUrl}
       hx-target={`#row-${row.id}`}
-      hx-target-error={`#row-edit-error-${row.id}`}
+      hx-target-error={`#row-edit-error-${crud}-${row.id}`}
       hx-swap="outerHTML"
     >
     </form>
@@ -165,20 +194,13 @@ const topLevelError = typeof error === "string" ? error : null;
       class="cancel"
       hx-get={`/partials/${slugify(crud)}/${row.id}`}
       hx-target={`#row-${row.id}`}
-      hx-target-error={`#row-edit-error-${row.id}`}
+      hx-target-error={`#row-edit-error-${crud}-${row.id}`}
       hx-swap="outerHTML"
     >
       ⌀
     </button>
   </td>
-</tr>
-
-<tr id={`row-edit-error-${row.id}`} class="row-error">
-  {
-    topLevelError ? (
-      <td class="callout error top-level" colspan={headers.length}>
-        {topLevelError}
-      </td>
-    ) : null
-  }
+  <td class="error-cell">
+    <div id={`row-edit-error-${crud}-${row.id}`} class="row-error"></div>
+  </td>
 </tr>
