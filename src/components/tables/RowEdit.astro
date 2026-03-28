@@ -40,7 +40,6 @@ const {
 } = Astro.props;
 
 const topLevelError = typeof error === "string" ? error : null;
-console.log({ row });
 ---
 
 <tr id={`row-${row.id}`} data-status="editing">
@@ -201,6 +200,6 @@ console.log({ row });
     </button>
   </td>
   <td class="error-cell">
-    <div id={`row-edit-error-${crud}-${row.id}`} class="row-error"></div>
+    <div id={`row-edit-error-${crud}-${row.id}`} class="row-error callout error top-level">{topLevelError}</div>
   </td>
 </tr>

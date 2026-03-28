@@ -3,7 +3,11 @@ import { expect, test, describe, beforeAll } from "vitest";
 // @ts-ignore
 import RowEdit from "@components/tables/RowEdit.astro";
 import { seedData } from "../../db/seed-data";
-import { courseConfigRequired, creditConfigRequired, tableConfigs } from "@lib/tableConfigs";
+import {
+  courseConfigRequired,
+  creditConfigRequired,
+  tableConfigs,
+} from "@lib/tableConfigs";
 import type { ZodError } from "astro/zod";
 
 const user = seedData.users[0];
@@ -35,7 +39,9 @@ describe("RowEdit - structure", () => {
     expect(result).toContain('style="display:none"');
     expect(result).toContain(`hx-patch="/partials/users/${user.id}"`);
     expect(result).toContain(`hx-target="#row-${user.id}"`);
-    expect(result).toContain(`hx-target-error="#row-edit-error-${user.id}"`);
+    expect(result).toContain(
+      `hx-target-error="#row-edit-error-${baseProps.crud}-${user.id}"`,
+    );
     expect(result).toContain('hx-swap="outerHTML"');
   });
 
@@ -55,12 +61,14 @@ describe("RowEdit - structure", () => {
   });
 
   test("renders error row placeholder", () => {
-    expect(result).toContain(`id="row-edit-error-${user.id}"`);
-    expect(result).toContain('class="row-error"');
+    expect(result).toContain(
+      `id="row-edit-error-${baseProps.crud}-${user.id}"`,
+    );
+    expect(result).toContain('class="row-error callout error top-level"');
   });
 
   test("does not render error content when error is null", () => {
-    expect(result).not.toContain('class="callout error top-level"');
+    expect(result).toMatch(/id="row-edit-error-users-1"[^>]*><\/div>/);
   });
 });
 
@@ -81,11 +89,11 @@ describe("RowEdit - error states", () => {
       props: { ...baseProps, error: "Something went wrong" },
     });
 
-    expect(result).toContain('class="callout error top-level"');
+    expect(result).toContain('class="row-error callout error top-level"');
     expect(result).toContain("Something went wrong");
   });
 
-  test("does not render top level error for zod field errors", async () => {
+  test("does not render top level error when zod field errors present", async () => {
     // zod errors are field-level, not top-level string
     const zodError = {
       formErrors: [],
@@ -93,11 +101,12 @@ describe("RowEdit - error states", () => {
     } as unknown as ReturnType<ZodError["flatten"]>;
 
     const container = await AstroContainer.create();
-    const result = await container.renderToString(RowEdit, {
+    const html = await container.renderToString(RowEdit, {
       props: { ...baseProps, error: zodError },
     });
 
-    expect(result).not.toContain('class="callout error top-level"');
+    expect(html).toContain("Name is required");
+    expect(html).toMatch(/id="row-edit-error-users-1"[^>]*><\/div>/);
   });
 });
 
@@ -161,8 +170,8 @@ describe("RowEdit - schemas", () => {
 
     test("renders correct number of cells", () => {
       const cellCount = (result.match(/<td\b/g) || []).length;
-      // +1 for action cell (which has no data-key)
-      expect(cellCount).toBe(Object.keys(config).length + 1);
+      // +2 for action cell, and error cell (which has no data-key)
+      expect(cellCount).toBe(Object.keys(config).length + 2);
     });
   });
 });

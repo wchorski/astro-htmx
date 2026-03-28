@@ -4,14 +4,14 @@ import {
   formatPhonePrettyManual,
   prettyPlainCivilDateFull,
 } from "@lib/formatters";
-import type { FieldOption, FieldType, FieldValue } from "@ty/FieldConfig";
+import type { BaseRow, FieldOption, FieldType, FieldValue } from "@ty/FieldConfig";
 
 interface Props {
   name: string;
   options: FieldOption[] | undefined;
   type: FieldType;
   //   prettyVal: string;
-  rawVal: FieldValue;
+  rawVal: BaseRow[string];
   endpoint: string;
   //   row: Record<string, any> & { id: number };
 }

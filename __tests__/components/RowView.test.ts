@@ -1,6 +1,5 @@
 import { experimental_AstroContainer as AstroContainer } from "astro/container";
 import { expect, test, describe, beforeAll } from "vitest";
-// @ts-expect-error
 import RowView from "@components/tables/RowView.astro";
 import { seedData } from "../../db/seed-data";
 import {
@@ -27,7 +26,7 @@ const testCases = [
     endpoint: "/attendance/admin/credits/id",
     expectedFields: [
       "1",
-      "Know Your Union 2026-11-21T08:00",
+      "Know Your Union | Saturday, November 21, 2026 at 8:00 AM",
       "Fri Mar 20 2026 10:00:00 GMT-0500 (Central Daylight Time)",
       "true",
     ],

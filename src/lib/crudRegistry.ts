@@ -62,11 +62,11 @@ export const crud = {
     create: async (row, session) => {
       try {
         // permissions for individual fields verses whole schema... what a pain...
-        const fields = await userPolicy.writableFields(session, null);
+        // const fields = await userPolicy.writableFields(session, null);
 
-        const sanitized = sanitizeFields(row, fields);
+        // const sanitized = sanitizeFields(row, fields);
 
-        const validated = validate.userCreate.parse(sanitized);
+        const validated = validate.userCreate.parse(row);
 
         const [result] = await db
           .insert(User)
@@ -253,11 +253,12 @@ export const crud = {
           .set({
             ...validated,
             date: realDate,
-            wpPostId,
+            wpPostId: wpPostId ?? validated.wpPostId,
           })
           .where(eq(Course.id, validated.id))
           .returning();
         if (!result) throw new NotFoundError(`Course ${row.id} not found`);
+
         return result;
       } catch (e) {
         throwErrorsForCRUD(e);
@@ -334,7 +335,7 @@ export const crud = {
         throwErrorsForCRUD(e);
       }
     },
-    
+
     delete: async (id) => {
       try {
         const validId = validate.id.parse(id);
@@ -507,7 +508,20 @@ export const crud = {
         throwErrorsForCRUD(e);
       }
     },
-
+    readMany: async () => {
+      try {
+        const credits = await db
+          .select()
+          .from(Credit)
+          .innerJoin(User, eq(Credit.userId, User.id))
+          .where(eq(Credit.courseId, 42069));
+        // .limit(perPage)
+        // .offset((page - 1) * perPage);
+        return credits.map(item => userCreditMap(item.Credit, item.User));
+      } catch (e) {
+        throwErrorsForCRUD(e);
+      }
+    },
     update: async (
       inputFields: FormFields<CourseCreditFlat> & { id: string },
       session,
@@ -552,7 +566,15 @@ export const crud = {
           .where(eq(Credit.id, validId))
           .returning();
         if (!deleted) throw new NotFoundError(`Credit ${id} not found`);
-        return deleted;
+
+        const user = await db
+          .select()
+          .from(User)
+          .where(eq(User.id, deleted.userId))
+          .get();
+        if (!user) throw new NotFoundError(`User not found`);
+
+        return userCreditMap(deleted, user);
       } catch (e) {
         throwErrorsForCRUD(e);
       }
