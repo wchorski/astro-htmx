@@ -12,7 +12,7 @@ import SelectField from "@components/form/SelectField.astro";
 import TextareaField from "@components/form/TextareaField.astro";
 import InputField from "@components/form/InputField.astro";
 import { slugify } from "@lib/formatters";
-import { undefined } from "astro:schema";
+import { ZodError } from "astro:schema";
 import SearchSelect from "@components/form/SearchSelect.astro";
 
 interface Props {
@@ -20,17 +20,21 @@ interface Props {
   config: FieldConfig;
   headers: string[];
   actionUrl?: string;
+  error?: string | ReturnType<ZodError["flatten"]> | null;
 }
 
 const {
   config,
   crud,
   headers,
+  error,
   actionUrl = `/partials/${slugify(crud)}/create`,
 } = Astro.props;
+
+const topLevelError = typeof error === "string" ? error : null;
 ---
 
-<tr id="row-new" data-status="creating" class="highlight-green">
+<tr id={`row-create-${crud}`} data-status="creating" class="highlight-green">
   {
     headers.map((key) => {
       const field = config[key] ?? {};
@@ -57,7 +61,7 @@ const {
               errorId={`field-error-create-${key}`}
               name={key}
               label={label}
-              // inputAttrs={inputAttrs}
+              inputAttrs={inputAttrs}
               options={options}
             />
           </td>
@@ -111,9 +115,9 @@ const {
       id="create-form"
       style="display:none"
       hx-post={actionUrl}
-      hx-target="#table-footer"
-      hx-target-error="#row-create-error"
-      hx-swap="innerHTML"
+      hx-target={`#row-create-${crud}`}
+      hx-target-error={`#row-create-error-${crud}`}
+      hx-swap="outerHTML"
       hx-vals={JSON.stringify({
         _view: "table-row",
       })}
@@ -147,9 +151,10 @@ const {
       />
     </button>
   </td>
+  <td class="error-cell">
+    <div id={`row-create-error-${crud}`} class="top-level">{topLevelError}</div>
+  </td>
 </tr>
-
-<tr id={`row-create-error`} class="row-error"></tr>
 
 <script>
   document

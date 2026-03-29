@@ -1,36 +1,33 @@
 ---
-// partials/course-credits/[courseId].astro
+// partials/credits/create
 import RowView from "@components/tables/RowView.astro";
-// import UserCard from "@components/UserCard.astro";
 import RowCreateForm from "@components/tables/RowCreate.astro";
-import { tableConfigs } from "@lib/tableConfigs";
+import { creditConfigRequired, tableConfigs } from "@lib/tableConfigs";
 import { BadRequestError, errorHandlingOnSubmit } from "@lib/errors";
 import { crud, type CrudRegistryType } from "@lib/crudRegistry";
 import { parseOutUndefinedFormData } from "@lib/sanatizers";
 import { TEST_ADMIN_SESSION } from "@lib/auth/session";
-import type { UserCreditFlat } from "@ty/Schema";
+import type { CreditSelect } from "@ty/Schema";
 
 type ViewType = "table-row" | "card";
 
-let newUserCredit: UserCreditFlat | null | undefined = null;
+let newCredit: CreditSelect | null | undefined = null;
 let error = null;
 let view: ViewType = "table-row";
-
-const { courseId } = Astro.params;
-if (!courseId) throw new BadRequestError("Course ID missing in request");
-const config = tableConfigs.courseCredits.required;
+const users = await crud.users.readMany(TEST_ADMIN_SESSION);
+const courses = await crud.courses.readMany(TEST_ADMIN_SESSION);
+const config = creditConfigRequired(users, courses);
 const ctx = {
-  crud: "courseCredits" as CrudRegistryType,
+  crud: "credits" as CrudRegistryType,
   config,
-  endpoint: "/attendance/course-credits",
-  headers: Object.keys(config),
+  endpoint: "/attendance/credits",
+  headers: Object.keys(config) as (keyof typeof config)[],
 };
 
 if (Astro.request.method === "POST") {
   try {
     // const session = await requirePermission(Astro.request, "users", "create");
     // TODO
-
     const session = TEST_ADMIN_SESSION;
 
     const formData = await Astro.request.formData();
@@ -38,15 +35,11 @@ if (Astro.request.method === "POST") {
     // TODO may remove later
     view = (formData.get("_view") as ViewType) ?? "table-row"; // caller decides
 
-    // TODO shouldn't need to filter out _
     const submitFields = Object.fromEntries(
       [...formData.entries()].filter(([key]) => !key.startsWith("_")),
     );
 
-    newUserCredit = await crud.courseCredits.create(
-      parseOutUndefinedFormData({ ...submitFields, courseId }),
-      session,
-    );
+    newCredit = await crud.credits.create(submitFields);
   } catch (e) {
     const { err, status } = errorHandlingOnSubmit(e);
     Astro.response.status = status;
@@ -73,14 +66,14 @@ if (Astro.request.method === "POST") {
           </span>
         );
       })}
-
-      <div id={`#row-create-error-${crud}`} class="row-error error top-level" />
+      <div id={`#row-create-error-${crud}`} />
     </>
   ) : error ? (
     <>
       <div id={`#row-create-error-${crud}`} class="row-error error top-level">
         {typeof error === "string" ? error : JSON.stringify(error)}
       </div>
+
       {ctx.headers.map((fieldName) => (
         <span
           id={`field-error-create-${fieldName}`}
@@ -89,9 +82,9 @@ if (Astro.request.method === "POST") {
         />
       ))}
     </>
-  ) : newUserCredit && view === "table-row" ? (
+  ) : newCredit && view === "table-row" ? (
     <>
-      <RowView row={newUserCredit} {...ctx} classList={["new-row"]} />
+      <RowView row={newCredit} {...ctx} classList={["new-row"]} />
       <RowCreateForm {...ctx} />
     </>
   ) : (

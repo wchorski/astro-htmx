@@ -155,7 +155,7 @@ hr {
   border-color: var(--c-seperator);
   padding: 1rem;
 }
-.error {
+.error:not(:empty) {
   background-color: rgba(var(--c-error), 0.192);
   border: solid red 3px;
   border-left-style: dashed;

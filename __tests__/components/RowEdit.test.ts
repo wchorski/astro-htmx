@@ -64,7 +64,7 @@ describe("RowEdit - structure", () => {
     expect(result).toContain(
       `id="row-edit-error-${baseProps.crud}-${user.id}"`,
     );
-    expect(result).toContain('class="row-error callout error top-level"');
+    expect(result).toContain('class="row-error error top-level"');
   });
 
   test("does not render error content when error is null", () => {
@@ -89,7 +89,7 @@ describe("RowEdit - error states", () => {
       props: { ...baseProps, error: "Something went wrong" },
     });
 
-    expect(result).toContain('class="row-error callout error top-level"');
+    expect(result).toContain('class="row-error error top-level"');
     expect(result).toContain("Something went wrong");
   });
 

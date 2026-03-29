@@ -28,7 +28,7 @@ describe("RowCreate - structure", () => {
   });
 
   test("renders row in creating state", () => {
-    expect(result).toContain(`id="row-new"`);
+    expect(result).toContain(`id="row-create-${baseProps.crud}"`);
     expect(result).toContain('data-status="creating"');
   });
 

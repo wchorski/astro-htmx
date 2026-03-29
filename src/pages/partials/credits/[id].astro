@@ -25,7 +25,7 @@ const ctx = {
   crud: "credits" as CrudRegistryType,
   config,
   endpoint: "/attendance/admin/credits",
-  headers: Object.keys(config),
+  headers: Object.keys(config) as (keyof typeof config)[],
 };
 
 const session = TEST_ADMIN_SESSION;

@@ -6,6 +6,9 @@ import { Credit, db, eq, User, Course, Location } from "astro:db";
 import Layout from "@layouts/Layout.astro";
 import AttendanceAdminNav from "@components/navigation/AttendanceAdminNav.astro";
 import TableEditable from "@components/TableEditable.astro";
+import { crud } from "@lib/crudRegistry";
+import { TEST_ADMIN_SESSION } from "@lib/auth/session";
+import { prettyDateToLocale } from "@lib/formatters";
 export const prerender = false; // Not needed in 'server' mode
 const { id } = Astro.params;
 if (!id) throw new Error("no id found. throw 404");
@@ -30,16 +33,17 @@ const ownedCredits = await db
   .innerJoin(Location, eq(Course.locationId, Location.id))
   .where(eq(Credit.userId, Number(id)));
 
-console.log(JSON.stringify(ownedCredits, null, 2));
-
 const tableRows = ownedCredits.map(({ credit, course, location }) => ({
   id: credit.id,
   courseId: course.id,
-  subject: course.subject,
-  location: location.name,
-  address: location.address,
+  locationId: location.id,
   attended: credit.attended,
 }));
+
+const session = TEST_ADMIN_SESSION
+
+const courses = await crud.courses.readMany(session)
+const locations = await crud.locations.readMany(session)
 ---
 
 <Layout>
@@ -69,7 +73,7 @@ const tableRows = ownedCredits.map(({ credit, course, location }) => ({
         <p class="callout not-found">no credits found</p>
       ) : (
         <TableEditable
-          crud="users"
+          crud="credits"
           rows={tableRows}
           endpoint="ownedCredits"
           config={{
@@ -80,22 +84,27 @@ const tableRows = ownedCredits.map(({ credit, course, location }) => ({
               readonly: true,
             },
             courseId: {
-              label: "Course ID",
-              type: "number",
+              label: "Course",
+              type: "select",
               required: true,
-              readonly: true,
+              options: courses.map((item) => ({
+                value: String(item.id),
+                label:
+                  item.subject +
+                  " | " +
+                  prettyDateToLocale(new Date(item.dateCivil)),
+              })),
             },
-            subject: {
-              type: "text",
+            locationId: {
+              type: "select",
               required: true,
-            },
-            location: {
-              type: "text",
-              required: true,
-            },
-            address: {
-              type: "text",
-              required: true,
+              options: locations.map((item) => ({
+                value: String(item.id),
+                label:
+                  item.name +
+                  " | " +
+                  item.address,
+              })),
             },
             // city: {
             //   label: "city",

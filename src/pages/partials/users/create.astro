@@ -2,7 +2,7 @@
 // partials/users/create.astro
 import RowView from "@components/tables/RowView.astro";
 import UserCard from "@components/UserCard.astro";
-import RowCreateForm from "@components/tables/RowCreate.astro";
+import RowCreate from "@components/tables/RowCreate.astro";
 import { tableConfigs } from "@lib/tableConfigs";
 import { BadRequestError, errorHandlingOnSubmit } from "@lib/errors";
 import { crud, type CrudRegistryType } from "@lib/crudRegistry";
@@ -65,13 +65,13 @@ if (Astro.request.method === "POST") {
           </span>
         );
       })}
-      <tr id={`row-create-error`} />
+      <div id={`row-create-error-${ctx.crud}`} />
     </>
   ) : error ? (
     <>
-      <td class="callout error top-level" colspan={ctx.headers.length}>
+      <div id={`row-create-error-${ctx.crud}`} class="row-error error top-level">
         {typeof error === "string" ? error : JSON.stringify(error)}
-      </td>
+      </div>
       {ctx.headers.map((fieldName) => (
         <span
           id={`field-error-create-${fieldName}`}
@@ -83,8 +83,7 @@ if (Astro.request.method === "POST") {
   ) : newUser && view === "table-row" ? (
     <>
       <RowView row={newUser} {...ctx} classList={["new-row"]} />
-      <RowCreateForm {...ctx} />
-      <tr id={`row-create-error`} hx-swap-oob="outerHTML" />
+      <RowCreate {...ctx} />
     </>
   ) : (
     <p>unknown error occured</p>

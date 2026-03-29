@@ -54,17 +54,18 @@ table tbody > tr:nth-child(even of :not(.row-error)) {
   background-color: #0000004f;
 }
 
-tr.row-error:empty {
+.row-error:empty {
   display: none;
 }
 
-tr[data-status="editing"] {
+tr[data-status="editing"], tr[data-status="creating"] {
   /* position: relative; */
   anchor-name: --editing-row;
 }
 
 .error-cell {
   padding: 0;
+  width: 0;
 }
 
 .row-error:not(:empty) {

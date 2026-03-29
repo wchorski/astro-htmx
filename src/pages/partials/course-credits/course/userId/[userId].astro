@@ -59,15 +59,6 @@ if (Astro.request.method === "POST") {
 {
   error && typeof error === "object" && "fieldErrors" in error ? (
     <>
-      {error.formErrors.length ? (
-        <tr id="row-create-error">
-          <td class="callout error top-level" colspan={ctx.headers.length}>
-            {error.formErrors[0]}
-          </td>
-        </tr>
-      ) : (
-        <tr id="row-create-error" />
-      )}
       {ctx.headers.map((fieldName) => {
         const messages = error.fieldErrors[fieldName];
         return (
@@ -80,12 +71,14 @@ if (Astro.request.method === "POST") {
           </span>
         );
       })}
+
+      <div id={`#row-create-error-${crud}`} class="row-error error top-level" />
     </>
   ) : error ? (
     <>
-      <td class="callout error top-level" colspan={ctx.headers.length}>
+      <div id={`#row-create-error-${crud}`} class="row-error error top-level">
         {typeof error === "string" ? error : JSON.stringify(error)}
-      </td>
+      </div>
       {ctx.headers.map((fieldName) => (
         <span
           id={`field-error-create-${fieldName}`}
@@ -98,7 +91,6 @@ if (Astro.request.method === "POST") {
     <>
       <RowView row={newUserCredit} {...ctx} classList={["new-row"]} />
       <RowCreateForm {...ctx} />
-      <tr id={`row-create-error`} hx-swap-oob="outerHTML" />
     </>
   ) : (
     <p>unknown error occured</p>
