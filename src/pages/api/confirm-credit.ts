@@ -1,9 +1,9 @@
 // src/pages/api/confirm-credit.ts
-import { PhoneSanitizer } from "@lib/sanatizers";
 import type { APIRoute } from "astro";
 import { db, Credit, Course, User } from "astro:db";
 import { eq, or } from "astro:db";
 import { z } from "astro/zod";
+import { normalizePhoneToE164Manual } from "@lib/formatters";
 
 const formSchema = z.object({
   userId: z.coerce.number().optional(),
@@ -80,7 +80,7 @@ export const POST: APIRoute = async ({ request, redirect }) => {
       .from(Credit)
       .where(eq(Credit.courseId, courseId));
 
-    const phoneSanatized: string | null = PhoneSanitizer.sanitize(phone);
+    const phoneSanatized: string | null = normalizePhoneToE164Manual(phone);
     if (!phoneSanatized) {
       return redirect(
         `/partials/credit-form?error=${encodeURIComponent(`Fix phone formatting`)}`,
@@ -109,8 +109,8 @@ export const POST: APIRoute = async ({ request, redirect }) => {
       const [newMember] = await db
         .insert(User)
         .values({
-          asipId,
-          regNum,
+          // asipId,
+          // regNum,
           first_name,
           last_name,
           middle_initial,
