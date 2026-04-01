@@ -1,5 +1,5 @@
 ## https://docs.astro.build/en/recipes/docker/#multi-stage-build-using-ssr
-FROM node:lts-alpine AS base
+FROM node:lts-slim AS base
 WORKDIR /app
 
 # By copying only the package.json and package-lock.json here, we ensure that the following `-deps` steps are independent of the source code.
