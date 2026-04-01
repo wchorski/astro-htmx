@@ -12,8 +12,8 @@
     "test:e2e": "npm run build && playwright test",
     "db:local:schema": "LIBSQL_URL=http://localhost:4320 node db/apply-schema-libsql.ts",
     "db:local:seed": "LIBSQL_URL=http://localhost:4320 node db/seed-libsql.ts",
-    "db:prod:schema": "LIBSQL_URL=http://backupnas03:4320 node db/apply-schema-libsql.ts",
-    "db:prod:seed": "LIBSQL_URL=http://backupnas03:4320 node db/seed-libsql.ts"
+    "db:prod:schema": "LIBSQL_URL=http://moeits-mini-server:4320 node db/apply-schema-libsql.ts",
+    "db:prod:seed": "LIBSQL_URL=http://moeits-mini-server:4320 tsx -r tsconfig-paths/register db/seed-libsql.ts"
   },
   "dependencies": {
     "@astrojs/db": "^0.20.1",
@@ -28,6 +28,8 @@
   "devDependencies": {
     "@playwright/test": "^1.58.2",
     "@types/node": "^25.0.10",
+    "tsconfig-paths": "^4.2.0",
+    "tsx": "^4.21.0",
     "typescript-plugin-css-modules": "^5.2.0",
     "vitest": "^4.1.0"
   }
