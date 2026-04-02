@@ -2,15 +2,7 @@
 import { and, db, eq, User, Role } from "astro:db";
 import type { Session } from "./session";
 import type { BaseRow } from "@ty/FieldConfig";
-
-export const PERMISSIONS = {
-  manageAllMembers: "manageAllMembers",
-  viewAllMembers: "viewAllMembers",
-  manageAllCourses: "manageAllCourses",
-  viewAllCourses: "viewAllCourses",
-  manageAllCredits: "manageAllCredits",
-  viewAllCredits: "viewAllCredits",
-} as const;
+import { PERMISSIONS } from "./roles";
 
 export type Permission = keyof typeof PERMISSIONS;
 

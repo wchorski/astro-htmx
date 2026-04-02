@@ -1,4 +1,13 @@
-import type { Course, Credit, User, Location, Role } from "astro:db";
+// import type { Course, Credit, User, Location, Role } from "astro:db";
+
+import {
+  Role,
+  Location,
+  User,
+  Course,
+  Credit,
+} from "@db/schema";
+
 export type RoleInsert = typeof Role.$inferInsert;
 export type RoleSelect = typeof Role.$inferSelect;
 export type CreditInsert = typeof Credit.$inferInsert;

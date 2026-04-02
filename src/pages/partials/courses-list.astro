@@ -1,8 +1,9 @@
 ---
+import type { CourseSelect } from "@ty/Schema";
+
 interface Props {
-  courses: (typeof Course.$inferInsert)[];
+  courses: CourseSelect[];
 }
-import { Course } from "astro:db";
 // import { db, desc, count, Course } from "astro:db";
 const { courses } = Astro.props;
 // import PaginationNav from "@components/navigation/PaginationNav.astro";
@@ -29,11 +30,11 @@ const { courses } = Astro.props;
 <ul id="courses-list">
   {
     courses.length > 0 ? (
-      courses.map(({ id, subject, description, date }) => (
+      courses.map(({ id, subject, description, timestamp }) => (
         <li>
           <article>
-            <time datetime={date.toISOString()}>
-              {date.toLocaleString("en-US", {
+            <time datetime={timestamp.toISOString()}>
+              {timestamp.toLocaleString("en-US", {
                 year: "numeric",
                 month: "short",
                 day: "numeric",

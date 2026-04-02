@@ -12,6 +12,12 @@ interface ImportMetaEnv {
   readonly LIBSQL_URL?: string;
   readonly DEFAULT_ROLE_ID?: string;
   readonly MS_SHAREPOINT_KYU_FOLDER_URL?: string;
+  readonly DB_USER?: string;
+  readonly DB_PASSWORD?: string;
+  readonly DB_COLLECTION?: string;
+  readonly DB_PROTOCOL?: string;
+  readonly DB_PORT?: string;
+  readonly DB_DOMAIN?: string;
 }
 
 interface ImportMeta {

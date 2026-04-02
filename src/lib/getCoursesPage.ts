@@ -1,4 +1,8 @@
-import { db, count, Course, Location, desc } from "astro:db";
+
+import { db } from "@db/db";
+import { Course, Location } from "@db/schema";
+import { desc, count } from "drizzle-orm";
+
 
 export async function getCoursesPage(page: number, perPage = 12) {
   if (page < 1) page = 1;
@@ -16,7 +20,7 @@ export async function getCoursesPage(page: number, perPage = 12) {
   const courses = await db
     .select()
     .from(Course)
-    .orderBy(desc(Course.date))
+    .orderBy(desc(Course.timestamp))
     .limit(perPage)
     .offset((page - 1) * perPage);
 

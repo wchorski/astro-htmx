@@ -16,6 +16,7 @@ function normalizeValue(v: any) {
   if (v === undefined) return null;
   if (v instanceof Date) return v.toISOString();
   if (typeof v === "boolean") return v ? 1 : 0;
+  if (Array.isArray(v)) return JSON.stringify(v);
   return v;
 }
 
