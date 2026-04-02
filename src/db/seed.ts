@@ -62,7 +62,7 @@ if (process.argv.includes("--truncate")) {
 
 // ---- seed ---------------------------------------------------
 
-//? generator mode (for random)
+//? generator mode for fake / randomized data
 
 // await seed(db, schema, {
 //   Role: {
@@ -72,17 +72,22 @@ if (process.argv.includes("--truncate")) {
 //     },
 //   },
 // });
+// await seed(db, schema).refine(
+//   () =>
+//     ({
+//       roles: seedData.roles,
+//       locations: seedData.locations,
+//       users: seedData.users,
+//       courses: seedData.courses,
+//       credits: seedData.credits,
+//     }) as any,
+// );
 
-await seed(db, schema).refine(
-  () =>
-    ({
-      roles: seedData.roles,
-      locations: seedData.locations,
-      users: seedData.users,
-      courses: seedData.courses,
-      credits: seedData.credits,
-    }) as any,
-);
+await db.insert(schema.Role).values(seedData.roles);
+await db.insert(schema.Location).values(seedData.locations);
+await db.insert(schema.User).values(seedData.users);
+await db.insert(schema.Course).values(seedData.courses);
+await db.insert(schema.Credit).values(seedData.credits);
 
 await client.end();
 

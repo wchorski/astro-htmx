@@ -2,10 +2,10 @@
 import UsersEditableTable from "@components/UsersEditableTable.astro";
 import AttendanceAdminNav from "@components/navigation/AttendanceAdminNav.astro";
 import Layout from "@layouts/Layout.astro";
-import { getMembersPage } from "@lib/getMembersPage";
+import { getUsersPage } from "@lib/getUsersPage";
 import PaginationNav from "@components/navigation/PaginationNav.astro";
 const page = Number(Astro.params.page);
-const result = await getMembersPage(page);
+const result = await getUsersPage(page);
 
 if ("redirect" in result) {
   return Astro.redirect("/attendance/admin/users");

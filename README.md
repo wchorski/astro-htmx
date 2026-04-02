@@ -7,6 +7,47 @@ npm run db:push
 npm run db:seed:truncate
 ```
 
+any changes made to schema.ts need to rerun
+```shell
+npm run db:push
+npm run db:seed:truncate
+```
+
+Drizzle will warn you of any changes with an interactive cli. For example if a column name is new or a rename
+```shell
+npm run db:push
+
+> my-app@0.0.1 db:push
+> npx drizzle-kit push
+
+No config path provided, using default 'drizzle.config.ts'
+Reading config file '/Volumes/edata/vscode/moeits_staff-astro-htmx/drizzle.config.ts'
+Using 'pg' driver for database querying
+[✓] Pulling schema from database...
+
+~ date › timestamp column will be renamed
+--- all columns conflicts in courses table resolved ---
+
+
+~ date › timestamp column will be renamed
+--- all columns conflicts in credits table resolved ---
+
+[✓] Changes applied
+```
+
+### Drizzle Studio
+```shell
+mkdir -p "$HOME/Library/Application Support/drizzle-studio"
+touch "$HOME/Library/Application Support/drizzle-studio/localhost.pem"
+touch "$HOME/Library/Application Support/drizzle-studio/localhost-key.pem"
+
+npm run db:studio
+```
+
+https://local.drizzle.studio/
+
+---
+
 HOW to generate sql files and migrations with 
 ```shell
 npx drizzle-kit generate   # generates SQL migration files

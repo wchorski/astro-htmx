@@ -11,7 +11,7 @@ import {
 } from "drizzle-orm/pg-core";
 
 export const Role = pgTable("roles", {
-  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  id: integer().primaryKey().generatedByDefaultAsIdentity(),
   label: text().notNull().unique(),
   description: text(),
   permissions: text().array().notNull().default([]),
@@ -20,7 +20,7 @@ export const Role = pgTable("roles", {
 export const Location = pgTable(
   "locations",
   {
-    id: integer().primaryKey().generatedAlwaysAsIdentity(),
+    id: integer().primaryKey().generatedByDefaultAsIdentity(),
     name: text().notNull().unique(),
     address: text().notNull(),
     city: text().notNull(),
@@ -38,7 +38,7 @@ export const Location = pgTable(
 export const User = pgTable(
   "users",
   {
-    id: integer().primaryKey().generatedAlwaysAsIdentity(),
+    id: integer().primaryKey().generatedByDefaultAsIdentity(),
     role_id: integer().references(() => Role.id),
     first_name: text().notNull(),
     last_name: text().notNull(),
@@ -57,7 +57,7 @@ export const User = pgTable(
 export const Course = pgTable(
   "courses",
   {
-    id: integer().primaryKey().generatedAlwaysAsIdentity(),
+    id: integer().primaryKey().generatedByDefaultAsIdentity(),
     wp_post_id: integer().unique(),
     subject: text().notNull(),
     description: text(),
@@ -81,7 +81,7 @@ export const Course = pgTable(
 export const Credit = pgTable(
   "credits",
   {
-    id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+    id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
     user_id: integer("user_id")
       .notNull()
       .references(() => User.id),

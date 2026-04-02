@@ -17,7 +17,7 @@
     "db:migrate": "drizzle-kit migrate",
     "db:studio": "drizzle-kit studio",
     "db:seed": "tsx src/db/seed.ts --seed",
-    "db:seed:truncate": "tsx src/db/seed.ts --seed --truncate",
+    "db:seed:truncate": "tsx src/db/seed.ts -- --seed --truncate",
     "db:prod:migrate": "DATABASE_URL=postgres://moeits:yourpassword@moeits-mini-server:5432/moeits_staff drizzle-kit migrate",
     "db:prod:seed": "DATABASE_URL=postgres://moeits:yourpassword@moeits-mini-server:5432/moeits_staff tsx db/seed.ts"
   },

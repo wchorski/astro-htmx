@@ -1,6 +1,8 @@
-import { db, count, User, desc, asc } from "astro:db";
+import { db } from "@db/db";
+import { User } from "@db/schema";
+import { count, asc } from "drizzle-orm";
 
-export async function getMembersPage(page: number, perPage = 12) {
+export async function getUsersPage(page: number, perPage = 12) {
   if (page < 1) page = 1;
 
   const totalResult = await db.select({ count: count(User.id) }).from(User);
