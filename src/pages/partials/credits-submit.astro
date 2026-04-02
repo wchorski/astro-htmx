@@ -55,9 +55,9 @@ if (Astro.request.method === 'POST') {
 
     existingMember = 
       validated.phone 
-        ? await db.select().from(User).where(eq(User.phone, validated.phone)).get() 
+        ? await db.select().from(User).where(eq(User.phone, validated.phone)).limit(1) 
         : validated.email 
-          ? await db.select().from(User).where(eq(User.email, validated.email)).get() 
+          ? await db.select().from(User).where(eq(User.email, validated.email)).limit(1) 
           : null
 
     // TODO add back in when registration form is implimented
@@ -80,9 +80,9 @@ if (Astro.request.method === 'POST') {
       city: validated.city,
       state: validated.state,
       zip: validated.zip,
-    }).returning().get();
+    }).returning().limit(1);
 
-    existingCredit = await db.select().from(Credit).where(and(eq(Credit.userId, targetMember.id), eq(Credit.courseId, validated.courseId))).get()
+    existingCredit = await db.select().from(Credit).where(and(eq(Credit.userId, targetMember.id), eq(Credit.courseId, validated.courseId))).limit(1)
 
     // TODO if the credit exists at all (meaning they register) throw an error
     if(existingCredit?.attended){

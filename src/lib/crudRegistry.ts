@@ -2,7 +2,7 @@
 import type { TableContext, TableRow } from "@ty/Table";
 
 import { db } from "@db/db";
-import { Course, Credit, Location, User, } from "@db/schema";
+import { Course, Credit, Location, User } from "@db/schema";
 import { eq } from "drizzle-orm";
 import {
   ConflictError,
@@ -53,7 +53,7 @@ type CrudEntry<T = TableRow> = {
   create: CreateFn;
   read: ReadFn<T>;
   readMany: ReadManyFn<T>;
-  uptimestamp: UpdateFn<T>;
+  update: UpdateFn<T>;
   delete: DeleteFn<T>;
 };
 
@@ -88,11 +88,11 @@ export const crud = {
         // const fields = await creditPolicy.writableFields(session, null);
         // const sanitized = sanitizeFields(row, fields);
         const validId = validate.id.parse(id);
-        const row = await db
+        const [row] = await db
           .select()
           .from(User)
           .where(eq(User.id, validId))
-          .get();
+          .limit(1);
         if (!row) throw new NotFoundError(`User ${id} not found`);
         return row;
       } catch (e) {
@@ -109,7 +109,7 @@ export const crud = {
         throwErrorsForCRUD(e);
       }
     },
-    uptimestamp: async (row, session) => {
+    update: async (row, session) => {
       try {
         // TODO add in auth. mutation for credit and user maybe tricky
         // const fields = await creditPolicy.writableFields(session, null);
@@ -128,7 +128,7 @@ export const crud = {
       }
     },
     // TODO authentication
-    // uptimestamp: async (row, session) => {
+    // update: async (row, session) => {
     //   try {
 
     //     if (!await userPolicy.update(session, row))
@@ -169,15 +169,15 @@ export const crud = {
       try {
         const validated = validate.courseCreate.parse(row);
 
-        const location = await db
+        const [location] = await db
           .select()
           .from(Location)
-          .where(eq(Location.id, validated.locationId))
-          .get();
+          .where(eq(Location.id, validated.location_id))
+          .limit(1);
 
         if (!location)
           throw new NotFoundError(
-            `location: ${validated.locationId} does not exist`,
+            `location: ${validated.location_id} does not exist`,
           );
 
         const realDate = localDateTimeToRealDate(
@@ -211,11 +211,11 @@ export const crud = {
     read: async (id, session) => {
       try {
         const validId = validate.id.parse(id);
-        const row = await db
+        const [row] = await db
           .select()
           .from(Course)
           .where(eq(Course.id, validId))
-          .get();
+          .limit(1);
         if (!row) throw new NotFoundError(`Course ${id} not found`);
         return row;
       } catch (e) {
@@ -232,19 +232,19 @@ export const crud = {
         throwErrorsForCRUD(e);
       }
     },
-    uptimestamp: async (row, session) => {
+    update: async (row, session) => {
       try {
         const validated = validate.courseUpdate.parse(row);
 
         const location = await db
           .select()
           .from(Location)
-          .where(eq(Location.id, validated.locationId))
-          .get();
+          .where(eq(Location.id, validated.location_id))
+          .limit(1);
 
         if (!location)
           throw new NotFoundError(
-            `location: ${validated.locationId} does not exist`,
+            `location: ${validated.location_id} does not exist`,
           );
         const realDate = localDateTimeToRealDate(
           validated.date_civil,
@@ -310,11 +310,11 @@ export const crud = {
     read: async (id) => {
       try {
         const validId = validate.id.parse(id);
-        const row = await db
+        const [row] = await db
           .select()
           .from(Credit)
           .where(eq(Credit.id, validId))
-          .get();
+          .limit(1);
         if (!row) throw new NotFoundError(`Credit ${id} not found`);
         return row;
       } catch (e) {
@@ -331,7 +331,7 @@ export const crud = {
         throwErrorsForCRUD(e);
       }
     },
-    uptimestamp: async (row) => {
+    update: async (row) => {
       try {
         const validated = validate.creditUpdate.parse(row);
 
@@ -388,11 +388,11 @@ export const crud = {
     read: async (id, session) => {
       try {
         const validId = validate.id.parse(id);
-        const row = await db
+        const [row] = await db
           .select()
           .from(Location)
           .where(eq(Location.id, validId))
-          .get();
+          .limit(1);
         if (!row) throw new NotFoundError(`Location ${id} not found`);
         return row;
       } catch (e) {
@@ -400,7 +400,7 @@ export const crud = {
       }
     },
 
-    uptimestamp: async (row, session) => {
+    update: async (row, session) => {
       try {
         const validated = validate.locationUpdate.parse(row);
         const validId = validate.id.parse(row.id);
@@ -443,15 +443,15 @@ export const crud = {
 
           // --- Branch 1: link to existing user ---
           if ("user_id" in validated) {
-            userId = validated.userId;
+            user_id = validated.user_id;
 
-            const found = await tx
+            const [found] = await tx
               .select()
               .from(User)
-              .where(eq(User.id, userId))
-              .get();
+              .where(eq(User.id, user_id))
+              .limit(1);
 
-            if (!found) throw new NotFoundError(`User ${userId} not found`);
+            if (!found) throw new NotFoundError(`User ${user_id} not found`);
             user = found;
           } else {
             const [created] = await tx
@@ -471,16 +471,16 @@ export const crud = {
             if (!created) throw new Error("Failed to create user");
 
             user = created;
-            userId = created.id;
+            user_id = created.id;
           }
 
-          // --- Create credit linked to resolved userId ---
+          // --- Create credit linked to resolved user_id ---
           const [credit] = await tx
             .insert(Credit)
             .values({
               attended: validated.attended,
               course_id: validated.courseId,
-              userId,
+              user_id,
               timestamp: new Date(),
             })
             .returning();
@@ -502,18 +502,18 @@ export const crud = {
 
         const validId = validate.id.parse(id);
 
-        const row = await db
+        const [row] = await db
           .select()
           .from(Credit)
-          .innerJoin(User, eq(Credit.userId, User.id))
+          .innerJoin(User, eq(Credit.user_id, User.id))
           .where(eq(Credit.id, validId))
-          .get();
+          .limit(1);
         if (!row) throw new NotFoundError(`Credit ${id} not found`);
         return {
-          ...row.User,
-          ...row.Credit,
-          user_id: row.User.id, // preserve user id before Credit.id overwrites it
-          id: row.Credit.id,
+          ...row.users,
+          ...row.credits,
+          user_id: row.credits.id, // preserve user id before Credit.id overwrites it
+          id: row.credits.id,
         };
       } catch (e) {
         throwErrorsForCRUD(e);
@@ -524,16 +524,16 @@ export const crud = {
         const credits = await db
           .select()
           .from(Credit)
-          .innerJoin(User, eq(Credit.userId, User.id))
-          .where(eq(Credit.courseId, 42069));
+          .innerJoin(User, eq(Credit.user_id, User.id))
+          .where(eq(Credit.course_id, 42069));
         // .limit(perPage)
         // .offset((page - 1) * perPage);
-        return credits.map((item) => userCreditMap(item.Credit, item.User));
+        return credits.map((item) => userCreditMap(item.credits, item.users));
       } catch (e) {
         throwErrorsForCRUD(e);
       }
     },
-    uptimestamp: async (
+    update: async (
       inputFields: FormFields<CourseCreditFlat> & { id: string },
       session,
     ) => {
@@ -541,7 +541,7 @@ export const crud = {
         // TODO add in auth. mutation for credit and user maybe tricky
         // const fields = await creditPolicy.writableFields(session, null);
         // const sanitized = sanitizeFields(row, fields);
-        const { id, userId, courseId, attended, ...userFields } =
+        const { id, user_id, course_id, attended, ...userFields } =
           validate.userCreditUpdate.parse(inputFields);
 
         // two updates but in a transaction so they succeed or fail together
@@ -556,9 +556,9 @@ export const crud = {
           const [user] = await tx
             .update(User)
             .set(userFields)
-            .where(eq(User.id, userId))
+            .where(eq(User.id, user_id))
             .returning();
-          if (!user) throw new NotFoundError(`User ${userId} not found`);
+          if (!user) throw new NotFoundError(`User ${user_id} not found`);
 
           // return { ...credit, ...user };
           return userCreditMap(credit, user);
@@ -578,11 +578,11 @@ export const crud = {
           .returning();
         if (!deleted) throw new NotFoundError(`Credit ${id} not found`);
 
-        const user = await db
+        const [user] = await db
           .select()
           .from(User)
-          .where(eq(User.id, deleted.userId))
-          .get();
+          .where(eq(User.id, deleted.user_id))
+          .limit(1);
         if (!user) throw new NotFoundError(`User not found`);
 
         return userCreditMap(deleted, user);

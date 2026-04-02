@@ -67,7 +67,7 @@ export const POST: APIRoute = async ({ request, redirect }) => {
       .select()
       .from(Course)
       .where(eq(Course.id, courseId))
-      .get();
+      .limit(1);
 
     if (!courseExists) {
       return redirect(
@@ -88,12 +88,12 @@ export const POST: APIRoute = async ({ request, redirect }) => {
     }
 
     const memberExists = userId
-      ? await db.select().from(User).where(eq(User.id, userId)).get()
+      ? await db.select().from(User).where(eq(User.id, userId)).limit(1)
       : await db
           .select()
           .from(User)
           .where(eq(User.phone, phoneSanatized))
-          .get();
+          .limit(1);
     // TODO member may not exist yet (if this app doesn't also register them)
     // if (!memberExists) {
     //   return redirect(

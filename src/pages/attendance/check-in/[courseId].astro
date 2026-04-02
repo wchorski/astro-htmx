@@ -14,14 +14,14 @@ const course = await db
   .select()
   .from(Course)
   .where(eq(Course.id, Number(courseId)))
-  .get();
+  .limit(1);
 if (!course) return Astro.redirect("/404");
 
 const location = await db
   .select()
   .from(Location)
-  .where(eq(Location.id, course.locationId))
-  .get();
+  .where(eq(Location.id, course.location_id))
+  .limit(1);
 if (!location) return Astro.redirect("/404");
 
 const { subject, date, description, dateCivil } = course;

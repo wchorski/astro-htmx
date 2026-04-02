@@ -16,7 +16,7 @@ const course = await db
   .select()
   .from(Course)
   .where(eq(Course.id, Number(id)))
-  .get();
+  .limit(1);
 if (!course) return Astro.redirect("/404");
 
 const courseCredits = await db

@@ -59,11 +59,11 @@ if (Astro.request.method === 'POST') {
     // TODO find member and set as attended
     existingMember = 
       validated.userId 
-        ? await db.select().from(User).where(eq(User.id, validated.userId)).get()
+        ? await db.select().from(User).where(eq(User.id, validated.userId)).limit(1)
         : validated.phone 
-          ? await db.select().from(User).where(eq(User.phone, validated.phone)).get() 
+          ? await db.select().from(User).where(eq(User.phone, validated.phone)).limit(1) 
           : validated.email 
-            ? await db.select().from(User).where(eq(User.email, validated.email)).get() 
+            ? await db.select().from(User).where(eq(User.email, validated.email)).limit(1) 
             : null
     
     if(!existingMember){

@@ -32,10 +32,7 @@ export const validate = {
       .trim()
       .toLowerCase()
       .min(3, "Must be more than 3 characters"),
-    zip: z.coerce
-      .number()
-      .min(10000, "Invalid ZIP code")
-      .max(99999, "Invalid ZIP code"),
+    zip: z.string().min(5, "Invalid ZIP code").max(5, "Invalid ZIP code"),
   }),
 
   get userCreate() {
@@ -80,7 +77,7 @@ export const validate = {
     address: z.string().min(3, "Must be more than 3 characters"),
     city: z.string().min(3, "Must be more than 3 characters"),
     state: z.string().min(2, "Must be more than 3 characters"),
-    zip: z.coerce.number().min(10000, "Invalid ZIP code").max(99999, "Invalid ZIP code"),
+    zip: z.string().min(5, "Invalid ZIP code").max(5, "Invalid ZIP code"),
     timezone: z.string().min(8, "Must be more than 8 characters"),
     description: z.string().optional(),
   }),
@@ -138,7 +135,7 @@ export const validate = {
       address1: z.string(),
       city: z.string(),
       state: z.string(),
-      zip: z.coerce.number(),
+      zip: z.string(),
       course_id: z.coerce.number(),
       // attended: z.coerce.boolean(),
       attended: z
@@ -159,7 +156,7 @@ export const validate = {
       ) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: "If linking by userId, other fields must be left blank.",
+          message: "If linking by user_id, other fields must be left blank.",
         });
         return;
       }

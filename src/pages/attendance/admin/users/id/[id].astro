@@ -16,7 +16,7 @@ const member = await db
   .select()
   .from(User)
   .where(eq(User.id, Number(id)))
-  .get();
+  .limit(1);
 if (!member) return Astro.redirect("/404");
 
 const { first_name, last_name, middle_initial, address1, city, state, zip } =
@@ -30,7 +30,7 @@ const ownedCredits = await db
   })
   .from(Credit)
   .innerJoin(Course, eq(Credit.courseId, Course.id))
-  .innerJoin(Location, eq(Course.locationId, Location.id))
+  .innerJoin(Location, eq(Course.location_id, Location.id))
   .where(eq(Credit.userId, Number(id)));
 
 const tableRows = ownedCredits.map(({ credit, course, location }) => ({

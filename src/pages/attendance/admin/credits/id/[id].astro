@@ -12,7 +12,7 @@ const foundCourse = await db
   .select()
   .from(Course)
   .where(eq(Course.id, Number(id)))
-  .get();
+  .limit(1);
 
 const courseCredits = await db
   .select({
