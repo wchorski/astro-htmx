@@ -1,3 +1,4 @@
+//! moved onto drizzle with src/db/db.ts
 // import { column, defineDb, defineTable } from "astro:db";
 
 // // TOOD add in permissions later
@@ -16,7 +17,7 @@
 //   columns: {
 //     id: column.number({ primaryKey: true }),
 //     // TODO auth
-//     roleId: column.number({
+//     role_id: column.number({
 //       references: () => Role.columns.id,
 //       optional: true,
 //     }),
@@ -46,19 +47,19 @@
 // const Course = defineTable({
 //   columns: {
 //     id: column.number({ primaryKey: true }),
-//     wpPostId: column.number({ optional: true }),
+//     wp_post_id: column.number({ optional: true }),
 //     subject: column.text(),
 //     description: column.text({ optional: true }),
 //     where: column.text({ optional: true }),
-//     date: column.date(),
-//     dateCivil: column.text(),
-//     locationId: column.number({ references: () => Location.columns.id }),
+//     timestamp: column.date(),
+//     date_civil: column.text(),
+//     location_id: column.number({ references: () => Location.columns.id }),
 //   },
 //   // TODO make a joined subject and date
 //   indexes: [
 //     { on: ["wpPostId"], unique: true },
 //     // prevent duplicate entry of same subject, date, and locaiton
-//     { on: ["subject", "dateCivil", "locationId"], unique: true },
+//     { on: ["subject", "dateCivil", "location_id"], unique: true },
 //   ],
 // });
 // const Location = defineTable({
@@ -78,15 +79,15 @@
 // const Credit = defineTable({
 //   columns: {
 //     id: column.number({ primaryKey: true }),
-//     userId: column.number({ references: () => User.columns.id }),
-//     courseId: column.number({ references: () => Course.columns.id }),
-//     date: column.date(),
-//     // date: column.date({ default: NOW }),
+//     user_id: column.number({ references: () => User.columns.id }),
+//     course_id: column.number({ references: () => Course.columns.id }),
+//     timestamp: column.date(),
+//     // timestamp: column.date({ default: NOW }),
 //     grade: column.text({ optional: true }),
 //     attended: column.boolean({ default: false }),
 //   },
 //   //? a member can not have more than one credit on any one course (avoid duplicates)
-//   indexes: [{ on: ["courseId", "userId"], unique: true }],
+//   indexes: [{ on: ["course_id", "user_id"], unique: true }],
 // });
 
 // // https://astro.build/db/config

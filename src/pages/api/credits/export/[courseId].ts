@@ -46,7 +46,7 @@ export const PUT: APIRoute = async ({ params, request, redirect }) => {
       course: rows.length > 0 ? rows[0].course : null,
 
       credits: rows.map((row) => {
-        const { id: creditId, date: creditDate, ...creditRest } = row.credit; // pull id out, keep everything else
+        const { id: creditId, timestamp: creditDate, ...creditRest } = row.credit; // pull id out, keep everything else
         const { id: userId, ...memberRest } = row.user;
         return {
           user: {
@@ -161,7 +161,7 @@ type CreditWithMember = Omit<CreditInsert, "id" | "date"> & {
   creditId: CreditInsert["id"];
   dateCreated: CreditInsert["date"];
   user: Omit<UserInsert, "id"> & {
-    userId: UserInsert["id"];
+    user_id: UserInsert["id"];
     phone: string; // because you force "" as fallback
   };
 };

@@ -36,12 +36,12 @@ function basicAuth(username: string, appPassword: string) {
  * Convert "YYYY-MM-DDTHH:MM" + IANA time zone -> "YYYY-MM-DD HH:mm:ss"
  * This matches ACF date_time_picker REST schema expectations.
  */
-function acfDateTimeFromCivil(dateCivil: string) {
+function acfDateTimeFromCivil(date_civil: string) {
   // Force seconds, then replace "T" with space
   return dateCivil.replace("T", " ") + ":00";
 }
 
-// function acfRealDateTimeFromInstant(date: Date, timeZone: string) {
+// function acfRealDateTimeFromInstant(timestamp: Date, timeZone: string) {
 //   const instant = Temporal.Instant.fromEpochMilliseconds(date.getTime());
 //   const zdt = instant.toZonedDateTimeISO(timeZone);
 //   return zdt
@@ -59,7 +59,7 @@ export async function createWordpressEventPost(
 
   const authHeader = basicAuth(WP_USERNAME, WP_APP_PASSWORD);
 
-  const acfDate = acfDateTimeFromCivil(course.dateCivil);
+  const acfDate = acfDateTimeFromCivil(course.date_civil);
   //   const acfRealDate = acfRealDateTimeFromInstant(course.date, timezone);
 
   // (Optional) sanity check: compare the instant-based version
@@ -69,7 +69,7 @@ export async function createWordpressEventPost(
     title: course.subject,
     status: "draft",
     // if you want the WP post publish date, you can set "date" too, but it's optional
-    // date: new Date().toISOString(),
+    // timestamp: new Date().toISOString(),
     content: course.description ?? "",
 
     // Taxonomy term IDs (from your earlier examples)
@@ -78,9 +78,9 @@ export async function createWordpressEventPost(
 
     // ACF fields — MUST match your ACF field "name" values
     acf: {
-      event_date: acfDate,
+      event_timestamp: acfDate,
       // TODO use acfRealDateTimeFromInstant() to set relative to location's timezone (for now, the WP site doesn't even use or need this so setting both as the same is ok)
-      real_event_date: acfDate, // yes, both are required by your schema
+      real_event_timestamp: acfDate, // yes, both are required by your schema
       where: course.where ?? null,
       event_description: course.description ?? null,
       show_link: "no", // enum: "no" | "yes"
@@ -154,7 +154,7 @@ export async function updateWordpressEventPost(
   if (!WP_USERNAME || !WP_APP_PASSWORD) {
     throw new Error("Missing WP_USERNAME and/or WP_APP_PASSWORD");
   }
-  const acfDate = acfDateTimeFromCivil(course.dateCivil);
+  const acfDate = acfDateTimeFromCivil(course.date_civil);
 
   const payload = {
     title: course.subject,
@@ -162,8 +162,8 @@ export async function updateWordpressEventPost(
     site: getSiteMap(course),
     event_filter: getEventFilterMap(course),
     acf: {
-      event_date: acfDate, // must be "Y-m-d H:i:s"
-      real_event_date: acfDate, // must be "Y-m-d H:i:s"
+      event_timestamp: acfDate, // must be "Y-m-d H:i:s"
+      real_event_timestamp: acfDate, // must be "Y-m-d H:i:s"
       where: course.where ?? null,
       event_description: course.description ?? null,
       show_link: "no",

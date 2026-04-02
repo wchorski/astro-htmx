@@ -90,7 +90,7 @@ export const courseConfigRequired = (locations: LocationSelect[]) =>
       required: true,
       readonly: true,
     },
-    wpPostId: {
+    wp_post_id: {
       type: "number",
       required: true,
       readonly: true,
@@ -106,12 +106,12 @@ export const courseConfigRequired = (locations: LocationSelect[]) =>
       type: "text",
       placeholder: "...",
     },
-    dateCivil: {
+    date_civil: {
       label: "Civil Date",
       type: "datetime-local",
       required: true,
     },
-    locationId: {
+    location_id: {
       label: "Locations",
       type: "select",
       required: true,
@@ -129,14 +129,14 @@ const courseCreditsRequiredConfig = {
     required: true,
     readonly: true,
   },
-  userId: {
+  user_id: {
     label: "User ID",
     type: "number",
     required: true,
     readonly: true,
   },
   //? don't need it if passed with URL
-  // courseId: {
+  // course_id: {
   //   label: "Course ID",
   //   type: "hidden",
   //   value: courseId,
@@ -204,7 +204,7 @@ export const creditConfigRequired = (
       required: true,
       readonly: true,
     },
-    userId: {
+    user_id: {
       label: "User",
       // type: "searchSelect",
       type: "select",
@@ -215,7 +215,7 @@ export const creditConfigRequired = (
       })),
     },
     // TODO if user data set is gt 5000, switch to dyamicaly searched and loaded data
-    // userId: {
+    // user_id: {
     //   label: "User",
     //   type: "searchSelect",
     //   required: true,
@@ -224,16 +224,16 @@ export const creditConfigRequired = (
     //   primaryTemplate: "{firstName} {lastName}",
     //   secondaryTemplate: "{email}",
     // },
-    courseId: {
+    course_id: {
       label: "Course",
       type: "select",
       required: true,
       options: courses.map((item) => ({
         value: String(item.id),
-        label: item.subject + " | " + prettyDateToLocale(new Date(item.dateCivil)),
+        label: item.subject + " | " + prettyDateToLocale(new Date(item.date_civil)),
       })),
     },
-    date: {
+    timestamp: {
       label: "Attended Date",
       type: "datetime-local",
       readonly: true,
@@ -329,14 +329,14 @@ export const tableConfigs = {
 
 export const userCreditMap = (credit: CreditSelect, user: UserSelect) => ({
   id: credit.id,
-  userId: user.id,
-  // courseId: credit.courseId,
+  user_id: user.id,
+  // course_id: credit.courseId,
   first_name: user.first_name,
   last_name: user.last_name,
   middle_initial: user.middle_initial,
   phone: user.phone,
   email: user.email,
-  address1: user.address1,
+  address1: user.address_1,
   city: user.city,
   state: user.state,
   zip: user.zip,

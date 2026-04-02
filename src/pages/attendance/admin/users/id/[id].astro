@@ -35,8 +35,8 @@ const ownedCredits = await db
 
 const tableRows = ownedCredits.map(({ credit, course, location }) => ({
   id: credit.id,
-  courseId: course.id,
-  locationId: location.id,
+  course_id: course.id,
+  location_id: location.id,
   attended: credit.attended,
 }));
 
@@ -83,7 +83,7 @@ const locations = await crud.locations.readMany(session)
               required: true,
               readonly: true,
             },
-            courseId: {
+            course_id: {
               label: "Course",
               type: "select",
               required: true,
@@ -92,10 +92,10 @@ const locations = await crud.locations.readMany(session)
                 label:
                   item.subject +
                   " | " +
-                  prettyDateToLocale(new Date(item.dateCivil)),
+                  prettyDateToLocale(new Date(item.date_civil)),
               })),
             },
-            locationId: {
+            location_id: {
               type: "select",
               required: true,
               options: locations.map((item) => ({

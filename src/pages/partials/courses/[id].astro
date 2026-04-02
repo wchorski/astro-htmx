@@ -126,7 +126,7 @@ if (Astro.request.method === "DELETE") {
     <tr id={`row-${id}`} hx-swap-oob="outerHTML">
       <td colspan="100%" class="danger">
         DELETED {crudKey}{" "}
-        {`${course.id} | ${course.subject} ${course.dateCivil}`}
+        {`${course.id} | ${course.subject} ${course.date_civil}`}
       </td>
     </tr>
   ) : Astro.request.method === "PATCH" && course ? (

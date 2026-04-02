@@ -24,13 +24,13 @@ export type UserCreditSelect = {
 };
 
 export type UserCreditFlat = {
-  userId: number;
+  user_id: number;
   id: number;
   date?: Date;
   courseId?: number;
   grade?: string | null;
   attended: boolean;
-  roleId?: number | null;
+  role_id?: number | null;
   first_name: string;
   last_name: string;
   middle_initial: string | null;

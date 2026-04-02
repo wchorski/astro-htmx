@@ -74,16 +74,16 @@ export const GET: APIRoute = async ({ url }) => {
 
       const newCourse: CourseInsert = {
         // id: wpPost.id,
-        wpPostId: wpPost.id,
+        wp_post_id: wpPost.id,
         subject: wpPost.title,
         description: wpPost.event_description,
-        date: realDate,
+        timestamp: realDate,
         dateCivil,
         where: removeHTMLfromString(wpPost.where),
-        locationId: loc.id,
+        location_id: loc.id,
       };
       // @ts-ignore
-      seedCoursesFormat.push({ ...newCourse, date: realDate.toISOString() });
+      seedCoursesFormat.push({ ...newCourse, timestamp: realDate.toISOString() });
 
       await db.insert(Course).values(newCourse).onConflictDoUpdate({
         target: Course.id,
@@ -110,7 +110,7 @@ export const GET: APIRoute = async ({ url }) => {
 function realEventDateToLocalString(real: string): string {
   // "20260207080000" -> "2026-02-07T08:00"
   if (!/^\d{14}$/.test(real)) {
-    throw new Error(`Invalid real_event_date: ${real}`);
+    throw new Error(`Invalid real_event_timestamp: ${real}`);
   }
   const y = real.slice(0, 4);
   const mo = real.slice(4, 6);
@@ -121,10 +121,10 @@ function realEventDateToLocalString(real: string): string {
   return `${y}-${mo}-${d}T${h}:${mi}`;
 }
 
-function parsedateCivil(dateCivil: string) {
+function parsedateCivil(date_civil: string) {
   const [datePart, timePart] = dateCivil.split("T");
   if (!datePart || !timePart)
-    throw new Error(`Invalid dateCivil: ${dateCivil}`);
+    throw new Error(`Invalid date_civil: ${dateCivil}`);
 
   const [year, month, day] = datePart.split("-").map(Number);
   const [hour, minute] = timePart.split(":").map(Number);
@@ -132,7 +132,7 @@ function parsedateCivil(dateCivil: string) {
   return { year, month, day, hour, minute };
 }
 
-function getZonedParts(date: Date, timeZone: string) {
+function getZonedParts(timestamp: Date, timeZone: string) {
   const dtf = new Intl.DateTimeFormat("en-US", {
     timeZone,
     hour12: false,
@@ -157,7 +157,7 @@ function getZonedParts(date: Date, timeZone: string) {
   };
 }
 
-function localDateTimeToUtcDate(dateCivil: string, timeZone: string): Date {
+function localDateTimeToUtcDate(date_civil: string, timeZone: string): Date {
   const desired = parsedateCivil(dateCivil);
 
   // First guess: treat desired local time as if it were UTC

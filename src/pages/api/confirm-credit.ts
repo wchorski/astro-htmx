@@ -6,8 +6,8 @@ import { z } from "astro/zod";
 import { normalizePhoneToE164Manual } from "@lib/formatters";
 
 const formSchema = z.object({
-  userId: z.coerce.number().optional(),
-  courseId: z.coerce.number(),
+  user_id: z.coerce.number().optional(),
+  course_id: z.coerce.number(),
   asipId: z.coerce.number(),
   regNum: z.coerce.number(),
   first_name: z.string().min(1, "First name is required"),
@@ -125,9 +125,9 @@ export const POST: APIRoute = async ({ request, redirect }) => {
         .returning();
 
       await db.insert(Credit).values({
-        userId: newMember.id,
+        user_id: newMember.id,
         courseId,
-        date: new Date(),
+        timestamp: new Date(),
         attended: true,
       });
     } else {
@@ -146,9 +146,9 @@ export const POST: APIRoute = async ({ request, redirect }) => {
         );
 
       await db.insert(Credit).values({
-        userId: memberExists.id,
+        user_id: memberExists.id,
         courseId,
-        date: new Date(),
+        timestamp: new Date(),
         attended: true,
       });
     }

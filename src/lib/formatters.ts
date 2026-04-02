@@ -141,20 +141,20 @@ export function localDateTimeToRealDate(localString: string, timezone: string) {
 
 const LOCAL_DATE_TIME_REGEX = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/;
 
-export function prettyPlainCivilDateFull(dateCivil: string): string {
+export function prettyPlainCivilDateFull(date_civil: string): string {
   // 1️⃣ Enforce exact format shape
-  if (!LOCAL_DATE_TIME_REGEX.test(dateCivil)) {
+  if (!LOCAL_DATE_TIME_REGEX.test(date_civil)) {
     throw new Error(
-      `Invalid format. Expected YYYY-MM-DDTHH:mm, received: ${dateCivil}`,
+      `Invalid format. Expected YYYY-MM-DDTHH:mm, received: ${date_civil}`,
     );
   }
 
   // 2️⃣ Let Temporal validate real calendar correctness
   let plain: Temporal.PlainDateTime;
   try {
-    plain = Temporal.PlainDateTime.from(dateCivil);
+    plain = Temporal.PlainDateTime.from(date_civil);
   } catch {
-    throw new Error(`Invalid calendar date/time: ${dateCivil}`);
+    throw new Error(`Invalid calendar date/time: ${date_civil}`);
   }
 
   return plain.toLocaleString("en-US", {
@@ -167,8 +167,8 @@ export function prettyPlainCivilDateFull(dateCivil: string): string {
   });
 }
 
-export function prettyDateToLocale(date: Date) {
-  return date.toLocaleString("en-US", {
+export function prettyDateToLocale(timestamp: Date) {
+  return timestamp.toLocaleString("en-US", {
     weekday: "long",
     year: "numeric",
     month: "long",
@@ -178,8 +178,8 @@ export function prettyDateToLocale(date: Date) {
   });
 }
 
-export const dateToLocaleFieldValue = (date: Date) => {
-  return date
+export const dateToLocaleFieldValue = (timestamp: Date) => {
+  return timestamp
     .toLocaleString("en-CA", {
       year: "numeric",
       month: "2-digit",
@@ -210,7 +210,7 @@ export function toLocalDateTimeString(
   const date = new Date(apiDateString);
 
   if (Number.isNaN(date.getTime())) {
-    throw new Error(`Invalid date: ${apiDateString}`);
+    throw new Error(`Invalid timestamp: ${apiDateString}`);
   }
 
   const parts = new Intl.DateTimeFormat("en-CA", {
@@ -239,7 +239,7 @@ export function toLocalDateTimeString(
 }
 
 // export function localDateTimeToRealDate(
-//   dateCivil: string,        // "2026-02-26T19:00"
+//   date_civil: string,        // "2026-02-26T19:00"
 //   timeZone: string          // "America/Chicago"
 // ): Date {
 //   // Parse components manually (do NOT let Date guess)

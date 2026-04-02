@@ -12,7 +12,6 @@ import type { CourseSelect, CreditSelect, UserSelect } from "@ty/Schema";
 import RowCreate from "./tables/RowCreate.astro";
 import { creditConfigRequired } from "@lib/tableConfigs";
 const { credits: tableRows, users, courses } = Astro.props;
-
 const config = creditConfigRequired(users, courses);
 
 const ctx = {

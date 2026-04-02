@@ -1,9 +1,13 @@
-import { db, count, Location, desc } from "astro:db";
+import { db } from "@db/db";
+import { Location } from "@db/schema";
+import { desc, count } from "drizzle-orm";
 
 export async function getLocationsPage(page: number, perPage = 12) {
   if (page < 1) page = 1;
 
-  const totalResult = await db.select({ count: count(Location.id) }).from(Location);
+  const totalResult = await db
+    .select({ count: count(Location.id) })
+    .from(Location);
 
   const totalCount = totalResult[0].count;
   const totalPages = Math.ceil(totalCount / perPage);

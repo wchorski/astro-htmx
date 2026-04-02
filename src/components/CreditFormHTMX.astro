@@ -20,13 +20,13 @@ const { error, success } = Astro.props;
   <div id="loading" class="htmx-indicator">Submitting...</div>
 
   <fieldset>
-    <label for="userId">
+    <label for="user_id">
       <span>TEST: userId</span>
-      <input type="number" name="userId" value="1" required />
+      <input type="number" name="user_id" value="1" required />
     </label>
-    <label for="courseId">
+    <label for="course_id">
       <span>TEST: courseId</span>
-      <input type="number" name="courseId" value="1" required />
+      <input type="number" name="course_id" value="1" required />
     </label>
   </fieldset>
 
@@ -92,7 +92,7 @@ const { error, success } = Astro.props;
     </label>
   </fieldset>
 
-  <p>TODO: Course: ??? - Date: ???</p>
+  <p>TODO: Course: ??? - timestamp: ???</p>
   <button type="submit">Confirm Credit</button>
 </form>
 

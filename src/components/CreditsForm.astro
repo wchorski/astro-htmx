@@ -1,7 +1,7 @@
 ---
 import type { User, Course } from "astro:db";
 interface Props {
-  courseId: number;
+  course_id: number;
   member?: typeof User.$inferInsert;
   formId?: string;
 }
@@ -30,7 +30,7 @@ const responseTargetId = `${formId}-response`;
     <span class="text">Course ID</span>
     <input
       type="hidden"
-      name="courseId"
+      name="course_id"
       aria-describedby={`${formId}-error-courseId`}
       id={`${formId}-courseId`}
       value={courseId}
@@ -120,7 +120,7 @@ const responseTargetId = `${formId}-response`;
         name="address1"
         aria-describedby={`${formId}-error-address1`}
         id={`${formId}-address1`}
-        value={member?.address1}
+        value={member?.address_1}
         required
       />
       <span class="field-error" id={`${formId}-error-address1`}></span>

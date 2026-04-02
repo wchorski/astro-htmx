@@ -1,6 +1,9 @@
 // src/lib/crudRegistry.ts
 import type { TableContext, TableRow } from "@ty/Table";
-import { db, eq, User, Course, Credit, Location } from "astro:db";
+
+import { db } from "@db/db";
+import { Course, Credit, Location, User, } from "@db/schema";
+import { eq } from "drizzle-orm";
 import {
   ConflictError,
   ForbiddenError,
@@ -50,7 +53,7 @@ type CrudEntry<T = TableRow> = {
   create: CreateFn;
   read: ReadFn<T>;
   readMany: ReadManyFn<T>;
-  update: UpdateFn<T>;
+  uptimestamp: UpdateFn<T>;
   delete: DeleteFn<T>;
 };
 
@@ -71,7 +74,7 @@ export const crud = {
         const [result] = await db
           .insert(User)
           // TODO move this to frontend form instead.
-          .values({ ...validated, roleId: Number(DEFAULT_ROLE_ID) ?? null })
+          .values({ ...validated, role_id: Number(DEFAULT_ROLE_ID) ?? null })
           .returning();
 
         return result;
@@ -106,7 +109,7 @@ export const crud = {
         throwErrorsForCRUD(e);
       }
     },
-    update: async (row, session) => {
+    uptimestamp: async (row, session) => {
       try {
         // TODO add in auth. mutation for credit and user maybe tricky
         // const fields = await creditPolicy.writableFields(session, null);
@@ -125,7 +128,7 @@ export const crud = {
       }
     },
     // TODO authentication
-    // update: async (row, session) => {
+    // uptimestamp: async (row, session) => {
     //   try {
 
     //     if (!await userPolicy.update(session, row))
@@ -178,21 +181,25 @@ export const crud = {
           );
 
         const realDate = localDateTimeToRealDate(
-          validated.dateCivil,
+          validated.date_civil,
           location.timezone,
         );
 
         const wpPostId =
           WP_USERNAME && WP_APP_PASSWORD
-            ? (await createWordpressEventPost({ ...validated, date: realDate }))
-                .id
+            ? (
+                await createWordpressEventPost({
+                  ...validated,
+                  timestamp: realDate,
+                })
+              ).id
             : null;
 
         const [result] = await db
           .insert(Course)
           .values({
             ...validated,
-            date: realDate,
+            timestamp: realDate,
             wpPostId,
           })
           .returning();
@@ -225,7 +232,7 @@ export const crud = {
         throwErrorsForCRUD(e);
       }
     },
-    update: async (row, session) => {
+    uptimestamp: async (row, session) => {
       try {
         const validated = validate.courseUpdate.parse(row);
 
@@ -240,20 +247,24 @@ export const crud = {
             `location: ${validated.locationId} does not exist`,
           );
         const realDate = localDateTimeToRealDate(
-          validated.dateCivil,
+          validated.date_civil,
           location.timezone,
         );
         const wpPostId =
           WP_USERNAME && WP_APP_PASSWORD
-            ? (await createWordpressEventPost({ ...validated, date: realDate }))
-                .id
+            ? (
+                await createWordpressEventPost({
+                  ...validated,
+                  timestamp: realDate,
+                })
+              ).id
             : null;
         const [result] = await db
           .update(Course)
           .set({
             ...validated,
-            date: realDate,
-            wpPostId: wpPostId ?? validated.wpPostId,
+            timestamp: realDate,
+            wp_post_id: wpPostId ?? validated.wpPostId,
           })
           .where(eq(Course.id, validated.id))
           .returning();
@@ -288,7 +299,7 @@ export const crud = {
           .insert(Credit)
           .values({
             ...validated,
-            date: new Date(),
+            timestamp: new Date(),
           })
           .returning();
         return result;
@@ -320,7 +331,7 @@ export const crud = {
         throwErrorsForCRUD(e);
       }
     },
-    update: async (row) => {
+    uptimestamp: async (row) => {
       try {
         const validated = validate.creditUpdate.parse(row);
 
@@ -389,7 +400,7 @@ export const crud = {
       }
     },
 
-    update: async (row, session) => {
+    uptimestamp: async (row, session) => {
       try {
         const validated = validate.locationUpdate.parse(row);
         const validId = validate.id.parse(row.id);
@@ -428,10 +439,10 @@ export const crud = {
 
         return await db.transaction(async (tx) => {
           let user: typeof User.$inferSelect;
-          let userId: number;
+          let user_id: number;
 
           // --- Branch 1: link to existing user ---
-          if ("userId" in validated) {
+          if ("user_id" in validated) {
             userId = validated.userId;
 
             const found = await tx
@@ -450,7 +461,7 @@ export const crud = {
                 last_name: validated.last_name,
                 phone: validated.phone,
                 email: validated.email,
-                address1: validated.address1,
+                address1: validated.address_1,
                 city: validated.city,
                 state: validated.state,
                 zip: validated.zip,
@@ -468,16 +479,16 @@ export const crud = {
             .insert(Credit)
             .values({
               attended: validated.attended,
-              courseId: validated.courseId,
+              course_id: validated.courseId,
               userId,
-              date: new Date(),
+              timestamp: new Date(),
             })
             .returning();
 
           if (!credit) throw new Error("Failed to create credit");
 
           // flat return: user + credit (ensure credit.id wins)
-          return { ...user, ...credit, userId: user.id, id: credit.id };
+          return { ...user, ...credit, user_id: user.id, id: credit.id };
         });
       } catch (e) {
         throwErrorsForCRUD(e);
@@ -501,7 +512,7 @@ export const crud = {
         return {
           ...row.User,
           ...row.Credit,
-          userId: row.User.id, // preserve user id before Credit.id overwrites it
+          user_id: row.User.id, // preserve user id before Credit.id overwrites it
           id: row.Credit.id,
         };
       } catch (e) {
@@ -517,12 +528,12 @@ export const crud = {
           .where(eq(Credit.courseId, 42069));
         // .limit(perPage)
         // .offset((page - 1) * perPage);
-        return credits.map(item => userCreditMap(item.Credit, item.User));
+        return credits.map((item) => userCreditMap(item.Credit, item.User));
       } catch (e) {
         throwErrorsForCRUD(e);
       }
     },
-    update: async (
+    uptimestamp: async (
       inputFields: FormFields<CourseCreditFlat> & { id: string },
       session,
     ) => {

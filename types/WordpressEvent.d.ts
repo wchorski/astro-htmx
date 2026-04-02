@@ -1,11 +1,11 @@
 export type WordpressEvent = {
   id: number;
   title: string;
-  date: string;
+  timestamp: string;
   slug: string;
   link: string;
-  event_date: string;
-  real_event_date: string;
+  event_timestamp: string;
+  real_event_timestamp: string;
   location: string | null;
   where: string;
   description: string | null;

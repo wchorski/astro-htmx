@@ -28,14 +28,14 @@ label .text {
 }
 
 input[name="id"],
-input[name="userId"],
+input[name="user_id"],
 input[name="wpPostId"],
 input[name="middle_initial"],
-input[name="courseId"] 
-input[name="locationId"],
-input[name="courseId"],
+input[name="course_id"] 
+input[name="location_id"],
+input[name="course_id"],
 input[name="grade"],
-select[name="locationId"] {
+select[name="location_id"] {
   max-width: 10ch;
 }
 

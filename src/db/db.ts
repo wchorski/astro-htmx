@@ -20,4 +20,7 @@ const DATABASE_URL =
 
 if (!DATABASE_URL) throw new Error("missing database env variable");
 
+
 export const db = drizzle(DATABASE_URL, { schema });
+
+console.log(Object.keys(db.query));

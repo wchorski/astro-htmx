@@ -72,7 +72,7 @@ describe("validate.course schema", () => {
   test("parses valid course", () => {
     const result = validate.course.parse(validCourse);
     expect(result.subject).toBe(validCourse.subject);
-    expect(result.dateCivil).toBe(validCourse.dateCivil);
+    expect(result.date_civil).toBe(validCourse.date_civil);
   });
 
   test("fails missing required field", () => {
@@ -99,7 +99,7 @@ describe("validate.location schema", () => {
 });
 
 describe("validate.userLink schema", () => {
-  const validLink = { userId: 1, courseId: 2, attended: "on" };
+  const validLink = { user_id: 1, course_id: 2, attended: "on" };
 
   test("parses valid userLink and transforms attended", () => {
     const result = validate.userLink.parse(validLink);
@@ -107,7 +107,7 @@ describe("validate.userLink schema", () => {
   });
 
   test("fails missing required field", () => {
-    const invalid = { ...validLink, courseId: undefined };
+    const invalid = { ...validLink, course_id: undefined };
     expect(() => validate.userLink.parse(invalid)).toThrow();
   });
 });

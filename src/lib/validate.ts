@@ -48,8 +48,8 @@ export const validate = {
 
   credit: z.object({
     id: z.coerce.number(),
-    userId: z.coerce.number(),
-    courseId: z.coerce.number(),
+    user_id: z.coerce.number(),
+    course_id: z.coerce.number(),
     grade: z.string().optional(),
     // attended: z.coerce.boolean(),
     attended: z
@@ -94,13 +94,13 @@ export const validate = {
 
   course: z.object({
     id: z.coerce.number(),
-    wpPostId: z.coerce.number().optional(),
+    wp_post_id: z.coerce.number().optional(),
     subject: z.string().min(3, "Must be more than 3 characters"),
     description: z.string().optional(),
     // handles by crud
-    // date: z.date(),
-    dateCivil: z.string(),
-    locationId: z.coerce.number(),
+    // timestamp: z.date(),
+    date_civil: z.string(),
+    location_id: z.coerce.number(),
   }),
 
   get courseCreate() {
@@ -112,8 +112,8 @@ export const validate = {
 
   userLink: z
     .object({
-      userId: z.coerce.number(),
-      courseId: z.coerce.number(),
+      user_id: z.coerce.number(),
+      course_id: z.coerce.number(),
       // attended: z.coerce.boolean(),
       attended: z
         .string()
@@ -139,7 +139,7 @@ export const validate = {
       city: z.string(),
       state: z.string(),
       zip: z.coerce.number(),
-      courseId: z.coerce.number(),
+      course_id: z.coerce.number(),
       // attended: z.coerce.boolean(),
       attended: z
         .string()

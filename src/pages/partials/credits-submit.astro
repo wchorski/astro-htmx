@@ -9,7 +9,7 @@ export const partial = true;
 export const prerender = false;
 
 const formSchema = z.object({
-  courseId: z.preprocess((val) => Number(val), z.number()),
+  course_id: z.preprocess((val) => Number(val), z.number()),
   email: z.string().email({ message: "Invalid email address" }),
   phone: z.string().refine(val => !!normalizePhoneToE164Manual(val), {
       message: "Invalid phone number",
@@ -75,7 +75,7 @@ if (Astro.request.method === 'POST') {
       middle_initial: validated.middle_initial,
       phone: validated.phone,
       email: validated.email,
-      address1: validated.address1,
+      address1: validated.address_1,
       address2: validated.address2,
       city: validated.city,
       state: validated.state,
@@ -90,16 +90,16 @@ if (Astro.request.method === 'POST') {
     }
 
     existingCredit ? await db.update(Credit).set({
-      userId: targetMember.id,
-      courseId: validated.courseId,
-      date: new Date(),
+      user_id: targetMember.id,
+      course_id: validated.courseId,
+      timestamp: new Date(),
       attended: true,
     }).where(eq(Credit.id, existingCredit.id)) 
     // TODO later don't allow member to insert Credit if they didn't register
     : await db.insert(Credit).values({
-      userId: targetMember.id,
-      courseId: validated.courseId,
-      date: new Date(),
+      user_id: targetMember.id,
+      course_id: validated.courseId,
+      timestamp: new Date(),
       attended: true,
     });
 
