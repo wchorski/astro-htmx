@@ -46,13 +46,13 @@ const userRequiredConfig = {
     required: true,
     placeholder: "john@mail.lan",
   },
-  address1: {
+  address_1: {
     label: "Address",
     type: "text",
     required: true,
     placeholder: "123 West East St...",
   },
-  address2: {
+  address_2: {
     label: "P.O. Box",
     type: "text",
   },
