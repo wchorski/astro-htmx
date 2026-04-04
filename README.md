@@ -7,7 +7,7 @@ npm run db:push
 npm run db:seed:truncate
 ```
 
-any changes made to schema.ts need to rerun
+any changes made to `schema.ts` or `seed-data.ts` need to rerun
 ```shell
 npm run db:push
 npm run db:seed:truncate

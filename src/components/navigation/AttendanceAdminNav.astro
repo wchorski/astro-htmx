@@ -21,7 +21,14 @@ const isActive = (path: string) =>
           aria-current={pathname.startsWith(link.href) ? "page" : undefined}
           class="link"
         >
-          {link.label}
+          <span>{link.label}</span>
+          {pathname.startsWith(link.href) ? (
+            <span
+              // transition:name="active-span"
+              style="view-transition-name: active-span"
+              class="striped-corner"
+            />
+          ) : null}
         </a>
       ))
     }
@@ -41,24 +48,38 @@ const isActive = (path: string) =>
     color: white;
     display: flex;
     gap: 0.1rem;
+    --c-link-bg: rgb(72, 95, 95);
   }
 
   a.link {
-    background-color: rgb(72, 95, 95);
+    background-color: var(--c-link-bg);
     border-width: 2px;
     border-style: solid;
     border-color: transparent;
     color: white;
     padding: 0.3rem 1rem;
     border-radius: 10px 10px 0 0;
+    position: relative;
+    /* border-top: 60px solid coral; */
+    /* border-right: 60px solid transparent; */
 
     &:hover {
-      background-color: grey;
+      background-color: var(--c-link-bg);
     }
   }
   a[aria-current="page"] {
     color: var(--c-active);
     background-color: transparent;
-    border-color: rgb(72, 95, 95);
+    border-color: var(--c-link-bg);
+  }
+
+  .striped-corner {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 20px;
+    height: 20px;
+    background: var(--c-link-bg);
+    clip-path: polygon(100% 0, 0 100%, 100% 100%);
   }
 </style>

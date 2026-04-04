@@ -83,11 +83,32 @@ if (process.argv.includes("--truncate")) {
 //     }) as any,
 // );
 
-await db.insert(schema.Role).values(seedData.roles);
+console.log(`=== Roles (${seedData.roles.length})===`);
 await db.insert(schema.Location).values(seedData.locations);
+await db.insert(schema.Role).values(seedData.roles);
+seedData.roles.forEach(element => {
+  console.log(`+ ${element.label}`);
+});
+console.log('');
+console.log(`=== Users (${seedData.users.length}) ===`);
 await db.insert(schema.User).values(seedData.users);
+seedData.users.forEach(element => {
+  console.log(`+ ${element.email}`);
+});
+console.log('');
+console.log(`=== Courses (${seedData.courses.length})===`);
 await db.insert(schema.Course).values(seedData.courses);
+seedData.courses.forEach(element => {
+  console.log(`+ ${element.subject} | ${element.date_civil}`);
+});
+console.log('');
+
+console.log(`=== Credits (${seedData.credits.length})===`);
 await db.insert(schema.Credit).values(seedData.credits);
+seedData.credits.forEach(element => {
+  console.log(`+ course_id: ${element.course_id}, user_id: ${element.user_id}, attended: ${element.attended}`);
+});
+console.log('');
 
 await client.end();
 
