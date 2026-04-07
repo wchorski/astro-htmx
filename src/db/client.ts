@@ -1,13 +1,8 @@
+import { meta } from "astro:schema";
 import { Client } from "pg";
 
 export function createPgClient() {
-  const required = [
-    "PGHOST",
-    "PGPORT",
-    "PGUSER",
-    "PGPASSWORD",
-    "PGDATABASE",
-  ];
+  const required = ["PGHOST", "PGPORT", "PGUSER", "PGPASSWORD", "PGDATABASE"];
 
   for (const key of required) {
     if (!process.env[key]) {
@@ -26,9 +21,10 @@ export function createPgClient() {
   });
 }
 
-
 export function getPGDatabaseUrl() {
-  return `postgres://${process.env.PGUSER}:` +
+  return (
+    `postgres://${process.env.PGUSER}:` +
     `${encodeURIComponent(process.env.PGPASSWORD!)}` +
-    `@${process.env.PGHOST}:${process.env.PGPORT}/${process.env.PGDATABASE}`;
+    `@${process.env.PGHOST}:${process.env.PGPORT}/${process.env.PGDATABASE}`
+  );
 }
