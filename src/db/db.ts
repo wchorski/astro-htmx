@@ -25,9 +25,11 @@ if (
 
 export function getDbUrl() {
   console.log("NODE_ENV: ", process.env.NODE_ENV);
+  if (!DB_PASSWORD) throw new Error("db password not set");
+  const encodedPassword = encodeURIComponent(DB_PASSWORD);
   const dbUrl =
     process.env.NODE_ENV === "production"
-      ? `${DB_PROTOCOL}://${DB_USER}:${DB_PASSWORD}@${DB_DOMAIN}:${DB_PORT}/${DB_COLLECTION}`
+      ? `${DB_PROTOCOL}://${DB_USER}:${encodedPassword}@${DB_DOMAIN}:${DB_PORT}/${DB_COLLECTION}`
       : DB_DEV_URL;
 
   console.log("db.ts DATABASE_URL: ", dbUrl);
