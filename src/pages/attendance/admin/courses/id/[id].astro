@@ -2,7 +2,9 @@
 interface Params {
   id: string;
 }
-import { db, eq, Course, Credit, User } from "astro:db";
+import { db } from "@db/db";
+import { Course, Credit, User } from "@db/schema";
+import { eq } from "drizzle-orm";
 import Layout from "@layouts/Layout.astro";
 import AttendanceAdminNav from "@components/navigation/AttendanceAdminNav.astro";
 import MembersSearchForm from "@components/MembersSearchForm.astro";
@@ -12,7 +14,7 @@ export const prerender = false; // Not needed in 'server' mode
 const { MS_SHAREPOINT_KYU_FOLDER_URL } = import.meta.env;
 const { id } = Astro.params;
 if (!id) throw new Error("no id found. throw 404");
-const course = await db
+const [course] = await db
   .select()
   .from(Course)
   .where(eq(Course.id, Number(id)))
@@ -25,10 +27,10 @@ const courseCredits = await db
     user: User,
   })
   .from(Credit)
-  .innerJoin(User, eq(Credit.userId, User.id))
-  .where(eq(Credit.courseId, Number(id)));
+  .innerJoin(User, eq(Credit.user_id, User.id))
+  .where(eq(Credit.course_id, Number(id)));
 
-const { subject, date, description } = course;
+const { subject, timestamp, description } = course;
 
 const config = {
   id: {
@@ -75,9 +77,9 @@ const ctx = {
       <h1>
         {subject}
         |
-        <time datetime={date.toISOString()}>
+        <time datetime={timestamp.toISOString()}>
           {
-            date.toLocaleString("en-US", {
+            timestamp.toLocaleString("en-US", {
               year: "numeric",
               month: "short",
             })
@@ -85,9 +87,9 @@ const ctx = {
         </time>
       </h1>
       <p>
-        <time datetime={date.toISOString()}>
+        <time datetime={timestamp.toISOString()}>
           {
-            date.toLocaleString("en-US", {
+            timestamp.toLocaleString("en-US", {
               weekday: "long",
               year: "numeric",
               month: "short",
@@ -108,12 +110,12 @@ const ctx = {
         <button hx-put={`/api/credits/export/${id}`} hx-swap="outerHTML">
           Export CSV to Sharepoint
         </button>
-        <br>
+        <br />
         <a href={MS_SHAREPOINT_KYU_FOLDER_URL}>View Sharepoint Folder</a>
       </div>
     </div>
 
-    <CourseCreditsEditableTable courseCredits={courseCredits} courseId={id} />
+    <CourseCreditsEditableTable courseCredits={courseCredits} course_id={id} />
     <hr />
 
     <section>

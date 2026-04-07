@@ -2,13 +2,15 @@
 interface Params {
   course_id: string;
 }
-import { db, eq, Course, Credit, User } from "astro:db";
+import { db } from "@db/db";
+import { Course, Credit, User  } from "@db/schema";
+import { eq } from "drizzle-orm";
 import Layout from "@layouts/Layout.astro";
 import CourseCreditsEditableTable from "@components/CourseCreditsEditableTable.astro";
 export const prerender = false; // Not needed in 'server' mode
 const { id } = Astro.params;
 if (!id) throw new Error("no id found. throw 404");
-const foundCourse = await db
+const [foundCourse] = await db
   .select()
   .from(Course)
   .where(eq(Course.id, Number(id)))
@@ -20,11 +22,11 @@ const courseCredits = await db
     user: User,
   })
   .from(Credit)
-  .innerJoin(User, eq(Credit.userId, User.id))
-  .where(eq(Credit.courseId, Number(id)));
+  .innerJoin(User, eq(Credit.user_id, User.id))
+  .where(eq(Credit.course_id, Number(id)));
 
 if (!foundCourse) return Astro.redirect("/404");
-const { subject, date, description } = foundCourse;
+const { subject, timestamp, description } = foundCourse;
 ---
 
 <Layout>
@@ -33,9 +35,9 @@ const { subject, date, description } = foundCourse;
       <h1>
         {subject}
         |
-        <time datetime={date.toISOString()}>
+        <time datetime={timestamp.toISOString()}>
           {
-            date.toLocaleString("en-US", {
+            timestamp.toLocaleString("en-US", {
               year: "numeric",
               month: "short",
             })
@@ -43,9 +45,9 @@ const { subject, date, description } = foundCourse;
         </time>
       </h1>
       <p>
-        <time datetime={date.toISOString()}>
+        <time datetime={timestamp.toISOString()}>
           {
-            date.toLocaleString("en-US", {
+            timestamp.toLocaleString("en-US", {
               year: "numeric",
               month: "short",
               day: "numeric",
@@ -72,7 +74,7 @@ const { subject, date, description } = foundCourse;
 
     <CourseCreditsEditableTable
       courseCredits={courseCredits}
-      courseId={id}
+      course_id={id}
     />
   </main>
 </Layout>

@@ -1,5 +1,7 @@
 ---
-import { db, Credit } from "astro:db";
+import { db } from "@db/db";
+import { Credit } from "@db/schema";
+
 
 const credits = await db.select().from(Credit);
 ---

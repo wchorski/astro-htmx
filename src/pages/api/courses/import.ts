@@ -1,6 +1,8 @@
 import type { WordpressEvent } from "@ty/WordpressEvent";
 import type { APIRoute } from "astro";
-import { Course, Location, db } from "astro:db";
+import { db } from "@db/db";
+import { Course, Location } from "@db/schema";
+
 // import eventJson from "../../../../private/l150-events.json";
 import { removeHTMLfromString } from "@lib/sanatizers";
 import type { CourseInsert } from "@ty/Schema";
@@ -67,10 +69,10 @@ export const GET: APIRoute = async ({ url }) => {
       }
 
       // ✅ Canonical local time from real_event_date
-      const dateCivil = realEventDateToLocalString(wpPost.real_event_date);
+      const date_civil = realEventDateToLocalString(wpPost.real_event_date);
 
       // ✅ Real Date (instant) derived from local+zone
-      const realDate = localDateTimeToUtcDate(dateCivil, loc.timezone);
+      const realDate = localDateTimeToUtcDate(date_civil, loc.timezone);
 
       const newCourse: CourseInsert = {
         // id: wpPost.id,
@@ -78,7 +80,7 @@ export const GET: APIRoute = async ({ url }) => {
         subject: wpPost.title,
         description: wpPost.event_description,
         timestamp: realDate,
-        dateCivil,
+        date_civil,
         where: removeHTMLfromString(wpPost.where),
         location_id: loc.id,
       };
@@ -122,9 +124,9 @@ function realEventDateToLocalString(real: string): string {
 }
 
 function parsedateCivil(date_civil: string) {
-  const [datePart, timePart] = dateCivil.split("T");
+  const [datePart, timePart] = date_civil.split("T");
   if (!datePart || !timePart)
-    throw new Error(`Invalid date_civil: ${dateCivil}`);
+    throw new Error(`Invalid date_civil: ${date_civil}`);
 
   const [year, month, day] = datePart.split("-").map(Number);
   const [hour, minute] = timePart.split(":").map(Number);
@@ -144,7 +146,7 @@ function getZonedParts(timestamp: Date, timeZone: string) {
     second: "2-digit",
   });
 
-  const parts = dtf.formatToParts(date);
+  const parts = dtf.formatToParts(timestamp);
   const get = (t: string) => Number(parts.find((p) => p.type === t)?.value);
 
   return {
@@ -158,7 +160,7 @@ function getZonedParts(timestamp: Date, timeZone: string) {
 }
 
 function localDateTimeToUtcDate(date_civil: string, timeZone: string): Date {
-  const desired = parsedateCivil(dateCivil);
+  const desired = parsedateCivil(date_civil);
 
   // First guess: treat desired local time as if it were UTC
   let guess = new Date(

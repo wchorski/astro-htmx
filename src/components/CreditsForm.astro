@@ -1,11 +1,13 @@
 ---
-import type { User, Course } from "astro:db";
+import { db } from "@db/db";
+import { User } from "@db/schema";
+
 interface Props {
   course_id: number;
   member?: typeof User.$inferInsert;
   formId?: string;
 }
-const { courseId, member, formId = "credits-form" } = Astro.props;
+const { course_id, member, formId = "credits-form" } = Astro.props;
 const errorTargetId = `${formId}-errors`;
 const responseTargetId = `${formId}-response`;
 ---
@@ -33,7 +35,7 @@ const responseTargetId = `${formId}-response`;
       name="course_id"
       aria-describedby={`${formId}-error-courseId`}
       id={`${formId}-courseId`}
-      value={courseId}
+      value={course_id}
       readonly
       required
     />
@@ -133,7 +135,7 @@ const responseTargetId = `${formId}-response`;
         name="address2"
         aria-describedby={`${formId}-error-address2`}
         id={`${formId}-address2`}
-        value={member?.address2}
+        value={member?.address_2}
       />
       <span class="field-error" id={`${formId}-error-address2`}></span>
     </label>

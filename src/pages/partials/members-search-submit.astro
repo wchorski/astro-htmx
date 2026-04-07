@@ -1,8 +1,10 @@
 ---
+import { db } from "@db/db";
+import { User } from "@db/schema";
+import { eq, asc } from "drizzle-orm";
 import { normalizePhoneToE164Manual } from '@lib/formatters';
 import { z } from 'astro/zod';
 import { formatPhonePrettyManual } from '@lib/formatters';
-import { db, eq, User, or } from 'astro:db';
 import CreditsForm from '@components/CreditsForm.astro'
 
 class NotFoundError extends Error {
@@ -24,11 +26,11 @@ const formSchema = z.object({
   }).min(10, { message: "Phone number must be at least 10 digits" }).trim().optional()
 }).refine(  
   (values) => {
-    // At least one of userId, email, or phone must be present
-    return Boolean(values.userId) || Boolean(values.email) || Boolean(values.phone);
+    // At least one of user_id, email, or phone must be present
+    return Boolean(values.user_id) || Boolean(values.email) || Boolean(values.phone);
   },
   {
-    message: "At least one of 'userId', 'email', or 'phone' must be provided",
+    message: "At least one of 'user_id', 'email', or 'phone' must be provided",
     path: [], // Error at root level
   } 
 ); 
@@ -48,18 +50,18 @@ if (Astro.request.method === 'POST') {
     // formId = formInputs.get('formId')?.toString() || 'users-search-form';
     
     const courseId = Number(formInputs.get('courseId'));
-    const userId = Number(formInputs.get('userId')) || undefined;
+    const user_id = Number(formInputs.get('user_id')) || undefined;
     const email = formInputs.get('email')?.toString().trim() || undefined;
     const phoneE16 = normalizePhoneToE164Manual(formInputs.get('phone')?.toString().trim());
     const phoneFormated = formatPhonePrettyManual(phoneE16)
-    console.log({email, phoneE16, userId});
-    const validated = formSchema.parse({ userId, email, phone: phoneE16, courseId });
+    console.log({email, phoneE16, user_id});
+    const validated = formSchema.parse({ user_id, email, phone: phoneE16, courseId });
     console.log({validated});
 
     // TODO find member and set as attended
     existingMember = 
-      validated.userId 
-        ? await db.select().from(User).where(eq(User.id, validated.userId)).limit(1)
+      validated.user_id 
+        ? await db.select().from(User).where(eq(User.id, validated.user_id)).limit(1)
         : validated.phone 
           ? await db.select().from(User).where(eq(User.phone, validated.phone)).limit(1) 
           : validated.email 
@@ -146,5 +148,5 @@ if (Astro.request.method === 'POST') {
   <form id="users-search-form" hx-swap-oob="outerHTML" style="display: none;">
     <!-- Empty or hidden form -->
   </form>
-  <CreditsForm courseId={formData.courseId} member={existingMember}/>
+  <CreditsForm courseId={formData.course_id} member={existingMember}/>
 </>}      

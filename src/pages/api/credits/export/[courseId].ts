@@ -3,8 +3,9 @@ import { getMsToken } from "@lib/auth/msAuthentication";
 import { formatPhonePrettyManual } from "@lib/formatters";
 import type { CreditInsert, UserInsert } from "@ty/Schema.d.ts";
 import type { APIRoute } from "astro";
-import { Course, Credit, db, eq, User } from "astro:db";
-
+import { db } from "@db/db";
+import { Course, Credit, User } from "@db/schema";
+import { eq } from "drizzle-orm";
 const {
   MS_SHAREPOINT_KYU_DRIVE_ID,
   MS_SHAREPOINT_KYU_ATTENDENCE_FOLDER_ID,
@@ -15,9 +16,9 @@ const {
 } = import.meta.env;
 
 export const PUT: APIRoute = async ({ params, request, redirect }) => {
-  const { courseId } = params;
+  const { course_id } = params;
 
-  if (!courseId)
+  if (!course_id)
     return new Response(
       JSON.stringify({
         error: true,
@@ -37,21 +38,25 @@ export const PUT: APIRoute = async ({ params, request, redirect }) => {
         credit: Credit,
       })
       .from(Course)
-      .innerJoin(Credit, eq(Credit.courseId, Course.id))
-      .innerJoin(User, eq(User.id, Credit.userId))
-      .where(eq(Course.id, Number(courseId)));
+      .innerJoin(Credit, eq(Credit.course_id, Course.id))
+      .innerJoin(User, eq(User.id, Credit.user_id))
+      .where(eq(Course.id, Number(course_id)));
 
     // reformat
     const courseData = {
       course: rows.length > 0 ? rows[0].course : null,
 
       credits: rows.map((row) => {
-        const { id: creditId, timestamp: creditDate, ...creditRest } = row.credit; // pull id out, keep everything else
-        const { id: userId, ...memberRest } = row.user;
+        const {
+          id: creditId,
+          timestamp: creditDate,
+          ...creditRest
+        } = row.credit; // pull id out, keep everything else
+        const { id: user_id, ...memberRest } = row.user;
         return {
           user: {
             ...memberRest,
-            userId,
+            user_id,
             phone: formatPhonePrettyManual(row.user.phone) || "",
           },
           ...creditRest,
@@ -75,9 +80,9 @@ export const PUT: APIRoute = async ({ params, request, redirect }) => {
     // const stat = await fs.stat(csvBuffer);
 
     const filename = `${courseData.course.subject} - ${new Date(
-      courseData.course.date,
+      courseData.course.timestamp,
     ).toLocaleDateString("en-CA")} Credits.csv`;
-    const folderYear = new Date(courseData.course.date).toLocaleDateString(
+    const folderYear = new Date(courseData.course.timestamp).toLocaleDateString(
       "en-CA",
       { year: "numeric" },
     );
@@ -159,7 +164,7 @@ export const PUT: APIRoute = async ({ params, request, redirect }) => {
 
 type CreditWithMember = Omit<CreditInsert, "id" | "date"> & {
   creditId: CreditInsert["id"];
-  dateCreated: CreditInsert["date"];
+  dateCreated: CreditInsert["timestamp"];
   user: Omit<UserInsert, "id"> & {
     user_id: UserInsert["id"];
     phone: string; // because you force "" as fallback

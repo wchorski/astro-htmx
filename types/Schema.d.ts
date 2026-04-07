@@ -1,5 +1,3 @@
-// import type { Course, Credit, User, Location, Role } from "astro:db";
-
 import {
   Role,
   Location,

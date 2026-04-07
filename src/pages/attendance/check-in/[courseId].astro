@@ -2,29 +2,31 @@
 interface Params {
   course_id: string;
 }
-import { db, eq, Course } from "astro:db";
+import { db } from "@db/db";
+import { Course, Location } from "@db/schema";
+import { eq } from "drizzle-orm";
 import Layout from "@layouts/Layout.astro";
 import MembersSearchForm from "@components/MembersSearchForm.astro";
 import { prettyPlainCivilDateFull } from "@lib/formatters";
-import { Location } from "astro:db";
+
 export const prerender = false; // Not needed in 'server' mode
-const { courseId } = Astro.params;
-if (!courseId) throw new Error("no id found. throw 404");
-const course = await db
+const { course_id } = Astro.params;
+if (!course_id) throw new Error("no id found. throw 404");
+const [course] = await db
   .select()
   .from(Course)
-  .where(eq(Course.id, Number(courseId)))
+  .where(eq(Course.id, Number(course_id)))
   .limit(1);
 if (!course) return Astro.redirect("/404");
 
-const location = await db
+const [location] = await db
   .select()
   .from(Location)
   .where(eq(Location.id, course.location_id))
   .limit(1);
 if (!location) return Astro.redirect("/404");
 
-const { subject, date, description, dateCivil } = course;
+const { subject, timestamp, description, date_civil } = course;
 ---
 
 <Layout>
@@ -32,7 +34,7 @@ const { subject, date, description, dateCivil } = course;
     <header>
       <h1>
         Check-In for {subject}
-        <span class="course-id">({courseId})</span>
+        <span class="course-id">({course_id})</span>
       </h1>
       <div class="flex space-between">
         <address>
@@ -59,11 +61,12 @@ const { subject, date, description, dateCivil } = course;
             width="30"
             height="30"
           />
-          <time datetime={dateCivil}>{prettyPlainCivilDateFull(dateCivil)}</time
+          <time datetime={date_civil}
+            >{prettyPlainCivilDateFull(date_civil)}</time
           >
           <br />
-          <time class="real" datetime={date.toISOString()}>
-            {date}
+          <time class="real" datetime={timestamp.toISOString()}>
+            {timestamp}
           </time>
           <br />
         </p>

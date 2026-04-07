@@ -1,5 +1,7 @@
 ---
-import {Credit, db, eq, and, User} from "astro:db"
+import { db } from "@db/db";
+import { User, Credit } from "@db/schema";
+import { eq, and } from "drizzle-orm";
 import { normalizePhoneToE164Manual } from '@lib/formatters';
 import { z } from 'astro/zod';
 import { formatPhonePrettyManual } from '@lib/formatters';
@@ -18,8 +20,8 @@ const formSchema = z.object({
   first_name: z.string(),
   last_name: z.string(),
   middle_initial: z.string().optional(),
-  address1: z.string(),
-  address2: z.string().optional(),
+  address_1: z.string(),
+  address_2: z.string().optional(),
   city: z.string(),
   state: z.string(),
   zip: z.preprocess((val) => Number(val), z.number())
@@ -47,7 +49,7 @@ if (Astro.request.method === 'POST') {
     
     // formData = Object.fromEntries(await Astro.request.formData());
 
-    // const courseId = Number(formInputs.get('courseId'));
+    // const course_id = Number(formInputs.get('course_id'));
     // const email = formInputs.get('email')?.toString().trim() || '';
     // const phone = formatPhoneToE164Manual(formInputs.get('phone')?.toString().trim() || '');
     
@@ -68,21 +70,21 @@ if (Astro.request.method === 'POST') {
     // if member doesn't exist, create a new one
     if(!validated.phone) throw new Error('!validated.phone')
     const targetMember = existingMember ?? await db.insert(User).values({
-      asipId: 0,
-      regNum: 0,
+      // asipId: 0,
+      // regNum: 0,
       first_name: validated.first_name,
       last_name: validated.last_name,
       middle_initial: validated.middle_initial,
       phone: validated.phone,
       email: validated.email,
-      address1: validated.address_1,
-      address2: validated.address2,
+      address_1: validated.address_1,
+      address_2: validated.address_2,
       city: validated.city,
       state: validated.state,
       zip: validated.zip,
     }).returning().limit(1);
 
-    existingCredit = await db.select().from(Credit).where(and(eq(Credit.userId, targetMember.id), eq(Credit.courseId, validated.courseId))).limit(1)
+    existingCredit = await db.select().from(Credit).where(and(eq(Credit.user_id, targetMember.id), eq(Credit.course_id, validated.course_id))).limit(1)
 
     // TODO if the credit exists at all (meaning they register) throw an error
     if(existingCredit?.attended){
@@ -91,14 +93,14 @@ if (Astro.request.method === 'POST') {
 
     existingCredit ? await db.update(Credit).set({
       user_id: targetMember.id,
-      course_id: validated.courseId,
+      course_id: validated.course_id,
       timestamp: new Date(),
       attended: true,
     }).where(eq(Credit.id, existingCredit.id)) 
     // TODO later don't allow member to insert Credit if they didn't register
     : await db.insert(Credit).values({
       user_id: targetMember.id,
-      course_id: validated.courseId,
+      course_id: validated.course_id,
       timestamp: new Date(),
       attended: true,
     });
@@ -161,7 +163,7 @@ if (Astro.request.method === 'POST') {
     <h2>✓ Course Credit Confirmed!</h2>
     <p>Thank you {formData.first_name + " " + formData.middle_initial + " " + formData.last_name} for confirming your attendance</p>
     <div class="submitted-data">
-      <p><strong>Course ID: </strong>{formData.courseId}</p>
+      <p><strong>Course ID: </strong>{formData.course_id}</p>
       <p><strong>Email: </strong>{formData.email}</p>
       <p><strong>Phone: </strong>{formData.phone}</p>
     </div>

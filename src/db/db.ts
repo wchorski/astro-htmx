@@ -2,25 +2,34 @@
 import { drizzle } from "drizzle-orm/node-postgres";
 import * as schema from "./schema";
 
-const {
-  DB_USER,
-  DB_PASSWORD,
-  DB_COLLECTION,
-  DB_PROTOCOL,
-  DB_DOMAIN,
-  DB_PORT,
-} = import.meta.env;
+const { DB_USER, DB_PASSWORD, DB_COLLECTION, DB_PROTOCOL, DB_DOMAIN, DB_PORT, DB_DEV_URL, No } =
+  import.meta.env;
 
-if (!DB_USER || !DB_PASSWORD || !DB_COLLECTION || !DB_PROTOCOL || !DB_DOMAIN || !DB_PORT) {
+if (
+  !DB_USER ||
+  !DB_PASSWORD ||
+  !DB_COLLECTION ||
+  !DB_PROTOCOL ||
+  !DB_DOMAIN ||
+  !DB_PORT
+) {
   throw new Error("Missing DB env vars");
 }
 
-const DATABASE_URL =
-  `${DB_PROTOCOL}://${DB_USER}:${DB_PASSWORD}@${DB_DOMAIN}:${DB_PORT}/${DB_COLLECTION}`;
+export function getDbUrl() {
+  const dbUrl =
+    process.env.NODE_ENV === "production"
+      ? `${DB_PROTOCOL}://${DB_USER}:${DB_PASSWORD}@${DB_DOMAIN}:${DB_PORT}/${DB_COLLECTION}`
+      : DB_DEV_URL;
 
-if (!DATABASE_URL) throw new Error("missing database env variable");
+  if (!dbUrl) throw new Error("No database url found");
 
+  return dbUrl;
+}
 
-export const db = drizzle(DATABASE_URL, { schema });
+const DATABASE_URL = getDbUrl();
 
-console.log(Object.keys(db.query));
+export const db = drizzle(DATABASE_URL, {
+  schema,
+  // ssl: process.env.NODE_ENV === "production" ? "require" : undefined,
+});

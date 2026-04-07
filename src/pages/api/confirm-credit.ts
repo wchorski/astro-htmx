@@ -1,7 +1,8 @@
 // src/pages/api/confirm-credit.ts
 import type { APIRoute } from "astro";
-import { db, Credit, Course, User } from "astro:db";
-import { eq, or } from "astro:db";
+import { db } from "@db/db";
+import { User, Credit, Course } from "@db/schema";
+import { eq } from "drizzle-orm";
 import { z } from "astro/zod";
 import { normalizePhoneToE164Manual } from "@lib/formatters";
 
@@ -46,17 +47,17 @@ export const POST: APIRoute = async ({ request, redirect }) => {
     }
 
     const {
-      userId,
-      courseId,
-      asipId,
-      regNum,
+      user_id,
+      course_id,
+      // asipId,
+      // regNum,
       first_name,
       last_name,
       middle_initial,
       phone,
       email,
-      address1,
-      address2,
+      address_1,
+      address_2,
       city,
       state,
       zip,
@@ -66,19 +67,19 @@ export const POST: APIRoute = async ({ request, redirect }) => {
       // TODO i could combine query for course + credits here
       .select()
       .from(Course)
-      .where(eq(Course.id, courseId))
+      .where(eq(Course.id, course_id))
       .limit(1);
 
     if (!courseExists) {
       return redirect(
-        `/partials/credit-form?error=${encodeURIComponent(`Course with ID ${courseId} does not exist`)}`,
+        `/partials/credit-form?error=${encodeURIComponent(`Course with ID ${course_id} does not exist`)}`,
       );
     }
 
     const courseCredits = await db
       .select()
       .from(Credit)
-      .where(eq(Credit.courseId, courseId));
+      .where(eq(Credit.course_id, course_id));
 
     const phoneSanatized: string | null = normalizePhoneToE164Manual(phone);
     if (!phoneSanatized) {
@@ -87,8 +88,8 @@ export const POST: APIRoute = async ({ request, redirect }) => {
       );
     }
 
-    const memberExists = userId
-      ? await db.select().from(User).where(eq(User.id, userId)).limit(1)
+    const memberExists = user_id
+      ? await db.select().from(User).where(eq(User.id, user_id)).limit(1)
       : await db
           .select()
           .from(User)
@@ -116,8 +117,8 @@ export const POST: APIRoute = async ({ request, redirect }) => {
           middle_initial,
           phone,
           email,
-          address1,
-          address2,
+          address1: address_1,
+          address2: address_2,
           city,
           state,
           zip,
@@ -126,7 +127,7 @@ export const POST: APIRoute = async ({ request, redirect }) => {
 
       await db.insert(Credit).values({
         user_id: newMember.id,
-        courseId,
+        courseId: course_id,
         timestamp: new Date(),
         attended: true,
       });
@@ -147,7 +148,7 @@ export const POST: APIRoute = async ({ request, redirect }) => {
 
       await db.insert(Credit).values({
         user_id: memberExists.id,
-        courseId,
+        courseId: course_id,
         timestamp: new Date(),
         attended: true,
       });

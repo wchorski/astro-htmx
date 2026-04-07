@@ -18,6 +18,7 @@ interface ImportMetaEnv {
   readonly DB_PROTOCOL?: string;
   readonly DB_PORT?: string;
   readonly DB_DOMAIN?: string;
+  readonly NODE_ENV?: "production" | "development";
 }
 
 interface ImportMeta {

@@ -122,22 +122,22 @@ const config = {
       <form action="">
         <fieldset>
           <legend>Essential</legend>
-          <InputField name={"first_name"} {...config.first_name} />
-          <InputField name={"last_name"} {...config.last_name} />
-          <InputField name={"middle_initial"} {...config.middle_initial} />
+          <InputField {...config.first_name} name={"first_name"} errorId={`form-edit-error-user-${id}-first_name`}/>
+          <InputField {...config.last_name} name={"last_name"} errorId={`form-edit-error-user-${id}-last_name`}/>
+          <InputField {...config.middle_initial} name={"middle_initial"} errorId={`form-edit-error-user-${id}-middle_initial`}/>
         </fieldset>
         <fieldset>
           <legend>Contact</legend>
-          <InputField name={"phone"} {...config.phone} />
-          <InputField name={"email"} {...config.email} />
+          <InputField {...config.phone} name={"phone"} errorId={`form-edit-error-user-${id}-phone`}/>
+          <InputField {...config.email} name={"email"} errorId={`form-edit-error-user-${id}-email`}/>
         </fieldset>
         <fieldset>
           <legend>Personal</legend>
-          <InputField name={"address_1"} {...config.address_1} />
-          <InputField name={"address_2"} {...config.address_2} />
-          <InputField name={"city"} {...config.city} />
-          <InputField name={"state"} {...config.state} />
-          <InputField name={"zip"} {...config.zip} />
+          <InputField {...config.address_1} name={"address_1"} errorId={`form-edit-error-user-${id}-address_1`}/>
+          <InputField {...config.address_2} name={"address_2"} errorId={`form-edit-error-user-${id}-address_2`}/>
+          <InputField {...config.city} name={"city"} errorId={`form-edit-error-user-${id}-city`}/>
+          <InputField {...config.state} name={"state"} errorId={`form-edit-error-user-${id}-state`}/>
+          <InputField {...config.zip} name={"zip"} errorId={`form-edit-error-user-${id}-zip`}/>
         </fieldset>
         <button type="submit">Update</button>
       </form>

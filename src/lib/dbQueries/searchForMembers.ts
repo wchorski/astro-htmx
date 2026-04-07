@@ -1,7 +1,9 @@
 import { throwErrorsForCRUD, ValidationError } from "@lib/errors";
 import type { UserSelect } from "@ty/Schema";
 import { z } from "astro/zod";
-import { or, eq, like, sql, db, User } from "astro:db";
+import { db } from "@db/db";
+import { User } from "@db/schema";
+import { or, eq, like, sql,} from "drizzle-orm";
 
 //? needs special validation because everything can be partial string ('fuzzy')
 export const MemberSearchSchema = z
@@ -36,7 +38,7 @@ export const MemberSearchSchema = z
 export async function searchForMembers(user: Partial<UserSelect>) {
   //! must convert any empty strings "" to undefined
   try {
-    const validated = MemberSearchSchema.safeParse(member);
+    const validated = MemberSearchSchema.safeParse(user);
 
     if (!validated.success) {
       console.log(validated.error.flatten());
