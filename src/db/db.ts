@@ -2,8 +2,15 @@
 import { drizzle } from "drizzle-orm/node-postgres";
 import * as schema from "./schema";
 
-const { DB_USER, DB_PASSWORD, DB_COLLECTION, DB_PROTOCOL, DB_DOMAIN, DB_PORT, DB_DEV_URL, No } =
-  import.meta.env;
+const {
+  DB_USER,
+  DB_PASSWORD,
+  DB_COLLECTION,
+  DB_PROTOCOL,
+  DB_DOMAIN,
+  DB_PORT,
+  DB_DEV_URL,
+} = import.meta.env;
 
 if (
   !DB_USER ||
@@ -17,10 +24,13 @@ if (
 }
 
 export function getDbUrl() {
+  console.log("NODE_ENV: ", process.env.NODE_ENV);
   const dbUrl =
     process.env.NODE_ENV === "production"
       ? `${DB_PROTOCOL}://${DB_USER}:${DB_PASSWORD}@${DB_DOMAIN}:${DB_PORT}/${DB_COLLECTION}`
       : DB_DEV_URL;
+
+  console.log("db.ts DATABASE_URL: ", dbUrl);
 
   if (!dbUrl) throw new Error("No database url found");
 

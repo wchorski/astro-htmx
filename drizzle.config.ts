@@ -15,11 +15,13 @@ if (
   throw new Error("missing database env variable");
 
 export function getDbUrl() {
+  console.log("NODE_ENV: ", process.env.NODE_ENV);
   const dbUrl =
     process.env.NODE_ENV === "production"
       ? `${DB_PROTOCOL}://${DB_USER}:${DB_PASSWORD}@${DB_DOMAIN}:${DB_PORT}/${DB_COLLECTION}`
       : process.env.DB_DEV_URL;
 
+  console.log("drizzle.config.ts DATABASE_URL: ", dbUrl);
   if (!dbUrl) throw new Error("No database url found");
 
   return dbUrl;
