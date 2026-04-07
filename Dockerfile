@@ -16,6 +16,13 @@ FROM build-deps AS build
 COPY . .
 RUN npm run build
 
+# Migration stage (has access to drizzle-kit)
+FROM build-deps AS migrate
+COPY . .
+COPY --from=build /app/dist ./dist
+# This stage has drizzle-kit available but won't run yet
+# We'll trigger it via docker-compose
+
 FROM base AS runtime
 COPY --from=prod-deps /app/node_modules ./node_modules
 COPY --from=build /app/dist ./dist
@@ -24,5 +31,5 @@ COPY --from=build /app/db ./db
 ENV HOST=0.0.0.0
 ENV PORT=4321
 EXPOSE 4321
-# CMD ["node", "./dist/server/entry.mjs"]
-CMD ["npm", "run", "start"]
+CMD ["node", "./dist/server/entry.mjs"]
+# CMD ["npm", "run", "start"]
