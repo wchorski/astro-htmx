@@ -2,6 +2,7 @@
 dist/
 private
 db/data
+db/*-data
 
 compose*.yml
 compose.yml

@@ -1,40 +1,27 @@
 // drizzle.config.ts
 import { defineConfig } from "drizzle-kit";
 
-const { DB_COLLECTION, DB_PASSWORD, DB_PORT, DB_PROTOCOL, DB_USER, DB_DOMAIN } =
-  process.env;
+const required = ["PGHOST", "PGPORT", "PGUSER", "PGPASSWORD", "PGDATABASE"];
 
-if (
-  !DB_COLLECTION ||
-  !DB_PASSWORD ||
-  !DB_PORT ||
-  !DB_PROTOCOL ||
-  !DB_USER ||
-  !DB_DOMAIN
-)
-  throw new Error("missing database env variable");
-
-export function getDbUrl() {
-  console.log("NODE_ENV: ", process.env.NODE_ENV);
-  if (!DB_PASSWORD) throw new Error("db password not set");
-  const encodedPassword = encodeURIComponent(DB_PASSWORD);
-  const dbUrl =
-    process.env.NODE_ENV === "production"
-      ? `${DB_PROTOCOL}://${DB_USER}:${encodedPassword}@${DB_DOMAIN}:${DB_PORT}/${DB_COLLECTION}`
-      : process.env.DB_DEV_URL;
-
-  console.log("drizzle.config.ts DATABASE_URL: ", dbUrl);
-  if (!dbUrl) throw new Error("No database url found");
-
-  return dbUrl;
+for (const key of required) {
+  if (!process.env[key]) {
+    throw new Error(`Missing required env var: ${key}`);
+  }
 }
 
-const DATABASE_URL = getDbUrl();
+const DATABASE_PORT = process.env.NODE_ENV === "production" ? "5432" : process.env.PGPORT
+// drizzle-kit ONLY accepts a URL → construct it ONCE here
+const DATABASE_URL =
+  `postgres://${process.env.PGUSER}:` +
+  `${encodeURIComponent(process.env.PGPASSWORD!)}` +
+  `@${process.env.PGHOST}:${DATABASE_PORT}/${process.env.PGDATABASE}`;
+
+console.log("drizzle.config.ts DATABASE_URL: ", DATABASE_URL);
 
 export default defineConfig({
+  dialect: "postgresql",
   schema: "./src/db/schema.ts",
   out: "./drizzle",
-  dialect: "postgresql",
   dbCredentials: {
     url: DATABASE_URL,
     ssl: process.env.NODE_ENV === "production" ? "require" : undefined,

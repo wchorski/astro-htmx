@@ -1,11 +1,13 @@
 // src/db/seed.ts
 import "dotenv/config";
 import { drizzle } from "drizzle-orm/node-postgres";
-import { seed } from "drizzle-seed";
+//? only use if wanting random generated data
+// import { seed } from "drizzle-seed";
 import { Client } from "pg";
 
 import * as schema from "./schema.js";
 import { seedData } from "./seed-data.js";
+import { createPgClient, getPGDatabaseUrl } from "./client.js";
 
 // ---- guards -------------------------------------------------
 
@@ -24,30 +26,15 @@ if (isProd && process.env.ALLOW_PROD_SEED !== "true") {
   );
 }
 
-// ---- connect ------------------------------------------------
-const { DB_USER, DB_PASSWORD, DB_COLLECTION, DB_PROTOCOL, DB_DOMAIN, DB_PORT } =
-  process.env;
+console.log("seed.ts DATABASE_URL: ", getPGDatabaseUrl());
 
-if (
-  !DB_USER ||
-  !DB_PASSWORD ||
-  !DB_COLLECTION ||
-  !DB_PROTOCOL ||
-  !DB_DOMAIN ||
-  !DB_PORT
-) {
-  throw new Error("Missing DB env vars");
-}
-
-const DATABASE_URL = `${DB_PROTOCOL}://${DB_USER}:${DB_PASSWORD}@${DB_DOMAIN}:${DB_PORT}/${DB_COLLECTION}`;
-
-console.log({ DATABASE_URL });
-
-const client = new Client({ connectionString: DATABASE_URL });
-
+const client = createPgClient(); // pg auto-reads PG* env vars
 await client.connect();
 
-const db = drizzle(client, { schema });
+const db = drizzle(client, {
+  schema,
+  // logger: true
+});
 
 // ---- optional: truncate (VERY explicit) --------------------
 
@@ -86,30 +73,34 @@ if (process.argv.includes("--truncate")) {
 console.log(`=== Roles (${seedData.roles.length})===`);
 await db.insert(schema.Location).values(seedData.locations);
 await db.insert(schema.Role).values(seedData.roles);
-seedData.roles.forEach(element => {
-  console.log(`+ ${element.label}`);
-});
-console.log('');
+// seedData.roles.forEach((element) => {
+//   console.log(`+ ${element.label}`);
+// });
+console.log("");
 console.log(`=== Users (${seedData.users.length}) ===`);
 await db.insert(schema.User).values(seedData.users);
-seedData.users.forEach(element => {
-  console.log(`+ ${element.email}`);
-});
-console.log('');
+// seedData.users.forEach((element) => {
+//   console.log(`+ ${element.email}`);
+// });
+console.log("");
 console.log(`=== Courses (${seedData.courses.length})===`);
 await db.insert(schema.Course).values(seedData.courses);
-seedData.courses.forEach(element => {
-  console.log(`+ ${element.subject} | ${element.date_civil}`);
-});
-console.log('');
+// seedData.courses.forEach((element) => {
+//   console.log(`+ ${element.subject} | ${element.date_civil}`);
+// });
+console.log("");
 
 console.log(`=== Credits (${seedData.credits.length})===`);
 await db.insert(schema.Credit).values(seedData.credits);
-seedData.credits.forEach(element => {
-  console.log(`+ course_id: ${element.course_id}, user_id: ${element.user_id}, attended: ${element.attended}`);
-});
-console.log('');
+// seedData.credits.forEach((element) => {
+//   console.log(
+//     `+ course_id: ${element.course_id}, user_id: ${element.user_id}, attended: ${element.attended}`,
+//   );
+// });
+console.log("");
 
 await client.end();
 
-console.log("✅ Database seeded successfully");
+console.log(
+  `✅ Database seeded successfully. ${seedData.roles.length + seedData.users.length + seedData.courses.length + seedData.credits.length} items added`,
+);

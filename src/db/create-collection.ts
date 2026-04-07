@@ -5,11 +5,7 @@ if (process.env.NODE_ENV === "production") {
   throw new Error("Refusing to create database in production");
 }
 
-const { DB_COLLECTION, DB_PASSWORD, DB_PORT, DB_USER, DB_DOMAIN } = process.env;
-
-if (!DB_COLLECTION || !DB_PASSWORD || !DB_PORT || !DB_USER || !DB_DOMAIN) {
-  throw new Error("Missing database environment variables");
-}
+const DB_COLLECTION = process.env.PGDATABASE
 
 /**
  * IMPORTANT:
@@ -17,10 +13,12 @@ if (!DB_COLLECTION || !DB_PASSWORD || !DB_PORT || !DB_USER || !DB_DOMAIN) {
  * - NOT the database you want to create
  */
 const admin = new Client({
-  host: DB_DOMAIN,
-  port: Number(DB_PORT),
-  user: DB_USER,
-  password: DB_PASSWORD,
+  // pg automatically reads PG* vars
+  // Explicit config is optional but clearer
+  host: process.env.PGHOST,
+  port: Number(process.env.PGPORT),
+  user: process.env.PGUSER,
+  password: process.env.PGPASSWORD,
   database: "postgres",
 });
 

@@ -9,15 +9,13 @@ interface ImportMetaEnv {
   readonly WP_USERNAME?: string;
   readonly WP_APP_PASSWORD?: string;
   readonly WORDPRESS_ENDPOINT?: string;
-  readonly LIBSQL_URL?: string;
   readonly DEFAULT_ROLE_ID?: string;
   readonly MS_SHAREPOINT_KYU_FOLDER_URL?: string;
-  readonly DB_USER?: string;
-  readonly DB_PASSWORD?: string;
-  readonly DB_COLLECTION?: string;
-  readonly DB_PROTOCOL?: string;
-  readonly DB_PORT?: string;
-  readonly DB_DOMAIN?: string;
+  readonly PGUSER?: string;
+  readonly PGPASSWORD?: string;
+  readonly PGDATABASE?: string;
+  readonly PGPORT?: string;
+  readonly PGHOST?: string;
   readonly NODE_ENV?: "production" | "development";
 }
 
