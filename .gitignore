@@ -4,6 +4,7 @@ private
 db/data
 
 compose*.yml
+compose.yml
 
 # generated types
 .astro/
