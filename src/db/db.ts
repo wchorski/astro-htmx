@@ -1,12 +1,12 @@
 // src/lib/db.ts
 import { drizzle } from "drizzle-orm/node-postgres";
 import * as schema from "./schema";
-import { getPGDatabaseUrl } from "./client";
+// import { getPGDatabaseUrl } from "./client";
 //? pool is better than client for concurrent connections
 // import { Client } from "pg";
 import { Pool } from "pg";
 
-console.log("db.ts DATABASE_URL: ", getPGDatabaseUrl());
+// console.log("db.ts DATABASE_URL: ", getPGDatabaseUrl());
 
 const pool = createPgAstroPool();
 // await client.connect();

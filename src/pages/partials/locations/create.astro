@@ -54,6 +54,7 @@ if (Astro.request.method === "POST") {
   error && typeof error === "object" && "fieldErrors" in error ? (
     <>
       {ctx.headers.map((fieldName) => {
+        // @ts-ignore
         const messages = error.fieldErrors[fieldName];
         return (
           <span
