@@ -16,8 +16,8 @@ const formSchema = z.object({
   middle_initial: z.string().optional(),
   phone: z.string().min(10, "Phone must be at least 10 digits"),
   email: z.string().email("Invalid email address"),
-  address1: z.string().min(1, "Address is required"),
-  address2: z.string().optional(),
+  address_1: z.string().min(1, "Address is required"),
+  address_2: z.string().optional(),
   city: z.string().min(1, "City is required"),
   // state: z.enum(["Illinois", "Indiana", "Iowa"], {
   //   errorMap: () => ({ message: "Please select a valid state" })
@@ -117,8 +117,8 @@ export const POST: APIRoute = async ({ request, redirect }) => {
           middle_initial,
           phone,
           email,
-          address1: address_1,
-          address2: address_2,
+          address_1: address_1,
+          address_2: address_2,
           city,
           state,
           zip,

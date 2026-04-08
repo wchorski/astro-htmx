@@ -51,14 +51,14 @@ describe("RowView - user row", () => {
 
   test("renders all cell data correctly", async () => {
     expect(result).toContain("+1 (111) 111-1111"); // phone
-    expect(result).toContain("111 Admin Lane"); // address1
+    expect(result).toContain("111 Admin Lane"); // address_1
     expect(result).toContain("Admin City"); // city
     expect(result).toContain("Adminland"); // state
     expect(result).toContain("10101"); // zip
   });
 
   test("renders empty fields as fallback dash", async () => {
-    // middle_initial and address2 are empty in seed data - should show '-'
+    // middle_initial and address_2 are empty in seed data - should show '-'
     const dashCount = (result.match(/class="sub-text"/g) || []).length;
     expect(dashCount).toBeGreaterThanOrEqual(2);
   });

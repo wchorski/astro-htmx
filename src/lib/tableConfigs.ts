@@ -171,7 +171,7 @@ const courseCreditsRequiredConfig = {
 
     autocomplete: "phone",
   },
-  address1: {
+  address_1: {
     label: "Address",
     type: "text",
   },
@@ -336,7 +336,7 @@ export const userCreditMap = (credit: CreditSelect, user: UserSelect) => ({
   middle_initial: user.middle_initial,
   phone: user.phone,
   email: user.email,
-  address1: user.address_1,
+  address_1: user.address_1,
   city: user.city,
   state: user.state,
   zip: user.zip,

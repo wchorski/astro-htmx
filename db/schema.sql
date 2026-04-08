@@ -30,8 +30,8 @@ CREATE TABLE IF NOT EXISTS User (
   middle_initial TEXT,
   phone TEXT NOT NULL UNIQUE,
   email TEXT NOT NULL UNIQUE,
-  address1 TEXT NOT NULL,
-  address2 TEXT,
+  address_1 TEXT NOT NULL,
+  address_2 TEXT,
   city TEXT NOT NULL,
   state TEXT NOT NULL,
   zip INTEGER NOT NULL

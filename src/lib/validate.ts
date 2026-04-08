@@ -20,8 +20,8 @@ export const validate = {
       .transform((val) => normalizePhoneToE164Manual(val))
       .refine((val) => val !== null, "Phone must be 10 digits or E.164 format"),
     email: z.string().trim().toLowerCase().email("Invalid email address"),
-    address1: z.string().trim().min(3, "Must be more than 3 characters"),
-    address2: z.string().trim().toLowerCase().optional(),
+    address_1: z.string().trim().min(3, "Must be more than 3 characters"),
+    address_2: z.string().trim().toLowerCase().optional(),
     city: z
       .string()
       .trim()
@@ -132,7 +132,7 @@ export const validate = {
           "Phone must be 10 digits or E.164 format",
         ),
       email: z.string().trim().toLowerCase().email(),
-      address1: z.string(),
+      address_1: z.string(),
       city: z.string(),
       state: z.string(),
       zip: z.string(),

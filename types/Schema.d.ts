@@ -34,8 +34,8 @@ export type UserCreditFlat = {
   middle_initial: string | null;
   phone: string;
   email: string;
-  address1: string;
-  address2?: string | null;
+  address_1: string;
+  address_2?: string | null;
   city: string;
   state: string;
   zip: number;
