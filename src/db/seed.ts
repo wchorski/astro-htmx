@@ -16,7 +16,7 @@ const allowSeed =
   process.argv.includes("--seed") || process.env.SEED_DB === "true";
 
 if (!allowSeed) {
-  console.log("ℹ️ Seeding skipped (no --seed flag)");
+  console.log("🌱 Seeding skipped (no --seed flag)");
   process.exit(0);
 }
 

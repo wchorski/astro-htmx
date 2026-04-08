@@ -67,6 +67,7 @@ npm run db:seed:truncate
 ```
 
 #todo
+- [ ] how to seed fresh database automatically (with docker container like `migrate`)
 - [ ] TRANSFER what learned from partials/course-credits/... to partials/users/...
 - [ ] use css grid to keep all field-errors in same height (and keep input fields from getting pushed up)
 - [ ] fix all db `config.ts` fields to use snakecase

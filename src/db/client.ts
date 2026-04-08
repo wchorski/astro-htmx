@@ -1,4 +1,3 @@
-import { meta } from "astro:schema";
 import { Client } from "pg";
 
 export function createPgClient() {
