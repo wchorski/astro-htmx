@@ -44,7 +44,6 @@ if (Astro.request.method === "POST") {
     const { err, status } = errorHandlingOnSubmit(e);
     Astro.response.status = status;
     error = err;
-    console.log(JSON.stringify(err, null, 2));
   }
 } else {
   return new Response("Method Not Allowed", { status: 405 });

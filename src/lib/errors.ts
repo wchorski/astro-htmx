@@ -1,11 +1,12 @@
-import { ZodError, type typeToFlattenedError } from "astro:schema";
+import { ZodError } from "astro:schema";
 import { LibsqlError } from "@libsql/client";
+import { DrizzleQueryError } from "drizzle-orm/errors";
 
 // --- Error Classes ---
 // 422
-export class ValidationError<T = any> extends Error {
-  flattened: typeToFlattenedError<T, string>;
-  constructor(flattened: typeToFlattenedError<T, string>) {
+export class ValidationError<T> extends Error {
+  flattened: ReturnType<ZodError["flatten"]>;
+  constructor(flattened: ReturnType<ZodError["flatten"]>) {
     super("Validation failed");
     this.name = "ValidationError";
     this.flattened = flattened;
@@ -77,7 +78,27 @@ export function throwErrorsForCRUD(e: unknown): never {
     );
   }
 
+  if (e instanceof DrizzleQueryError) {
+    const cause = e.cause as any;
+    if (cause.code === "23505") {
+      const match = cause.detail.match(/Key \((.*?)\)=\((.*?)\)/);
+
+      const key = match[1];
+      const value = match[2];
+
+      throw new ConflictError(
+        match?.[1]
+          ? `A duplicate ${cause.table || 'RECORD'} with ${key} "${value}" already exists`
+          : `A duplicate entry already exists for this entry.`,
+      );
+    } else {
+      console.log("❌❌❌ DrizzleQueryError");
+      console.log(e.cause);
+    }
+  }
+
   const msg = e instanceof Error ? e.message : String(e);
+
   throw new Error("An unexpected error occurred: " + msg);
 }
 
@@ -105,7 +126,7 @@ export function throwErrorsForCRUD(e: unknown): never {
 // Maps domain errors to { err, status } for the response
 
 export function errorHandlingOnSubmit(e: unknown): {
-  err: string | typeToFlattenedError<any, string>;
+  err: string | ReturnType<ZodError["flatten"]>;
   status: number;
 } {
   if (e instanceof BadRequestError) {
