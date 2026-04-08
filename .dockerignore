@@ -13,3 +13,4 @@ tests
 *.test.*
 *.spec.*
 db/data
+db/*-data
