@@ -1,5 +1,5 @@
 ---
-import Layout from "@layouts/Layout.astro";
+import BaseLayout from "@layouts/BaseLayout.astro";
 import { getCoursesPage } from "@lib/getCoursesPage";
 import CoursesList from "@partials/courses-list.astro";
 import PaginationNav from "@components/navigation/PaginationNav.astro";
@@ -21,7 +21,7 @@ const result = await getCoursesPage(page);
 const { courses, totalPages, totalCount, perPage } = result;
 ---
 
-<Layout>
+<BaseLayout>
   <main>
     <div class="card">
       <h1>Courses - Page {page}</h1>
@@ -39,4 +39,4 @@ const { courses, totalPages, totalCount, perPage } = result;
       ) : null
     }
   </main>
-</Layout>
+</BaseLayout>

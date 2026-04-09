@@ -2,7 +2,7 @@
 interface Props {
   creditId: string;
 }
-import Layout from "@layouts/Layout.astro";
+import BaseLayout from "@layouts/BaseLayout.astro";
 
 const { creditId } = Astro.params;
 const first_name = Astro.url.searchParams.get('first_name') || '';
@@ -11,7 +11,7 @@ const userId = Astro.url.searchParams.get('userId') || '';
 const courseId = Astro.url.searchParams.get('courseId') || '';
 ---
 
-<Layout>
+<BaseLayout>
   <main>
     <h1>User Credit</h1>
     <ul>
@@ -20,4 +20,4 @@ const courseId = Astro.url.searchParams.get('courseId') || '';
       <li>User: {`${first_name} ${last_name}`} | {userId}</li>
     </ul>
   </main>
-</Layout>
+</BaseLayout>

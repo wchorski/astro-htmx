@@ -21,7 +21,7 @@ const config = tableConfigs.users.required;
 const ctx = {
   crud: "users" as CrudRegistryType,
   config,
-  endpoint: "/attendance/users",
+  endpoint: "/users",
   headers: Object.keys(config),
 };
 
@@ -88,13 +88,23 @@ if (Astro.request.method === "DELETE") {
     error = err;
   }
 }
+
+enum PartialType {
+  RowInline = "row-inline",
+  PageSingle = "page-single",
+}
+
+const partialType = Astro.request.headers.get("X-Partial-Type") as
+  | PartialType
+  | undefined;
+if (!partialType) throw new BadRequestError("X-Partial-Type header not set");
 ---
 
 {
   error && typeof error === "object" && "fieldErrors" in error ? (
     <>
       {ctx.headers.map((fieldName) => {
-        const messages = error.fieldErrors[fieldName];
+        const messages = error?.fieldErrors?.[fieldName as keyof typeof error.fieldErrors];
         return (
           <span
             id={`field-error-${id}-${fieldName}`}
@@ -124,16 +134,28 @@ if (Astro.request.method === "DELETE") {
         />
       ))}
     </>
-  ) : Astro.request.method === "DELETE" && user ? (
+  ) : Astro.request.method === "DELETE" &&
+    partialType === PartialType.RowInline &&
+    user ? (
     <tr id={`row-${id}`} hx-swap-oob="outerHTML">
       <td colspan="100%" class="danger">
         DELETED user{" "}
         {`${user.id} | ${user.first_name} ${user.last_name} ${user.phone} ${user.email}`}
       </td>
     </tr>
-  ) : Astro.request.method === "PATCH" && user ? (
+  ) : Astro.request.method === "PATCH" &&
+    partialType === PartialType.RowInline &&
+    user ? (
     <RowView row={user} {...ctx} classList={["updated-row"]} oob />
-  ) : Astro.request.method === "GET" && user ? (
+  ) : Astro.request.method === "PATCH" &&
+    partialType === PartialType.PageSingle &&
+    user ? (
+    <button type="button" id="submit-button" disabled>
+      ✓ Updated!
+    </button>
+  ) : Astro.request.method === "GET" &&
+    partialType === PartialType.RowInline &&
+    user ? (
     <RowView row={user} {...ctx} oob />
   ) : (
     <p class="callout error">unknown error occured on partials/users/:id </p>

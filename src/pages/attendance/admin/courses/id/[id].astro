@@ -5,7 +5,7 @@ interface Params {
 import { db } from "@db/db";
 import { Course, Credit, User } from "@db/schema";
 import { eq } from "drizzle-orm";
-import Layout from "@layouts/Layout.astro";
+import BaseLayout from "@layouts/BaseLayout.astro";
 import AttendanceAdminNav from "@components/navigation/AttendanceAdminNav.astro";
 import MembersSearchForm from "@components/MembersSearchForm.astro";
 import RowSearchUser from "@components/tables/RowSearchUser.astro";
@@ -70,7 +70,7 @@ const ctx = {
 };
 ---
 
-<Layout>
+<BaseLayout>
   <AttendanceAdminNav />
   <main>
     <header>
@@ -132,7 +132,7 @@ const ctx = {
       </p>
     </footer>
   </main>
-</Layout>
+</BaseLayout>
 
 <style>
   main {

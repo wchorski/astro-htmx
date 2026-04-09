@@ -1,6 +1,6 @@
 ---
 import LocationsEditableTable from "@components/LocationsEditableTable.astro";
-import Layout from "@layouts/Layout.astro";
+import BaseLayout from "@layouts/BaseLayout.astro";
 import { getLocationsPage } from "@lib/getLocationsPage";
 import PaginationNav from "@components/navigation/PaginationNav.astro";
 const page = Number(Astro.params.page);
@@ -13,7 +13,7 @@ if ("redirect" in result) {
 const { locations, perPage, totalCount, totalPages } = result;
 ---
 
-<Layout>
+<BaseLayout>
   <main>
     <header>
       <h1>Locations - Page {page}</h1>
@@ -36,4 +36,4 @@ const { locations, perPage, totalCount, totalPages } = result;
       ) : null
     }
   </main>
-</Layout>
+</BaseLayout>

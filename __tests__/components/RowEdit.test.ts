@@ -15,7 +15,7 @@ const config = tableConfigs.users.required;
 const baseProps = {
   row: user,
   crud: "users" as const,
-  endpoint: "/attendance/users",
+  endpoint: "/users",
   config,
   headers: Object.keys(config),
   error: null,

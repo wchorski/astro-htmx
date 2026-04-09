@@ -1,6 +1,6 @@
 ---
 import Welcome from "../components/Welcome.astro";
-import Layout from "../layouts/Layout.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
 
 // Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
 // Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
@@ -37,7 +37,7 @@ const secret = import.meta.env.SUPER_DUPER_SECRET;
   </script>
 </head>
 
-<Layout>
+<BaseLayout>
   <h2>HEYYYY: {secret}</h2>
   <form>
     <label for="query">
@@ -52,4 +52,4 @@ const secret = import.meta.env.SUPER_DUPER_SECRET;
     </label>
   </form>
   <Welcome />
-</Layout>
+</BaseLayout>

@@ -173,6 +173,7 @@ const topLevelError = typeof error === "string" ? error : null;
       id={`edit-form-${row.id}`}
       style="display:none"
       hx-patch={submitUrl}
+      hx-headers='{"X-Partial-Type": "row-inline"}'
       hx-target={`#row-${row.id}`}
       hx-target-error={`#row-edit-error-${crud}-${row.id}`}
       hx-swap="outerHTML"

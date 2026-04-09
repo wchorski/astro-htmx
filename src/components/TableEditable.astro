@@ -4,7 +4,7 @@ interface Props<TRow extends BaseRow = BaseRow> {
   rows: TRow[];
   config: FieldConfig<TRow>;
   crud: CrudRegistryType;
-  endpoint: string;
+  endpoint?: string;
   createUrl?: string;
   editUrl?: (id: string | number) => string;
   // TODO passed down from page
@@ -16,7 +16,14 @@ import RowCreate from "./tables/RowCreate.astro";
 import type { CrudRegistryType } from "@lib/crudRegistry";
 import type { BaseRow, FieldConfig } from "@ty/FieldConfig";
 
-const { rows, config, crud, endpoint, editUrl, createUrl } = Astro.props;
+const {
+  rows,
+  config,
+  crud,
+  endpoint = `/${crud}`,
+  editUrl,
+  createUrl,
+} = Astro.props;
 
 const headers = Object.keys(config);
 

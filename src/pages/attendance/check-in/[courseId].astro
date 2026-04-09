@@ -5,7 +5,7 @@ interface Params {
 import { db } from "@db/db";
 import { Course, Location } from "@db/schema";
 import { eq } from "drizzle-orm";
-import Layout from "@layouts/Layout.astro";
+import BaseLayout from "@layouts/BaseLayout.astro";
 import MembersSearchForm from "@components/MembersSearchForm.astro";
 import { prettyPlainCivilDateFull } from "@lib/formatters";
 
@@ -29,7 +29,7 @@ if (!location) return Astro.redirect("/404");
 const { subject, timestamp, description, date_civil } = course;
 ---
 
-<Layout>
+<BaseLayout>
   <main>
     <header>
       <h1>
@@ -82,7 +82,7 @@ const { subject, timestamp, description, date_civil } = course;
 
     <MembersSearchForm course={course} />
   </main>
-</Layout>
+</BaseLayout>
 
 <style>
   main {

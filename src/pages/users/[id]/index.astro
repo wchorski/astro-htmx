@@ -5,7 +5,7 @@ interface Params {
 import { db } from "@db/db";
 import { User, Credit, Course, Location } from "@db/schema";
 import { eq } from "drizzle-orm";
-import Layout from "@layouts/Layout.astro";
+import BaseLayout from "@layouts/BaseLayout.astro";
 import AttendanceAdminNav from "@components/navigation/AttendanceAdminNav.astro";
 import TableEditable from "@components/TableEditable.astro";
 import { crud } from "@lib/crudRegistry";
@@ -13,7 +13,7 @@ import { TEST_ADMIN_SESSION } from "@lib/auth/session";
 import { formatPhonePrettyManual, prettyDateToLocale } from "@lib/formatters";
 export const prerender = false; // Not needed in 'server' mode
 const { id } = Astro.params;
-if (!id) throw new Error("no id found. throw 404");
+if (!id) return Astro.redirect("/404");
 const [user] = await db
   .select()
   .from(User)
@@ -58,7 +58,7 @@ const courses = await crud.courses.readMany(session);
 const locations = await crud.locations.readMany(session);
 ---
 
-<Layout>
+<BaseLayout>
   <AttendanceAdminNav />
   <main>
     <header>
@@ -78,7 +78,7 @@ const locations = await crud.locations.readMany(session);
 
         <div>
           <a href={`mailto:${email}`}>{email}</a>
-          <br>
+          <br />
           <a href={`tel:${phone}`}>{formatPhonePrettyManual(phone)}</a>
         </div>
       </div>
@@ -165,7 +165,7 @@ const locations = await crud.locations.readMany(session);
       )
     }
   </main>
-</Layout>
+</BaseLayout>
 
 <style>
   main {

@@ -111,3 +111,15 @@ hr {
     background-color: var(--c-error);
   }
 }
+
+input {
+  background-color: var(--c-txt-bg);
+  color: var(--c-txt);
+  border-color: var(--c-seperator);
+}
+
+form {
+  label, legend {
+    color: grey;
+  }
+}

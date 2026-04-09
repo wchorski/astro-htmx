@@ -3,7 +3,8 @@ input[type="tel"],
 input[type="number"],
 input[type="email"] {
   padding: 0.5rem;
-  border: 1px solid #ddd;
+  border-width: 1px;
+  border-style: solid;
   border-radius: 4px;
   font-size: 1rem;
   width: 100%;
@@ -31,17 +32,17 @@ input[name="id"],
 input[name="user_id"],
 input[name="wpPostId"],
 input[name="middle_initial"],
-input[name="course_id"] 
+input[name="course_id"],
 input[name="location_id"],
 input[name="course_id"],
 input[name="grade"],
-select[name="location_id"] {
+input[name="location_id"] {
   max-width: 10ch;
 }
 
 form {
   display: grid;
-  gap: 0.5rem;
+  gap: 0.8rem;
 
   & > legend:first-of-type {
     font-size: 1.5rem;
@@ -49,7 +50,9 @@ form {
   }
 
   & fieldset {
-    border-color: rgba(211, 211, 211, 0.099);
+    border-color: var(--c-seperator);
+    display: grid;
+    gap: 0.8rem;
   }
 
   & .form-field {
@@ -62,11 +65,32 @@ form {
 
   label {
     display: grid;
-    color: grey;
   }
 
   label.form-field:has(input[type="hidden"]) {
     border: dashed red 4px;
     display: none;
   }
+
+  fieldset.actions {
+    border: none;
+    padding: 0;
+    margin-top: 1.5rem;
+  }
+}
+
+#submit-pending {
+  display: none;
+}
+
+.htmx-request #submit-pending {
+  display: inline;
+}
+
+.htmx-request#submit-pending {
+  display: inline;
+}
+
+.htmx-request#submit-pending ~ .text {
+  display: none;
 }

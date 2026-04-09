@@ -58,7 +58,8 @@ table tbody > tr:nth-child(even of :not(.row-error)) {
   display: none;
 }
 
-tr[data-status="editing"], tr[data-status="creating"] {
+tr[data-status="editing"],
+tr[data-status="creating"] {
   /* position: relative; */
   anchor-name: --editing-row;
 }
@@ -68,7 +69,7 @@ tr[data-status="editing"], tr[data-status="creating"] {
   width: 0;
 }
 
-.row-error:not(:empty) {
+td .row-error:not(:empty) {
   position: absolute;
   position-anchor: --editing-row;
   top: anchor(bottom);
@@ -78,7 +79,9 @@ tr[data-status="editing"], tr[data-status="creating"] {
 
   /* stay in viewport */
   position-try-fallbacks: flip-block;
+}
 
+.row-error:not(:empty) {
   z-index: 20;
   padding: 0.5rem 1rem;
   background-color: color-mix(in srgb, var(--c-error) 30%, black 70%);

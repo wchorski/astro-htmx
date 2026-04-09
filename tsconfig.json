@@ -5,6 +5,7 @@
   "compilerOptions": {
     "paths": {
       "@components/*": ["./src/components/*"],
+      "@client/*": ["./src/client/*"],
       "@styles/*": ["./src/styles/*"],
       "@partials/*": ["./src/pages/partials/*"],
       "@lib/*": ["./src/lib/*"],

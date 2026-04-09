@@ -1,5 +1,5 @@
 ---
-import Layout from "@layouts/Layout.astro";
+import BaseLayout from "@layouts/BaseLayout.astro";
 import { getCoursesPage } from "@lib/getCoursesPage";
 import CoursesList from "@partials/courses-list.astro";
 import PaginationNav from "@components/navigation/PaginationNav.astro";
@@ -13,7 +13,7 @@ if ("redirect" in result) {
 const { courses = [], page, perPage, totalCount, totalPages } = result;
 ---
 
-<Layout>
+<BaseLayout>
   <main>
     <div class="card">
       <h1>Courses - Page {page}</h1>
@@ -31,4 +31,4 @@ const { courses = [], page, perPage, totalCount, totalPages } = result;
       ) : null
     }
   </main>
-</Layout>
+</BaseLayout>

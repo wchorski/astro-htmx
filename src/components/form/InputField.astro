@@ -45,6 +45,7 @@ if (type === "searchSelect")
 {
   readonly ? (
     <code class="text" aria-readonly="true">
+      <span class="text">{label ?? name}: </span>
       {value}
     </code>
   ) : (

@@ -17,7 +17,7 @@ describe("RowView - user row", () => {
       props: {
         row: user,
         crud: "users" as const,
-        endpoint: "/attendance/admin/users/id",
+        endpoint: "/users",
         config,
         headers: Object.keys(config),
       },
@@ -64,7 +64,7 @@ describe("RowView - user row", () => {
   });
 
   test("renders id cell as a link", async () => {
-    expect(result).toContain('<a href="/attendance/admin/users/id/1"');
+    expect(result).toContain('<a href="/users/1"');
     expect(result).toContain(">1<");
   });
 

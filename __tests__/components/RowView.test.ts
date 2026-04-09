@@ -1,7 +1,7 @@
 import { experimental_AstroContainer as AstroContainer } from "astro/container";
 import { expect, test, describe, beforeAll } from "vitest";
 import RowView from "@components/tables/RowView.astro";
-import { seedData } from "../../db/seed-data";
+import { seedData } from "@db/seed-data";
 import {
   courseConfigRequired,
   creditConfigRequired,
@@ -15,7 +15,7 @@ const testCases = [
     row: seedData.users[0],
     config: tableConfigs.users.required,
     crud: "users" as const,
-    endpoint: "/attendance/admin/users/id",
+    endpoint: "/users",
     expectedFields: ["Admin", "AAAttendance", "admin@attendance.lan"],
   },
   {

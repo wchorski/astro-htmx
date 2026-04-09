@@ -8,11 +8,8 @@ import { TEST_ADMIN_SESSION } from "@lib/auth/session";
 import type { UserSelect } from "@ty/Schema";
 import RowEdit from "@components/tables/RowEdit.astro";
 
-type ViewType = "table-row" | "card";
-
 let user: UserSelect | null | undefined = null;
 let error = null;
-let view: ViewType = "table-row";
 
 const { id } = Astro.params;
 if (!id) throw new BadRequestError("user ID missing in request");
@@ -20,7 +17,7 @@ const config = tableConfigs.users.required;
 const ctx = {
   crud: "users" as CrudRegistryType,
   config,
-  endpoint: "/attendance/users",
+  endpoint: "/users",
   headers: Object.keys(config),
 };
 
@@ -41,17 +38,30 @@ if (Astro.request.method === "GET") {
 } else {
   return new Response("Method Not Allowed", { status: 405 });
 }
+
+enum PartialType {
+  RowInline = "row-inline",
+  PageSingle = "page-single",
+}
+
+const partialType =
+  (Astro.request.headers.get("X-Partial-Type") as PartialType) ||
+  PartialType.RowInline;
+
+console.log({ partialType, user, error });
 ---
 
 {
   error ? (
-    <div
-      id={`row-edit-error-${ctx.crud}-${id}`}
-    >
+    <div id={`row-edit-error-${ctx.crud}-${id}`}>
       {typeof error === "string" ? error : JSON.stringify(error)}
     </div>
-  ) : user && view === "table-row" ? (
+  ) : user && partialType === PartialType.RowInline ? (
     <RowEdit {...ctx} row={user} error={error} />
+  ) : user && partialType === PartialType.PageSingle ? (
+    <button type="button" id="submit-button" disabled>
+      ✓ saved
+    </button>
   ) : (
     <p>unknown error occured</p>
   )

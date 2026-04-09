@@ -5,7 +5,7 @@ interface Params {
 import { db } from "@db/db";
 import { Course, Credit, User  } from "@db/schema";
 import { eq } from "drizzle-orm";
-import Layout from "@layouts/Layout.astro";
+import BaseLayout from "@layouts/BaseLayout.astro";
 import CourseCreditsEditableTable from "@components/CourseCreditsEditableTable.astro";
 export const prerender = false; // Not needed in 'server' mode
 const { id } = Astro.params;
@@ -29,7 +29,7 @@ if (!foundCourse) return Astro.redirect("/404");
 const { subject, timestamp, description } = foundCourse;
 ---
 
-<Layout>
+<BaseLayout>
   <main>
     <header>
       <h1>
@@ -77,4 +77,4 @@ const { subject, timestamp, description } = foundCourse;
       course_id={id}
     />
   </main>
-</Layout>
+</BaseLayout>

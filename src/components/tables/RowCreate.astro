@@ -118,9 +118,6 @@ const topLevelError = typeof error === "string" ? error : null;
       hx-target={`#row-create-${crud}`}
       hx-target-error={`#row-create-error-${crud}`}
       hx-swap="outerHTML"
-      hx-vals={JSON.stringify({
-        _view: "table-row",
-      })}
     >
     </form>
     <button
