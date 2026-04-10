@@ -1,0 +1,20 @@
+---
+const { id, headers, crud, message } = Astro.props;
+---
+<>
+  <div
+    id={`row-edit-error-${crud}-${id}`}
+    class="row-error callout error top-level"
+  >
+    {message}
+  </div>
+
+  {headers.map((fieldName) => (
+    <span
+      id={`field-error-${id}-${fieldName}`}
+      hx-swap-oob="outerHTML"
+      class="field-error"
+    />
+  ))}
+</>
+``

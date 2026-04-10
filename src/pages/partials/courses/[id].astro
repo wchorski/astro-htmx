@@ -8,6 +8,9 @@ import type { CourseSelect } from "@ty/Schema";
 import type { ZodError } from "astro/zod";
 import { TEST_ADMIN_SESSION } from "@lib/auth/session";
 import { delay } from "@lib/wait";
+import FieldErrors from "@components/dashboard/FieldErrors.partial.astro";
+import FormSuccess from "@components/dashboard/FormSuccess.partial.astro";
+import TopLevelError from "@components/dashboard/TopLevelError.partail.astro";
 
 interface Params {
   id: string | undefined;
@@ -84,9 +87,66 @@ const partialType = Astro.request.headers.get("X-Partial-Type") as
   | PartialType
   | undefined;
 if (!partialType) throw new BadRequestError("X-Partial-Type header not set");
+
+type RenderResult =
+  | {
+      kind: "field-error";
+      errors: ZodError["flatten"];
+    }
+  | {
+      kind: "top-error";
+      message: string;
+    }
+  | {
+      kind: "success";
+      course: CourseSelect;
+      method: "GET" | "PATCH" | "DELETE";
+    };
+
+let result: RenderResult;
+
+if (error && typeof error === "object" && "fieldErrors" in error) {
+  result = { kind: "field-error", errors: error };
+} else if (error) {
+  result = {
+    kind: "top-error",
+    message: typeof error === "string" ? error : JSON.stringify(error),
+  };
+} else if (course) {
+  result = {
+    kind: "success",
+    course,
+    method: Astro.request.method as any,
+  };
+} else {
+  result = {
+    kind: "top-error",
+    message: "No course data available",
+  };
+}
 ---
 
 {
+  result.kind === "field-error" ? (
+    <FieldErrors id={id} headers={ctx.headers} errors={result.errors} />
+  ) : result.kind === "top-error" ? (
+    <TopLevelError
+      id={id}
+      headers={ctx.headers}
+      crud={ctx.crud}
+      message={result.message}
+    />
+  ) : (
+    <FormSuccess
+      course={result.course}
+      method={result.method}
+      partialType={partialType}
+      ctx={ctx}
+    />
+  )
+}
+
+<!-- {
   error && typeof error === "object" && "fieldErrors" in error ? (
     <>
       {ctx.headers.map((fieldName) => {
@@ -150,4 +210,4 @@ if (!partialType) throw new BadRequestError("X-Partial-Type header not set");
   ) : (
     <p class="callout error">No course data available</p>
   )
-}
+} -->

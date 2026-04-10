@@ -25,18 +25,18 @@ button {
 button.htmx-request {
   anchor-name: --submit-button;
   position: relative;
-  overflow: hidden;
+  
   &::after {
     content: "";
     position: absolute;
-    transform: none;
-    anchor-name: --submit-button;
-    position-area: start end;
-    left: 0;
-    bottom: 0;
+    /* anchor-name: --submit-button;
+    position-area: center bottom; */
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: -3px;
 
-    width: 100%;
-    height: 5px;
+    width: 90%;
+    height: 2px;
     background-color: yellow;
     background: var(--lg-loading);
     background-size: 200% 100%;
