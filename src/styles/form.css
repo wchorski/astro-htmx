@@ -83,25 +83,35 @@ form {
     }
   }
 
-  select, input[type="datetime-local"] {
+  select,
+  input[type="datetime-local"] {
     width: fit-content;
     padding: 0.3rem 0.5rem;
     cursor: pointer;
   }
+
+  #submit-button {
+    display: grid;
+    grid-template-areas: "stack";
+
+    & > .text,
+    & .submit-indicator {
+      grid-area: stack;
+    }
+  }
 }
 
-#submit-pending {
-  display: none;
+.submit-indicator {
+  visibility: hidden;
 }
 
-.htmx-request #submit-pending {
-  display: inline;
-}
-
-.htmx-request#submit-pending {
-  display: inline;
-}
-
-.htmx-request#submit-pending ~ .text {
-  display: none;
+.htmx-request {
+  background-color: var(--c-seperator);
+  border-bottom-color: var(--c-secondary);
+  & .submit-indicator {
+    visibility: visible;
+  }
+  & .text {
+    display: none;
+  }
 }

@@ -144,7 +144,8 @@ const submitUrl = `/partials/users/${row.id}`;
         hx-target={`#submit-button`}
         hx-target-error={`#row-edit-error-${"users"}-${row.id}`}
         hx-swap="outerHTML"
-        hx-indicator="#pending"
+        hx-disable-elt="button, form"
+        hx-indicator="#submit-button"
       >
         {
           headers.map((key, i) => {
@@ -289,7 +290,7 @@ const submitUrl = `/partials/users/${row.id}`;
 
           <button type="submit" id="submit-button">
             <span class="text">Update</span>
-            <span id="submit-pending">updating...</span>
+            <span class="submit-indicator">updating...</span>
           </button>
         </fieldset>
       </form>

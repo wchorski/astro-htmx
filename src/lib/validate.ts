@@ -155,7 +155,7 @@ export const validate = {
         (data.first_name || data.last_name || data.email || data.phone)
       ) {
         ctx.addIssue({
-          code: z.ZodIssueCode.custom,
+          code: "custom",
           message: "If linking by user_id, other fields must be left blank.",
         });
         return;

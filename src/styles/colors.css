@@ -4,10 +4,12 @@
     --c-txt: #2e2b28;
     --c-txt-rev: #fff7f0;
     --c-txt-bg: #ffffff;
+    --c-input-bg: rgb(220, 220, 220);
     --c-seperator: rgb(160, 160, 160);
     --c-interactive: rgb(85, 123, 136);
     --c-active: rgb(100, 160, 151);
     --c-primary: rgb(79, 79, 196);
+    --c-accent: rgb(79, 196, 145);
     --c-error: rgb(166, 25, 25);
     --c-success: rgb(47, 141, 88);
   }
@@ -19,13 +21,39 @@
     --c-txt: #ddccbb;
     --c-txt-rev: #000000;
     --c-txt-bg: #262525;
+    --c-input-bg: rgb(24, 24, 24);
     --c-seperator: rgb(51, 51, 51);
     --c-interactive: rgb(85, 123, 136);
     --c-active: rgb(100, 160, 151);
     --c-primary: rgb(79, 79, 196);
+    --c-accent: rgb(79, 196, 145);
     --c-error: rgb(255 73 73);
     --c-success: rgb(47, 181, 105);
   }
+}
+
+:root {
+  --lg-primary: linear-gradient(
+    90deg,
+    var(--c-interactive) 0%,
+    var(--c-primary) 90%,
+    var(--c-interactive) 100%
+  );
+  --lg-disabled: repeating-linear-gradient(
+    45deg,
+    hsl(0, 0%, 10%) 3px,
+    hsl(0, 0%, 15%) 10px,
+    hsl(0, 0%, 16%) 20px
+  );
+  --lg-loading: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--c-interactive) 70%,
+    var(--c-accent) 90%,
+    transparent 100%
+  );
+
+  --c-disabled: gray;
 }
 
 .sub-text {
@@ -95,6 +123,23 @@ button,
   &:visited {
     color: var(--c-txt);
   }
+
+  background: var(--lg-primary);
+  background-position: 10px 0;
+}
+
+button:not(:disabled):hover,
+.btn:hover {
+  background-color: var(--c-primary);
+  background-position: 20px 20px;
+}
+button:not(:disabled):active {
+  filter: brightness(0.5);
+}
+button:disabled {
+  background-color: var(--c-disabled);
+  background-position: 0 0;
+  background: var(--lg-disabled);
 }
 
 .field-error:not(:empty) {
@@ -112,14 +157,17 @@ hr {
   }
 }
 
-input {
-  background-color: var(--c-txt-bg);
+input,
+select,
+textarea {
+  background-color: var(--c-input-bg);
   color: var(--c-txt);
   border-color: var(--c-seperator);
 }
 
 form {
-  label, legend {
+  label,
+  legend {
     color: grey;
   }
 }

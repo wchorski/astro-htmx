@@ -1,0 +1,52 @@
+/* @media (prefers-reduced-motion: reduce) {
+  .animation {
+    animation: dissolve 4s linear infinite both;
+    background-color: green;
+    text-decoration: overline;
+  }
+} */
+
+button {
+  transition-property: background-position, background-color, color, filter;
+  transition-duration: 100ms;
+  transition-timing-function: ease-in;
+  transition-delay: 0;
+}
+
+@keyframes loading-bottom-border {
+  from {
+    background-position: 0% 0;
+  }
+  to {
+    background-position: 200% 0;
+  }
+}
+
+button.htmx-request {
+  anchor-name: --submit-button;
+  position: relative;
+  overflow: hidden;
+  &::after {
+    content: "";
+    position: absolute;
+    transform: none;
+    anchor-name: --submit-button;
+    position-area: start end;
+    left: 0;
+    bottom: 0;
+
+    width: 100%;
+    height: 5px;
+    background-color: yellow;
+    background: var(--lg-loading);
+    background-size: 200% 100%;
+    background-position: 0 0;
+
+    animation-name: loading-bottom-border;
+    animation-duration: 900ms;
+    animation-timing-function: ease-in;
+    animation-delay: 0;
+    animation-iteration-count: infinite;
+    animation-direction: reverse;
+  }
+}

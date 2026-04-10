@@ -13,9 +13,11 @@ import { TEST_ADMIN_SESSION } from "@lib/auth/session";
 interface Params {
   id: string | undefined;
 }
-
 const { id } = Astro.params;
 if (!id) throw new BadRequestError("course ID missing in request");
+if (!Number.isInteger(Number(id))) {
+  throw new BadRequestError("Parameter 'id' must be a valid integer");
+}
 let user: UserSelect | null | undefined = null;
 let error: string | ReturnType<ZodError["flatten"]> | null = null;
 const config = tableConfigs.users.required;
@@ -30,7 +32,6 @@ const session = TEST_ADMIN_SESSION;
 
 if (Astro.request.method === "GET") {
   try {
-    if (!id) throw new BadRequestError("Missing required parameter: id");
     user = await crud.users.read(id, session);
   } catch (e) {
     const { err, status } = errorHandlingOnSubmit(e);
@@ -41,15 +42,8 @@ if (Astro.request.method === "GET") {
 
 if (Astro.request.method === "PATCH") {
   try {
-    if (!id) throw new BadRequestError("Missing required parameter: id");
     const formData = await Astro.request.formData();
     if (!formData) return new Response("Bad Request", { status: 400 });
-
-    const numericId = Number(id);
-
-    if (!Number.isInteger(numericId)) {
-      throw new BadRequestError("Parameter 'id' must be a valid integer");
-    }
 
     const submitFields = Object.fromEntries(
       [...formData.entries()].filter(([key]) => !key.startsWith("_")),
@@ -71,14 +65,6 @@ if (Astro.request.method === "PATCH") {
 
 if (Astro.request.method === "DELETE") {
   try {
-    if (!id) throw new BadRequestError("Missing required parameter: id");
-
-    const numericId = Number(id);
-
-    if (!Number.isInteger(numericId)) {
-      throw new BadRequestError("Parameter 'id' must be a valid integer");
-    }
-
     user = await crud.users.delete(id);
   } catch (e) {
     const { err, status } = errorHandlingOnSubmit(e);
@@ -151,8 +137,9 @@ if (!partialType) throw new BadRequestError("X-Partial-Type header not set");
       partialType === PartialType.TableRow ? (
         <RowView row={user} {...ctx} classList={["updated-row"]} oob />
       ) : partialType === PartialType.SinglePage ? (
-        <button type="button" id="submit-button" disabled>
-          ✓ Updated!
+        <button type="submit" id="submit-button" disabled>
+          <span class="text">✓ Updated!</span>
+          <span class="submit-indicator">updating...</span>
         </button>
       ) : (
         <p class="callout error">

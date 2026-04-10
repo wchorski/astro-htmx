@@ -61,9 +61,11 @@ const submitUrl = `/partials/courses/${row.id}`;
         id={`edit-form-${row.id}`}
         hx-patch={submitUrl}
         hx-headers='{"X-Partial-Type": "single-page"}'
-        hx-target={`#submit-button`}
+        hx-target="#submit-button"
         hx-target-error={`#row-edit-error-${"courses"}-${row.id}`}
         hx-swap="outerHTML"
+        hx-disabled-elt="button, form"
+        hx-indicator="#submit-button"
       >
         {
           headers.map((key, i) => {
@@ -207,7 +209,7 @@ const submitUrl = `/partials/courses/${row.id}`;
           </div>
           <button type="submit" id="submit-button">
             <span class="text">Update</span>
-            <span id="submit-pending">updating...</span>
+            <span class="submit-indicator">updating...</span>
           </button>
         </fieldset>
       </form>

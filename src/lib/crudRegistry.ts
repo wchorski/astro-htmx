@@ -185,7 +185,7 @@ export const crud = {
           location.timezone,
         );
 
-        const wpPostId =
+        const wp_post_id =
           WP_USERNAME && WP_APP_PASSWORD
             ? (
                 await createWordpressEventPost({
@@ -200,7 +200,7 @@ export const crud = {
           .values({
             ...validated,
             timestamp: realDate,
-            wpPostId,
+            wp_post_id,
           })
           .returning();
         return result;
@@ -236,7 +236,7 @@ export const crud = {
       try {
         const validated = validate.courseUpdate.parse(row);
 
-        const location = await db
+        const [location] = await db
           .select()
           .from(Location)
           .where(eq(Location.id, validated.location_id))
@@ -250,7 +250,7 @@ export const crud = {
           validated.date_civil,
           location.timezone,
         );
-        const wpPostId =
+        const wp_post_id =
           WP_USERNAME && WP_APP_PASSWORD
             ? (
                 await createWordpressEventPost({
@@ -264,7 +264,7 @@ export const crud = {
           .set({
             ...validated,
             timestamp: realDate,
-            wp_post_id: wpPostId ?? validated.wpPostId,
+            wp_post_id: wp_post_id ?? validated.wp_post_id,
           })
           .where(eq(Course.id, validated.id))
           .returning();
