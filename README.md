@@ -68,7 +68,7 @@ npm run db:seed:truncate
 
 #todo
 - [ ] restructure top level errors to include `fieldName` so it can target and style the problem field if it exists
-- [ ] show "no changes" and disable `update` button on page-single forms. also set button to disabled upon first press
+- [ ] show "no changes" and disable `update` button on single-page forms. also set button to disabled upon first press
 - [ ] how to seed fresh database automatically (with docker container like `migrate`)
 - [ ] TRANSFER what learned from partials/course-credits/... to partials/users/...
 - [ ] use css grid to keep all field-errors in same height (and keep input fields from getting pushed up)

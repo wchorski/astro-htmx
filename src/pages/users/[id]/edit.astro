@@ -121,7 +121,7 @@ const config = {
   },
 } as FieldConfig<BaseRow>;
 
-const headers = Object.keys(config);
+const headers = Object.keys(config) as (keyof typeof row & string)[];
 const error = null;
 
 const submitUrl = `/partials/users/${row.id}`;
@@ -140,7 +140,7 @@ const submitUrl = `/partials/users/${row.id}`;
       <form
         id={`edit-form-${row.id}`}
         hx-patch={submitUrl}
-        hx-headers='{"X-Partial-Type": "page-single"}'
+        hx-headers='{"X-Partial-Type": "single-page"}'
         hx-target={`#submit-button`}
         hx-target-error={`#row-edit-error-${"users"}-${row.id}`}
         hx-swap="outerHTML"

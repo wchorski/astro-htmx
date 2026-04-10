@@ -76,6 +76,17 @@ form {
     border: none;
     padding: 0;
     margin-top: 1.5rem;
+
+    & > button {
+      max-width: fit-content;
+      padding: 1rem 2rem;
+    }
+  }
+
+  select, input[type="datetime-local"] {
+    width: fit-content;
+    padding: 0.3rem 0.5rem;
+    cursor: pointer;
   }
 }
 

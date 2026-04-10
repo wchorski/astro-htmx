@@ -99,7 +99,7 @@ export function throwErrorsForCRUD(e: unknown): never {
 
   const msg = e instanceof Error ? e.message : String(e);
 
-  throw new Error("An unexpected error occurred: " + msg);
+  throw new Error(msg);
 }
 
 // function isUniqueConstraintError(e: unknown): { field?: string } | null {

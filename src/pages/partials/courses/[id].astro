@@ -39,12 +39,14 @@ if (Astro.request.method === "GET") {
   }
 }
 
+console.log('partials/courses/:id');
+
 if (Astro.request.method === "PATCH") {
   try {
     if (!id) throw new BadRequestError("Missing required parameter: id");
     const formData = await Astro.request.formData();
     if (!formData) return new Response("Bad Request", { status: 400 });
-
+    console.log({formData});
     const numericId = Number(id);
 
     if (!Number.isInteger(numericId)) {
@@ -86,13 +88,24 @@ if (Astro.request.method === "DELETE") {
     error = err;
   }
 }
+
+enum PartialType {
+  TableRow = "table-row",
+  SinglePage = "single-page",
+}
+
+const partialType = Astro.request.headers.get("X-Partial-Type") as
+  | PartialType
+  | undefined;
+if (!partialType) throw new BadRequestError("X-Partial-Type header not set");
 ---
 
 {
   error && typeof error === "object" && "fieldErrors" in error ? (
     <>
       {ctx.headers.map((fieldName) => {
-        const messages = error.fieldErrors[fieldName];
+        const messages =
+          error.fieldErrors?.[fieldName as keyof typeof error.fieldErrors];
         return (
           <span
             id={`field-error-${id}-${fieldName}`}
@@ -122,18 +135,32 @@ if (Astro.request.method === "DELETE") {
         />
       ))}
     </>
-  ) : Astro.request.method === "DELETE" && course ? (
-    <tr id={`row-${id}`} hx-swap-oob="outerHTML">
-      <td colspan="100%" class="danger">
-        DELETED {crudKey}{" "}
-        {`${course.id} | ${course.subject} ${course.date_civil}`}
-      </td>
-    </tr>
-  ) : Astro.request.method === "PATCH" && course ? (
-    <RowView row={course} {...ctx} classList={["updated-row"]} oob />
-  ) : Astro.request.method === "GET" && course ? (
-    <RowView row={course} {...ctx} oob />
+  ) : course ? (
+    Astro.request.method === "DELETE" ? (
+      <tr id={`row-${id}`} hx-swap-oob="outerHTML">
+        <td colspan="100%" class="danger">
+          DELETED {crudKey}{" "}
+          {`${course.id} | ${course.subject} ${course.date_civil}`}
+        </td>
+      </tr>
+    ) : Astro.request.method === "PATCH" ? (
+      partialType === PartialType.TableRow ? (
+        <RowView row={course} {...ctx} classList={["updated-row"]} oob />
+      ) : partialType === PartialType.SinglePage ? (
+        <button type="button" id="submit-button" disabled>
+          ✓ Updated!
+        </button>
+      ) : (
+        <p class="callout error">
+          Invalid partialType for PATCH: {partialType}
+        </p>
+      )
+    ) : Astro.request.method === "GET" ? (
+      <RowView row={course} {...ctx} oob />
+    ) : (
+      <p class="callout error">Unknown method: {Astro.request.method}</p>
+    )
   ) : (
-    <p class="callout error">unknown error occured on partials/courses/:id </p>
+    <p class="callout error">No course data available</p>
   )
 }

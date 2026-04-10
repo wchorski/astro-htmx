@@ -40,13 +40,13 @@ if (Astro.request.method === "GET") {
 }
 
 enum PartialType {
-  RowInline = "row-inline",
-  PageSingle = "page-single",
+  TableRow = "table-row",
+  SinglePage = "single-page",
 }
 
 const partialType =
   (Astro.request.headers.get("X-Partial-Type") as PartialType) ||
-  PartialType.RowInline;
+  PartialType.TableRow;
 
 console.log({ partialType, user, error });
 ---
@@ -56,9 +56,9 @@ console.log({ partialType, user, error });
     <div id={`row-edit-error-${ctx.crud}-${id}`}>
       {typeof error === "string" ? error : JSON.stringify(error)}
     </div>
-  ) : user && partialType === PartialType.RowInline ? (
+  ) : user && partialType === PartialType.TableRow ? (
     <RowEdit {...ctx} row={user} error={error} />
-  ) : user && partialType === PartialType.PageSingle ? (
+  ) : user && partialType === PartialType.SinglePage ? (
     <button type="button" id="submit-button" disabled>
       ✓ saved
     </button>
