@@ -106,8 +106,10 @@ const submitUrl = `/partials/courses/${row.id}`;
                 return (
                   <TextareaField
                     {...inputAttrs}
+                    errorId={`field-error-${row.id}-${key}`}
                     autofocus={autofocus}
                     value={resolvedValue}
+                    name={key}
                   />
                 );
               }

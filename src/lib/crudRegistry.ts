@@ -592,6 +592,7 @@ export const crud = {
       }
     },
   },
+  // roles: {},
 } satisfies CrudRegistry;
 // } satisfies Record<string, CrudEntry>;
 
@@ -599,7 +600,7 @@ type CrudRegistry = {
   courseCredits: CrudEntry<CourseCreditFlat>;
   locations: CrudEntry<LocationSelect>;
   users: CrudEntry<UserSelect>;
-  roles: CrudEntry<RoleSelect>;
+  // roles: CrudEntry<RoleSelect>;
   courses: CrudEntry<CourseSelect>;
   credits: CrudEntry<CreditSelect>;
   // ...

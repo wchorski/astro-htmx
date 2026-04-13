@@ -6,9 +6,10 @@
     --c-txt-bg: #ffffff;
     --c-input-bg: rgb(220, 220, 220);
     --c-seperator: rgb(160, 160, 160);
-    --c-interactive: rgb(85, 123, 136);
+    --c-interactive: rgb(176, 171, 37);
     --c-active: rgb(100, 160, 151);
     --c-primary: rgb(79, 79, 196);
+    --c-primary-dark: rgb(65, 65, 129);
     --c-accent: rgb(79, 196, 145);
     --c-error: rgb(166, 25, 25);
     --c-success: rgb(47, 141, 88);
@@ -23,9 +24,10 @@
     --c-txt-bg: #262525;
     --c-input-bg: rgb(24, 24, 24);
     --c-seperator: rgb(51, 51, 51);
-    --c-interactive: rgb(85, 123, 136);
-    --c-active: rgb(100, 160, 151);
-    --c-primary: rgb(79, 79, 196);
+    --c-interactive: rgb(139, 139, 228);
+    --c-active: rgb(17, 69, 61);
+    --c-primary: rgb(130, 130, 226);
+    --c-primary-dark: rgb(99, 99, 185);
     --c-accent: rgb(79, 196, 145);
     --c-error: rgb(255 73 73);
     --c-success: rgb(47, 181, 105);
@@ -36,7 +38,7 @@
   --lg-primary: linear-gradient(
     90deg,
     var(--c-interactive) 0%,
-    var(--c-primary) 90%,
+    var(--c-primary) 80%,
     var(--c-interactive) 100%
   );
   --lg-disabled: repeating-linear-gradient(
@@ -125,7 +127,12 @@ button,
   }
 
   background: var(--lg-primary);
-  background-position: 10px 0;
+  background-position: 0 0;
+  border-bottom-style: solid;
+  border-right-style: solid;
+  border-bottom-width: 4px;
+  border-right-width: 3px;
+  border-color: var(--c-primary-dark);
 }
 
 button:not(:disabled):hover,
@@ -135,6 +142,9 @@ button:not(:disabled):hover,
 }
 button:not(:disabled):active {
   filter: brightness(0.5);
+  
+  border-bottom-width: 0;
+  border-right-width: 0;
 }
 button:disabled {
   background-color: var(--c-disabled);

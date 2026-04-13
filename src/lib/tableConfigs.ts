@@ -120,7 +120,7 @@ export const courseConfigRequired = (locations: LocationSelect[]) =>
         label: loc.name,
       })),
     },
-  }) satisfies FieldConfig<CourseSelect>;
+  }) as FieldConfig<BaseRow> satisfies FieldConfig<CourseSelect>;
 
 const courseCreditsRequiredConfig = {
   id: {
@@ -230,7 +230,8 @@ export const creditConfigRequired = (
       required: true,
       options: courses.map((item) => ({
         value: String(item.id),
-        label: item.subject + " | " + prettyDateToLocale(new Date(item.date_civil)),
+        label:
+          item.subject + " | " + prettyDateToLocale(new Date(item.date_civil)),
       })),
     },
     timestamp: {
@@ -242,7 +243,7 @@ export const creditConfigRequired = (
     attended: {
       type: "checkbox",
     },
-  }) satisfies FieldConfig<CreditSelect>;
+  }) as FieldConfig<BaseRow> satisfies FieldConfig<CreditSelect>;
 
 const locationRequiredConfig = {
   id: {

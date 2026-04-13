@@ -48,5 +48,5 @@ export type UserCreditFlat = {
   address_2?: string | null;
   city: string;
   state: string;
-  zip: number;
+  zip: string;
 };

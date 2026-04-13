@@ -22,6 +22,7 @@ export type FieldOption = {
 type BaseFieldSlot = {
   label?: string;
   value?: string;
+  readonly?: boolean;
 };
 
 export type InputFieldSlot = BaseFieldSlot &

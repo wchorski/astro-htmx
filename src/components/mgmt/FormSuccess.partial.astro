@@ -19,11 +19,17 @@ const { entity, method, partialType, ctx } = Astro.props;
 
 {
   method === "DELETE" ? (
-    <tr id={`row-${entity.id}`} hx-swap-oob="outerHTML">
-      <td colspan="100%" class="danger">
-        DELETED {ctx.crud} {entity.id}
-      </td>
-    </tr>
+    partialType === "table-row" ? (
+      <tr id={`row-${entity.id}`} hx-swap-oob="outerHTML">
+        <td colspan="100%" class="danger">
+          DELETED {ctx.crud} {entity.id}
+        </td>
+      </tr>
+    ) : partialType === "single-page" ? (
+      <p>PAGE DELETED</p>
+    ) : (
+      <p class="callout error">unsupported partialType</p>
+    )
   ) : method === "PATCH" ? (
     partialType === "table-row" ? (
       <RowView row={entity} {...ctx} classList={["updated-row"]} oob />

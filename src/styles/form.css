@@ -12,11 +12,6 @@ input[type="email"] {
   box-sizing: border-box;
 }
 
-input::placeholder {
-  color: rgb(207, 207, 207);
-  opacity: 1; /* Firefox */
-}
-
 label:has(input:required) .text::after {
   content: "*";
 }

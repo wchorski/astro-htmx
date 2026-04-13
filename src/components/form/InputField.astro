@@ -36,6 +36,7 @@ const {
   fieldError,
   datalist,
   readonly,
+  autofocus,
 } = Astro.props;
 
 if (type === "searchSelect")
@@ -53,6 +54,7 @@ if (type === "searchSelect")
       <span class="text">{label ?? name}</span>
       <input
         {...inputAttrs}
+        autofocus={autofocus}
         form={formId}
         name={name}
         type={type}

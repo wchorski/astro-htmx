@@ -7,7 +7,7 @@
 } */
 
 button {
-  transition-property: background-position, background-color, color, filter;
+  transition-property: background-position, background-color, color, border, width, height, filter;
   transition-duration: 100ms;
   transition-timing-function: ease-in;
   transition-delay: 0;

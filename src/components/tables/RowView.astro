@@ -71,6 +71,7 @@ if (!headers.includes("id")) throw new Error("header does not include ID");
           hx-target={`#row-${row.id}`}
           hx-target-error={`#row-${row.id}`}
           hx-swap="outerHTML"
+          hx-headers='{"X-Partial-Type": "table-row"}'
         >
           Edit
         </button>
@@ -83,6 +84,7 @@ if (!headers.includes("id")) throw new Error("header does not include ID");
           hx-target-error={`#confirm-dialog-error`}
           hx-swap="outerHTML"
           hx-confirm={`Delete this ${crud}?`}
+          hx-headers='{"X-Partial-Type": "table-row"}'
         >
           <img
             class="icon"

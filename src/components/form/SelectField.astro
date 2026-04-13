@@ -7,7 +7,7 @@ interface Props extends Omit<
   "type" | "value" | "checked" | "name"
 > {
   formId?: string;
-  errorId:string,
+  errorId: string;
   name: string;
   label?: string;
   value?: string | number;
@@ -15,13 +15,22 @@ interface Props extends Omit<
   inputAttrs?: Omit<FieldSlot, "label" | "value" | "type">;
   options: FieldOption[] | undefined;
 }
-const { formId, errorId, inputAttrs, name, label, value, fieldError, options } =
-  Astro.props;
+const {
+  formId,
+  errorId,
+  inputAttrs,
+  name,
+  label,
+  value,
+  fieldError,
+  options,
+  autofocus,
+} = Astro.props;
 ---
 
 <label>
   <span class="text">{label ?? name}</span>
-  <select {...inputAttrs} form={formId} name={name}>
+  <select {...inputAttrs} form={formId} name={name} autofocus={autofocus}>
     {
       options?.map((opt) => (
         <option

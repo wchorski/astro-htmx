@@ -162,8 +162,18 @@ export const validate = {
       }
 
       const result = schema.safeParse(data);
+
       if (!result.success) {
-        result.error.issues.forEach((issue) => ctx.addIssue(issue));
+        result.error.issues.forEach((issue) => {
+          ctx.addIssue({
+            code: "custom",
+            message: issue.message,
+            path: issue.path,
+            params: {
+              originalCode: issue.code,
+            },
+          });
+        });
       }
     });
   },

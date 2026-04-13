@@ -10,11 +10,13 @@ import { TEST_ADMIN_SESSION } from "@lib/auth/session";
 import { delay } from "@lib/wait";
 import FieldErrors from "@components/mgmt/FieldErrors.partial.astro";
 import FormSuccess from "@components/mgmt/FormSuccess.partial.astro";
-import TopLevelError from "@components/mgmt/TopLevelError.partail.astro";
+import TopLevelError from "@components/mgmt/TopLevelError.partial.astro";
 
 interface Params {
   id: string | undefined;
 }
+
+type ZodErrorFlattened = ReturnType<ZodError<CourseSelect>["flatten"]>;
 
 // let id: string | null | undefined = null;
 const { id } = Astro.params;
@@ -91,7 +93,7 @@ if (!partialType) throw new BadRequestError("X-Partial-Type header not set");
 type RenderResult =
   | {
       kind: "field-error";
-      errors: ZodError["flatten"];
+      errors: ZodErrorFlattened;
     }
   | {
       kind: "top-error";
@@ -138,7 +140,7 @@ if (error && typeof error === "object" && "fieldErrors" in error) {
     />
   ) : (
     <FormSuccess
-      course={result.course}
+      entity={result.course}
       method={result.method}
       partialType={partialType}
       ctx={ctx}

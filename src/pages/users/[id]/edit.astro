@@ -188,6 +188,8 @@ const submitUrl = `/partials/users/${row.id}`;
                     {...inputAttrs}
                     autofocus={autofocus}
                     value={resolvedValue}
+                    errorId={`field-error-${row.id}-${key}`}
+                    name={key}
                   />
                 );
               }

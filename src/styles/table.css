@@ -60,8 +60,8 @@ table tbody > tr:nth-child(even of :not(.row-error)) {
 
 tr[data-status="editing"],
 tr[data-status="creating"] {
-  /* position: relative; */
-  anchor-name: --editing-row;
+  position: relative;
+  /* anchor-name: --editing-row; */
 }
 
 .error-cell {
@@ -70,12 +70,15 @@ tr[data-status="creating"] {
 }
 
 td .row-error:not(:empty) {
-  position: absolute;
-  position-anchor: --editing-row;
-  top: anchor(bottom);
+  /* position-anchor: --editing-row; */
+  /* top: anchor(bottom);
   left: anchor(left);
   right: anchor(right);
-  width: anchor-size(width);
+  width: anchor-size(width); */
+  position: absolute;
+  left: 0;
+  bottom: -2rem;
+  width: 100%;
 
   /* stay in viewport */
   position-try-fallbacks: flip-block;
