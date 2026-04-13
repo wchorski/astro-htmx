@@ -1,0 +1,28 @@
+---
+// mgmt/FieldErrors.partial.astro
+import type { ZodError } from 'astro/zod';
+
+type FlattenedZodError = ReturnType<ZodError["flatten"]>;
+
+interface Props {
+  id: string;
+  headers: string[];
+  errors: FlattenedZodError;
+}
+const { id, headers, errors } = Astro.props;
+---
+
+<>
+  {
+    headers.map((fieldName) => (
+      <span
+        id={`field-error-${id}-${fieldName}`}
+        hx-swap-oob="outerHTML"
+        class="anim-vibrate field-error"
+      >
+        {errors.fieldErrors?.[fieldName as keyof typeof errors.fieldErrors]?.[0] ?? ""}
+      </span>
+    ))
+  }
+  <div id={`row-edit-error-${id}`}></div>
+</>

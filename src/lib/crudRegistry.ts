@@ -31,6 +31,7 @@ import type {
   LocationSelect,
   UserCreditFlat as CourseCreditFlat,
   UserSelect,
+  RoleSelect,
 } from "@ty/Schema";
 
 type CreateFn = (
@@ -598,6 +599,7 @@ type CrudRegistry = {
   courseCredits: CrudEntry<CourseCreditFlat>;
   locations: CrudEntry<LocationSelect>;
   users: CrudEntry<UserSelect>;
+  roles: CrudEntry<RoleSelect>;
   courses: CrudEntry<CourseSelect>;
   credits: CrudEntry<CreditSelect>;
   // ...

@@ -1,10 +1,4 @@
-import {
-  Role,
-  Location,
-  User,
-  Course,
-  Credit,
-} from "@db/schema";
+import { Role, Location, User, Course, Credit } from "@db/schema";
 
 export type RoleInsert = typeof Role.$inferInsert;
 export type RoleSelect = typeof Role.$inferSelect;
@@ -20,6 +14,22 @@ export type UserCreditSelect = {
   credit: CreditSelect;
   user: UserSelect;
 };
+export type AnyEntitySelect =
+  | RoleSelect
+  | CreditSelect
+  | UserSelect
+  | CourseSelect
+  | LocationSelect;
+
+export const schemaEntityMap = {
+  roles: true,
+  locations: true,
+  users: true,
+  courses: true,
+  credits: true,
+} as const;
+
+export type SchemaEntity = keyof typeof schemaEntityMap;
 
 export type UserCreditFlat = {
   user_id: number;
