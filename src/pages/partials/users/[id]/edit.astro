@@ -47,8 +47,6 @@ enum PartialType {
 const partialType =
   (Astro.request.headers.get("X-Partial-Type") as PartialType) ||
   PartialType.TableRow;
-
-console.log({ partialType, user, error });
 ---
 
 {

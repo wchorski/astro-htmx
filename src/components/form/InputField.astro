@@ -48,6 +48,9 @@ if (type === "searchSelect")
     <code class="text" aria-readonly="true">
       <span class="text">{label ?? name}: </span>
       {value}
+      <span id={errorId} style="display: none;">
+        {fieldError ?? ""}
+      </span>
     </code>
   ) : (
     <label>

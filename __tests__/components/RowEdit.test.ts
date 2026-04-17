@@ -156,7 +156,7 @@ describe("RowEdit - schemas", () => {
     });
 
     test("renders in editing state", () => {
-      expect(result).toContain(`id="row-${row.id}"`);
+      expect(result).toContain(`id="row-${crud}-${row.id}"`);
       expect(result).toContain('data-status="editing"');
     });
 

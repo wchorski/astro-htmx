@@ -1,4 +1,5 @@
 ---
+import Popover from "@components/Popover.astro";
 import type { CrudRegistryType } from "@lib/crudRegistry";
 
 interface Props {
@@ -11,12 +12,9 @@ const { id, headers, crud, message } = Astro.props;
 ---
 
 <>
-  <div
-    id={`row-edit-error-${crud}-${id}`}
-    class="row-error callout error top-level"
-  >
+  <span id={`row-edit-error-${crud}-${id}`} >
     {message}
-  </div>
+  </span>
 
   {
     headers.map((fieldName) => (
@@ -28,4 +26,3 @@ const { id, headers, crud, message } = Astro.props;
     ))
   }
 </>
-``

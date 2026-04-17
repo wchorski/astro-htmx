@@ -22,7 +22,7 @@ const { entity, method, partialType, ctx } = Astro.props;
     partialType === "table-row" ? (
       <tr id={`row-${entity.id}`} hx-swap-oob="outerHTML">
         <td colspan="100%" class="danger">
-          DELETED {ctx.crud} {entity.id}
+          DELETED {ctx.crud + " " + `id:${entity.id}`}
         </td>
       </tr>
     ) : partialType === "single-page" ? (

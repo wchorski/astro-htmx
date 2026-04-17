@@ -54,20 +54,22 @@ const { id = "confirm-dialog" } = Astro.props;
     dialog.showModal();
 
     const onConfirm = () => {
-      cleanup();
+      // cleanup();
+      // popovertarget={"row-edit-error-courses-59746"}
       e.detail.issueRequest(true);
     };
 
     const onCancel = () => {
       cleanup();
-      document.removeEventListener("htmx:afterRequest", onAfterRequest); 
+      document.removeEventListener("htmx:afterRequest", onAfterRequest);
       closeDialog(dialog);
     };
 
     const onAfterRequest = (e: any) => {
-      console.log("🐸🐸🐸 onAfterRequest");
+      if (e.detail?.elt !== e.target) return;
       console.log(e.detail.successful);
       if (e.detail.successful) {
+        cleanup();
         closeDialog(dialog);
       }
     };

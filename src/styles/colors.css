@@ -126,25 +126,38 @@ button,
     color: var(--c-txt);
   }
 
-  background: var(--lg-primary);
+  /* background: var(--lg-primary); */
   background-position: 0 0;
   border-bottom-style: solid;
   border-right-style: solid;
   border-bottom-width: 4px;
   border-right-width: 3px;
-  border-color: var(--c-primary-dark);
+  /* border-color: var(--c-primary-dark); */
+  border-color: color-mix(in srgb, currentColor 50%, rgb(112, 112, 112));
+
+  &.delete {
+    color: red;
+    background-color: transparent;
+    outline: solid 1px var(--c-error);
+    border-color: var(--c-error);
+  }
 }
 
 button:not(:disabled):hover,
 .btn:hover {
   background-color: var(--c-primary);
   background-position: 20px 20px;
+
+  &.delete {
+    color: var(--c-txt);
+    background-color: var(--c-error);
+  }
 }
 button:not(:disabled):active {
   filter: brightness(0.5);
-  
-  border-bottom-width: 0;
-  border-right-width: 0;
+
+  /* border-bottom-width: 0; */
+  /* border-right-width: 0; */
 }
 button:disabled {
   background-color: var(--c-disabled);

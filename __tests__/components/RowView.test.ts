@@ -93,7 +93,7 @@ describe.each(testCases)(
     });
 
     test("renders correct row id", () => {
-      expect(result).toContain(`id="row-${row.id}"`);
+      expect(result).toContain(`id="row-${crud}-${row.id}"`);
       expect(result).toContain(`data-row-id="${row.id}"`);
     });
 
@@ -103,13 +103,13 @@ describe.each(testCases)(
 
     test("renders htmx edit attributes", () => {
       expect(result).toContain(`hx-get="/partials/${crud}/${row.id}/edit"`);
-      expect(result).toContain(`hx-target="#row-${row.id}"`);
+      expect(result).toContain(`hx-target="#row-${crud}-${row.id}"`);
       expect(result).toContain('hx-swap="outerHTML"');
     });
 
     test("renders htmx delete attributes", () => {
       expect(result).toContain(`hx-delete="/partials/${crud}/${row.id}"`);
-      expect(result).toContain(`hx-target="#row-${row.id}"`);
+      expect(result).toContain(`hx-target="#row-${crud}-${row.id}"`);
     });
 
     test("renders edit and delete buttons", () => {

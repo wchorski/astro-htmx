@@ -9,7 +9,10 @@ import type { ZodError } from "astro/zod";
 import type { BaseRow } from "@ty/FieldConfig";
 import type { TableRow } from "@ty/Table";
 import { TEST_ADMIN_SESSION } from "@lib/auth/session";
-
+import FieldErrors from "@components/mgmt/FieldErrors.partial.astro";
+import FormSuccess from "@components/mgmt/FormSuccess.partial.astro";
+import TopLevelError from "@components/mgmt/TopLevelError.partial.astro";
+type ZodErrorFlattened = ReturnType<ZodError<UserSelect>["flatten"]>;
 interface Params {
   id: string | undefined;
 }
@@ -82,80 +85,61 @@ const partialType = Astro.request.headers.get("X-Partial-Type") as
   | PartialType
   | undefined;
 if (!partialType) throw new BadRequestError("X-Partial-Type header not set");
+
+type RenderResult =
+  | {
+      kind: "field-error";
+      errors: ZodErrorFlattened;
+    }
+  | {
+      kind: "top-error";
+      message: string;
+    }
+  | {
+      kind: "success";
+      user: UserSelect;
+      method: "GET" | "PATCH" | "DELETE";
+    };
+
+let result: RenderResult;
+
+if (error && typeof error === "object" && "fieldErrors" in error) {
+  result = { kind: "field-error", errors: error };
+} else if (error) {
+  result = {
+    kind: "top-error",
+    message: typeof error === "string" ? error : JSON.stringify(error),
+  };
+} else if (user) {
+  result = {
+    kind: "success",
+    user,
+    method: Astro.request.method as any,
+  };
+} else {
+  result = {
+    kind: "top-error",
+    message: "No course data available",
+  };
+}
 ---
 
 {
-  error && typeof error === "object" && "fieldErrors" in error ? (
-    <>
-      {ctx.headers.map((fieldName) => {
-        const messages =
-          error?.fieldErrors?.[fieldName as keyof typeof error.fieldErrors];
-        return (
-          <span
-            id={`field-error-${id}-${fieldName}`}
-            hx-swap-oob="outerHTML"
-            class="anim-vibrate field-error"
-          >
-            {messages?.[0] ?? ""}
-          </span>
-        );
-      })}
-      <div id={`row-edit-error-${ctx.crud}-${id}`} />
-    </>
-  ) : error ? (
-    <>
-      <div
-        id={`row-edit-error-${ctx.crud}-${id}`}
-        class="row-error callout error top-level"
-      >
-        {typeof error === "string" ? error : JSON.stringify(error)}
-      </div>
-
-      {ctx.headers.map((fieldName) => (
-        <span
-          id={`field-error-${id}-${fieldName}`}
-          hx-swap-oob="outerHTML"
-          class="field-error"
-        />
-      ))}
-    </>
-  ) : user ? (
-    Astro.request.method === "DELETE" ? (
-      partialType === PartialType.TableRow ? (
-        <tr id={`row-${id}`} hx-swap-oob="outerHTML">
-          <td colspan="100%" class="danger">
-            DELETED user{" "}
-            {`${user.id} | ${user.first_name} ${user.last_name} ${user.phone} ${user.email}`}
-          </td>
-        </tr>
-      ) : (
-        <p class="callout error">
-          Invalid partialType for DELETE: {partialType}
-        </p>
-      )
-    ) : Astro.request.method === "PATCH" ? (
-      partialType === PartialType.TableRow ? (
-        <RowView row={user} {...ctx} classList={["updated-row"]} oob />
-      ) : partialType === PartialType.SinglePage ? (
-        <button type="submit" id="submit-button" disabled>
-          <span class="text">✓ Updated!</span>
-          <span class="submit-indicator">updating...</span>
-        </button>
-      ) : (
-        <p class="callout error">
-          Invalid partialType for PATCH: {partialType}
-        </p>
-      )
-    ) : Astro.request.method === "GET" ? (
-      partialType === PartialType.TableRow ? (
-        <RowView row={user} {...ctx} oob />
-      ) : (
-        <p class="callout error">Invalid partialType for GET: {partialType}</p>
-      )
-    ) : (
-      <p class="callout error">Unknown method: {Astro.request.method}</p>
-    )
+  result.kind === "field-error" ? (
+    <FieldErrors id={id} headers={ctx.headers} errors={result.errors} />
+  ) : result.kind === "top-error" ? (
+    <TopLevelError
+      id={id}
+      headers={ctx.headers}
+      crud={ctx.crud}
+      message={result.message}
+    />
   ) : (
-    <p class="callout error">No user data available</p>
+    <FormSuccess
+      entity={result.user}
+      method={result.method}
+      partialType={partialType}
+      ctx={ctx}
+    />
   )
 }

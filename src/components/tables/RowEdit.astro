@@ -1,9 +1,11 @@
 ---
 // components/tables/RowEdit.astro
+import AnchoredBox from "@components/AnchoredBox.astro";
 import InputField from "@components/form/InputField.astro";
 import SearchSelect from "@components/form/SearchSelect.astro";
 import SelectField from "@components/form/SelectField.astro";
 import TextareaField from "@components/form/TextareaField.astro";
+import Popover from "@components/Popover.astro";
 import type { CrudRegistryType } from "@lib/crudRegistry";
 import { slugify } from "@lib/formatters";
 import type {
@@ -44,9 +46,12 @@ const topLevelError = typeof error === "string" ? error : null;
 const autofocusIndex = Object.values(config).findIndex(
   (field) => field?.readonly !== true,
 );
+
+const anchorName =
+  `--anchor-row-edit-error-${crud}-${row.id}` || "--anchor-row";
 ---
 
-<tr id={`row-${row.id}`} data-status="editing">
+<tr id={`row-${crud}-${row.id}`} data-status="editing">
   {
     headers.map((key, i) => {
       const field: FieldSlot = config[key] ?? {};
@@ -180,7 +185,7 @@ const autofocusIndex = Object.values(config).findIndex(
       style="display:none"
       hx-patch={submitUrl}
       hx-headers='{"X-Partial-Type": "table-row"}'
-      hx-target={`#row-${row.id}`}
+      hx-target={`#row-${crud}-${row.id}`}
       hx-target-error={`#row-edit-error-${crud}-${row.id}`}
       hx-swap="outerHTML"
     >
@@ -199,28 +204,27 @@ const autofocusIndex = Object.values(config).findIndex(
       title="cancel"
       class="cancel"
       hx-get={`/partials/${slugify(crud)}/${row.id}`}
-      hx-target={`#row-${row.id}`}
+      hx-target={`#row-${crud}-${row.id}`}
       hx-target-error={`#row-edit-error-${crud}-${row.id}`}
-      hx-swap="outerHTML"
+      hx-swap="innerHTML"
+      hx-headers='{"X-Partial-Type": "table-row"}'
     >
       ⌀
     </button>
   </td>
   <td class="error-cell">
-    {
-      topLevelError ? (
-        <div
-          id={`row-edit-error-${crud}-${row.id}`}
-          class="row-error error top-level"
-        >
-          {topLevelError}
-        </div>
-      ) : (
-        <div
-          id={`row-edit-error-${crud}-${row.id}`}
-          class="row-error error top-level"
-        />
-      )
-    }
+    <AnchoredBox
+      messageId={`row-edit-error-${crud}-${row.id}`}
+      anchorName={anchorName}
+      class="row-error error top-level"
+    >
+      <span id={`row-edit-error-${crud}-${row.id}`}>{topLevelError}</span>
+    </AnchoredBox>
   </td>
 </tr>
+
+<style define:vars={{ anchorName }}>
+  tr {
+    anchor-name: var(--anchorName);
+  }
+</style>

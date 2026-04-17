@@ -88,8 +88,20 @@ export function throwErrorsForCRUD(e: unknown): never {
 
       throw new ConflictError(
         match?.[1]
-          ? `A duplicate ${cause.table || 'RECORD'} with ${key} "${value}" already exists`
+          ? `A duplicate ${cause.table || "RECORD"} with ${key} "${value}" already exists`
           : `A duplicate entry already exists for this entry.`,
+      );
+    }
+    if (cause.code === "23503") {
+      const match = cause.detail.match(/Key \((.*?)\)=\((.*?)\)/);
+
+      const key = match[1];
+      const value = match[2];
+
+      throw new ConflictError(
+        match?.[1]
+          ? `Resource with ${key}:${value} is still in use by a "${cause.table || "RECORD"}". You must first remove the connected "${cause.table}" to allow the removal of this record.`
+          : `This record is currently in use and cannot be deleted.`,
       );
     } else {
       console.log("❌❌❌ DrizzleQueryError");
