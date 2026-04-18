@@ -64,17 +64,22 @@ const { messageId, anchorName, class: className, ...attrs } = Astro.props;
     border: 2px solid var(--border);
     border-radius: 8px;
     padding: 1rem;
-    box-sizing: border-box;
-    inline-size: min(anchor-size(width), 100%);
     z-index: 999;
+
     display: flex;
     gap: 1rem;
     align-items: center;
     position: fixed;
+    box-sizing: border-box;
+
+    /* inline-size: min(anchor-size(width), 100%); */
+    /* max-inline-size: calc(100vw - 2rem); */
     position-anchor: var(--anchor-name);
     top: calc(anchor(bottom) + var(--gap));
-    left: anchor(left);
+    right: calc((var(--arrow)));
+    /* left: clamp(1rem, anchor(left), calc(100vw - min(anchor-size(width), 100%) - 1rem)); */
     position-try-fallbacks: --bottom-right, --bottom-left;
+
     transition-property: opacity, transform, overlay, display, visibility;
     transition-duration: 220ms;
     transition-timing-function: ease-out;
@@ -97,12 +102,13 @@ const { messageId, anchorName, class: className, ...attrs } = Astro.props;
     border-color: inherit;
     color: inherit;
   }
-  
+
   anchored-box::after {
     content: "";
     position: absolute;
     top: calc(var(--arrow) / -2);
-    left: calc(anchor(left) - (var(--arrow) / 2));
+    /* right: calc(anchor(left) - (var(--arrow) / 2)); */
+    right: var(--arrow);
     color: inherit;
     width: var(--arrow);
     height: var(--arrow);

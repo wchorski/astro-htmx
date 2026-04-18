@@ -1,5 +1,5 @@
 ---
-import Popover from "@components/Popover.astro";
+// TopLevelError.partial.astro
 import type { CrudRegistryType } from "@lib/crudRegistry";
 
 interface Props {
@@ -12,14 +12,14 @@ const { id, headers, crud, message } = Astro.props;
 ---
 
 <>
-  <span id={`row-edit-error-${crud}-${id}`} >
+  <span id={`row-edit-error-${crud}-${id}`} class="anim-vibrate">
     {message}
   </span>
 
   {
     headers.map((fieldName) => (
       <span
-        id={`field-error-${id}-${fieldName}`}
+        id={`field-error-${crud}-${id}-${fieldName}`}
         hx-swap-oob="outerHTML"
         class="field-error"
       />

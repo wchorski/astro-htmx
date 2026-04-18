@@ -1,28 +1,32 @@
 ---
 // mgmt/FieldErrors.partial.astro
-import type { ZodError } from 'astro/zod';
+import { type CrudRegistryType } from "@lib/crudRegistry";
+import type { ZodError } from "astro/zod";
 
 type FlattenedZodError = ReturnType<ZodError["flatten"]>;
 
 interface Props {
   id: string;
   headers: string[];
+  crud: CrudRegistryType;
   errors: FlattenedZodError;
 }
-const { id, headers, errors } = Astro.props;
+const { id, crud, headers, errors } = Astro.props;
 ---
 
 <>
   {
     headers.map((fieldName) => (
       <span
-        id={`field-error-${id}-${fieldName}`}
+        id={`field-error-${crud}-${id}-${fieldName}`}
         hx-swap-oob="outerHTML"
         class="anim-vibrate field-error"
       >
-        {errors.fieldErrors?.[fieldName as keyof typeof errors.fieldErrors]?.[0] ?? ""}
+        {errors.fieldErrors?.[
+          fieldName as keyof typeof errors.fieldErrors
+        ]?.[0] ?? ""}
       </span>
     ))
   }
-  <div id={`row-edit-error-${id}`}></div>
+  <span id={`row-edit-error-${crud}-${id}`}></span>
 </>

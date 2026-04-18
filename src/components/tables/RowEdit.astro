@@ -79,7 +79,7 @@ const anchorName =
                 value={resolvedValue}
                 autofocus={autofocus}
                 formId={`edit-form-${row.id}`}
-                errorId={`field-error-${row.id}-${key}`}
+                errorId={`field-error-${crud}-${row.id}-${key}`}
                 name={key}
                 label={label}
                 options={options}
@@ -95,7 +95,7 @@ const anchorName =
               <TextareaField
                 {...inputAttrs}
                 name={key}
-                errorId={`field-error-${row.id}-${key}`}
+                errorId={`field-error-${crud}-${row.id}-${key}`}
                 autofocus={autofocus}
                 value={resolvedValue}
               />
@@ -139,7 +139,7 @@ const anchorName =
                 {...inputAttrs}
                 autofocus={autofocus}
                 formId={`edit-form-${row.id}`}
-                errorId={`field-error-${row.id}-${key}`}
+                errorId={`field-error-${crud}-${row.id}-${key}`}
                 name={key}
                 label={label}
                 type="checkbox"
@@ -164,7 +164,7 @@ const anchorName =
                 {...inputAttrs}
                 autofocus={autofocus}
                 formId={`edit-form-${row.id}`}
-                errorId={`field-error-${row.id}-${key}`}
+                errorId={`field-error-${crud}-${row.id}-${key}`}
                 name={key}
                 label={label}
                 type={type}
@@ -224,7 +224,7 @@ const anchorName =
 </tr>
 
 <style define:vars={{ anchorName }}>
-  tr {
+  .action-cell {
     anchor-name: var(--anchorName);
   }
 </style>

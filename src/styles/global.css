@@ -173,63 +173,6 @@ hr {
   animation-direction: normal;
 }
 
-.anim-vibrate {
-  animation-name: vibrate;
-  animation-duration: 100ms;
-  animation-timing-function: linear;
-  animation-delay: 0;
-  animation-iteration-count: 3;
-  animation-direction: normal;
-}
-
-@keyframes vibrate {
-  0% {
-    opacity: 0.3;
-    transform: translateX(0);
-  }
-  25% {
-    transform: translateX(-4px);
-  }
-  75% {
-    transform: translateX(4px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-.anim-raise-in {
-  animation-name: raise-in;
-  animation-duration: 200ms;
-  animation-timing-function: ease-in;
-  animation-delay: 0;
-  animation-iteration-count: 1;
-  animation-direction: normal;
-}
-
-@keyframes raise-in {
-  0% {
-    opacity: 0.3;
-    transform: translateY(-10px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes fall-out {
-  from {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  to {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-}
-
 /* COMPONENTS */
 dialog {
   /* transform: translateY(20px); */
@@ -254,10 +197,6 @@ dialog[open] {
 dialog[open]::backdrop {
   background: rgba(0, 0, 0, 0.708);
   backdrop-filter: blur(4px);
-}
-
-dialog.closing {
-  animation: fall-out 150ms ease-in forwards;
 }
 
 /* TYPEOGRAPY */
