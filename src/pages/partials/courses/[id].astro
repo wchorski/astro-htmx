@@ -21,9 +21,6 @@ type ZodErrorFlattened = ReturnType<ZodError<CourseSelect>["flatten"]>;
 // let id: string | null | undefined = null;
 const { id } = Astro.params;
 if (!id) throw new BadRequestError("course ID missing in request");
-if (!Number.isInteger(Number(id))) {
-  throw new BadRequestError("Parameter 'id' must be a valid integer");
-}
 const session = TEST_ADMIN_SESSION;
 const locations = await crud.locations.readMany(session);
 let course: CourseSelect | null | undefined = null;

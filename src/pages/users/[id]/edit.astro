@@ -125,7 +125,9 @@ const submitUrl = `/partials/users/${row.id}`;
 
 <PageEditorWithSidebarLayout>
   <nav>
-    <a href="#" onclick="history.back(); return false;">← Cancel</a>
+    <a href="#" onclick="history.back(); return false;"
+      >← Return to previous page</a
+    >
   </nav>
   <main>
     <header>
@@ -135,6 +137,7 @@ const submitUrl = `/partials/users/${row.id}`;
     <div data-layout="content">
       <form
         id={`edit-form-${row.id}`}
+        class="edit-page"
         hx-patch={submitUrl}
         hx-headers='{"X-Partial-Type": "single-page"}'
         hx-target={`#submit-button`}
@@ -280,10 +283,10 @@ const submitUrl = `/partials/users/${row.id}`;
         </fieldset> -->
 
         <fieldset class="actions">
-          <div
-            id={`row-edit-error-${"users"}-${row.id}`}
-            class="row-error error top-level"
-          >
+          <div class="row-error error top-level">
+            <p class="message">
+              <span id={`row-edit-error-${"users"}-${row.id}`}></span>
+            </p>
           </div>
 
           <button type="submit" id="submit-button">
@@ -301,7 +304,7 @@ const submitUrl = `/partials/users/${row.id}`;
           <dt>Link</dt>
           <dd>
             <a href={`/users/${row.id}`} target="_blank"
-              >{`/users/${row.id}`}
+              >{`/users/:id`}
               <svg
                 width="20px"
                 height="20px"

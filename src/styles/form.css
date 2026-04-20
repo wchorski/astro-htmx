@@ -110,3 +110,17 @@ form {
     display: none;
   }
 }
+
+form.edit-page {
+  & .error.top-level:has(.message span:empty) {
+    visibility: hidden;
+    opacity: 0.2;
+    transform: translateY(14px);
+    pointer-events: none;
+    height: 0;
+  }
+}
+
+form .message {
+  display: flex;
+}

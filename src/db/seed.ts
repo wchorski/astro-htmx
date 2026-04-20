@@ -46,7 +46,6 @@ const db = drizzle(client, {
 //   await db.delete(schema.Role);
 // }
 
-
 if (process.argv.includes("--truncate")) {
   console.log("⚠️ Truncating tables + resetting identities...");
 
@@ -60,7 +59,6 @@ if (process.argv.includes("--truncate")) {
     CASCADE;
   `);
 }
-
 
 // ---- seed ---------------------------------------------------
 
@@ -85,37 +83,34 @@ if (process.argv.includes("--truncate")) {
 //     }) as any,
 // );
 
-console.log(`=== Roles (${seedData.roles.length})===`);
+console.log("🌱 Seeding Database 🌱");
+console.log(`=== Roles (+${seedData.roles.length})===`);
 await db.insert(schema.Location).values(seedData.locations);
 await db.insert(schema.Role).values(seedData.roles);
 // seedData.roles.forEach((element) => {
 //   console.log(`+ ${element.label}`);
 // });
-console.log("");
-console.log(`=== Users (${seedData.users.length}) ===`);
+console.log(`=== Users (+${seedData.users.length}) ===`);
 await db.insert(schema.User).values(seedData.users);
 // seedData.users.forEach((element) => {
 //   console.log(`+ ${element.email}`);
 // });
-console.log("");
-console.log(`=== Courses (${seedData.courses.length})===`);
+console.log(`=== Courses (+${seedData.courses.length})===`);
 await db.insert(schema.Course).values(seedData.courses);
 // seedData.courses.forEach((element) => {
 //   console.log(`+ ${element.subject} | ${element.date_civil}`);
 // });
-console.log("");
 
-console.log(`=== Credits (${seedData.credits.length})===`);
+console.log(`=== Credits (+${seedData.credits.length})===`);
 await db.insert(schema.Credit).values(seedData.credits);
 // seedData.credits.forEach((element) => {
 //   console.log(
 //     `+ course_id: ${element.course_id}, user_id: ${element.user_id}, attended: ${element.attended}`,
 //   );
 // });
-console.log("");
 
 await client.end();
 
 console.log(
-  `✅ Database seeded successfully. ${seedData.roles.length + seedData.users.length + seedData.courses.length + seedData.credits.length} items added`,
+  `🌲 Database seeded successfully. ${seedData.roles.length + seedData.users.length + seedData.courses.length + seedData.credits.length} items added 🌲`,
 );

@@ -18,9 +18,6 @@ interface Params {
 }
 const { id } = Astro.params;
 if (!id) throw new BadRequestError("course ID missing in request");
-if (!Number.isInteger(Number(id))) {
-  throw new BadRequestError("Parameter 'id' must be a valid integer");
-}
 let user: UserSelect | null | undefined = null;
 let error: string | ReturnType<ZodError["flatten"]> | null = null;
 const config = tableConfigs.users.required;
