@@ -25,11 +25,7 @@ import { slugify } from "@lib/formatters";
 
 const { id } = Astro.params;
 if (!id) throw new Error("no id found. throw 404");
-const [row] = await db
-  .select()
-  .from(Course)
-  .where(eq(Course.id, Number(id)))
-  .limit(1);
+const [row] = await db.select().from(Course).where(eq(Course.id, id)).limit(1);
 
 if (!row) return Astro.redirect("/404");
 

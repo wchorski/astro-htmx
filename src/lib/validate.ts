@@ -2,11 +2,11 @@ import { z } from "astro/zod";
 import { normalizePhoneToE164Manual } from "./formatters";
 
 export const validate = {
-  id: z.coerce.number(),
+  id: z.string(),
 
   // TODO i should prob use .strict() where i can as a lot of these data inputs usually contain all fields type
   user: z.object({
-    id: z.coerce.number(),
+    id: z.string(),
     first_name: z.string().trim().min(3, "Must be more than 3 characters"),
     last_name: z.string().trim().min(3, "Must be more than 3 characters"),
     middle_initial: z
@@ -44,9 +44,9 @@ export const validate = {
   },
 
   credit: z.object({
-    id: z.coerce.number(),
-    user_id: z.coerce.number(),
-    course_id: z.coerce.number(),
+    id: z.string(),
+    user_id: z.string(),
+    course_id: z.string(),
     grade: z.string().optional(),
     // attended: z.coerce.boolean(),
     attended: z
@@ -72,7 +72,7 @@ export const validate = {
   },
 
   location: z.object({
-    id: z.coerce.number(),
+    id: z.string(),
     name: z.string().min(3, "Must be more than 3 characters"),
     address: z.string().min(3, "Must be more than 3 characters"),
     city: z.string().min(3, "Must be more than 3 characters"),
@@ -90,14 +90,14 @@ export const validate = {
   },
 
   course: z.object({
-    id: z.coerce.number(),
+    id: z.string(),
     wp_post_id: z.coerce.number().optional(),
     subject: z.string().min(3, "Must be more than 3 characters"),
     description: z.string().optional(),
     // handles by crud
     // timestamp: z.date(),
     date_civil: z.string(),
-    location_id: z.coerce.number(),
+    location_id: z.string(),
   }),
 
   get courseCreate() {
@@ -109,8 +109,8 @@ export const validate = {
 
   userLink: z
     .object({
-      user_id: z.coerce.number(),
-      course_id: z.coerce.number(),
+      user_id: z.string(),
+      course_id: z.string(),
       // attended: z.coerce.boolean(),
       attended: z
         .string()
@@ -136,7 +136,7 @@ export const validate = {
       city: z.string(),
       state: z.string(),
       zip: z.string(),
-      course_id: z.coerce.number(),
+      course_id: z.string(),
       // attended: z.coerce.boolean(),
       attended: z
         .string()

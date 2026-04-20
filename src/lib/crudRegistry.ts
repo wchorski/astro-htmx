@@ -75,7 +75,7 @@ export const crud = {
         const [result] = await db
           .insert(User)
           // TODO move this to frontend form instead.
-          .values({ ...validated, role_id: Number(DEFAULT_ROLE_ID) ?? null })
+          .values({ ...validated, role_id: DEFAULT_ROLE_ID ?? null })
           .returning();
 
         return result;
@@ -516,20 +516,6 @@ export const crud = {
           user_id: row.credits.id, // preserve user id before Credit.id overwrites it
           id: row.credits.id,
         };
-      } catch (e) {
-        throwErrorsForCRUD(e);
-      }
-    },
-    readMany: async () => {
-      try {
-        const credits = await db
-          .select()
-          .from(Credit)
-          .innerJoin(User, eq(Credit.user_id, User.id))
-          .where(eq(Credit.course_id, 42069));
-        // .limit(perPage)
-        // .offset((page - 1) * perPage);
-        return credits.map((item) => userCreditMap(item.credits, item.users));
       } catch (e) {
         throwErrorsForCRUD(e);
       }

@@ -4,7 +4,12 @@ import {
   formatPhonePrettyManual,
   prettyPlainCivilDateFull,
 } from "@lib/formatters";
-import type { BaseRow, FieldOption, FieldType, FieldValue } from "@ty/FieldConfig";
+import type {
+  BaseRow,
+  FieldOption,
+  FieldType,
+  FieldValue,
+} from "@ty/FieldConfig";
 
 interface Props {
   name: string;
@@ -19,6 +24,8 @@ const { name, endpoint, rawVal, type, options } = Astro.props;
 
 const prettyVal = (() => {
   switch (true) {
+    case name === "id":
+      return "item page";
     case type === "date":
     case type === "datetime-local":
       return name === "dateCivil"

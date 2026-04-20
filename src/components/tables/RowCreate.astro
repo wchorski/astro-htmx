@@ -14,6 +14,7 @@ import InputField from "@components/form/InputField.astro";
 import { slugify } from "@lib/formatters";
 import { ZodError } from "astro:schema";
 import SearchSelect from "@components/form/SearchSelect.astro";
+import AnchoredBox from "@components/AnchoredBox.astro";
 
 interface Props {
   crud: CrudRegistryType;
@@ -31,7 +32,9 @@ const {
   actionUrl = `/partials/${slugify(crud)}/create`,
 } = Astro.props;
 
+const formId = `create-form-${crud}`;
 const topLevelError = typeof error === "string" ? error : null;
+const anchorName = `--anchor-row-create-error-${crud}` || "--anchor-row";
 ---
 
 <tr id={`row-create-${crud}`} data-status="creating" class="highlight-green">
@@ -57,7 +60,7 @@ const topLevelError = typeof error === "string" ? error : null;
           <td data-type={type}>
             <SelectField
               {...inputAttrs}
-              formId={"create-form"}
+              formId={formId}
               errorId={`field-error-create-${key}`}
               name={key}
               label={label}
@@ -100,7 +103,7 @@ const topLevelError = typeof error === "string" ? error : null;
           <InputField
             {...inputAttrs}
             checked={false}
-            formId={"create-form"}
+            formId={formId}
             errorId={`field-error-create-${key}`}
             name={key}
             label={label}
@@ -116,19 +119,16 @@ const topLevelError = typeof error === "string" ? error : null;
 
   <td class="action-cell">
     <form
-      id="create-form"
+      id={formId}
       style="display:none"
       hx-post={actionUrl}
+      hx-headers='{"X-Partial-Type": "table-row"}'
       hx-target={`#row-create-${crud}`}
       hx-target-error={`#row-create-error-${crud}`}
       hx-swap="outerHTML"
     >
     </form>
-    <button
-      type="submit"
-      form="create-form"
-      class="save"
-      title="create new item"
+    <button type="submit" form={formId} class="save" title={`create new ${crud}`}
       ><img
         class="icon"
         src="/icons/add.svg"
@@ -141,7 +141,7 @@ const topLevelError = typeof error === "string" ? error : null;
       title="clear fields"
       type="button"
       class="cancel"
-      data-clear-form="create-form"
+      data-clear-form="formId"
     >
       <img
         class="icon"
@@ -153,9 +153,13 @@ const topLevelError = typeof error === "string" ? error : null;
     </button>
   </td>
   <td class="error-cell">
-    <div id={`row-create-error-${crud}`} class="top-level">
-      {topLevelError}
-    </div>
+    <AnchoredBox
+      messageId={`row-create-error-${crud}`}
+      anchorName={anchorName}
+      class="row-error error top-level"
+    >
+      <span id={`row-create-error-${crud}`}>{topLevelError}</span>
+    </AnchoredBox>
   </td>
 </tr>
 
@@ -181,3 +185,9 @@ const topLevelError = typeof error === "string" ? error : null;
       if (errorRow) errorRow.innerHTML = "";
     });
 </script>
+
+<style define:vars={{ anchorName }}>
+  .action-cell {
+    anchor-name: var(--anchorName);
+  }
+</style>

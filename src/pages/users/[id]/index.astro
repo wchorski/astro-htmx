@@ -14,11 +14,7 @@ import { formatPhonePrettyManual, prettyDateToLocale } from "@lib/formatters";
 export const prerender = false; // Not needed in 'server' mode
 const { id } = Astro.params;
 if (!id) return Astro.redirect("/404");
-const [user] = await db
-  .select()
-  .from(User)
-  .where(eq(User.id, Number(id)))
-  .limit(1);
+const [user] = await db.select().from(User).where(eq(User.id, id)).limit(1);
 
 if (!user) return Astro.redirect("/404");
 
@@ -43,7 +39,7 @@ const ownedCredits = await db
   .from(Credit)
   .innerJoin(Course, eq(Credit.course_id, Course.id))
   .innerJoin(Location, eq(Course.location_id, Location.id))
-  .where(eq(Credit.user_id, Number(id)));
+  .where(eq(Credit.user_id, id));
 
 const tableRows = ownedCredits.map(({ credit, course, location }) => ({
   id: credit.id,

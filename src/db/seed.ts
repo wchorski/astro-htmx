@@ -3,11 +3,10 @@ import "dotenv/config";
 import { drizzle } from "drizzle-orm/node-postgres";
 //? only use if wanting random generated data
 // import { seed } from "drizzle-seed";
-import { Client } from "pg";
-
 import * as schema from "./schema.js";
 import { seedData } from "./seed-data.js";
 import { createPgClient, getPGDatabaseUrl } from "./client.js";
+import { sql } from "drizzle-orm";
 
 // ---- guards -------------------------------------------------
 
@@ -38,14 +37,30 @@ const db = drizzle(client, {
 
 // ---- optional: truncate (VERY explicit) --------------------
 
+// if (process.argv.includes("--truncate")) {
+//   console.log("⚠️ Truncating tables...");
+//   await db.delete(schema.Credit);
+//   await db.delete(schema.Course);
+//   await db.delete(schema.User);
+//   await db.delete(schema.Location);
+//   await db.delete(schema.Role);
+// }
+
+
 if (process.argv.includes("--truncate")) {
-  console.log("⚠️ Truncating tables...");
-  await db.delete(schema.Credit);
-  await db.delete(schema.Course);
-  await db.delete(schema.User);
-  await db.delete(schema.Location);
-  await db.delete(schema.Role);
+  console.log("⚠️ Truncating tables + resetting identities...");
+
+  await db.execute(sql`
+    TRUNCATE TABLE
+      "credits",
+      "courses",
+      "users",
+      "locations",
+      "roles"
+    CASCADE;
+  `);
 }
+
 
 // ---- seed ---------------------------------------------------
 

@@ -8,10 +8,13 @@ import {
   uniqueIndex,
   index,
   timestamp,
+  uuid,
 } from "drizzle-orm/pg-core";
+import { resourceId } from "./resource-id";
+import { sql } from "drizzle-orm";
 
 export const Role = pgTable("roles", {
-  id: integer().primaryKey().generatedByDefaultAsIdentity(),
+  id: uuid("id").primaryKey().default(sql`uuidv7()`),
   label: text().notNull().unique(),
   description: text(),
   permissions: text().array().notNull().default([]),
@@ -20,7 +23,7 @@ export const Role = pgTable("roles", {
 export const Location = pgTable(
   "locations",
   {
-    id: integer().primaryKey().generatedByDefaultAsIdentity(),
+    id: uuid("id").primaryKey().default(sql`uuidv7()`),
     name: text().notNull().unique(),
     address: text().notNull(),
     city: text().notNull(),
@@ -38,8 +41,10 @@ export const Location = pgTable(
 export const User = pgTable(
   "users",
   {
-    id: integer().primaryKey().generatedByDefaultAsIdentity(),
-    role_id: integer().references(() => Role.id),
+    // TODO switch to uuid when this app gets more serious and need more privacy with url
+    id: uuid("id").primaryKey().default(sql`uuidv7()`),
+    // id: integer().primaryKey().generatedByDefaultAsIdentity(),
+    role_id: uuid().references(() => Role.id),
     first_name: text().notNull(),
     last_name: text().notNull(),
     middle_initial: text(),
@@ -57,14 +62,14 @@ export const User = pgTable(
 export const Course = pgTable(
   "courses",
   {
-    id: integer().primaryKey().generatedByDefaultAsIdentity(),
+    id: uuid("id").primaryKey().default(sql`uuidv7()`),
     wp_post_id: integer().unique(),
     subject: text().notNull(),
     description: text(),
     where: text(),
     timestamp: timestamp().notNull(),
     date_civil: text().notNull(),
-    location_id: integer()
+    location_id: uuid()
       .notNull()
       .references(() => Location.id),
   },
@@ -81,11 +86,14 @@ export const Course = pgTable(
 export const Credit = pgTable(
   "credits",
   {
-    id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
-    user_id: integer("user_id")
+    id: uuid("id").primaryKey().default(sql`uuidv7()`),
+    user_id: uuid("user_id")
       .notNull()
       .references(() => User.id),
-    course_id: integer("course_id")
+    // user_id: integer("user_id")
+    //   .notNull()
+    //   .references(() => User.id),
+    course_id: uuid("course_id")
       .notNull()
       .references(() => Course.id),
     timestamp: timestamp().notNull(),

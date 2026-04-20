@@ -17,6 +17,7 @@ interface ImportMetaEnv {
   readonly PGPORT?: string;
   readonly PGHOST?: string;
   readonly NODE_ENV?: "production" | "development";
+  readonly DATABASE_ID_SECRET?: string;
 }
 
 interface ImportMeta {

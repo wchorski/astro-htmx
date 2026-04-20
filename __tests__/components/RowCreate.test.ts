@@ -2,7 +2,7 @@ import { experimental_AstroContainer as AstroContainer } from "astro/container";
 import { expect, test, describe, beforeAll } from "vitest";
 // @ts-ignore
 import RowCreate from "@components/tables/RowCreate.astro";
-import { seedData } from "../../db/seed-data";
+import { seedData } from "../../src/db/seed-data";
 import {
   courseConfigRequired,
   creditConfigRequired,
@@ -33,7 +33,7 @@ describe("RowCreate - structure", () => {
   });
 
   test("renders hidden create form with correct htmx attributes", () => {
-    expect(result).toContain(`id="create-form"`);
+    expect(result).toContain(`id="create-form-${baseProps.crud}"`);
     expect(result).toContain('style="display:none"');
     expect(result).toContain(`hx-post="/partials/users/create"`);
     expect(result).toContain(`hx-target="#table-footer"`);
@@ -43,14 +43,14 @@ describe("RowCreate - structure", () => {
 
   test("renders save button linked to form", () => {
     expect(result).toContain('type="submit"');
-    expect(result).toContain('form="create-form"');
+    expect(result).toContain(`form="create-form-${baseProps.crud}"`);
     expect(result).toContain('class="save"');
   });
 
   test("renders clear button with data-clear-form", () => {
     expect(result).toContain('type="button"');
     expect(result).toContain('class="cancel"');
-    expect(result).toContain('data-clear-form="create-form"');
+    expect(result).toContain(`data-clear-form="create-form-${baseProps.crud}"`);
   });
 
   test("renders error row placeholder", () => {

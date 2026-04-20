@@ -24,11 +24,7 @@ import PageEditorWithSidebarLayout from "@layouts/PageEditorWithSidebarLayout.as
 
 const { id } = Astro.params;
 if (!id) throw new Error("no id found. throw 404");
-const [row] = await db
-  .select()
-  .from(User)
-  .where(eq(User.id, Number(id)))
-  .limit(1);
+const [row] = await db.select().from(User).where(eq(User.id, id)).limit(1);
 
 if (!row) return Astro.redirect("/404");
 

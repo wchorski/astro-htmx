@@ -17,7 +17,7 @@ if (!id) return Astro.redirect("/404");
 const [course] = await db
   .select()
   .from(Course)
-  .where(eq(Course.id, Number(id)))
+  .where(eq(Course.id, id))
   .limit(1);
 
 if (!course) return Astro.redirect("/404");
@@ -43,8 +43,8 @@ const { address, city, zip, state } = location;
       <time datetime={date_civil}>
         {prettyDateToLocale(new Date(date_civil))}
       </time>
-      <br>
-      <br>
+      <br />
+      <br />
       <div class="user-info">
         <address>
           {address}
@@ -75,7 +75,7 @@ const { address, city, zip, state } = location;
         <span> Edit </span>
       </a>
     </header>
-    <hr>
+    <hr />
     <div data-layout="content"><p class="description">{description}</p></div>
   </main>
 </BaseLayout>
