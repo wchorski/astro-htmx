@@ -112,6 +112,11 @@ form {
 }
 
 form.edit-page {
+  & .error.top-level {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
   & .error.top-level:has(.message span:empty) {
     visibility: hidden;
     opacity: 0.2;

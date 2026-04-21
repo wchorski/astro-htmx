@@ -21,6 +21,7 @@ import SelectField from "@components/form/SelectField.astro";
 import TextareaField from "@components/form/TextareaField.astro";
 import { crud } from "@lib/crudRegistry";
 import PageEditorWithSidebarLayout from "@layouts/PageEditorWithSidebarLayout.astro";
+import SubmitButton from "@components/form/SubmitButton.astro";
 
 const { id } = Astro.params;
 if (!id) throw new Error("no id found. throw 404");
@@ -156,6 +157,7 @@ const submitUrl = `/partials/users/${row.id}`;
                 ? (error as any).fieldErrors[key]?.[0]
                 : null;
             const autofocus = i === 0;
+            const fieldErrorId = `field-error-${"users"}-${row.id}-${key}`;
 
             switch (field.type) {
               case "select": {
@@ -172,7 +174,7 @@ const submitUrl = `/partials/users/${row.id}`;
                     value={resolvedValue}
                     autofocus={autofocus}
                     formId={`edit-form-${row.id}`}
-                    errorId={`field-error-${row.id}-${key}`}
+                    errorId={fieldErrorId}
                     name={key}
                     label={label}
                     options={options}
@@ -187,7 +189,7 @@ const submitUrl = `/partials/users/${row.id}`;
                     {...inputAttrs}
                     autofocus={autofocus}
                     value={resolvedValue}
-                    errorId={`field-error-${row.id}-${key}`}
+                    errorId={fieldErrorId}
                     name={key}
                   />
                 );
@@ -226,7 +228,7 @@ const submitUrl = `/partials/users/${row.id}`;
                     {...inputAttrs}
                     autofocus={autofocus}
                     formId={`edit-form-${row.id}`}
-                    errorId={`field-error-${row.id}-${key}`}
+                    errorId={fieldErrorId}
                     name={key}
                     label={label}
                     type="checkbox"
@@ -249,7 +251,7 @@ const submitUrl = `/partials/users/${row.id}`;
                     {...inputAttrs}
                     autofocus={autofocus}
                     formId={`edit-form-${row.id}`}
-                    errorId={`field-error-${row.id}-${key}`}
+                    errorId={fieldErrorId}
                     name={key}
                     label={label}
                     type={type}
@@ -289,10 +291,12 @@ const submitUrl = `/partials/users/${row.id}`;
             </p>
           </div>
 
-          <button type="submit" id="submit-button">
-            <span class="text">Update</span>
-            <span class="submit-indicator">updating...</span>
-          </button>
+          <SubmitButton
+            id="submit-button"
+            class="anim-success"
+            text="Update"
+            updateText="Updating..."
+          />
         </fieldset>
       </form>
     </div>

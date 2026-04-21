@@ -73,6 +73,7 @@ const submitUrl = `/partials/courses/${row.id}`;
                 ? (error as any).fieldErrors[key]?.[0]
                 : null;
             const autofocus = i === 0;
+            const fieldErrorId = `field-error-${"users"}-${row.id}-${key}`
 
             switch (field.type) {
               case "select": {
@@ -89,7 +90,7 @@ const submitUrl = `/partials/courses/${row.id}`;
                     value={resolvedValue}
                     autofocus={autofocus}
                     formId={`edit-form-${row.id}`}
-                    errorId={`field-error-${row.id}-${key}`}
+                    errorId={fieldErrorId}
                     name={key}
                     label={label}
                     options={options}
@@ -102,7 +103,7 @@ const submitUrl = `/partials/courses/${row.id}`;
                 return (
                   <TextareaField
                     {...inputAttrs}
-                    errorId={`field-error-${row.id}-${key}`}
+                    errorId={fieldErrorId}
                     autofocus={autofocus}
                     value={resolvedValue}
                     name={key}
@@ -143,7 +144,7 @@ const submitUrl = `/partials/courses/${row.id}`;
                     {...inputAttrs}
                     autofocus={autofocus}
                     formId={`edit-form-${row.id}`}
-                    errorId={`field-error-${row.id}-${key}`}
+                    errorId={fieldErrorId}
                     name={key}
                     label={label}
                     type="checkbox"
@@ -166,7 +167,7 @@ const submitUrl = `/partials/courses/${row.id}`;
                     {...inputAttrs}
                     autofocus={autofocus}
                     formId={`edit-form-${row.id}`}
-                    errorId={`field-error-${row.id}-${key}`}
+                    errorId={fieldErrorId}
                     name={key}
                     label={label}
                     type={type}

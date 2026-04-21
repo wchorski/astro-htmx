@@ -10,7 +10,6 @@ import {
   timestamp,
   uuid,
 } from "drizzle-orm/pg-core";
-import { resourceId } from "./resource-id";
 import { sql } from "drizzle-orm";
 
 export const Role = pgTable("roles", {

@@ -28,5 +28,5 @@ const { id, crud, headers, errors } = Astro.props;
       </span>
     ))
   }
-  <span id={`row-edit-error-${crud}-${id}`}></span>
+  <span id={`row-edit-error-${crud}-${id}`} hx-swap-oob="outerHTML"></span>
 </>

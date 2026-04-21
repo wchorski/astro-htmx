@@ -13,6 +13,7 @@ interface Props {
   };
 }
 import RowView from "@components/tables/RowView.astro";
+import SubmitButton from "@components/form/SubmitButton.astro";
 
 const { entity, method, partialType, ctx } = Astro.props;
 ---
@@ -34,10 +35,24 @@ const { entity, method, partialType, ctx } = Astro.props;
     partialType === "table-row" ? (
       <RowView row={entity} {...ctx} classList={["updated-row"]} oob />
     ) : partialType === "single-page" ? (
-      <button type="submit" id="submit-button">
-        <span class="text">✓ Updated!</span>
-        <span class="submit-indicator">updating...</span>
-      </button>
+      <>
+        <SubmitButton
+          id="submit-button"
+          class={"success"}
+          text="Update"
+          updateText="Updating..."
+        />
+        <span
+          id={`row-edit-error-${ctx.crud}-${entity.id}`}
+          hx-swap-oob="outerHTML"
+        />
+        {ctx.headers.map((fieldName) => (
+          <span
+            id={`field-error-${ctx.crud}-${entity.id}-${fieldName}`}
+            hx-swap-oob="outerHTML"
+          />
+        ))}
+      </>
     ) : (
       <p class="callout error">unsupported partialType</p>
     )

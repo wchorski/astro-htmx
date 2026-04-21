@@ -7,7 +7,8 @@
 } */
 
 button {
-  transition-property: background-position, background-color, color, border, width, height, filter;
+  transition-property:
+    background-position, background-color, color, border, width, height, filter;
   transition-duration: 100ms;
   transition-timing-function: ease-in;
   transition-delay: 0;
@@ -22,10 +23,50 @@ button {
   }
 }
 
+button[type="submit"].success {
+  position: relative;
+  &::after {
+    opacity: 0;
+    pointer-events: none;
+    content: "✔ success";
+    position: absolute;
+    bottom: 4rem;
+    color: var(--c-success);
+    width: 100%;
+
+    animation-name: slide-down-fade-out;
+    animation-duration: 5s;
+    animation-timing-function: ease-out;
+    animation-delay: 0;
+    animation-iteration-count: 1;
+    animation-direction: normal;
+  }
+}
+
+@keyframes slide-down-fade-out {
+  0% {
+    opacity: 0.3;
+    transform: translateY(100%);
+  }
+  30% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  90% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-100%);
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+
 button.htmx-request {
   anchor-name: --submit-button;
   position: relative;
-  
+
   &::after {
     content: "";
     position: absolute;
@@ -61,8 +102,8 @@ button.htmx-request {
 }
 
 anchored-box .message span {
-    display: inline-block;
-  }
+  display: inline-block;
+}
 
 @keyframes vibrate {
   0% {
