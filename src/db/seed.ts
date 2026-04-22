@@ -40,8 +40,6 @@ try {
   throw e;
 }
 
-
-
 const db = drizzle(client, {
   schema,
   // logger: true
@@ -97,8 +95,10 @@ if (process.argv.includes("--truncate")) {
 
 console.log("🌱 Seeding Database 🌱");
 console.log(`=== Roles (+${seedData.roles.length})===`);
-await db.insert(schema.Location).values(seedData.locations);
 await db.insert(schema.Role).values(seedData.roles);
+
+console.log(`=== Locations (+${seedData.locations.length})===`);
+await db.insert(schema.Location).values(seedData.locations);
 // seedData.roles.forEach((element) => {
 //   console.log(`+ ${element.label}`);
 // });
