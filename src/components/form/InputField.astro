@@ -7,6 +7,7 @@ import type {
   FieldType,
   InputFieldType,
 } from "@ty/FieldConfig";
+import { formatPhonePrettyManual } from "@lib/formatters";
 
 interface Props extends Omit<
   HTMLAttributes<"input">,
@@ -41,6 +42,16 @@ const {
 
 if (type === "searchSelect")
   throw new Error("InputField cannot be of type searchSelect");
+
+const prettyVal = (() => {
+  switch (true) {
+    case type === "tel":
+      return formatPhonePrettyManual(value);
+
+    default:
+      return value;
+  }
+})();
 ---
 
 {
@@ -61,7 +72,7 @@ if (type === "searchSelect")
         form={formId}
         name={name}
         type={type}
-        value={type !== "checkbox" ? value : undefined}
+        value={type !== "checkbox" ? prettyVal : undefined}
         checked={checked ?? undefined}
         list={datalist ? `datalist-${name}` : undefined}
       />

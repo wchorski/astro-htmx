@@ -118,6 +118,16 @@ table tr.new-row {
   }
 }
 
+td[data-key="id"] {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+  width: 6ch;
+  direction: rtl;
+  color: var(--c-primary);
+}
+
 td[data-type="hidden"],
 th[data-type="hidden"] {
   display: none;

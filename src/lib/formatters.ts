@@ -56,29 +56,32 @@ export function normalizePhoneToE164Manual(
 }
 
 export function slugify(text: string): string {
-  return text
-    .normalize("NFD") // decompose accents
-    .replace(/[\u0300-\u036f]/g, "") // remove diacritics
-    .trim()
-    // insert dash between lowercase/number and uppercase (handles camelCase)
-    .replace(/([a-z0-9])([A-Z])/g, "$1-$2")
-    // insert dash between consecutive uppercase letters followed by lowercase (e.g., "URLPath" -> "URL-Path")
-    .replace(/([A-Z]+)([A-Z][a-z0-9])/g, "$1-$2")
-    // replace spaces, underscores, and non-alphanumeric with dash
-    .replace(/[\s_]+/g, "-")
-    .replace(/[^a-zA-Z0-9-]+/g, "-") // treat special characters as separators
-    .replace(/-+/g, "-") // collapse multiple dashes
-    .replace(/^-+/, "") // trim leading dash
-    .replace(/-+$/, "") // trim trailing dash
-    .toLowerCase();
+  return (
+    text
+      .normalize("NFD") // decompose accents
+      .replace(/[\u0300-\u036f]/g, "") // remove diacritics
+      .trim()
+      // insert dash between lowercase/number and uppercase (handles camelCase)
+      .replace(/([a-z0-9])([A-Z])/g, "$1-$2")
+      // insert dash between consecutive uppercase letters followed by lowercase (e.g., "URLPath" -> "URL-Path")
+      .replace(/([A-Z]+)([A-Z][a-z0-9])/g, "$1-$2")
+      // replace spaces, underscores, and non-alphanumeric with dash
+      .replace(/[\s_]+/g, "-")
+      .replace(/[^a-zA-Z0-9-]+/g, "-") // treat special characters as separators
+      .replace(/-+/g, "-") // collapse multiple dashes
+      .replace(/^-+/, "") // trim leading dash
+      .replace(/-+$/, "") // trim trailing dash
+      .toLowerCase()
+  );
 }
-
 
 export function formatPhonePrettyManual(
   input: string | undefined | null,
   options: PrettyFormatOptions = { defaultCountryCode: "1" },
 ) {
-  if (!input) return undefined;
+    if (!input || input === 'undefined' || input === 'null') {
+    return undefined;
+  }
 
   const { defaultCountryCode = "1" } = options;
 
