@@ -28,7 +28,19 @@ if (isProd && process.env.ALLOW_PROD_SEED !== "true") {
 console.log("seed.ts DATABASE_URL: ", getPGDatabaseUrl());
 
 const client = createPgClient(); // pg auto-reads PG* env vars
-await client.connect();
+console.log("pg connectionParameters:", (client as any).connectionParameters);
+client.on("error", (err) => console.error("🔥 pg client error event:", err));
+client.on("end", () => console.error("🔥 pg connection ended"));
+
+try {
+  await client.connect();
+  console.log("✅ connected");
+} catch (e) {
+  console.error("❌ connect failed:", e);
+  throw e;
+}
+
+
 
 const db = drizzle(client, {
   schema,
@@ -37,28 +49,28 @@ const db = drizzle(client, {
 
 // ---- optional: truncate (VERY explicit) --------------------
 
-// if (process.argv.includes("--truncate")) {
-//   console.log("⚠️ Truncating tables...");
-//   await db.delete(schema.Credit);
-//   await db.delete(schema.Course);
-//   await db.delete(schema.User);
-//   await db.delete(schema.Location);
-//   await db.delete(schema.Role);
-// }
-
 if (process.argv.includes("--truncate")) {
-  console.log("⚠️ Truncating tables + resetting identities...");
-
-  await db.execute(sql`
-    TRUNCATE TABLE
-      "credits",
-      "courses",
-      "users",
-      "locations",
-      "roles"
-    CASCADE;
-  `);
+  console.log("⚠️ Truncating tables...");
+  await db.delete(schema.Credit);
+  await db.delete(schema.Course);
+  await db.delete(schema.User);
+  await db.delete(schema.Location);
+  await db.delete(schema.Role);
 }
+
+// if (process.argv.includes("--truncate")) {
+//   console.log("⚠️ Truncating tables + resetting identities...");
+
+//   await db.execute(sql`
+//     TRUNCATE TABLE
+//       "credits",
+//       "courses",
+//       "users",
+//       "locations",
+//       "roles"
+//     CASCADE
+//   `);
+// }
 
 // ---- seed ---------------------------------------------------
 
