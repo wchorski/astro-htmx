@@ -22,6 +22,12 @@ COPY . .
 # COPY --from=build /app/dist ./dist
 CMD ["npx", "drizzle-kit", "migrate"]
 
+# Seed stage
+FROM build-deps AS seed
+COPY . .
+CMD ["npm", "run", "db:seed:truncate"]
+
+
 FROM base AS runtime
 COPY --from=prod-deps /app/node_modules ./node_modules
 COPY --from=build /app/dist ./dist
