@@ -73,7 +73,7 @@ const anchorName =
             ...inputAttrs
           } = field as SelectFieldSlot;
           return (
-            <td>
+            <td data-key={key} data-type={field.type}>
               <SelectField
                 {...inputAttrs}
                 value={resolvedValue}
@@ -91,7 +91,7 @@ const anchorName =
         case "textarea": {
           const { type: _, label: _l, value: _v, ...inputAttrs } = field;
           return (
-            <td>
+            <td data-key={key} data-type={field.type}>
               <TextareaField
                 {...inputAttrs}
                 name={key}
@@ -112,7 +112,7 @@ const anchorName =
             ...ssProps
           } = field as SearchSelectFieldSlot;
           return (
-            <td data-type="searchSelect">
+            <td data-key={key} data-type={field.type}>
               <SearchSelect
                 {...ssProps}
                 id={`ss-row-edit-${crud}-${row.id}-${key}`}
@@ -134,7 +134,7 @@ const anchorName =
             ...inputAttrs
           } = field as InputFieldSlot;
           return (
-            <td>
+            <td data-key={key} data-type={field.type}>
               <InputField
                 {...inputAttrs}
                 autofocus={autofocus}
@@ -159,7 +159,7 @@ const anchorName =
             ...inputAttrs
           } = field as InputFieldSlot;
           return (
-            <td>
+            <td data-key={key} data-type={field.type}>
               <InputField
                 {...inputAttrs}
                 autofocus={autofocus}

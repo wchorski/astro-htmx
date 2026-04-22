@@ -3,7 +3,7 @@ interface Params {
   course_id: string;
 }
 import { db } from "@db/db";
-import { Course, Credit, User  } from "@db/schema";
+import { Course, Credit, User } from "@db/schema";
 import { eq } from "drizzle-orm";
 import BaseLayout from "@layouts/BaseLayout.astro";
 import CourseCreditsEditableTable from "@components/CourseCreditsEditableTable.astro";
@@ -13,7 +13,7 @@ if (!id) throw new Error("no id found. throw 404");
 const [foundCourse] = await db
   .select()
   .from(Course)
-  .where(eq(Course.id, Number(id)))
+  .where(eq(Course.id, id))
   .limit(1);
 
 const courseCredits = await db
@@ -23,7 +23,7 @@ const courseCredits = await db
   })
   .from(Credit)
   .innerJoin(User, eq(Credit.user_id, User.id))
-  .where(eq(Credit.course_id, Number(id)));
+  .where(eq(Credit.course_id, id));
 
 if (!foundCourse) return Astro.redirect("/404");
 const { subject, timestamp, description } = foundCourse;
@@ -72,9 +72,6 @@ const { subject, timestamp, description } = foundCourse;
       >
     </div>
 
-    <CourseCreditsEditableTable
-      courseCredits={courseCredits}
-      course_id={id}
-    />
+    <CourseCreditsEditableTable courseCredits={courseCredits} course_id={id} />
   </main>
 </BaseLayout>

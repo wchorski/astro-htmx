@@ -3,12 +3,12 @@ import type { HTMLAttributes } from "astro/types";
 interface Props extends HTMLAttributes<"button"> {
   id?: string;
   text?: string;
-  updateText?: string;
+  indicatorText?: string;
 }
 const {
   id = "submit-button",
   text = "Submit",
-  updateText = "Submitting...",
+  indicatorText = "Submitting...",
   class: className,
   ...attrs
 } = Astro.props;
@@ -16,5 +16,5 @@ const {
 
 <button type="submit" id={id} class:list={[className]} {...attrs}>
   <span class="text">{text}</span>
-  <span class="submit-indicator">{updateText}</span>
+  <span class="submit-indicator">{indicatorText}</span>
 </button>

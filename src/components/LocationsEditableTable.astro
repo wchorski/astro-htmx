@@ -12,7 +12,7 @@ const { locations } = Astro.props;
 const config = tableConfigs.locations.required
 const ctx = {
   crud: "locations" as const,
-  endpoint: "/attendance/admin/locations/id",
+  // endpoint: "/attendance/admin/locations/id",
   config,
   headers: Object.keys(config)
 }
@@ -29,7 +29,6 @@ const ctx = {
     <TableEditable
       crud={ctx.crud}
       rows={locations}
-      endpoint={ctx.endpoint}
       config={ctx.config}
     />
   )

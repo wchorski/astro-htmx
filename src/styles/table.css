@@ -119,13 +119,19 @@ table tr.new-row {
 }
 
 td[data-key="id"] {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: block;
-  width: 6ch;
-  direction: rtl;
-  color: var(--c-primary);
+  & a, & code span {
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+    width: 6ch;
+    direction: rtl;
+  }
+
+  & a {
+    color: var(--c-primary);
+  }
 }
 
 td[data-type="hidden"],

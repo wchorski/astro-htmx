@@ -35,6 +35,11 @@ input[name="location_id"] {
   max-width: 10ch;
 }
 
+input[type="checkbox"] {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
 form {
   display: grid;
   gap: 0.8rem;

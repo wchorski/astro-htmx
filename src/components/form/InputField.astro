@@ -57,8 +57,7 @@ const prettyVal = (() => {
 {
   readonly ? (
     <code class="text" aria-readonly="true">
-      <span class="text">{label ?? name}: </span>
-      {value}
+      <span class="value">{label ?? name}: {value}</span>
       <span id={errorId} style="display: none;">
         {fieldError ?? ""}
       </span>

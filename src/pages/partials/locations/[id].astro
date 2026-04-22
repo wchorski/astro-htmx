@@ -7,12 +7,16 @@ import RowView from "@components/tables/RowView.astro";
 import type { LocationSelect } from "@ty/Schema";
 import type { ZodError } from "astro/zod";
 import { TEST_ADMIN_SESSION } from "@lib/auth/session";
-
+import FieldErrors from "@components/mgmt/FieldErrors.partial.astro";
+import FormSuccess from "@components/mgmt/FormSuccess.partial.astro";
+import TopLevelError from "@components/mgmt/TopLevelError.partial.astro";
+type ZodErrorFlattened = ReturnType<ZodError<LocationSelect>["flatten"]>;
 interface Params {
   id: string | undefined;
 }
 
-let id: string | null | undefined = null;
+const { id } = Astro.params;
+if (!id) throw new BadRequestError("Missing required parameter: id");
 let location: LocationSelect | null | undefined = null;
 let error: string | ReturnType<ZodError["flatten"]> | null = null;
 const config = tableConfigs.locations.required;
@@ -26,9 +30,7 @@ const ctx = {
 const session = TEST_ADMIN_SESSION;
 
 if (Astro.request.method === "GET") {
-  id = Astro.params.id;
   try {
-    if (!id) throw new BadRequestError("Missing required parameter: id");
     location = await crud.locations.read(id, session);
   } catch (e) {
     const { err, status } = errorHandlingOnSubmit(e);
@@ -38,17 +40,9 @@ if (Astro.request.method === "GET") {
 }
 
 if (Astro.request.method === "PATCH") {
-  id = Astro.params.id;
   try {
-    if (!id) throw new BadRequestError("Missing required parameter: id");
     const formData = await Astro.request.formData();
     if (!formData) return new Response("Bad Request", { status: 400 });
-
-    const numericId = Number(id);
-
-    if (!Number.isInteger(numericId)) {
-      throw new BadRequestError("Parameter 'id' must be a valid integer");
-    }
 
     const submitFields = Object.fromEntries(
       [...formData.entries()].filter(([key]) => !key.startsWith("_")),
@@ -69,16 +63,7 @@ if (Astro.request.method === "PATCH") {
 }
 
 if (Astro.request.method === "DELETE") {
-  id = Astro.params.id;
   try {
-    if (!id) throw new BadRequestError("Missing required parameter: id");
-
-    const numericId = Number(id);
-
-    if (!Number.isInteger(numericId)) {
-      throw new BadRequestError("Parameter 'id' must be a valid integer");
-    }
-
     location = await crud.locations.delete(id);
   } catch (e) {
     const { err, status } = errorHandlingOnSubmit(e);
@@ -86,56 +71,76 @@ if (Astro.request.method === "DELETE") {
     error = err;
   }
 }
+
+enum PartialType {
+  TableRow = "table-row",
+  SinglePage = "single-page",
+}
+
+const partialType = Astro.request.headers.get("X-Partial-Type") as
+  | PartialType
+  | undefined;
+if (!partialType) throw new BadRequestError("X-Partial-Type header not set");
+
+type RenderResult =
+  | {
+      kind: "field-error";
+      errors: ZodErrorFlattened;
+    }
+  | {
+      kind: "top-error";
+      message: string;
+    }
+  | {
+      kind: "success";
+      location: LocationSelect;
+      method: "GET" | "PATCH" | "DELETE";
+    };
+
+let result: RenderResult;
+
+if (error && typeof error === "object" && "fieldErrors" in error) {
+  result = { kind: "field-error", errors: error };
+} else if (error) {
+  result = {
+    kind: "top-error",
+    message: typeof error === "string" ? error : JSON.stringify(error),
+  };
+} else if (location) {
+  result = {
+    kind: "success",
+    location,
+    method: Astro.request.method as any,
+  };
+} else {
+  result = {
+    kind: "top-error",
+    message: "No course data available",
+  };
+}
 ---
 
 {
-  error && typeof error === "object" && "fieldErrors" in error ? (
-    <>
-      {ctx.headers.map((fieldName) => {
-        const messages = error.fieldErrors[fieldName];
-        return (
-          <span
-            id={`field-error-${id}-${fieldName}`}
-            hx-swap-oob="outerHTML"
-            class="anim-vibrate field-error"
-          >
-            {messages?.[0] ?? ""}
-          </span>
-        );
-      })}
-      <div id={`row-edit-error-${ctx.crud}-${id}`} />
-    </>
-  ) : error ? (
-    <>
-      <div
-        id={`row-edit-error-${ctx.crud}-${id}`}
-        class="row-error callout error top-level"
-      >
-        {typeof error === "string" ? error : JSON.stringify(error)}
-      </div>
-
-      {ctx.headers.map((fieldName) => (
-        <span
-          id={`field-error-${id}-${fieldName}`}
-          hx-swap-oob="outerHTML"
-          class="field-error"
-        />
-      ))}
-    </>
-  ) : Astro.request.method === "DELETE" && location ? (
-    <tr id={`row-${id}`} hx-swap-oob="outerHTML">
-      <td colspan="100%" class="danger">
-        DELETED location{" "}
-        {`${location.id} | ${location.address} ${location.city} ${location.state}, ${location.zip}`}
-      </td>
-    </tr>
-  ) : Astro.request.method === "PATCH" && location ? (
-    <RowView row={location} {...ctx} classList={["updated-row"]} oob />
-  ) : Astro.request.method === "GET" && location ? (
-    <RowView row={location} {...ctx} oob />
+  result.kind === "field-error" ? (
+    <FieldErrors
+      id={id}
+      crud={ctx.crud}
+      headers={ctx.headers}
+      errors={result.errors}
+    />
+  ) : result.kind === "top-error" ? (
+    <TopLevelError
+      id={id}
+      headers={ctx.headers}
+      crud={ctx.crud}
+      message={result.message}
+    />
   ) : (
-    <p class="callout error">
-      unknown error occured on partials/locations/:id{" "}
-    </p>
+    <FormSuccess
+      entity={result.location}
+      method={result.method}
+      partialType={partialType}
+      ctx={ctx}
+    />
   )
 }

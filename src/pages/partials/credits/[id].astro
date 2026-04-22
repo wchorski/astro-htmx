@@ -45,12 +45,6 @@ if (Astro.request.method === "PATCH") {
     const formData = await Astro.request.formData();
     if (!formData) return new Response("Bad Request", { status: 400 });
 
-    const numericId = Number(id);
-
-    if (!Number.isInteger(numericId)) {
-      throw new BadRequestError("Parameter 'id' must be a valid integer");
-    }
-
     const submitFields = Object.fromEntries(
       [...formData.entries()].filter(([key]) => !key.startsWith("_")),
     );
@@ -72,12 +66,6 @@ if (Astro.request.method === "PATCH") {
 if (Astro.request.method === "DELETE") {
   try {
     if (!id) throw new BadRequestError("Missing required parameter: id");
-
-    const numericId = Number(id);
-
-    if (!Number.isInteger(numericId)) {
-      throw new BadRequestError("Parameter 'id' must be a valid integer");
-    }
 
     credit = await crud.credits.delete(id);
   } catch (e) {

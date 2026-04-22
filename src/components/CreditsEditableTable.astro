@@ -16,7 +16,7 @@ const config = creditConfigRequired(users, courses);
 
 const ctx = {
   crud: "credits" as const,
-  endpoint: "/attendance/admin/credits/id",
+  // endpoint: "/attendance/admin/credits/id",
   config,
   headers: Object.keys(config)
 }
@@ -34,7 +34,6 @@ const ctx = {
     <TableEditable
       crud={ctx.crud}
       rows={tableRows}
-      endpoint={ctx.endpoint}
       config={ctx.config}
     />
   )
