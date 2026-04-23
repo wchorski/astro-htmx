@@ -1,0 +1,65 @@
+---
+import { db } from "@db/db";
+import { or, ilike, like } from "drizzle-orm";
+import { User } from "@db/schema";
+import { crud } from "@lib/crudRegistry";
+import { BadRequestError, errorHandlingOnSubmit } from "@lib/errors";
+import type { UserSelect } from "@ty/Schema";
+
+let users: UserSelect[] | null | undefined = null;
+let error = null;
+
+if (Astro.request.method === "POST") {
+  try {
+    const formData = await Astro.request.formData();
+    const searchQuery = formData.get("search")?.toString()?.trim();
+
+    if (!searchQuery) throw new BadRequestError("search query is blank");
+
+    const digitsOnly = searchQuery.replace(/\D/g, "");
+    // if (digitsOnly.length >= 3) {
+    //   // Add digit-only phone search as 5th condition
+    //   or(
+    //     // ... existing conditions ...
+    //     like(User.phone, `%${digitsOnly}%`),
+    //   );
+    // }
+
+    if (searchQuery) {
+      users = await db
+        .select()
+        .from(User)
+        .where(
+          or(
+            ilike(User.first_name, `%${searchQuery}%`),
+            ilike(User.last_name, `%${searchQuery}%`),
+            ilike(User.email, `%${searchQuery}%`),
+            like(User.phone, `%${digitsOnly}%`),
+          ),
+        );
+    } else {
+      // Empty search - return no results (or all users if you prefer)
+      users = [];
+    }
+  } catch (e) {
+    const { err, status } = errorHandlingOnSubmit(e);
+    Astro.response.status = status;
+    error = err;
+    console.log(JSON.stringify(err, null, 2));
+  }
+} else {
+  return new Response("Method Not Allowed", { status: 405 });
+}
+---
+
+{
+  users &&
+    users.map((user) => (
+      <tr>
+        <td>{user.first_name}</td>
+        <td>{user.last_name}</td>
+        <td>{user.phone}</td>
+        <td>{user.email}</td>
+      </tr>
+    ))
+}

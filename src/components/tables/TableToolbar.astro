@@ -1,0 +1,38 @@
+---
+import InputField from "@components/form/InputField.astro";
+import SubmitButton from "@components/form/SubmitButton.astro";
+interface Props {
+  errorTargetId: string;
+}
+
+const { errorTargetId = `${"users"}-table-field-search-error` } = Astro.props;
+---
+
+<menu>
+  <form
+    id={`${"users"}-search-form`}
+    hx-post={`/partials/${"users"}/search`}
+    hx-target={`#${"users"}-table-body`}
+    hx-target-error={`#${errorTargetId}`}
+    hx-trigger="input changed delay:500ms, keyup[key=='Enter'], load"
+    hx-swap={"innerHTML"}
+    data-status="idle"
+  >
+    <InputField
+      name="search"
+      type={"search"}
+      placeholder="Search by name, email, or phone..."
+      errorId={`${"users"}-table-field-search`}
+    />
+    <SubmitButton text="Search" indicatorText="Searching..." />
+  </form>
+  <button>filter</button>
+</menu>
+
+<style>
+  menu {
+    padding: 0;
+    display: flex;
+    justify-content: space-between;
+  }
+</style>

@@ -1,5 +1,5 @@
 import { ZodError } from "astro:schema";
-import { LibsqlError } from "@libsql/client";
+// import { LibsqlError } from "@libsql/client";
 import { DrizzleQueryError } from "drizzle-orm/errors";
 
 // --- Error Classes ---
@@ -63,20 +63,20 @@ export function throwErrorsForCRUD(e: unknown): never {
   if (e instanceof ZodError) throw new ValidationError(e.flatten());
 
   // TODO falls apart if using a different database. look into using `isUniqueConstraintError`
-  if (
-    e instanceof LibsqlError &&
-    (e as LibsqlError).extendedCode === "SQLITE_CONSTRAINT_UNIQUE"
-  ) {
-    const match = (e as LibsqlError).message.match(
-      /UNIQUE constraint failed: (\w+\.\w+)/,
-    )?.[1];
+  // if (
+  //   e instanceof LibsqlError &&
+  //   (e as LibsqlError).extendedCode === "SQLITE_CONSTRAINT_UNIQUE"
+  // ) {
+  //   const match = (e as LibsqlError).message.match(
+  //     /UNIQUE constraint failed: (\w+\.\w+)/,
+  //   )?.[1];
 
-    throw new ConflictError(
-      match
-        ? `Duplicate: Item with "${match}" already exists`
-        : `A duplicate entry already exists. [${e.message}]`,
-    );
-  }
+  //   throw new ConflictError(
+  //     match
+  //       ? `Duplicate: Item with "${match}" already exists`
+  //       : `A duplicate entry already exists. [${e.message}]`,
+  //   );
+  // }
 
   if (e instanceof DrizzleQueryError) {
     const cause = e.cause as any;
