@@ -64,7 +64,11 @@ const anchorName = `--anchor-row-create-error-${crud}` || "--anchor-row";
       const fieldErrorId = `field-error-${crud}-${"create"}-${key}`;
 
       if (key === "id") {
-        return <td data-type={type} class="background-success" />;
+        return (
+          <td data-type={type} class="background-success">
+            <span id={fieldErrorId} style="display: none;"></span>
+          </td>
+        );
       }
       if (type === "select")
         return (
@@ -194,8 +198,7 @@ const anchorName = `--anchor-row-create-error-${crud}` || "--anchor-row";
     });
 
   document.body.addEventListener("htmx:afterRequest", (e) => {
-    
-    const status = e.detail.xhr.status
+    const status = e.detail.xhr.status;
     if (status < 200 || status >= 300) return;
 
     document

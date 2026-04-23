@@ -1,7 +1,8 @@
 import htmx from "htmx.org";
 import "htmx-ext-response-targets";
 
-if (import.meta.env.DEV === true && Boolean(import.meta.env.HTMX_LOGS)) {
+
+if (import.meta.env.DEV === true) {
   // Enable logging in development mode
   htmx.logAll();
 }
