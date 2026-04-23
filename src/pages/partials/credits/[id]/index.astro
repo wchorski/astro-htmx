@@ -1,37 +1,41 @@
 ---
-// partials/users/[id].astro
+// partials/credits/:id
 import { crud, type CrudRegistryType } from "@lib/crudRegistry";
 import { BadRequestError, errorHandlingOnSubmit } from "@lib/errors";
-import { tableConfigs } from "@lib/tableConfigs";
+import { creditConfigRequired, tableConfigs } from "@lib/tableConfigs";
 import RowView from "@components/tables/RowView.astro";
-import type { LocationSelect } from "@ty/Schema";
+import type { CreditSelect } from "@ty/Schema";
 import type { ZodError } from "astro/zod";
+import type { BaseRow } from "@ty/FieldConfig";
+import type { TableRow } from "@ty/Table";
 import { TEST_ADMIN_SESSION } from "@lib/auth/session";
 import FieldErrors from "@components/mgmt/FieldErrors.partial.astro";
 import FormSuccess from "@components/mgmt/FormSuccess.partial.astro";
 import TopLevelError from "@components/mgmt/TopLevelError.partial.astro";
-type ZodErrorFlattened = ReturnType<ZodError<LocationSelect>["flatten"]>;
+
 interface Params {
   id: string | undefined;
 }
 
-const { id } = Astro.params;
+const id = Astro.params.id;
 if (!id) throw new BadRequestError("Missing required parameter: id");
-let location: LocationSelect | null | undefined = null;
+let credit: CreditSelect | null | undefined = null;
 let error: string | ReturnType<ZodError["flatten"]> | null = null;
-const config = tableConfigs.locations.required;
+const users = await crud.users.readMany(TEST_ADMIN_SESSION);
+const courses = await crud.courses.readMany(TEST_ADMIN_SESSION);
+const config = creditConfigRequired(users, courses);
 const ctx = {
-  crud: "locations" as CrudRegistryType,
+  crud: "credits" as CrudRegistryType,
   config,
-  endpoint: "/attendance/locations",
-  headers: Object.keys(config),
+  endpoint: "/attendance/admin/credits",
+  headers: Object.keys(config) as (keyof typeof config)[],
 };
 
 const session = TEST_ADMIN_SESSION;
 
 if (Astro.request.method === "GET") {
   try {
-    location = await crud.locations.read(id, session);
+    credit = await crud.credits.read(id);
   } catch (e) {
     const { err, status } = errorHandlingOnSubmit(e);
     Astro.response.status = status;
@@ -53,7 +57,7 @@ if (Astro.request.method === "PATCH") {
       id,
     };
 
-    location = await crud.locations.update(payload, session);
+    credit = await crud.credits.update(payload);
   } catch (e) {
     const { err, status } = errorHandlingOnSubmit(e);
     Astro.response.status = status;
@@ -64,7 +68,9 @@ if (Astro.request.method === "PATCH") {
 
 if (Astro.request.method === "DELETE") {
   try {
-    location = await crud.locations.delete(id);
+    if (!id) throw new BadRequestError("Missing required parameter: id");
+
+    credit = await crud.credits.delete(id);
   } catch (e) {
     const { err, status } = errorHandlingOnSubmit(e);
     Astro.response.status = status;
@@ -81,7 +87,7 @@ const partialType = Astro.request.headers.get("X-Partial-Type") as
   | PartialType
   | undefined;
 if (!partialType) throw new BadRequestError("X-Partial-Type header not set");
-
+type ZodErrorFlattened = ReturnType<ZodError<CreditSelect>["flatten"]>;
 type RenderResult =
   | {
       kind: "field-error";
@@ -93,8 +99,8 @@ type RenderResult =
     }
   | {
       kind: "success";
-      location: LocationSelect;
-      method: "GET" | "PATCH" | "DELETE";
+      credit: CreditSelect;
+      method: "GET" | "POST" | "PATCH" | "DELETE";
     };
 
 let result: RenderResult;
@@ -106,10 +112,10 @@ if (error && typeof error === "object" && "fieldErrors" in error) {
     kind: "top-error",
     message: typeof error === "string" ? error : JSON.stringify(error),
   };
-} else if (location) {
+} else if (credit) {
   result = {
     kind: "success",
-    location,
+    credit,
     method: Astro.request.method as any,
   };
 } else {
@@ -123,24 +129,23 @@ if (error && typeof error === "object" && "fieldErrors" in error) {
 {
   result.kind === "field-error" ? (
     <FieldErrors
-      id={id}
-      crud={ctx.crud}
+      id={"create"}
       headers={ctx.headers}
       errors={result.errors}
+      crud={ctx.crud}
     />
   ) : result.kind === "top-error" ? (
     <TopLevelError
-      id={id}
+      id={"create"}
       headers={ctx.headers}
       crud={ctx.crud}
       message={result.message}
     />
   ) : (
     <FormSuccess
-      entity={result.location}
+      entity={result.credit}
       method={result.method}
       partialType={partialType}
       ctx={ctx}
     />
   )
-}

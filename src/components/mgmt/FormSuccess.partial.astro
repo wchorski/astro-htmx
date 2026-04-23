@@ -3,7 +3,7 @@ import type { FieldConfig, BaseRow } from "@ty/FieldConfig";
 import type { CrudRegistryType } from "@lib/crudRegistry";
 interface Props {
   entity: BaseRow;
-  method: "DELETE" | "PATCH" | "GET";
+  method: "DELETE" | "PATCH" | "GET" | "POST";
   partialType: "table-row" | "single-page";
   ctx: {
     crud: CrudRegistryType;
@@ -14,6 +14,7 @@ interface Props {
 }
 import RowView from "@components/tables/RowView.astro";
 import SubmitButton from "@components/form/SubmitButton.astro";
+import TopLevelError from "./TopLevelError.partial.astro";
 
 const { entity, method, partialType, ctx } = Astro.props;
 ---
@@ -56,7 +57,25 @@ const { entity, method, partialType, ctx } = Astro.props;
     ) : (
       <p class="callout error">unsupported partialType</p>
     )
-  ) : (
+  ) : method === "POST" ? (
+    partialType === "table-row" ? (
+      <>
+        <RowView row={entity} {...ctx} classList={["new-row"]} />
+        <TopLevelError
+          crud={ctx.crud}
+          id={"create"}
+          headers={ctx.headers}
+          message=""
+        />
+      </>
+    ) : partialType === "single-page" ? (
+      <p class="callout debug">TODO single page POST method</p>
+    ) : (
+      <p class="callout error">unsupported partialType</p>
+    )
+  ) : method === "GET" ? (
     <RowView row={entity} {...ctx} oob />
+  ) : (
+    <p class="callout error">method not supported</p>
   )
 }

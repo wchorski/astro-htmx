@@ -64,28 +64,3 @@ const prettyVal = (() => {
     <span class="sub-text">—</span>
   )
 }
-
-<style>
-  .true,
-  .false {
-    &::after {
-      display: inline-block;
-      margin-left: 2px;
-    }
-  }
-  .true {
-    color: var(--c-success);
-
-    &::after {
-      content: " ✔";
-    }
-  }
-  .false {
-    color: rgb(146, 113, 113);
-    opacity: 0.3;
-
-    &::after {
-      content: " ✘";
-    }
-  }
-</style>

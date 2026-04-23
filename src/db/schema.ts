@@ -42,7 +42,6 @@ export const User = pgTable(
   {
     // TODO switch to uuid when this app gets more serious and need more privacy with url
     id: uuid("id").primaryKey().default(sql`uuidv7()`),
-    // id: integer().primaryKey().generatedByDefaultAsIdentity(),
     role_id: uuid().references(() => Role.id),
     first_name: text().notNull(),
     last_name: text().notNull(),
@@ -89,9 +88,6 @@ export const Credit = pgTable(
     user_id: uuid("user_id")
       .notNull()
       .references(() => User.id),
-    // user_id: integer("user_id")
-    //   .notNull()
-    //   .references(() => User.id),
     course_id: uuid("course_id")
       .notNull()
       .references(() => Course.id),

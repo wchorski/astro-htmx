@@ -95,7 +95,7 @@ type RenderResult =
   | {
       kind: "success";
       user: UserSelect;
-      method: "GET" | "PATCH" | "DELETE";
+      method: "GET" | "POST" | "PATCH" | "DELETE";
     };
 
 let result: RenderResult;
@@ -123,7 +123,12 @@ if (error && typeof error === "object" && "fieldErrors" in error) {
 
 {
   result.kind === "field-error" ? (
-    <FieldErrors id={id} crud={ctx.crud} headers={ctx.headers} errors={result.errors} />
+    <FieldErrors
+      id={id}
+      crud={ctx.crud}
+      headers={ctx.headers}
+      errors={result.errors}
+    />
   ) : result.kind === "top-error" ? (
     <TopLevelError
       id={id}

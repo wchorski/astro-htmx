@@ -1,7 +1,7 @@
 ## ⚙️ DEV Environment
 ```shell
 ## spin up development postgres container
-cp .env.example .env
+cp .env.example .env.development
 npm run db:dev:create
 npm run db:push
 npm run db:seed:truncate
@@ -57,13 +57,10 @@ npx drizzle-kit migrate    # runs them against your DB
 ## 🏭 Production
 ```shell
 cp .env.example .env
-## NODE_ENV="production"
 cp compose.yml.example compose.yml
 docker compose build
 docker compose up --remove-orphans
 
-## from dev (set env to point to prod database host:port)
-npm run db:seed:truncate
 ```
 
 #todo

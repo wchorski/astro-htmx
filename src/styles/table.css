@@ -9,9 +9,11 @@ table {
   width: 100%;
   border-collapse: collapse;
 
-  & thead {
+  & > thead {
     position: sticky;
     top: 0;
+    background-color: var(--c-txt-bg);
+    z-index: 1;
   }
 }
 
@@ -47,10 +49,10 @@ td {
   padding-block: 0.5rem;
 }
 
-table tbody > tr:nth-child(odd of :not(.row-error)) {
+table tbody > tr:not(.row-error):nth-of-type(odd) {
   background-color: #0000001c;
 }
-table tbody > tr:nth-child(even of :not(.row-error)) {
+table tbody > tr:not(.row-error):nth-of-type(even) {
   background-color: #0000004f;
 }
 
@@ -119,8 +121,8 @@ table tr.new-row {
 }
 
 td[data-key="id"] {
-  & a, & code span {
-
+  & a,
+  & code span {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;

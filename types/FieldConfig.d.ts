@@ -77,7 +77,7 @@ type SelectFieldType = Exclude<FieldType, "input" | "textarea">;
 export type BaseRow = Record<
   string,
   string | number | boolean | Date | null | undefined
-> & { id: string | number };
+> & { id: string };
 
 export type FieldConfig<TRow extends BaseRow = BaseRow> = {
   [K in keyof TRow]?: FieldSlot;

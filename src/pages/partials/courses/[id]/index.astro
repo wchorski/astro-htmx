@@ -1,52 +1,82 @@
 ---
-// partials/credits/create
-import RowView from "@components/tables/RowView.astro";
-import RowCreateForm from "@components/tables/RowCreate.astro";
-import { creditConfigRequired, tableConfigs } from "@lib/tableConfigs";
-import { BadRequestError, errorHandlingOnSubmit } from "@lib/errors";
+// partials/users/[id].astro
 import { crud, type CrudRegistryType } from "@lib/crudRegistry";
-import { parseOutUndefinedFormData } from "@lib/sanatizers";
+import { BadRequestError, errorHandlingOnSubmit } from "@lib/errors";
+import { courseConfigRequired, tableConfigs } from "@lib/tableConfigs";
+import RowView from "@components/tables/RowView.astro";
+import type { CourseSelect } from "@ty/Schema";
+import type { ZodError } from "astro/zod";
 import { TEST_ADMIN_SESSION } from "@lib/auth/session";
-import type { CreditSelect } from "@ty/Schema";
+import { delay } from "@lib/wait";
 import FieldErrors from "@components/mgmt/FieldErrors.partial.astro";
 import FormSuccess from "@components/mgmt/FormSuccess.partial.astro";
 import TopLevelError from "@components/mgmt/TopLevelError.partial.astro";
-import type { ZodError } from "astro:schema";
 
-type ViewType = "table-row" | "card";
+interface Params {
+  id: string | undefined;
+}
 
+type ZodErrorFlattened = ReturnType<ZodError<CourseSelect>["flatten"]>;
 
-let error = null;
-let credit: CreditSelect | null | undefined = null;
-const users = await crud.users.readMany(TEST_ADMIN_SESSION);
-const courses = await crud.courses.readMany(TEST_ADMIN_SESSION);
-const config = creditConfigRequired(users, courses);
+// let id: string | null | undefined = null;
+const { id } = Astro.params;
+if (!id) throw new BadRequestError("course ID missing in request");
+const session = TEST_ADMIN_SESSION;
+const locations = await crud.locations.readMany(session);
+let course: CourseSelect | null | undefined = null;
+let error: string | ReturnType<ZodError["flatten"]> | null = null;
+const crudKey = "courses" as const;
+const config = courseConfigRequired(locations);
 const ctx = {
-  crud: "credits" as CrudRegistryType,
+  crud: crudKey,
   config,
-  endpoint: "/attendance/credits",
-  headers: Object.keys(config) as (keyof typeof config)[],
+  endpoint: "/attendance/courses",
+  headers: Object.keys(config) as (keyof CourseSelect & string)[],
 };
 
-if (Astro.request.method === "POST") {
+if (Astro.request.method === "GET") {
   try {
+    course = await crud[crudKey].read(id, session);
+  } catch (e) {
+    const { err, status } = errorHandlingOnSubmit(e);
+    Astro.response.status = status;
+    error = err;
+  }
+}
 
+if (Astro.request.method === "PATCH") {
+  try {
     const formData = await Astro.request.formData();
+    if (!formData) return new Response("Bad Request", { status: 400 });
 
     const submitFields = Object.fromEntries(
       [...formData.entries()].filter(([key]) => !key.startsWith("_")),
     );
 
-    credit = await crud.credits.create(submitFields);
+    const payload = {
+      ...submitFields,
+      id,
+    };
+
+    course = await crud[crudKey].update(payload, session);
   } catch (e) {
     const { err, status } = errorHandlingOnSubmit(e);
     Astro.response.status = status;
     error = err;
     console.log(JSON.stringify(err, null, 2));
   }
-} else {
-  return new Response("Method Not Allowed", { status: 405 });
 }
+
+if (Astro.request.method === "DELETE") {
+  try {
+    course = await crud[crudKey].delete(id, session);
+  } catch (e) {
+    const { err, status } = errorHandlingOnSubmit(e);
+    Astro.response.status = status;
+    error = err;
+  }
+}
+
 enum PartialType {
   TableRow = "table-row",
   SinglePage = "single-page",
@@ -56,7 +86,7 @@ const partialType = Astro.request.headers.get("X-Partial-Type") as
   | PartialType
   | undefined;
 if (!partialType) throw new BadRequestError("X-Partial-Type header not set");
-type ZodErrorFlattened = ReturnType<ZodError<CreditSelect>["flatten"]>;
+
 type RenderResult =
   | {
       kind: "field-error";
@@ -68,7 +98,7 @@ type RenderResult =
     }
   | {
       kind: "success";
-      credit: CreditSelect;
+      course: CourseSelect;
       method: "GET" | "POST" | "PATCH" | "DELETE";
     };
 
@@ -81,16 +111,16 @@ if (error && typeof error === "object" && "fieldErrors" in error) {
     kind: "top-error",
     message: typeof error === "string" ? error : JSON.stringify(error),
   };
-} else if (credit) {
+} else if (course) {
   result = {
     kind: "success",
-    credit,
+    course,
     method: Astro.request.method as any,
   };
 } else {
   result = {
     kind: "top-error",
-    message: "No credit data available",
+    message: "No course data available",
   };
 }
 ---
@@ -98,21 +128,21 @@ if (error && typeof error === "object" && "fieldErrors" in error) {
 {
   result.kind === "field-error" ? (
     <FieldErrors
-      id={"create"}
+      id={id}
       headers={ctx.headers}
       errors={result.errors}
       crud={ctx.crud}
     />
   ) : result.kind === "top-error" ? (
     <TopLevelError
-      id={"create"}
+      id={id}
       headers={ctx.headers}
       crud={ctx.crud}
       message={result.message}
     />
   ) : (
     <FormSuccess
-      entity={result.credit}
+      entity={result.course}
       method={result.method}
       partialType={partialType}
       ctx={ctx}

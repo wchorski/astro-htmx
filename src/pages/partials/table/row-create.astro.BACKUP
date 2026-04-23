@@ -19,7 +19,7 @@ let submittedFields: Record<string, any> | null = null;
 let error: string | Record<string, any> | null = null;
 let newRow: BaseRow | null = null;
 
-console.log('/row-create');
+console.log('YO WTF why this? /row-create');
 if (Astro.request.method === "POST") {
   try {
     const formData = await Astro.request.formData();

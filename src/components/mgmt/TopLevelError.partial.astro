@@ -12,7 +12,11 @@ const { id, headers, crud, message } = Astro.props;
 ---
 
 <>
-  <span id={`row-edit-error-${crud}-${id}`} class="anim-vibrate">
+  <span
+    id={`row-edit-error-${crud}-${id}`}
+    class="anim-vibrate"
+    hx-swap-oob="outerHTML"
+  >
     {message}
   </span>
 

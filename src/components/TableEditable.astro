@@ -47,7 +47,7 @@ function label(key: string) {
         <th aria-label="Actions"></th>
       </tr>
     </thead>
-    <tbody>
+    <tbody id={`${crud}-table-body`}>
       {
         rows.map((row) => (
           <ViewRow
@@ -61,7 +61,7 @@ function label(key: string) {
         ))
       }
     </tbody>
-    <tfoot id="table-footer">
+    <tfoot>
       <RowCreate
         config={config}
         crud={crud}

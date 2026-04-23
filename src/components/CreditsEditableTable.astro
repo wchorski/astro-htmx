@@ -26,9 +26,9 @@ const ctx = {
   tableRows.length === 0 ? (
     <p class="callout not-found">no credits found</p>
     <table>
-      <tfoot>
+      <tbody>
         <RowCreate {...ctx} class:list={'highlight-green'}/>
-      </tfoot>
+      </tbody>
     </table>
   ) : (
     <TableEditable

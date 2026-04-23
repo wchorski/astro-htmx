@@ -72,7 +72,7 @@ type RenderResult =
   | {
       kind: "success";
       user: UserSelect;
-      method: "GET" | "PATCH" | "DELETE";
+      method: "GET" | "POST" | "PATCH" | "DELETE";
     };
 
 let result: RenderResult;
@@ -101,14 +101,14 @@ if (error && typeof error === "object" && "fieldErrors" in error) {
 {
   result.kind === "field-error" ? (
     <FieldErrors
-      id={"0"}
+      id={"create"}
       headers={ctx.headers}
       errors={result.errors}
       crud={ctx.crud}
     />
   ) : result.kind === "top-error" ? (
     <TopLevelError
-      id={"0"}
+      id={"create"}
       headers={ctx.headers}
       crud={ctx.crud}
       message={result.message}
@@ -122,6 +122,3 @@ if (error && typeof error === "object" && "fieldErrors" in error) {
     />
   )
 }
-
-<!-- <RowView row={user} {...ctx} classList={["new-row"]} />
-<RowCreate {...ctx} /> -->

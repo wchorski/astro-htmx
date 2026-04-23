@@ -22,6 +22,7 @@ let row: TableRow | null = null;
 let submittedFields: Record<string, any> | null = null;
 let error: string | ReturnType<ZodError["flatten"]> | null = null;
 
+console.log('....... ROW-EDIT');
 if (Astro.request.method === "PUT") {
   try {
     const formData = await Astro.request.formData();

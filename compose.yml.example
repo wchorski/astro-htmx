@@ -32,6 +32,21 @@ services:
       - .env
     restart: "no" # Run once and exit
 
+  seed:
+    build:
+      context: .
+      target: seed
+    networks:
+      - moeits_staff-astro-network
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy
+      app:
+        condition: service_healthy
+    restart: "no"
+
   app:
     build: .
     container_name: moeits_staff-astro

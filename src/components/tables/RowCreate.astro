@@ -20,6 +20,8 @@ interface Props {
   crud: CrudRegistryType;
   config: FieldConfig;
   headers: string[];
+  oob?: boolean;
+  oobSwap?: string;
   actionUrl?: string;
   error?: string | ReturnType<ZodError["flatten"]> | null;
 }
@@ -28,6 +30,8 @@ const {
   config,
   crud,
   headers,
+  oob,
+  oobSwap,
   error,
   actionUrl = `/partials/${slugify(crud)}/create`,
 } = Astro.props;
@@ -37,7 +41,13 @@ const topLevelError = typeof error === "string" ? error : null;
 const anchorName = `--anchor-row-create-error-${crud}` || "--anchor-row";
 ---
 
-<tr id={`row-create-${crud}`} data-status="creating" class="highlight-green">
+<tr
+  data-entity={crud}
+  id={`row-create-${crud}`}
+  hx-swap-oob={oobSwap ?? (oob ? "outerHTML" : undefined)}
+  data-status="creating"
+  class="highlight-green"
+>
   {
     headers.map((key) => {
       const field = config[key] ?? {};
@@ -51,6 +61,7 @@ const anchorName = `--anchor-row-create-error-${crud}` || "--anchor-row";
       const { options } = field as SelectFieldSlot;
       delete (inputAttrs as any).datalist;
       const { datalist } = field as InputFieldSlot;
+      const fieldErrorId = `field-error-${crud}-${"create"}-${key}`;
 
       if (key === "id") {
         return <td data-type={type} class="background-success" />;
@@ -61,7 +72,7 @@ const anchorName = `--anchor-row-create-error-${crud}` || "--anchor-row";
             <SelectField
               {...inputAttrs}
               formId={formId}
-              errorId={`field-error-create-${key}`}
+              errorId={fieldErrorId}
               name={key}
               label={label}
               inputAttrs={inputAttrs}
@@ -72,11 +83,7 @@ const anchorName = `--anchor-row-create-error-${crud}` || "--anchor-row";
       if (type === "textarea")
         return (
           <td data-type={type}>
-            <TextareaField
-              {...inputAttrs}
-              name={key}
-              errorId={`field-error-create-${key}`}
-            />
+            <TextareaField {...inputAttrs} name={key} errorId={fieldErrorId} />
           </td>
         );
       if (type === "searchSelect") {
@@ -104,7 +111,7 @@ const anchorName = `--anchor-row-create-error-${crud}` || "--anchor-row";
             {...inputAttrs}
             checked={false}
             formId={formId}
-            errorId={`field-error-create-${key}`}
+            errorId={fieldErrorId}
             name={key}
             label={label}
             type={type}
@@ -123,12 +130,16 @@ const anchorName = `--anchor-row-create-error-${crud}` || "--anchor-row";
       style="display:none"
       hx-post={actionUrl}
       hx-headers='{"X-Partial-Type": "table-row"}'
-      hx-target={`#row-create-${crud}`}
-      hx-target-error={`#row-create-error-${crud}`}
-      hx-swap="outerHTML"
+      hx-target={`#${crud}-table-body`}
+      hx-target-error={`#row-edit-error-${crud}-create`}
+      hx-swap="beforeend"
     >
     </form>
-    <button type="submit" form={formId} class="save" title={`create new ${crud}`}
+    <button
+      type="submit"
+      form={formId}
+      class="save"
+      title={`create new ${crud}`}
       ><img
         class="icon"
         src="/icons/add.svg"
@@ -141,7 +152,7 @@ const anchorName = `--anchor-row-create-error-${crud}` || "--anchor-row";
       title="clear fields"
       type="button"
       class="cancel"
-      data-clear-form="formId"
+      data-clear-form={formId}
     >
       <img
         class="icon"
@@ -158,7 +169,7 @@ const anchorName = `--anchor-row-create-error-${crud}` || "--anchor-row";
       anchorName={anchorName}
       class="row-error error top-level"
     >
-      <span id={`row-create-error-${crud}`}>{topLevelError}</span>
+      <span id={`row-edit-error-${crud}-create`}>{topLevelError}</span>
     </AnchoredBox>
   </td>
 </tr>
@@ -180,10 +191,17 @@ const anchorName = `--anchor-row-create-error-${crud}` || "--anchor-row";
         else if (input.type === "hidden") return;
         else input.value = "";
       });
-
-      const errorRow = document.getElementById("row-create-error");
-      if (errorRow) errorRow.innerHTML = "";
     });
+
+  document.body.addEventListener("htmx:afterRequest", (e) => {
+    
+    const status = e.detail.xhr.status
+    if (status < 200 || status >= 300) return;
+
+    document
+      .querySelector("[data-clear-form]")
+      ?.dispatchEvent(new Event("click"));
+  });
 </script>
 
 <style define:vars={{ anchorName }}>

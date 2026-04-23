@@ -18,6 +18,7 @@ interface Props<TRow extends BaseRow = BaseRow> {
   endpoint: string;
   classList?: AstroBuiltinAttributes["class:list"];
   oob?: boolean;
+  oobSwap?: string;
   disableEdit?: boolean;
   error?: string | ReturnType<ZodError["flatten"]> | null;
   editUrl?: string | ((id: string | number) => string);
@@ -32,6 +33,7 @@ const {
   endpoint,
   classList,
   oob,
+  oobSwap,
   error,
   editUrl = `/partials/${slugify(crud)}/${row.id}/edit`,
 
@@ -46,10 +48,11 @@ const anchorName =
 
 <tr
   id={`row-${crud}-${row.id}`}
-  hx-swap-oob={oob ? "outerHTML" : undefined}
+  hx-swap-oob={oobSwap ?? (oob ? "outerHTML" : undefined)}
   data-row-id={row.id}
   data-status="viewing"
   class:list={classList}
+  style={`anchor-name: ${anchorName};`}
 >
   {
     headers.map((key) => {
@@ -129,9 +132,3 @@ const anchorName =
     </AnchoredBox>
   </td>
 </tr>
-
-<style define:vars={{ anchorName }}>
-  tr {
-    anchor-name: var(--anchorName);
-  }
-</style>

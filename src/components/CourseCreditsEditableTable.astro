@@ -11,7 +11,7 @@ import TableEditable from "@components/TableEditable.astro";
 import type { CreditSelect, UserSelect } from "@ty/Schema";
 import RowCreate from "./tables/RowCreate.astro";
 import { tableConfigs, userCreditMap } from "@lib/tableConfigs";
-const { courseCredits, courseId } = Astro.props;
+const { courseCredits, course_id } = Astro.props;
 
 const tableRows = courseCredits.map(({ credit, user }) => userCreditMap(credit, user));
 
@@ -29,9 +29,9 @@ const ctx = {
   tableRows.length === 0 ? (
     <p class="callout not-found">no member credits found</p>
     <table>
-      <tfoot>
+      <tbody>
         <RowCreate {...ctx} class:list={'highlight-green'}/>
-      </tfoot>
+      </tbody>
     </table>
   ) : (
     <TableEditable
@@ -39,7 +39,7 @@ const ctx = {
       rows={tableRows}
       endpoint={ctx.endpoint}
       config={ctx.config}
-      createUrl={`/partials/course-credits/course/${courseId}`}
+      createUrl={`/partials/course-credits/course/${course_id}`}
     />
   )
 }
