@@ -11,6 +11,7 @@ import type { ZodError } from "astro:schema";
 import FieldErrors from "@components/mgmt/FieldErrors.partial.astro";
 import FormSuccess from "@components/mgmt/FormSuccess.partial.astro";
 import TopLevelError from "@components/mgmt/TopLevelError.partial.astro";
+import { handleResult } from "@lib/handleRenderResult";
 
 type ViewType = "table-row" | "card";
 
@@ -64,43 +65,13 @@ const partialType = Astro.request.headers.get("X-Partial-Type") as
   | PartialType
   | undefined;
 if (!partialType) throw new BadRequestError("X-Partial-Type header not set");
-type ZodErrorFlattened = ReturnType<ZodError<CourseSelect>["flatten"]>;
-type RenderResult =
-  | {
-      kind: "field-error";
-      errors: ZodErrorFlattened;
-    }
-  | {
-      kind: "top-error";
-      message: string;
-    }
-  | {
-      kind: "success";
-      course: CourseSelect;
-      method: "GET" | "POST" | "PATCH" | "DELETE";
-    };
 
-let result: RenderResult;
-
-if (error && typeof error === "object" && "fieldErrors" in error) {
-  result = { kind: "field-error", errors: error };
-} else if (error) {
-  result = {
-    kind: "top-error",
-    message: typeof error === "string" ? error : JSON.stringify(error),
-  };
-} else if (course) {
-  result = {
-    kind: "success",
-    course,
-    method: Astro.request.method as any,
-  };
-} else {
-  result = {
-    kind: "top-error",
-    message: "No course data available",
-  };
-}
+const result = handleResult<CourseSelect>({
+  error,
+  entity: course,
+  method: Astro.request.method,
+  emptyMessage: "No user data available",
+});
 ---
 
 {
@@ -120,7 +91,7 @@ if (error && typeof error === "object" && "fieldErrors" in error) {
     />
   ) : (
     <FormSuccess
-      entity={result.course}
+      entity={result.entity}
       method={result.method}
       partialType={partialType}
       ctx={ctx}

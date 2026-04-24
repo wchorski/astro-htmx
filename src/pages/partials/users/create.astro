@@ -14,6 +14,7 @@ import { view } from "drizzle-orm/sqlite-core";
 import FieldErrors from "@components/mgmt/FieldErrors.partial.astro";
 import FormSuccess from "@components/mgmt/FormSuccess.partial.astro";
 import TopLevelError from "@components/mgmt/TopLevelError.partial.astro";
+import { handleResult } from "@lib/handleRenderResult";
 
 type ZodErrorFlattened = ReturnType<ZodError<UserSelect>["flatten"]>;
 
@@ -60,42 +61,12 @@ const partialType = Astro.request.headers.get("X-Partial-Type") as
   | undefined;
 if (!partialType) throw new BadRequestError("X-Partial-Type header not set");
 
-type RenderResult =
-  | {
-      kind: "field-error";
-      errors: ZodErrorFlattened;
-    }
-  | {
-      kind: "top-error";
-      message: string;
-    }
-  | {
-      kind: "success";
-      user: UserSelect;
-      method: "GET" | "POST" | "PATCH" | "DELETE";
-    };
-
-let result: RenderResult;
-
-if (error && typeof error === "object" && "fieldErrors" in error) {
-  result = { kind: "field-error", errors: error };
-} else if (error) {
-  result = {
-    kind: "top-error",
-    message: typeof error === "string" ? error : JSON.stringify(error),
-  };
-} else if (user) {
-  result = {
-    kind: "success",
-    user,
-    method: Astro.request.method as any,
-  };
-} else {
-  result = {
-    kind: "top-error",
-    message: "No course data available",
-  };
-}
+const result = handleResult<UserSelect>({
+  error,
+  entity: user,
+  method: Astro.request.method,
+  emptyMessage: "No user data available",
+});
 ---
 
 {
@@ -115,7 +86,7 @@ if (error && typeof error === "object" && "fieldErrors" in error) {
     />
   ) : (
     <FormSuccess
-      entity={result.user}
+      entity={result.entity}
       method={result.method}
       partialType={partialType}
       ctx={ctx}

@@ -119,3 +119,6 @@ docker volume inspect libsql-data
 
 ## Zod Validation
 https://www.codegenes.net/blog/zod-validation-based-on-another-field/#prerequisites
+
+## HTMX Learning
+- https://singhajit.com/htmx-guide-modern-web-development/

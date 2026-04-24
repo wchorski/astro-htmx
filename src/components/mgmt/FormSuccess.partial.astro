@@ -1,13 +1,13 @@
 ---
 import type { FieldConfig, BaseRow } from "@ty/FieldConfig";
 import type { CrudRegistryType } from "@lib/crudRegistry";
-interface Props {
-  entity: BaseRow;
+interface Props<T extends BaseRow = BaseRow> {
+  entity: T;
   method: "DELETE" | "PATCH" | "GET" | "POST";
   partialType: "table-row" | "single-page";
   ctx: {
     crud: CrudRegistryType;
-    config: FieldConfig<BaseRow>;
+    config: FieldConfig<T>;
     endpoint: string;
     headers: string[];
   };
@@ -16,7 +16,7 @@ import RowView from "@components/tables/RowView.astro";
 import SubmitButton from "@components/form/SubmitButton.astro";
 import TopLevelError from "./TopLevelError.partial.astro";
 
-const { entity, method, partialType, ctx } = Astro.props;
+const { entity, method, partialType, ctx } = Astro.props as Props;
 ---
 
 {
