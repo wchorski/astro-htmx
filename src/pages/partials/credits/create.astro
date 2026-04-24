@@ -62,29 +62,8 @@ const result = handleResult<CreditSelect>({
   error,
   entity: credit,
   method: Astro.request.method,
-  emptyMessage: "No user data available",
+  emptyMessage: "No credits available",
 });
-
-
-// if (error && typeof error === "object" && "fieldErrors" in error) {
-//   result = { kind: "field-error", errors: error };
-// } else if (error) {
-//   result = {
-//     kind: "top-error",
-//     message: typeof error === "string" ? error : JSON.stringify(error),
-//   };
-// } else if (credit) {
-//   result = {
-//     kind: "success",
-//     credit,
-//     method: Astro.request.method as any,
-//   };
-// } else {
-//   result = {
-//     kind: "top-error",
-//     message: "No credit data available",
-//   };
-// }
 ---
 
 {

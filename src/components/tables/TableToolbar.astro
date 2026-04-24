@@ -16,6 +16,7 @@ const { errorTargetId = `${"users"}-table-field-search-error` } = Astro.props;
     hx-target-error={`#${errorTargetId}`}
     hx-trigger="input changed delay:500ms, keyup[key=='Enter'], load"
     hx-swap={"innerHTML"}
+    hx-headers='{"X-Partial-Type":"table-row"}'
     data-status="idle"
   >
     <InputField

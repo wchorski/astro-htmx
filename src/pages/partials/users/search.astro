@@ -2,12 +2,25 @@
 import { db } from "@db/db";
 import { or, ilike, like } from "drizzle-orm";
 import { User } from "@db/schema";
-import { crud } from "@lib/crudRegistry";
+import { crud, type CrudRegistryType } from "@lib/crudRegistry";
 import { BadRequestError, errorHandlingOnSubmit } from "@lib/errors";
 import type { UserSelect } from "@ty/Schema";
+import { handleResult } from "@lib/handleRenderResult";
+import FieldErrors from "@components/mgmt/FieldErrors.partial.astro";
+import FormSuccess from "@components/mgmt/FormSuccess.partial.astro";
+import TopLevelError from "@components/mgmt/TopLevelError.partial.astro";
+import { tableConfigs } from "@lib/tableConfigs";
+import RowView from "@components/tables/RowView.astro";
 
 let users: UserSelect[] | null | undefined = null;
 let error = null;
+const config = tableConfigs.users.required;
+const ctx = {
+  crud: "users" as CrudRegistryType,
+  config,
+  endpoint: "/users",
+  headers: Object.keys(config),
+};
 
 if (Astro.request.method === "POST") {
   try {
@@ -25,18 +38,24 @@ if (Astro.request.method === "POST") {
     //   );
     // }
 
+    console.log({ searchQuery });
+
     if (searchQuery) {
+      const conditions = [
+        ilike(User.first_name, `%${searchQuery}%`),
+        ilike(User.last_name, `%${searchQuery}%`),
+        ilike(User.email, `%${searchQuery}%`),
+      ];
+
+      if (digitsOnly.length >= 3) {
+        conditions.push(like(User.phone, `%${digitsOnly}%`));
+      }
+
       users = await db
         .select()
         .from(User)
-        .where(
-          or(
-            ilike(User.first_name, `%${searchQuery}%`),
-            ilike(User.last_name, `%${searchQuery}%`),
-            ilike(User.email, `%${searchQuery}%`),
-            like(User.phone, `%${digitsOnly}%`),
-          ),
-        );
+        .where(or(...conditions))
+        .limit(10);
     } else {
       // Empty search - return no results (or all users if you prefer)
       users = [];
@@ -50,16 +69,58 @@ if (Astro.request.method === "POST") {
 } else {
   return new Response("Method Not Allowed", { status: 405 });
 }
+
+enum PartialType {
+  TableRow = "table-row",
+  SinglePage = "single-page",
+}
+
+const partialType = Astro.request.headers.get("X-Partial-Type") as
+  | PartialType
+  | undefined;
+if (!partialType) throw new BadRequestError("X-Partial-Type header not set");
+
+const result = handleResult<UserSelect>({
+  error,
+  entity: users,
+  method: Astro.request.method,
+  emptyMessage: "No user data available",
+});
 ---
 
 {
-  users &&
-    users.map((user) => (
-      <tr>
-        <td>{user.first_name}</td>
-        <td>{user.last_name}</td>
-        <td>{user.phone}</td>
-        <td>{user.email}</td>
-      </tr>
-    ))
+  result.kind === "field-error" ? (
+    <FieldErrors
+      id={"create"}
+      headers={ctx.headers}
+      errors={result.errors}
+      crud={ctx.crud}
+    />
+  ) : result.kind === "top-error" ? (
+    <TopLevelError
+      id={"create"}
+      headers={ctx.headers}
+      crud={ctx.crud}
+      message={result.message}
+    />
+  ) : (
+    <>
+      {/* <FormSuccess
+        entity={result.entity}
+        method={result.method}
+        partialType={partialType}
+        ctx={ctx}
+      /> */}
+      {users &&
+        users.map((entity) => (
+          <RowView row={entity} {...ctx} classList={["new-row"]} />
+        ))}
+      <TopLevelError
+        crud={ctx.crud}
+        id={"create"}
+        headers={ctx.headers}
+        message=""
+      />
+    </>
+  )
 }

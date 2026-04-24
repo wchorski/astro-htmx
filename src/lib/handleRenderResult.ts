@@ -3,7 +3,7 @@ import type { HttpMethod, RenderResult } from "@ty/RenderResults";
 export function handleResult<T>(opts: {
   error?: unknown;
   entity?: T | null | undefined;
-  method: string;          // Astro.request.method is string
+  method: HttpMethod; 
   emptyMessage: string;
 }): RenderResult<T> {
   const { error, entity, method, emptyMessage } = opts;
@@ -23,10 +23,10 @@ export function handleResult<T>(opts: {
     return {
       kind: "success",
       entity,
-      method: method as HttpMethod,
+      method,
     };
   }
 
   return { kind: "top-error", message: emptyMessage };
 }
-``
+``;
