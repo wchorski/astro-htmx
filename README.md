@@ -64,6 +64,7 @@ docker compose up --remove-orphans
 ```
 
 #todo
+- [ ] table sorting for each column (asc, desc, default)
 - [ ] restructure top level errors to include `fieldName` so it can target and style the problem field if it exists
 - [ ] show "no changes" and disable `update` button on single-page forms. also set button to disabled upon first press
 - [ ] how to seed fresh database automatically (with docker container like `migrate`)

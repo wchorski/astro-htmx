@@ -1,13 +1,13 @@
 // lib/handleRenderResult.ts
-import type { HttpMethod, RenderResult } from "@ty/Results";
+import type { QueryResult, } from "@ty/Results";
 
-export function handleResult<T>(opts: {
+export function handleQueryResult<T>(opts: {
   error?: unknown;
-  entity?: T | null | undefined;
-  method: HttpMethod;
+  rows?: T[] | null ;
+  method: "POST";
   emptyMessage: string;
-}): RenderResult<T> {
-  const { error, entity, method, emptyMessage } = opts;
+}): QueryResult<T> {
+  const { error, rows, method, emptyMessage } = opts;
 
   if (error && typeof error === "object" && "fieldErrors" in error) {
     return { kind: "field-error", errors: error };
@@ -20,10 +20,10 @@ export function handleResult<T>(opts: {
     };
   }
 
-  if (entity) {
+  if (rows) {
     return {
       kind: "success",
-      entity,
+      rows,
       method,
     };
   }

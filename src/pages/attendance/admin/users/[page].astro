@@ -4,6 +4,7 @@ import AttendanceAdminNav from "@components/navigation/AttendanceAdminNav.astro"
 import BaseLayout from "@layouts/BaseLayout.astro";
 import { getUsersPage } from "@lib/getUsersPage";
 import PaginationNav from "@components/navigation/PaginationNav.astro";
+import TableToolbar from "@components/tables/TableToolbar.astro";
 const page = Number(Astro.params.page);
 const result = await getUsersPage(page);
 
@@ -21,17 +22,23 @@ const { users, perPage, totalCount, totalPages } = result;
       <h1>Users - Page {page}</h1>
     </header>
 
-    <UsersEditableTable users={users} />
-
-    {
-      users ? (
-        <PaginationNav
-          path="/attendance/admin/users"
-          page={Number(page)}
-          perPage={perPage}
-          totalCount={totalCount}
-        />
-      ) : null
-    }
+    <div data-layout="content" class="content">
+      <TableToolbar
+        page={page}
+        model="users"
+        placeholder={"Search by name, email, or phone..."}
+      />
+      <UsersEditableTable users={users} />
+      {
+        users ? (
+          <PaginationNav
+            path="/attendance/admin/users"
+            page={Number(page)}
+            perPage={perPage}
+            totalCount={totalCount}
+          />
+        ) : null
+      }
+    </div>
   </main>
 </BaseLayout>

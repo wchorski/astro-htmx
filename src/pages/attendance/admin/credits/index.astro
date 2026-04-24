@@ -5,6 +5,8 @@ import BaseLayout from "@layouts/BaseLayout.astro";
 import PaginationNav from "@components/navigation/PaginationNav.astro";
 import CreditsEditableTable from "@components/CreditsEditableTable.astro";
 import { getCreditsPage } from "@lib/getCreditsPage";
+import TableToolbar from "@components/tables/TableToolbar.astro";
+import { undefined } from "astro:schema";
 
 const result = await getCreditsPage(1);
 
@@ -23,16 +25,23 @@ const { credits, courses, users, page, perPage, totalCount, totalPages } =
       <h1>Credits - Page {page}</h1>
       <p class="sub-text">List of all credits from all courses.</p>
     </header>
-    <CreditsEditableTable credits={credits} courses={courses} users={users} />
-    {
-      credits ? (
-        <PaginationNav
-          path="/attendance/admin/credits"
-          page={Number(page)}
-          perPage={perPage}
-          totalCount={totalCount}
-        />
-      ) : null
-    }
+    <div data-layout="content" class="content">
+      <TableToolbar
+        page={page}
+        model="credits"
+        placeholder={"Search credits by user_id, course_id, attended, or timestamp"}
+      />
+      <CreditsEditableTable credits={credits} courses={courses} users={users} />
+      {
+        credits ? (
+          <PaginationNav
+            path="/attendance/admin/credits"
+            page={Number(page)}
+            perPage={perPage}
+            totalCount={totalCount}
+          />
+        ) : null
+      }
+    </div>
   </main>
 </BaseLayout>

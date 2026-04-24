@@ -1,33 +1,17 @@
 ---
-import InputField from "@components/form/InputField.astro";
-import SubmitButton from "@components/form/SubmitButton.astro";
+// components/tables/TableToolbar.astro
+import TableSearchForm from "@components/form/TableSearchForm.astro";
 interface Props {
-  errorTargetId: string;
+  page: number;
+  model: string;
+  placeholder?: string;
 }
 
-const { errorTargetId = `${"users"}-table-field-search-error` } = Astro.props;
+const { model, page, placeholder } = Astro.props;
 ---
 
 <menu>
-  <form
-    id={`${"users"}-search-form`}
-    hx-post={`/partials/${"users"}/search`}
-    hx-target={`#${"users"}-table-body`}
-    hx-target-error={`#${errorTargetId}`}
-    hx-trigger="input changed delay:500ms, keyup[key=='Enter'], load"
-    hx-swap={"innerHTML"}
-    hx-headers='{"X-Partial-Type":"table-row"}'
-    data-status="idle"
-  >
-    <InputField
-      name="search"
-      type={"search"}
-      placeholder="Search by name, email, or phone..."
-      errorId={`${"users"}-table-field-search`}
-    />
-    <SubmitButton text="Search" indicatorText="Searching..." />
-  </form>
-  <button>filter</button>
+  <TableSearchForm model={model} page={page} placeholder={placeholder} />
 </menu>
 
 <style>

@@ -4,17 +4,26 @@ interface Props extends HTMLAttributes<"button"> {
   id?: string;
   text?: string;
   indicatorText?: string;
+  hideText?: boolean;
 }
 const {
   id = "submit-button",
   text = "Submit",
   indicatorText = "Submitting...",
+  hideText = false,
   class: className,
   ...attrs
 } = Astro.props;
 ---
 
-<button type="submit" id={id} class:list={[className]} {...attrs}>
-  <span class="text">{text}</span>
+<button
+  type="submit"
+  title={hideText ? text : ""}
+  id={id}
+  class:list={[className]}
+  {...attrs}
+>
+  <span class:list={["text", hideText ? "hide" : ""]}>{text}</span>
   <span class="submit-indicator">{indicatorText}</span>
+  <slot name="icon" />
 </button>

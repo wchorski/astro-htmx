@@ -1,26 +1,29 @@
 ---
 import { db } from "@db/db";
 import { or, ilike, like } from "drizzle-orm";
-import { User } from "@db/schema";
+import { Course, Location } from "@db/schema";
 import { crud, type CrudRegistryType } from "@lib/crudRegistry";
 import { BadRequestError, errorHandlingOnSubmit } from "@lib/errors";
-import type { UserSelect } from "@ty/Schema";
+import type { CourseSelect } from "@ty/Schema";
 import { handleResult } from "@lib/handleRenderResult";
 import FieldErrors from "@components/mgmt/FieldErrors.partial.astro";
 import FormSuccess from "@components/mgmt/FormSuccess.partial.astro";
 import TopLevelError from "@components/mgmt/TopLevelError.partial.astro";
-import { tableConfigs } from "@lib/tableConfigs";
+import { courseConfigRequired, tableConfigs } from "@lib/tableConfigs";
 import RowView from "@components/tables/RowView.astro";
 import { getUsersPage } from "@lib/getUsersPage";
+import { getCoursesPage } from "@lib/getCoursesPage";
 import { handleQueryResult } from "@lib/handleQueryResult";
 
-let users: UserSelect[] | null | undefined = null;
+const locations = await db.select().from(Location);
+
+let courses: CourseSelect[] | null | undefined = null;
 let error = null;
-const config = tableConfigs.users.required;
+const config = courseConfigRequired(locations);
 const ctx = {
-  crud: "users" as CrudRegistryType,
+  crud: "courses" as CrudRegistryType,
   config,
-  endpoint: "/users",
+  endpoint: "/courses",
   headers: Object.keys(config),
 };
 
@@ -38,24 +41,24 @@ if (Astro.request.method === "POST") {
 
     if (searchQuery) {
       const conditions = [
-        ilike(User.first_name, `%${searchQuery}%`),
-        ilike(User.last_name, `%${searchQuery}%`),
-        ilike(User.email, `%${searchQuery}%`),
+        ilike(Course.subject, `%${searchQuery}%`),
+        ilike(Course.description, `%${searchQuery}%`),
+        ilike(Course.date_civil, `%${searchQuery}%`),
       ];
 
-      if (digitsOnly && digitsOnly.length >= 3) {
-        conditions.push(like(User.phone, `%${digitsOnly}%`));
-      }
+      //   if (digitsOnly && digitsOnly.length >= 3) {
+      //     conditions.push(like(Course.phone, `%${digitsOnly}%`));
+      //   }
 
-      users = await db
+      courses = await db
         .select()
-        .from(User)
+        .from(Course)
         .where(or(...conditions))
         .limit(10);
     } else {
-      // Empty search - return no results (or all users if you prefer)
-      const result = await getUsersPage(page);
-      users = result.users;
+      // Empty search - return no results (or all courses if you prefer)
+      const result = await getCoursesPage(page);
+      courses = result.courses;
     }
   } catch (e) {
     const { err, status } = errorHandlingOnSubmit(e);
@@ -77,11 +80,11 @@ const partialType = Astro.request.headers.get("X-Partial-Type") as
   | undefined;
 if (!partialType) throw new BadRequestError("X-Partial-Type header not set");
 
-const result = handleQueryResult<UserSelect>({
+const result = handleQueryResult<CourseSelect>({
   error,
-  rows: users,
+  rows: courses,
   method: Astro.request.method,
-  emptyMessage: `No matching data found`,
+  emptyMessage: "No user data available",
 });
 ---
 
@@ -102,8 +105,8 @@ const result = handleQueryResult<UserSelect>({
     />
   ) : (
     <>
-      {users && users.length > 0 ? (
-        users.map((entity) => <RowView row={entity} {...ctx} />)
+      {courses && courses.length > 0 ? (
+        courses.map((entity) => <RowView row={entity} {...ctx} />)
       ) : (
         <tr>
           <td colspan="100%" class="callout">

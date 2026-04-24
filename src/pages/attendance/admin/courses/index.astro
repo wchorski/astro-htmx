@@ -5,6 +5,7 @@ import AttendanceAdminNav from "@components/navigation/AttendanceAdminNav.astro"
 import BaseLayout from "@layouts/BaseLayout.astro";
 import { getCoursesPage } from "@lib/getCoursesPage";
 import PaginationNav from "@components/navigation/PaginationNav.astro";
+import TableToolbar from "@components/tables/TableToolbar.astro";
 
 const { WORDPRESS_ENDPOINT } = import.meta.env;
 const result = await getCoursesPage(1);
@@ -26,36 +27,43 @@ const { courses, locations, page, perPage, totalCount, totalPages } = result;
         <a href={WORDPRESS_ENDPOINT + "/events"}>View Wordpress Events</a>
       </div>
     </header>
-    <div class="callout warning">
-      <p>
-        Created/Updated Courses here will create/update an accompanying
-        Wordpress event set as DRAFT. To become viewable on the <a
-          href={WORDPRESS_ENDPOINT + "/wp-admin/edit.php?post_type=event"}
-          >Wordpress site</a
-        >, it must be set to PUBLISH.
-      </p>
-    </div>
-    <hr />
-    {
-      locations.length === 0 ? (
+    <div data-layout="content" class="content">
+      <div class="callout warning">
         <p>
-          No locations set. First create a location on the{" "}
-          <a href="/attendance/admin/locations">locations page</a>
+          Created/Updated Courses here will create/update an accompanying
+          Wordpress event set as DRAFT. To become viewable on the <a
+            href={WORDPRESS_ENDPOINT + "/wp-admin/edit.php?post_type=event"}
+            >Wordpress site</a
+          >, it must be set to PUBLISH.
         </p>
-      ) : (
-        <CoursesEditableTable courses={courses} locations={locations} />
-      )
-    }
+      </div>
+      <hr />
+      <TableToolbar
+        page={page}
+        model="courses"
+        placeholder={"Search by subject, description, or numerical date..."}
+      />
+      {
+        locations.length === 0 ? (
+          <p>
+            No locations set. First create a location on the{" "}
+            <a href="/attendance/admin/locations">locations page</a>
+          </p>
+        ) : (
+          <CoursesEditableTable courses={courses} locations={locations} />
+        )
+      }
 
-    {
-      courses.length > 0 ? (
-        <PaginationNav
-          path="/attendance/admin/courses"
-          page={Number(page)}
-          perPage={perPage}
-          totalCount={totalCount}
-        />
-      ) : null
-    }
+      {
+        courses.length > 0 ? (
+          <PaginationNav
+            path="/attendance/admin/courses"
+            page={Number(page)}
+            perPage={perPage}
+            totalCount={totalCount}
+          />
+        ) : null
+      }
+    </div>
   </main>
 </BaseLayout>

@@ -25,7 +25,7 @@ const { name, endpoint, rawVal, type, options } = Astro.props;
 const prettyVal = (() => {
   switch (true) {
     case name === "id":
-      return rawVal
+      return rawVal;
     case type === "date":
     case type === "datetime-local":
       return name === "dateCivil"
@@ -34,10 +34,7 @@ const prettyVal = (() => {
     case type === "tel":
       return formatPhonePrettyManual(rawVal as string);
     case type === "select":
-      return (
-        options?.find((opt) => String(opt.value) === rawVal)?.label ||
-        ""
-      );
+      return options?.find((opt) => String(opt.value) === rawVal)?.label || "";
 
     default:
       return rawVal;
@@ -47,7 +44,9 @@ const prettyVal = (() => {
 
 {
   name === "id" && endpoint ? (
-    <a href={`${endpoint}/${rawVal}`}>{prettyVal}</a>
+    <a href={`${endpoint}/${rawVal}`} title={String(rawVal)}>
+      {prettyVal}
+    </a>
   ) : type === "datetime-local" ? (
     <time datetime={String(rawVal)}>{prettyVal}</time>
   ) : type === "number" ? (

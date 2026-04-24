@@ -28,7 +28,6 @@ interface Props extends Omit<
 const {
   formId,
   errorId,
-  inputAttrs,
   checked,
   name,
   label,
@@ -38,6 +37,9 @@ const {
   datalist,
   readonly,
   autofocus,
+  // TODO spread this like ...rest and remove rest
+  inputAttrs,
+  ...rest
 } = Astro.props;
 
 if (type === "searchSelect")
@@ -57,7 +59,9 @@ const prettyVal = (() => {
 {
   readonly ? (
     <code class="text" aria-readonly="true">
-      <span class="value">{label ?? name}: {value}</span>
+      <span class="value">
+        {label ?? name}: {value}
+      </span>
       <span id={errorId} style="display: none;">
         {fieldError ?? ""}
       </span>
@@ -67,6 +71,7 @@ const prettyVal = (() => {
       <span class="text">{label ?? name}</span>
       <input
         {...inputAttrs}
+        {...rest}
         autofocus={autofocus}
         form={formId}
         name={name}

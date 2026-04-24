@@ -22,7 +22,11 @@ const { users, page, perPage, totalCount, totalPages } = result;
       <h1>Users - Page {page}</h1>
     </header>
     <div data-layout="content" class="content">
-      <TableToolbar />
+      <TableToolbar
+        page={page}
+        model="users"
+        placeholder={"Search by name, email, or phone..."}
+      />
       <UsersEditableTable users={users} />
       {
         users ? (
