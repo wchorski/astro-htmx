@@ -135,7 +135,7 @@ const anchorName = `--anchor-row-create-error-${crud}` || "--anchor-row";
       hx-post={actionUrl}
       hx-headers='{"X-Partial-Type": "table-row"}'
       hx-target={`#${crud}-table-body`}
-      hx-target-error={`#row-edit-error-${crud}-create`}
+      hx-target-error={`#top-level-error-${crud}-create`}
       hx-swap="beforeend"
     >
     </form>
@@ -173,7 +173,7 @@ const anchorName = `--anchor-row-create-error-${crud}` || "--anchor-row";
       anchorName={anchorName}
       class="row-error error top-level"
     >
-      <span id={`row-edit-error-${crud}-create`}>{topLevelError}</span>
+      <span id={`top-level-error-${crud}-create`}>{topLevelError}</span>
     </AnchoredBox>
   </td>
 </tr>

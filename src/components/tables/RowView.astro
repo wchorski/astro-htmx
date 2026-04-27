@@ -43,7 +43,7 @@ if (!headers.includes("id")) throw new Error("header does not include ID");
 
 const topLevelError = typeof error === "string" ? error : null;
 const anchorName =
-  `--anchor-row-edit-error-${crud}-${row.id}` || "--anchor-row";
+  `--anchor-top-level-error-${crud}-${row.id}` || "--anchor-row";
 ---
 
 <tr
@@ -83,7 +83,7 @@ const anchorName =
           type="button"
           hx-get={editUrl}
           hx-target={`#row-${crud}-${row.id}`}
-          hx-target-error={`#row-edit-error-${crud}-${row.id}`}
+          hx-target-error={`#top-level-error-${crud}-${row.id}`}
           hx-swap="outerHTML"
           hx-headers='{"X-Partial-Type": "table-row"}'
         >
@@ -95,7 +95,7 @@ const anchorName =
           class="btn delete primary danger"
           hx-delete={`/partials/${slugify(crud)}/${row.id}`}
           hx-target={`#row-${crud}-${row.id}`}
-          hx-target-error={`#row-edit-error-${crud}-${row.id}`}
+          hx-target-error={`#top-level-error-${crud}-${row.id}`}
           hx-swap="outerHTML"
           hx-confirm={`Delete this ${crud} ${row.name || row.first_name || row.subject || row.id}?`}
           hx-headers='{"X-Partial-Type": "table-row"}'
@@ -124,11 +124,11 @@ const anchorName =
   }
   <td class="error-cell">
     <AnchoredBox
-      messageId={`row-edit-error-${crud}-${row.id}`}
+      messageId={`top-level-error-${crud}-${row.id}`}
       anchorName={anchorName}
       class="row-error error top-level"
     >
-      <span id={`row-edit-error-${crud}-${row.id}`}>{topLevelError}</span>
+      <span id={`top-level-error-${crud}-${row.id}`}>{topLevelError}</span>
     </AnchoredBox>
   </td>
 </tr>

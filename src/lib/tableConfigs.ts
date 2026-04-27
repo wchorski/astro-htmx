@@ -14,7 +14,7 @@ const { DATALIST_CITIES, DATALIST_STATES, DATALIST_TIMEZONES } = import.meta
 const userRequiredConfig = {
   id: {
     label: "ID",
-    type: "number",
+    type: "text",
     required: true,
     readonly: true,
   },
@@ -75,9 +75,27 @@ const userRequiredConfig = {
     })),
   },
   zip: {
-    type: "number",
+    type: "text",
     required: true,
     placeholder: "50505...",
+  },
+} as FieldConfig<BaseRow>;
+
+export const userCreditCheckInConfig = {
+  course_id: {
+    label: "Course ID",
+    type: "hidden",
+    required: true,
+  },
+  user_id: {
+    label: "User ID",
+    type: "text"
+  },
+  email: {
+    type: "email",
+  },
+  phone: {
+    type: "tel",
   },
 } as FieldConfig<BaseRow>;
 
@@ -86,7 +104,7 @@ export const courseConfigRequired = (locations: LocationSelect[]) =>
   ({
     id: {
       label: "ID",
-      type: "number",
+      type: "text",
       required: true,
       readonly: true,
     },
@@ -125,13 +143,13 @@ export const courseConfigRequired = (locations: LocationSelect[]) =>
 const courseCreditsRequiredConfig = {
   id: {
     label: "ID",
-    type: "number",
+    type: "text",
     required: true,
     readonly: true,
   },
   user_id: {
     label: "User ID",
-    type: "number",
+    type: "text",
     required: true,
     readonly: true,
   },
@@ -185,7 +203,7 @@ const courseCreditsRequiredConfig = {
   },
   zip: {
     label: "zip",
-    type: "number",
+    type: "text",
   },
   attended: {
     label: "attended",
@@ -200,7 +218,7 @@ export const creditConfigRequired = (
   ({
     id: {
       label: "ID",
-      type: "number",
+      type: "text",
       required: true,
       readonly: true,
     },
@@ -248,7 +266,7 @@ export const creditConfigRequired = (
 const locationRequiredConfig = {
   id: {
     label: "ID",
-    type: "number",
+    type: "text",
     required: true,
     readonly: true,
   },
@@ -281,7 +299,7 @@ const locationRequiredConfig = {
     })),
   },
   zip: {
-    type: "number",
+    type: "text",
     required: true,
     placeholder: "50505",
   },

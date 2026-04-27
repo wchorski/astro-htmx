@@ -132,7 +132,7 @@ if (error && typeof error === "object" && "fieldErrors" in error) {
       id={"create"}
       headers={ctx.headers}
       errors={result.errors}
-      crud={ctx.crud}
+      model={ctx.crud}
     />
   ) : result.kind === "top-error" ? (
     <TopLevelError

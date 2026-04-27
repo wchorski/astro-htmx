@@ -40,7 +40,7 @@ describe("RowEdit - structure", () => {
     expect(result).toContain(`hx-patch="/partials/users/${user.id}"`);
     expect(result).toContain(`hx-target="#row-${user.id}"`);
     expect(result).toContain(
-      `hx-target-error="#row-edit-error-${baseProps.crud}-${user.id}"`,
+      `hx-target-error="#top-level-error-${baseProps.crud}-${user.id}"`,
     );
     expect(result).toContain('hx-swap="outerHTML"');
   });
@@ -62,13 +62,13 @@ describe("RowEdit - structure", () => {
 
   test("renders error row placeholder", () => {
     expect(result).toContain(
-      `id="row-edit-error-${baseProps.crud}-${user.id}"`,
+      `id="top-level-error-${baseProps.crud}-${user.id}"`,
     );
     expect(result).toContain('class="row-error error top-level"');
   });
 
   test("does not render error content when error is null", () => {
-    expect(result).toMatch(/id="row-edit-error-users-1"[^>]*><\/div>/);
+    expect(result).toMatch(/id="top-level-error-users-1"[^>]*><\/div>/);
   });
 });
 
@@ -106,7 +106,7 @@ describe("RowEdit - error states", () => {
     });
 
     expect(html).toContain("Name is required");
-    expect(html).toMatch(/id="row-edit-error-users-1"[^>]*><\/div>/);
+    expect(html).toMatch(/id="top-level-error-users-1"[^>]*><\/div>/);
   });
 });
 

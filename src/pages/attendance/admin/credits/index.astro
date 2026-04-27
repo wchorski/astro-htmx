@@ -29,7 +29,7 @@ const { credits, courses, users, page, perPage, totalCount, totalPages } =
       <TableToolbar
         page={page}
         model="credits"
-        placeholder={"Search credits by user_id, course_id, attended, or timestamp"}
+        placeholder={"Search credits by user:NAME, course:SUBJECT"}
       />
       <CreditsEditableTable credits={credits} courses={courses} users={users} />
       {

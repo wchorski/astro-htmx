@@ -1,164 +1,117 @@
 ---
+// components/MemberSearchForm.astro
 import BarcodeScanner from "./BarcodeScanner.astro";
-import type { CourseInsert, UserInsert } from "@ty/Schema";
+import type { CourseSelect, UserSelect } from "@ty/Schema";
+import InputField from "./form/InputField.astro";
+import SubmitButton from "./form/SubmitButton.astro";
+import { userCreditCheckInConfig } from "@lib/tableConfigs";
 interface Props {
-  course: CourseInsert;
+  course: CourseSelect;
   formId?: string;
-  member?: UserInsert;
+  user?: UserSelect;
 }
-const { course, member, formId = "users-search-form" } = Astro.props;
-const errorTargetId = `${formId}-errors`;
+const { course, user, formId = "check-in-form" } = Astro.props;
+// const errorTargetId = `${formId}-errors`;
 const responseTargetId = `${formId}-response`;
+
+const model = "users";
+
+const config = userCreditCheckInConfig;
 ---
 
-<div id={responseTargetId} class="form-response-target"></div>
-
 <form
-  id={formId}
-  class="card"
+  id={responseTargetId}
+  class="card edit-page"
   hx-ext="response-targets"
   hx-post="/partials/users-search-submit"
   hx-target={`#${responseTargetId}`}
-  hx-target-error={`#${errorTargetId}`}
-  hx-vals={JSON.stringify({ formId })}
-  hx-swap="innerHTML"
+  hx-target-error={`#top-level-error-${model}-${formId}`}
+  hx-swap="outerHTML"
   data-status="idle"
 >
-  <caption>Users Search</caption>
+  <legend>Find A User</legend>
   <!-- <div id={errorTargetId}></div> -->
 
   <!-- TODO make hidden field (or grab it from url in submit.astro partial) -->
   <div class="form-field">
-    <label>
-      Course ID:
-      <input
-        type="number"
-        name="course_id"
-        id={`${formId}-courseId`}
-        value={course.id}
-        required
-      />
-    </label>
-    <span class="field-error" id={`${formId}-error-courseId`}></span>
+    <InputField
+      label="Course ID"
+      name="course_id"
+      type={"hidden"}
+      value={course.id}
+      model={model}
+      id={formId}
+      required
+    />
   </div>
 
   <fieldset>
+    <legend>by ID</legend>
     <div class="flex gap-m">
-      <label class="form-field">
-        <span class="text">User Id</span>
-
-        <input
-          type="number"
-          name="user_id"
-          id={`${formId}-userId`}
-          value={member?.id}
-        />
-        <span class="field-error" id={`${formId}-error-userId`}></span>
-      </label>
+      <InputField
+        label="User ID"
+        name="user_id"
+        type={'text'}
+        value={user ? user.id : undefined}
+        model={model}
+        id={formId}
+      />
 
       <BarcodeScanner />
     </div>
-
-    - or -
-
-    <label class="form-field">
-      <div>
-        <span class="text">Phone</span>
-        |
-        <span class="example">example: 123-456-7890</span>
-      </div>
-      <input
-        type="tel"
-        name="phone"
-        id={`${formId}-phone`}
-        value={member?.phone}
-      />
-      <span class="field-error" id={`${formId}-error-phone`}></span>
-    </label>
-
-    - or -
-
-    <label class="form-field">
-      <span class="text">Email</span>
-      <input
-        type="email"
-        name="email"
-        id={`${formId}-email`}
-        value={member?.email}
-      />
-      <span class="field-error" id={`${formId}-error-email`}></span>
-    </label>
   </fieldset>
 
-  <button type="submit">
-    <span class="button-text">Search for User</span>
-    <span class="htmx-indicator">Submitting...</span>
-  </button>
+  <fieldset class="separator">
+    <legend>OR</legend>
+  </fieldset>
+
+  <fieldset>
+    <legend>by Phone Number</legend>
+    <InputField
+      label={"Phone | example: 123-456-7890"}
+      name="phone"
+      value={user ? user.phone : undefined}
+      model={model}
+      type={'tel'}
+      id={formId}
+    />
+  </fieldset>
+
+  <fieldset class="separator">
+    <legend>OR</legend>
+  </fieldset>
+
+  <fieldset>
+    <legend>by Email</legend>
+    <InputField
+      name="email"
+      value={user ? user.email : undefined}
+      model={model}
+      type={'email'}
+      id={formId}
+    />
+  </fieldset>
+
+  <fieldset class="actions">
+    <div class="row-error error top-level">
+      <p class="message">
+        <span id={`top-level-error-${model}-${formId}`}></span>
+      </p>
+    </div>
+    <SubmitButton text="Search for User" indicatorText="Searching..." />
+  </fieldset>
 </form>
 
-<style>
-  .form-field:has(.field-error:not(:empty)) {
-    border-style: dotted;
-    border-width: 1px;
-    border-color: red;
-    border-inline-start-width: 5px;
-    border-inline-start-style: solid;
-  }
-
-  form .htmx-indicator {
-    display: none;
-    animation: fadeIn 0.1s;
-  }
-
-  form .htmx-request {
-    & .button-text {
-      display: none;
-    }
-
-    & .htmx-indicator {
-      display: inline;
-      /* Force minimum display time even if request is fast */
-      animation:
-        fadeIn 0.1s,
-        stay 3s;
-    }
-  }
-
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-
-  @keyframes stay {
-    from,
-    to {
-      opacity: 1;
-    }
-  }
-
-  .form-response-target:has(.success-state) + form {
-    & :global(.form-field) {
-      border: none;
-    }
-    & :global(.field-error) {
-      display: none;
-    }
-  }
-</style>
-
 <script>
-
   // TODO do i even need this below?
-  document.addEventListener("htmx:afterRequest", function (evt: CustomEvent) {
-    const form = evt.detail.elt;
+  document.addEventListener("htmx:afterRequest", (evt) => {
+    // const form = evt.detail.elt;
+    // @ts-ignore
+    const { form, successful } = evt.detail;
 
-    if (!form.classList.contains("users-search-form")) return;
+    // if (!form.classList.contains("users-search-form")) return;
 
-    if (evt.detail.successful) {
+    if (successful) {
       const formId = form.id;
 
       // Clear field errors scoped to this form
@@ -212,3 +165,10 @@ const responseTargetId = `${formId}-response`;
   //   inputs.forEach((i) => i.addEventListener("input", inputListener));
   // });
 </script>
+
+<style>
+  fieldset:not(.separator) {
+    border: none;
+    padding: 0;
+  }
+</style>

@@ -3,6 +3,11 @@ import { normalizePhoneToE164Manual } from "./formatters";
 
 export const validate = {
   id: z.string(),
+  phone: z
+    .string()
+    .trim()
+    .transform((val) => normalizePhoneToE164Manual(val))
+    .refine((val) => val !== null, "Phone must be 10 digits or E.164 format"),
 
   // TODO i should prob use .strict() where i can as a lot of these data inputs usually contain all fields type
   user: z.object({

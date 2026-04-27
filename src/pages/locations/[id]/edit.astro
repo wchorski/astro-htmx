@@ -26,7 +26,11 @@ import SubmitButton from "@components/form/SubmitButton.astro";
 
 const { id } = Astro.params;
 if (!id) throw new Error("no id found. throw 404");
-const [row] = await db.select().from(Location).where(eq(Location.id, id)).limit(1);
+const [row] = await db
+  .select()
+  .from(Location)
+  .where(eq(Location.id, id))
+  .limit(1);
 
 if (!row) return Astro.redirect("/404");
 
@@ -38,16 +42,19 @@ const { DATALIST_CITIES, DATALIST_STATES, DATALIST_TIMEZONES } = import.meta
 // const {} = row;
 
 // const config = courseConfigRequired(locations);
-const config = tableConfigs.locations.required
+const config = tableConfigs.locations.required;
 
 const headers = Object.keys(config) as (keyof typeof row & string)[];
 const error = null;
 const submitUrl = `/partials/locations/${row.id}`;
+const model = "locations";
 ---
 
 <PageEditorWithSidebarLayout>
   <nav>
-    <a href="#" onclick="history.back(); return false;">← Return to previous page</a>
+    <a href="#" onclick="history.back(); return false;"
+      >← Return to previous page</a
+    >
   </nav>
   <main>
     <header>
@@ -61,7 +68,7 @@ const submitUrl = `/partials/locations/${row.id}`;
         hx-patch={submitUrl}
         hx-headers='{"X-Partial-Type": "single-page"}'
         hx-target="#submit-button"
-        hx-target-error={`#row-edit-error-${"locations"}-${row.id}`}
+        hx-target-error={`#top-level-error-${"locations"}-${row.id}`}
         hx-swap="outerHTML"
         hx-disabled-elt="button, form"
         hx-indicator="#submit-button"
@@ -76,7 +83,7 @@ const submitUrl = `/partials/locations/${row.id}`;
                 ? (error as any).fieldErrors[key]?.[0]
                 : null;
             const autofocus = i === 0;
-            const fieldErrorId = `field-error-${"users"}-${row.id}-${key}`
+            const fieldErrorId = `field-error-${"users"}-${row.id}-${key}`;
 
             switch (field.type) {
               case "select": {
@@ -147,7 +154,8 @@ const submitUrl = `/partials/locations/${row.id}`;
                     {...inputAttrs}
                     autofocus={autofocus}
                     formId={`edit-form-${row.id}`}
-                    errorId={fieldErrorId}
+                    model={model}
+                    id={id}
                     name={key}
                     label={label}
                     type="checkbox"
@@ -170,7 +178,8 @@ const submitUrl = `/partials/locations/${row.id}`;
                     {...inputAttrs}
                     autofocus={autofocus}
                     formId={`edit-form-${row.id}`}
-                    errorId={fieldErrorId}
+                    model={model}
+                    id={id}
                     name={key}
                     label={label}
                     type={type}
@@ -187,7 +196,7 @@ const submitUrl = `/partials/locations/${row.id}`;
         <fieldset class="actions">
           <div class="row-error error top-level">
             <p class="message">
-              <span id={`row-edit-error-${"locations"}-${row.id}`}></span>
+              <span id={`top-level-error-${"locations"}-${row.id}`}></span>
             </p>
           </div>
           <SubmitButton

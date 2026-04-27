@@ -124,7 +124,7 @@ if (error && typeof error === "object" && "fieldErrors" in error) {
   result.kind === "field-error" ? (
     <FieldErrors
       id={id}
-      crud={ctx.crud}
+      model={ctx.crud}
       headers={ctx.headers}
       errors={result.errors}
     />

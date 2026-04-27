@@ -17,7 +17,7 @@ const {} = Astro.props;
     </div>
     <button
       type="button"
-      class="btn btn-primary"
+      class="btn"
       data-action="start"
       popovertarget="scanner-dialog">Scan Barcode</button
     >
@@ -53,7 +53,7 @@ const {} = Astro.props;
     <div class="button-group">
       <button
         popovertarget="scanner-dialog"
-        class="btn btn-primary"
+        class="btn"
         data-action="start"
       >
         Scan Again
@@ -377,16 +377,6 @@ const {} = Astro.props;
 
   .btn:active {
     transform: scale(0.98);
-  }
-
-  .btn-primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-  }
-
-  .btn-primary:hover {
-    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
   }
 
   .video-container {

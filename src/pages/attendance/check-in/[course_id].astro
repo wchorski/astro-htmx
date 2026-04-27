@@ -11,11 +11,12 @@ import { prettyPlainCivilDateFull } from "@lib/formatters";
 
 export const prerender = false; // Not needed in 'server' mode
 const { course_id } = Astro.params;
-if (!course_id) throw new Error("no id found. throw 404");
+
+if (!course_id) throw new Error("no course_id found. throw 404");
 const [course] = await db
   .select()
   .from(Course)
-  .where(eq(Course.id, Number(course_id)))
+  .where(eq(Course.id, course_id))
   .limit(1);
 if (!course) return Astro.redirect("/404");
 
@@ -32,9 +33,9 @@ const { subject, timestamp, description, date_civil } = course;
 <BaseLayout>
   <main>
     <header>
+      <p class="sub-text">Check-In for</p>
       <h1>
-        Check-In for {subject}
-        <span class="course-id">({course_id})</span>
+        {subject}
       </h1>
       <div class="flex space-between">
         <address>
@@ -72,15 +73,11 @@ const { subject, timestamp, description, date_civil } = course;
         </p>
       </div>
       <p class="description">{description}</p>
+      <hr />
     </header>
-
-    <hr />
-    <!-- <ClassForm course={foundCourse} /> -->
-    <!-- <CreditForm course={foundCourse} /> -->
-    <!-- TODO debug remove later -->
-    <!-- <CreditsForm courseId={foundCourse.id} /> -->
-
-    <MembersSearchForm course={course} />
+    <div data-layout="content" class="content">
+      <MembersSearchForm course={course} />
+    </div>
   </main>
 </BaseLayout>
 
@@ -93,5 +90,9 @@ const { subject, timestamp, description, date_civil } = course;
   time.real {
     color: grey;
     font-size: 0.7rem;
+  }
+  [data-layout="content"] {
+    display: grid;
+    gap: 1rem;
   }
 </style>

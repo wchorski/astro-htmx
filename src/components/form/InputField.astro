@@ -14,8 +14,10 @@ interface Props extends Omit<
   "type" | "value" | "checked" | "name"
 > {
   formId?: string;
-  errorId: string;
+  // errorId: string;
+  id: string;
   name: string;
+  model: string;
   label?: string;
   type?: InputFieldType | null;
   value?: string;
@@ -27,7 +29,9 @@ interface Props extends Omit<
 
 const {
   formId,
-  errorId,
+  id,
+  model,
+  // errorId,
   checked,
   name,
   label,
@@ -54,6 +58,8 @@ const prettyVal = (() => {
       return value;
   }
 })();
+
+const errorId = `field-error-${model}-${id}-${name}`;
 ---
 
 {
@@ -67,7 +73,7 @@ const prettyVal = (() => {
       </span>
     </code>
   ) : (
-    <label>
+    <label class="form-field">
       <span class="text">{label ?? name}</span>
       <input
         {...inputAttrs}

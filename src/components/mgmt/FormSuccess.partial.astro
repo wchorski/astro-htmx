@@ -45,7 +45,7 @@ const { entity, method, partialType, ctx } = Astro.props as Props;
           indicatorText="Updating..."
         />
         <span
-          id={`row-edit-error-${ctx.crud}-${entity.id}`}
+          id={`top-level-error-${ctx.crud}-${entity.id}`}
           hx-swap-oob="outerHTML"
         />
         {ctx.headers.map((fieldName) => (

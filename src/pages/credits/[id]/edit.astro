@@ -48,6 +48,7 @@ const config = creditConfigRequired(users, courses);
 const headers = Object.keys(config) as (keyof typeof row & string)[];
 const error = null;
 const submitUrl = `/partials/credits/${row.id}`;
+const model = "credits";
 ---
 
 <PageEditorWithSidebarLayout>
@@ -72,7 +73,7 @@ const submitUrl = `/partials/credits/${row.id}`;
         hx-patch={submitUrl}
         hx-headers='{"X-Partial-Type": "single-page"}'
         hx-target="#submit-button"
-        hx-target-error={`#row-edit-error-${"credits"}-${row.id}`}
+        hx-target-error={`#top-level-error-${"credits"}-${row.id}`}
         hx-swap="outerHTML"
         hx-disabled-elt="button, form"
         hx-indicator="#submit-button"
@@ -158,7 +159,8 @@ const submitUrl = `/partials/credits/${row.id}`;
                     {...inputAttrs}
                     autofocus={autofocus}
                     formId={`edit-form-${row.id}`}
-                    errorId={fieldErrorId}
+                    model={model}
+                    id={id}
                     name={key}
                     label={label}
                     type="checkbox"
@@ -181,7 +183,8 @@ const submitUrl = `/partials/credits/${row.id}`;
                     {...inputAttrs}
                     autofocus={autofocus}
                     formId={`edit-form-${row.id}`}
-                    errorId={fieldErrorId}
+                    model={model}
+                    id={id}
                     name={key}
                     label={label}
                     type={type}
@@ -198,7 +201,7 @@ const submitUrl = `/partials/credits/${row.id}`;
         <fieldset class="actions">
           <div class="row-error error top-level">
             <p class="message">
-              <span id={`row-edit-error-${"credits"}-${row.id}`}></span>
+              <span id={`top-level-error-${"credits"}-${row.id}`}></span>
             </p>
           </div>
           <SubmitButton

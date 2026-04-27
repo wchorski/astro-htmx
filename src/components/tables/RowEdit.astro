@@ -48,7 +48,7 @@ const autofocusIndex = Object.values(config).findIndex(
 );
 
 const anchorName =
-  `--anchor-row-edit-error-${crud}-${row.id}` || "--anchor-row";
+  `--anchor-top-level-error-${crud}-${row.id}` || "--anchor-row";
 ---
 
 <tr id={`row-${crud}-${row.id}`} data-status="editing">
@@ -139,7 +139,8 @@ const anchorName =
                 {...inputAttrs}
                 autofocus={autofocus}
                 formId={`edit-form-${row.id}`}
-                errorId={`field-error-${crud}-${row.id}-${key}`}
+                model={crud}
+                id={row.id}
                 name={key}
                 label={label}
                 type="checkbox"
@@ -164,7 +165,8 @@ const anchorName =
                 {...inputAttrs}
                 autofocus={autofocus}
                 formId={`edit-form-${row.id}`}
-                errorId={`field-error-${crud}-${row.id}-${key}`}
+                model={crud}
+                id={row.id}
                 name={key}
                 label={label}
                 type={type}
@@ -186,7 +188,7 @@ const anchorName =
       hx-patch={submitUrl}
       hx-headers='{"X-Partial-Type": "table-row"}'
       hx-target={`#row-${crud}-${row.id}`}
-      hx-target-error={`#row-edit-error-${crud}-${row.id}`}
+      hx-target-error={`#top-level-error-${crud}-${row.id}`}
       hx-swap="outerHTML"
     >
     </form>
@@ -205,7 +207,7 @@ const anchorName =
       class="cancel"
       hx-get={`/partials/${slugify(crud)}/${row.id}`}
       hx-target={`#row-${crud}-${row.id}`}
-      hx-target-error={`#row-edit-error-${crud}-${row.id}`}
+      hx-target-error={`#top-level-error-${crud}-${row.id}`}
       hx-swap="innerHTML"
       hx-headers='{"X-Partial-Type": "table-row"}'
     >
@@ -214,11 +216,11 @@ const anchorName =
   </td>
   <td class="error-cell">
     <AnchoredBox
-      messageId={`row-edit-error-${crud}-${row.id}`}
+      messageId={`top-level-error-${crud}-${row.id}`}
       anchorName={anchorName}
       class="row-error error top-level"
     >
-      <span id={`row-edit-error-${crud}-${row.id}`}>{topLevelError}</span>
+      <span id={`top-level-error-${crud}-${row.id}`}>{topLevelError}</span>
     </AnchoredBox>
   </td>
 </tr>

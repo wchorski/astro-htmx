@@ -30,4 +30,3 @@ export function handleResult<T>(opts: {
 
   return { kind: "top-error", message: emptyMessage };
 }
-``;

@@ -8,25 +8,25 @@ type FlattenedZodError = ReturnType<ZodError["flatten"]>;
 interface Props {
   id: string;
   headers: string[];
-  crud: CrudRegistryType;
+  model: CrudRegistryType;
   errors: FlattenedZodError;
 }
-const { id, crud, headers, errors } = Astro.props;
+const { id, model, headers, errors } = Astro.props;
+const fieldId = (name: string) => `field-error-${model}-${id}-${name}`;
 ---
 
 <>
   {
-    headers.map((fieldName) => (
+    headers.map((name) => (
       <span
-        id={`field-error-${crud}-${id}-${fieldName}`}
+        id={fieldId(name)}
         hx-swap-oob="outerHTML"
         class="anim-vibrate field-error"
       >
-        {errors.fieldErrors?.[
-          fieldName as keyof typeof errors.fieldErrors
-        ]?.[0] ?? ""}
+        {errors.fieldErrors?.[name as keyof typeof errors.fieldErrors]?.[0] ??
+          ""}
       </span>
     ))
   }
-  <span id={`row-edit-error-${crud}-${id}`} hx-swap-oob="outerHTML"></span>
+  <span id={`top-level-error-${model}-${id}`} hx-swap-oob="outerHTML"></span>
 </>

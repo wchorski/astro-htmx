@@ -1,4 +1,5 @@
 import { ZodError } from "astro:schema";
+import { z } from 'astro/zod'
 // import { LibsqlError } from "@libsql/client";
 import { DrizzleQueryError } from "drizzle-orm/errors";
 
@@ -6,7 +7,7 @@ import { DrizzleQueryError } from "drizzle-orm/errors";
 // 422
 export class ValidationError<T> extends Error {
   flattened: ReturnType<ZodError["flatten"]>;
-  constructor(flattened: ReturnType<ZodError["flatten"]>) {
+  constructor(flattened: z.core.$ZodFlattenedError<T>) {
     super("Validation failed");
     this.name = "ValidationError";
     this.flattened = flattened;
@@ -60,7 +61,7 @@ export function throwErrorsForCRUD(e: unknown): never {
     throw e;
   }
 
-  if (e instanceof ZodError) throw new ValidationError(e.flatten());
+  if (e instanceof ZodError) throw new ValidationError(z.flattenError(e));
 
   // TODO falls apart if using a different database. look into using `isUniqueConstraintError`
   // if (
@@ -157,7 +158,7 @@ export function errorHandlingOnSubmit(e: unknown): {
     return { status: 409, err: e.message };
   }
   if (e instanceof ZodError) {
-    return { err: e.flatten(), status: 422 };
+    return { err: z.flattenError(e), status: 422 };
   }
   if (e instanceof ValidationError) {
     return { status: 422, err: e.flattened };

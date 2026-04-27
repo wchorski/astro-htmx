@@ -45,7 +45,7 @@ if (Astro.request.method === "GET") {
 {
   error ? (
     <div
-      id={`row-edit-error-${ctx.crud}-${id}`}
+      id={`top-level-error-${ctx.crud}-${id}`}
       class="row-error callout error top-level"
     >
       {typeof error === "string" ? error : JSON.stringify(error)}

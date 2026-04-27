@@ -72,7 +72,7 @@ const result = handleResult<CreditSelect>({
       id={"create"}
       headers={ctx.headers}
       errors={result.errors}
-      crud={ctx.crud}
+      model={ctx.crud}
     />
   ) : result.kind === "top-error" ? (
     <TopLevelError
