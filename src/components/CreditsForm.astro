@@ -1,318 +1,50 @@
 ---
 import { User } from "@db/schema";
 import type { UserSelect } from "@ty/Schema";
+import InputField from "./form/InputField.astro";
+import SubmitButton from "./form/SubmitButton.astro";
+import type { HTMLAttributes } from "astro/types";
+import { formatPhonePrettyManual } from "@lib/formatters";
 
-interface Props {
+interface Props extends HTMLAttributes<"form"> {
   course_id: string;
-  user?: UserSelect;
+  user: UserSelect;
   formId?: string;
 }
-const { course_id, user, formId = "credits-form" } = Astro.props;
-const errorTargetId = `${formId}-errors`;
-const responseTargetId = `${formId}-response`;
-console.log({ course_id, user, formId });
+const {
+  course_id,
+  user,
+  formId = "check_in_credits",
+  class: classList,
+  ...attr
+} = Astro.props;
+const model = "credits";
+const errorTargetId = `top-level-error-${model}-${formId}`;
+console.log({errorTargetId});
 ---
-
-<div id={responseTargetId} class="form-response-target"></div>
 
 <form
   id={formId}
-  class="credits-form card"
+  class:list={[classList, "credits-form"]}
   hx-ext="response-targets"
-  hx-post="/partials/credits-submit"
-  hx-target={`#${responseTargetId}`}
+  hx-post={`/partials/check-in/${course_id}/${user.id}`}
+  hx-target={`#${formId}`}
   hx-target-error={`#${errorTargetId}`}
-  hx-vals={JSON.stringify({ formId })}
-  hx-swap="innerHTML"
+  hx-swap="outerHTML"
 >
-  <legend>Confirm Credits Form</legend>
-  <!-- TODO remove id not needed -->
-  <div id="credits-form-response"></div>
+  <legend>Confirm Credit For</legend>
+  <ul>
+    <li>{user.first_name} {user.middle_initial} {user.last_name}</li>
+    <li>{formatPhonePrettyManual(user.phone)}</li>
+    <li>{user.email}</li>
+  </ul>
 
-  <label class="form-field">
-    <span class="text">Course ID</span>
-    <input
-      type="hidden"
-      name="course_id"
-      aria-describedby={`${formId}-error-course_id`}
-      id={`${formId}-courseId`}
-      value={course_id}
-      readonly
-      required
-    />
-    <span class="field-error" id={`${formId}-error-course_id`}></span>
-  </label>
-
-  <fieldset>
-    <legend>Contact</legend>
-    <label class="form-field">
-      <span class="text">Email</span>
-      <input
-        type="email"
-        name="email"
-        aria-describedby={`${formId}-error-email`}
-        id={`${formId}-email`}
-        value={user?.email}
-        required
-      />
-      <span class="field-error" id={`${formId}-error-email`}></span>
-    </label>
-
-    <label class="form-field">
-      <span class="text">Phone</span>
-      <input
-        type="tel"
-        name="phone"
-        aria-describedby={`${formId}-error-phone`}
-        id={`${formId}-phone`}
-        value={user?.phone}
-        required
-      />
-      <span class="field-error" id={`${formId}-error-phone`}></span>
-    </label>
+  <fieldset class="actions">
+    <div class="row-error error top-level">
+      <p class="message">
+        <span id={errorTargetId}></span>
+      </p>
+    </div>
+    <SubmitButton text="Confirm Credit" />
   </fieldset>
-
-  <fieldset>
-    <legend>Personal Info</legend>
-
-    <label class="form-field">
-      <span class="text">First Name</span>
-      <input
-        type="text"
-        name="first_name"
-        aria-describedby={`${formId}-error-first_name`}
-        id={`${formId}-phone`}
-        value={user?.first_name}
-        required
-      />
-      <span class="field-error" id={`${formId}-error-first_name`}></span>
-    </label>
-
-    <label class="form-field">
-      <span class="text">Last Name</span>
-      <input
-        type="text"
-        name="last_name"
-        aria-describedby={`${formId}-error-last_name`}
-        id={`${formId}-last_name`}
-        value={user?.last_name}
-        required
-      />
-      <span class="field-error" id={`${formId}-error-last_name`}></span>
-    </label>
-
-    <label class="form-field">
-      <span class="text">Middle Initial</span>
-      <input
-        type="text"
-        name="middle_initial"
-        aria-describedby={`${formId}-error-middle_inital`}
-        id={`${formId}-middle_initial`}
-        value={user?.middle_initial}
-      />
-      <span class="field-error" id={`${formId}-error-middle_initial`}></span>
-    </label>
-  </fieldset>
-
-  <fieldset>
-    <legend>Residence</legend>
-    <label class="form-field">
-      <span class="text">Address Number and Street</span>
-      <input
-        type="text"
-        name="address_1"
-        aria-describedby={`${formId}-error-address_1`}
-        id={`${formId}-address_1`}
-        value={user?.address_1}
-        required
-      />
-      <span class="field-error" id={`${formId}-error-address_1`}></span>
-    </label>
-
-    <label class="form-field">
-      <span class="text">P.O. Box</span>
-      <input
-        type="text"
-        name="address_2"
-        aria-describedby={`${formId}-error-address_2`}
-        id={`${formId}-address_2`}
-        value={user?.address_2}
-      />
-      <span class="field-error" id={`${formId}-error-address_2`}></span>
-    </label>
-
-    <label class="form-field">
-      <span class="text">City/Town</span>
-      <input
-        type="text"
-        list="cities"
-        name="city"
-        id="city"
-        value={user?.city}
-        required
-      />
-      <datalist id="cities">
-        <option value="Countryside">Countryside</option>
-        <option value="Joliet">Joliet</option>
-        <option value="Rockford">Rockford</option>
-        <option value="Rock Island">Rock Island</option>
-        <option value="Utica">Utica</option>
-        <option value="Lakeville">Lakeville</option>
-        <option value="Lakemoor">Lakemoor</option>
-        <option value="Merville">Merville</option>
-      </datalist>
-    </label>
-
-    <label class="form-field">
-      <span class="text">State</span>
-      <input
-        type="text"
-        list="states"
-        name="state"
-        id="state"
-        value={user?.state}
-        required
-      />
-      <datalist id="states">
-        <option value="Illinois">Illinois</option>
-        <option value="Indiana">Indiana</option>
-        <option value="Iowa">Iowa</option>
-      </datalist>
-    </label>
-
-    <label class="form-field">
-      <span class="text">ZIP</span>
-      <input type="number" name="zip" value={user?.zip} required />
-    </label>
-  </fieldset>
-
-  <button type="submit">
-    <span class="button-text">Confirm Course Credit</span>
-    <span class="htmx-indicator">Submitting...</span>
-  </button>
 </form>
-
-<style>
-  /* Base styles for form fields */
-  /* .credits-form .form-field {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 1rem;
-  } */
-
-  /* Grid container for fieldsets */
-  .credits-form fieldset {
-    display: grid;
-    gap: 1rem;
-  }
-
-  /* Grid for Email & Phone (2 columns) */
-  .credits-form fieldset > .form-field:nth-child(1),
-  .credits-form fieldset > .form-field:nth-child(2) {
-    grid-column: span 1;
-  }
-
-  /* Grid for First Name, Last Name, Middle Initial (3 columns) */
-  .credits-form fieldset > .form-field:nth-child(n + 3):nth-child(-n + 5) {
-    grid-column: span 1;
-  }
-
-  /* General grid rules to make responsive without media queries */
-  .credits-form fieldset {
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  }
-
-  .form-field:has(.field-error:not(:empty)) {
-    border-style: dotted;
-    border-width: 1px;
-    border-color: red;
-    border-inline-start-width: 5px;
-    border-inline-start-style: solid;
-  }
-
-  form .htmx-indicator {
-    display: none;
-    animation: fadeIn 0.1s;
-  }
-
-  form .htmx-request {
-    & .button-text {
-      display: none;
-    }
-
-    & .htmx-indicator {
-      display: inline;
-      /* Force minimum display time even if request is fast */
-      animation:
-        fadeIn 0.1s,
-        stay 3s;
-    }
-  }
-
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-
-  @keyframes stay {
-    from,
-    to {
-      opacity: 1;
-    }
-  }
-
-  .form-response-target {
-    scroll-margin-top: 10rem;
-  }
-  .form-response-target:has(.success-state) + form {
-    & :global(.form-field) {
-      border: none;
-    }
-    & :global(.field-error) {
-      display: none;
-    }
-  }
-</style>
-
-<script>
-  // @ts-ignore
-  document.body.addEventListener("htmx:afterSwap", (evt: CustomEvent) => {
-    // @ts-ignore
-    if (evt.target.id === "credits-form-response") {
-      // @ts-ignore
-      document
-        .getElementById("credits-form-response")
-        .scrollIntoView({ behavior: "smooth" });
-    }
-  });
-
-  // TODO do i even need this below?
-  // Use event delegation to handle all credits forms on the page
-  document.addEventListener("htmx:afterRequest", function (evt: CustomEvent) {
-    const form = evt.detail.elt;
-
-    // Only process if this is a credits form
-    if (!form.classList.contains("credits-form")) return;
-
-    if (evt.detail.successful) {
-      const formId = form.id;
-
-      // Clear field errors scoped to this form
-      form.querySelectorAll(".field-error").forEach((el: Element) => {
-        (el as HTMLElement).textContent = "";
-      });
-
-      // Clear form errors div for this specific form
-      const errorTargetId = `${formId}-errors`;
-      const formErrors = document.getElementById(errorTargetId);
-      if (formErrors) formErrors.innerHTML = "";
-
-      // Reset the form
-      (form as HTMLFormElement).reset();
-    }
-  });
-</script>

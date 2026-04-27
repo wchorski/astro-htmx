@@ -11,9 +11,7 @@ interface Props {
   user?: UserSelect;
 }
 const { course, user, formId = "check-in-form" } = Astro.props;
-// const errorTargetId = `${formId}-errors`;
 const responseTargetId = `${formId}-response`;
-
 const model = "users";
 
 const config = userCreditCheckInConfig;
@@ -23,27 +21,13 @@ const config = userCreditCheckInConfig;
   id={responseTargetId}
   class="card edit-page"
   hx-ext="response-targets"
-  hx-post="/partials/users-search-submit"
+  hx-post={`/partials/users/find-for-check-in/${course.id}`}
   hx-target={`#${responseTargetId}`}
   hx-target-error={`#top-level-error-${model}-${formId}`}
   hx-swap="outerHTML"
   data-status="idle"
 >
   <legend>Find A User</legend>
-  <!-- <div id={errorTargetId}></div> -->
-
-  <!-- TODO make hidden field (or grab it from url in submit.astro partial) -->
-  <div class="form-field">
-    <InputField
-      label="Course ID"
-      name="course_id"
-      type={"hidden"}
-      value={course.id}
-      model={model}
-      id={formId}
-      required
-    />
-  </div>
 
   <fieldset>
     <legend>by ID</legend>
@@ -51,7 +35,7 @@ const config = userCreditCheckInConfig;
       <InputField
         label="User ID"
         name="user_id"
-        type={'text'}
+        type={"text"}
         value={user ? user.id : undefined}
         model={model}
         id={formId}
@@ -72,7 +56,7 @@ const config = userCreditCheckInConfig;
       name="phone"
       value={user ? user.phone : undefined}
       model={model}
-      type={'tel'}
+      type={"tel"}
       id={formId}
     />
   </fieldset>
@@ -87,7 +71,7 @@ const config = userCreditCheckInConfig;
       name="email"
       value={user ? user.email : undefined}
       model={model}
-      type={'email'}
+      type={"email"}
       id={formId}
     />
   </fieldset>
@@ -170,5 +154,9 @@ const config = userCreditCheckInConfig;
   fieldset:not(.separator) {
     border: none;
     padding: 0;
+
+    & > legend {
+      margin-bottom: 0.5rem;
+    }
   }
 </style>

@@ -40,6 +40,16 @@ table {
   & input[name="location_id"] {
     max-width: 10ch;
   }
+
+  & td[data-key="user_id"] span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+    width: 6ch;
+    direction: rtl;
+    align-self: center;
+  }
 }
 
 input[type="checkbox"] {
@@ -72,6 +82,10 @@ form {
 
   label {
     display: grid;
+
+    & .text {
+      align-self: end;
+    }
   }
 
   label.form-field:has(input[type="hidden"]) {
