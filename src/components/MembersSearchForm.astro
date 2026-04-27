@@ -13,7 +13,7 @@ interface Props {
 const { course, user, formId = "check-in-form" } = Astro.props;
 const responseTargetId = `${formId}-response`;
 const model = "users";
-
+const errorTargetId = `top-level-error-${model}-${formId}`;
 const config = userCreditCheckInConfig;
 ---
 
@@ -23,7 +23,7 @@ const config = userCreditCheckInConfig;
   hx-ext="response-targets"
   hx-post={`/partials/users/find-for-check-in/${course.id}`}
   hx-target={`#${responseTargetId}`}
-  hx-target-error={`#top-level-error-${model}-${formId}`}
+  hx-target-error={`#${errorTargetId}`}
   hx-swap="outerHTML"
   data-status="idle"
 >
@@ -79,7 +79,7 @@ const config = userCreditCheckInConfig;
   <fieldset class="actions">
     <div class="row-error error top-level">
       <p class="message">
-        <span id={`top-level-error-${model}-${formId}`}></span>
+        <span id={errorTargetId}></span>
       </p>
     </div>
     <SubmitButton text="Search for User" indicatorText="Searching..." />
@@ -115,9 +115,9 @@ const config = userCreditCheckInConfig;
 
   document.addEventListener("barcode-scanned", ((evt: CustomEvent) => {
     const scannedValue = evt.detail.value;
-    const formId = "users-search-form"; // or get dynamically
-    const userIdInput = document.getElementById(
-      `${formId}-userId`,
+    const formId = "check-in-form"; // or get dynamically
+    const userIdInput = document.querySelector(
+      `input[name="user_id"]`,
     ) as HTMLInputElement;
 
     if (userIdInput) {
