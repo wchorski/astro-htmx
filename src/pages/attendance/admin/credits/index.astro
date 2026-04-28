@@ -1,14 +1,30 @@
 ---
-import UsersEditableTable from "@components/UsersEditableTable.astro";
 import AttendanceAdminNav from "@components/navigation/AttendanceAdminNav.astro";
 import BaseLayout from "@layouts/BaseLayout.astro";
 import PaginationNav from "@components/navigation/PaginationNav.astro";
 import CreditsEditableTable from "@components/CreditsEditableTable.astro";
 import { getCreditsPage } from "@lib/getCreditsPage";
-import TableToolbar from "@components/tables/TableToolbar.astro";
-import { undefined } from "astro:schema";
+import TableMenu from "@components/tables/TableMenu.astro";
 
-const result = await getCreditsPage(1);
+const params = Astro.url.searchParams;
+
+const ALLOWED_PER_PAGE = [5, 10, 15, 25, 50, 100];
+const DEFAULT_PER_PAGE = 25;
+
+let perPageParam = DEFAULT_PER_PAGE;
+const rawPerPage = params.get("perPage");
+
+if (rawPerPage !== null) {
+  const n = Number(rawPerPage);
+
+  if (ALLOWED_PER_PAGE.includes(n)) {
+    perPageParam = n;
+  } else {
+    params.delete("perPage");
+    return Astro.redirect(`${Astro.url.pathname}?${params.toString()}`);
+  }
+}
+const result = await getCreditsPage(1, perPageParam);
 
 if ("redirect" in result) {
   return Astro.redirect("/attendance/admin/credits");
@@ -26,8 +42,9 @@ const { credits, courses, users, page, perPage, totalCount, totalPages } =
       <p class="sub-text">List of all credits from all courses.</p>
     </header>
     <div data-layout="content" class="content">
-      <TableToolbar
+      <TableMenu
         page={page}
+        perPage={perPage}
         model="credits"
         placeholder={"Search credits by user:NAME, course:SUBJECT"}
       />

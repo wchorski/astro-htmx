@@ -5,9 +5,9 @@ import AttendanceAdminNav from "@components/navigation/AttendanceAdminNav.astro"
 import BaseLayout from "@layouts/BaseLayout.astro";
 import { getCoursesPage } from "@lib/getCoursesPage";
 import PaginationNav from "@components/navigation/PaginationNav.astro";
-import TableToolbar from "@components/tables/TableToolbar.astro";
+import TableMenu from "@components/tables/TableMenu.astro";
 import SelectField from "@components/form/SelectField.astro";
-import FilterSelectForm from "@components/form/FilterSelectForm.astro";
+import FilterSelect from "@components/form/FilterSelect.astro";
 
 const { WORDPRESS_ENDPOINT } = import.meta.env;
 
@@ -20,8 +20,26 @@ if (params.has("location_id") && rawLocation === "") {
 
 const location_id = rawLocation ?? undefined;
 
+const ALLOWED_PER_PAGE = [5, 10, 25, 50, 100];
+const DEFAULT_PER_PAGE = 25;
+
+let perPageParam = DEFAULT_PER_PAGE;
+const rawPerPage = params.get("perPage");
+
+if (rawPerPage !== null) {
+  const n = Number(rawPerPage);
+
+  if (ALLOWED_PER_PAGE.includes(n)) {
+    perPageParam = n;
+  } else {
+    params.delete("perPage");
+    return Astro.redirect(`${Astro.url.pathname}?${params.toString()}`);
+  }
+}
+
 const result = await getCoursesPage({
   page: 1,
+  perPage: perPageParam,
   location_id,
 });
 
@@ -30,9 +48,13 @@ if ("redirect" in result) {
 }
 
 const { courses, locations, page, perPage, totalCount, totalPages } = result;
+
+console.log({ page, perPage, totalCount });
 ---
 
 <BaseLayout>
+  <script type="module" src="/src/client/tablePerPage.ts"></script>
+
   <AttendanceAdminNav />
   <main>
     <header class="flex space-between">
@@ -54,21 +76,24 @@ const { courses, locations, page, perPage, totalCount, totalPages } = result;
       </div>
       <hr />
 
-      <TableToolbar
+      <TableMenu
         page={page}
+        perPage={perPage}
         model="courses"
         placeholder={"Search by subject, description, or numerical date..."}
       >
-        <FilterSelectForm
-          name="location_id"
-          options={locations.map((loc) => ({
-            value: loc.id,
-            label: loc.name,
-          }))}
-          value={location_id}
-          model="locations"
-        />
-      </TableToolbar>
+        <fieldset slot="filters-fieldset">
+          <FilterSelect
+            name="location_id"
+            options={locations.map((loc) => ({
+              value: loc.id,
+              label: loc.name,
+            }))}
+            value={location_id}
+            model="locations"
+          />
+        </fieldset>
+      </TableMenu>
 
       {
         locations.length === 0 ? (

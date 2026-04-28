@@ -2,7 +2,12 @@ import { db } from "@db/db";
 import { User } from "@db/schema";
 import { count, asc } from "drizzle-orm";
 
-export async function getUsersPage(page: number, perPage = 12) {
+interface Props {
+  page: number;
+  perPage?: number;
+}
+
+export async function getUsersPage({ page, perPage = 15 }: Props) {
   if (page < 1) page = 1;
 
   const totalResult = await db.select({ count: count(User.id) }).from(User);

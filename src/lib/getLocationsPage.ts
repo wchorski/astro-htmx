@@ -2,7 +2,12 @@ import { db } from "@db/db";
 import { Location } from "@db/schema";
 import { desc, count } from "drizzle-orm";
 
-export async function getLocationsPage(page: number, perPage = 12) {
+interface Props {
+  page: number;
+  perPage?: number;
+}
+
+export async function getLocationsPage({ page, perPage = 15 }: Props) {
   if (page < 1) page = 1;
 
   const totalResult = await db
