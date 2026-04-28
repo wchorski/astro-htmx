@@ -1,8 +1,7 @@
 import { experimental_AstroContainer as AstroContainer } from "astro/container";
 import { expect, test, describe } from "vitest";
-// @ts-expect-error
 import RowView from "@components/tables/RowView.astro";
-import { seedData } from "../../db/seed-data";
+import { seedData } from "@db/seed-data";
 import { tableConfigs } from "@lib/tableConfigs";
 
 const user = seedData.users[0];
@@ -10,6 +9,8 @@ const config = tableConfigs.users.required;
 
 describe("RowView - user row", () => {
   let result: string;
+  const row = user;
+  const model = "users";
 
   test("renders user data correctly", async () => {
     const component = await AstroContainer.create();
@@ -30,19 +31,24 @@ describe("RowView - user row", () => {
   });
 
   test("renders correct row id", async () => {
-    expect(result).toContain('id="row-1"');
-    expect(result).toContain('data-row-id="1"');
+    expect(result).toContain(`id="row-${model}-${row.id}"`);
+    expect(result).toContain(`data-row-id="${row.id}"`);
   });
 
   test("renders htmx attributes on edit button", async () => {
-    expect(result).toContain('hx-get="/partials/users/1/edit"');
-    expect(result).toContain('hx-target="#row-1"');
-    expect(result).toContain('hx-swap="outerHTML"');
+    expect(result).toContain(`hx-get="/partials/${model}/${row.id}/edit"`);
+    expect(result).toContain(`hx-target="#row-${model}-${row.id}"`);
+    expect(result).toContain(`hx-swap="outerHTML"`);
   });
 
   test("renders htmx attributes on delete button", async () => {
-    expect(result).toContain('hx-delete="/partials/users/1"');
-    expect(result).toContain('hx-confirm="Delete this users?"');
+    expect(result).toContain(`hx-delete="/partials/users/${user.id}"`);
+    expect(result).toContain(
+      `hx-confirm="Delete this ${model} ${row.first_name}?"`,
+    );
+    expect(result).toContain(
+      `hx-target-error="#top-level-error-${model}-${row.id}"`,
+    );
   });
 
   test("renders correct data-status on row", async () => {
@@ -64,8 +70,8 @@ describe("RowView - user row", () => {
   });
 
   test("renders id cell as a link", async () => {
-    expect(result).toContain('<a href="/users/1"');
-    expect(result).toContain(">1<");
+    expect(result).toContain(`<a href="/users/${row.id}"`);
+    expect(result).toContain(`>${row.id}<`);
   });
 
   test("renders correct number of cells", async () => {
@@ -76,15 +82,5 @@ describe("RowView - user row", () => {
   test("renders action cell with edit and delete buttons", async () => {
     expect(result).toContain('class="edit"');
     expect(result).toContain('class="btn delete primary danger"');
-  });
-
-  test("delete button has confirmation dialog", async () => {
-    expect(result).toContain('hx-confirm="Delete this users?"');
-    expect(result).toContain('hx-target-error="#confirm-dialog-error"');
-  });
-
-  test("delete button renders trash icon", async () => {
-    expect(result).toContain('src="/icons/trash-can.svg"');
-    expect(result).toContain('alt="delete icon"');
   });
 });

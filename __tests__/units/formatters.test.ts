@@ -4,7 +4,52 @@ import {
   slugify,
   localDateTimeToRealDate,
   normalizePhoneToE164Manual,
+  prettyPlainCivilDateFull,
 } from "@lib/formatters"; // adjust path
+
+
+describe("prettyPlainCivilDateFull", () => {
+  it("formats a valid civil datetime correctly", () => {
+    const result = prettyPlainCivilDateFull("2026-04-28T10:00");
+
+    expect(result).toBe(
+      "Tuesday, April 28, 2026 at 10:00 AM"
+    );
+  });
+
+  it("pads minutes correctly", () => {
+    const result = prettyPlainCivilDateFull("2026-04-28T10:05");
+
+    expect(result).toBe(
+      "Tuesday, April 28, 2026 at 10:05 AM"
+    );
+  });
+
+  it("throws for invalid format (missing T)", () => {
+    expect(() =>
+      prettyPlainCivilDateFull("2026-04-28 10:00")
+    ).toThrow("Invalid format");
+  });
+
+  it("throws for invalid format (seconds present)", () => {
+    expect(() =>
+      prettyPlainCivilDateFull("2026-04-28T10:00:00")
+    ).toThrow("Invalid format");
+  });
+
+  it("throws for impossible calendar dates", () => {
+    expect(() =>
+      prettyPlainCivilDateFull("2026-02-30T10:00")
+    ).toThrow("Invalid calendar date/time");
+  });
+
+  it("throws for invalid hour", () => {
+    expect(() =>
+      prettyPlainCivilDateFull("2026-04-28T25:00")
+    ).toThrow("Invalid calendar date/time");
+  });
+});
+
 
 describe("localDateTimeToRealDate", () => {
   it("converts a local datetime string to a Date in the given timezone", () => {

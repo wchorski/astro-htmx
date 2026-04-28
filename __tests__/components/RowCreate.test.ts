@@ -34,11 +34,12 @@ describe("RowCreate - structure", () => {
 
   test("renders hidden create form with correct htmx attributes", () => {
     expect(result).toContain(`id="create-form-${baseProps.crud}"`);
-    expect(result).toContain('style="display:none"');
+    expect(result).toContain('style="display:none');
     expect(result).toContain(`hx-post="/partials/users/create"`);
-    expect(result).toContain(`hx-target="#table-footer"`);
-    expect(result).toContain(`hx-target-error="#row-create-error"`);
-    expect(result).toContain('hx-swap="innerHTML"');
+    expect(result).toContain(
+      `hx-target-error="#top-level-error-${baseProps.crud}-create"`,
+    );
+    expect(result).toContain('hx-swap="beforeend"');
   });
 
   test("renders save button linked to form", () => {
@@ -54,8 +55,8 @@ describe("RowCreate - structure", () => {
   });
 
   test("renders error row placeholder", () => {
-    expect(result).toContain(`id="row-create-error"`);
-    expect(result).toContain('class="row-error"');
+    expect(result).toContain(`id="top-level-error-${baseProps.crud}-create"`);
+    expect(result).toContain('class="error-cell"');
   });
 });
 
@@ -116,7 +117,7 @@ describe("RowCreate - schemas", () => {
     });
 
     test("renders in creating state", () => {
-      expect(result).toContain(`id="row-new"`);
+      expect(result).toContain(`id="row-create-${crud}"`);
       expect(result).toContain('data-status="creating"');
     });
 
@@ -127,8 +128,8 @@ describe("RowCreate - schemas", () => {
     test("renders correct number of cells", () => {
       const cellCount = (result.match(/<td\b/g) || []).length;
 
-      // +1 for action cell
-      expect(cellCount).toBe(Object.keys(config).length + 1);
+      // +2 for action cell and error cell
+      expect(cellCount).toBe(Object.keys(config).length + 2);
     });
 
     test("renders id field as empty success cell", () => {

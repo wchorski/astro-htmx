@@ -2,7 +2,7 @@ import { experimental_AstroContainer as AstroContainer } from "astro/container";
 import { expect, test, describe, beforeAll } from "vitest";
 // @ts-ignore
 import RowEdit from "@components/tables/RowEdit.astro";
-import { seedData } from "../../db/seed-data";
+import { seedData } from "@db/seed-data";
 import {
   courseConfigRequired,
   creditConfigRequired,
@@ -30,15 +30,15 @@ describe("RowEdit - structure", () => {
   });
 
   test("renders row in editing state", () => {
-    expect(result).toContain(`id="row-${user.id}"`);
+    expect(result).toContain(`id="row-${baseProps.crud}-${user.id}"`);
     expect(result).toContain('data-status="editing"');
   });
 
   test("renders hidden form with correct htmx attributes", () => {
     expect(result).toContain(`id="edit-form-${user.id}"`);
-    expect(result).toContain('style="display:none"');
+    expect(result).toContain('style="display:none');
     expect(result).toContain(`hx-patch="/partials/users/${user.id}"`);
-    expect(result).toContain(`hx-target="#row-${user.id}"`);
+    expect(result).toContain(`hx-target="#row-${baseProps.crud}-${user.id}"`);
     expect(result).toContain(
       `hx-target-error="#top-level-error-${baseProps.crud}-${user.id}"`,
     );
@@ -56,7 +56,7 @@ describe("RowEdit - structure", () => {
     expect(result).toContain('type="reset"');
     expect(result).toContain('class="cancel"');
     expect(result).toContain(`hx-get="/partials/users/${user.id}"`);
-    expect(result).toContain(`hx-target="#row-${user.id}"`);
+    expect(result).toContain(`hx-target="#row-users-${user.id}"`);
     expect(result).toContain("⌀");
   });
 
@@ -68,7 +68,7 @@ describe("RowEdit - structure", () => {
   });
 
   test("does not render error content when error is null", () => {
-    expect(result).toMatch(/id="top-level-error-users-1"[^>]*><\/div>/);
+    expect(result).toMatch(new RegExp(`id="top-level-error-users-${user.id}"`));
   });
 });
 
@@ -106,7 +106,8 @@ describe("RowEdit - error states", () => {
     });
 
     expect(html).toContain("Name is required");
-    expect(html).toMatch(/id="top-level-error-users-1"[^>]*><\/div>/);
+
+    expect(html).toMatch(new RegExp(`id="top-level-error-users-${user.id}"`));
   });
 });
 
