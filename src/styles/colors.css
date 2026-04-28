@@ -139,7 +139,7 @@ button,
 
   &.delete {
     color: red;
-    background-color: transparent;
+    background-color: var(--c-txt-bg);
     outline: solid 1px var(--c-error);
     border-color: var(--c-error);
   }

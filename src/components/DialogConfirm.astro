@@ -47,6 +47,8 @@ const { id = "confirm-dialog" } = Astro.props;
   }
 
   document.addEventListener("htmx:confirm", (e: any) => {
+    console.log("DialogConfirm");
+    console.log({ e });
     if (!e.detail.question) return;
     e.preventDefault();
 
