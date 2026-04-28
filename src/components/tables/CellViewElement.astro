@@ -28,7 +28,7 @@ const prettyVal = (() => {
       return rawVal;
     case type === "date":
     case type === "datetime-local":
-      return name === "dateCivil"
+      return name === "date_civil"
         ? prettyPlainCivilDateFull(rawVal as string)
         : String(rawVal);
     case type === "tel":

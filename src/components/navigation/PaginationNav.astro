@@ -7,13 +7,18 @@ interface Props {
   // how many pages to show on each side of current page
   siblingCount?: number;
 }
-
+const params = new URLSearchParams(Astro.url.searchParams);
 const { page, perPage, totalCount, path, siblingCount = 10 } = Astro.props;
 
 const totalPages = Math.ceil(totalCount / perPage);
 
 const start = (page - 1) * perPage + 1;
 const end = Math.min(page * perPage, totalCount);
+
+function href(p: number) {
+  const query = params.toString();
+  return query ? `${path}/${p}?${query}` : `${path}/${p}`;
+}
 
 function getPageRange() {
   const pages: (number | "dots")[] = [];
@@ -47,7 +52,7 @@ const visiblePages = getPageRange();
 <nav class="pagination">
   <!-- Previous -->
   <a
-    href={page === 1 ? undefined : `${path}/${page - 1}`}
+    href={href(page - 1)}
     class="btn"
     aria-disabled={page === 1 ? "true" : "false"}
   >
@@ -65,7 +70,7 @@ const visiblePages = getPageRange();
         ) : (
           <li>
             <a
-              href={p === page ? undefined : `${path}/${p}`}
+              href={href(p)}
               class="btn"
               aria-current={p === page ? "page" : undefined}
             >
@@ -79,7 +84,7 @@ const visiblePages = getPageRange();
 
   <!-- Next -->
   <a
-    href={page === totalPages ? undefined : `${path}/${page + 1}`}
+    href={href(page + 1)}
     class="btn"
     aria-disabled={page === totalPages ? "true" : "false"}
   >
@@ -87,7 +92,7 @@ const visiblePages = getPageRange();
   </a>
 </nav>
 
-<p class="nav-caption">
+<p class="nav-caption sub-text">
   {start} to {end}
   <br />
   {totalCount} total

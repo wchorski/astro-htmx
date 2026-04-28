@@ -4,7 +4,7 @@ import { getCoursesPage } from "@lib/getCoursesPage";
 import CoursesList from "@partials/courses-list.astro";
 import PaginationNav from "@components/navigation/PaginationNav.astro";
 
-const result = await getCoursesPage(1);
+const result = await getCoursesPage({page: 1});
 
 if ("redirect" in result) {
   return Astro.redirect("/attendance/courses");

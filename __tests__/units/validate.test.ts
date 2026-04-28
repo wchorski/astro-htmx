@@ -93,13 +93,13 @@ describe("validate.location schema", () => {
   });
 
   test("fails on invalid zip", () => {
-    const invalid = { ...validLocation, zip: 999 };
+    const invalid = { ...validLocation, zip: "bad input for zip" };
     expect(() => validate.location.parse(invalid)).toThrow(/Invalid ZIP code/);
   });
 });
 
 describe("validate.userLink schema", () => {
-  const validLink = { user_id: 1, course_id: 2, attended: "on" };
+  const validLink = { user_id: seedData.users[0].id, course_id: seedData.courses[0].id, attended: "on" };
 
   test("parses valid userLink and transforms attended", () => {
     const result = validate.userLink.parse(validLink);

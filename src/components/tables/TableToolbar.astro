@@ -12,6 +12,7 @@ const { model, page, placeholder } = Astro.props;
 
 <menu>
   <TableSearchForm model={model} page={page} placeholder={placeholder} />
+  <slot />
 </menu>
 
 <style>
@@ -19,5 +20,7 @@ const { model, page, placeholder } = Astro.props;
     padding: 0;
     display: flex;
     justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
   }
 </style>

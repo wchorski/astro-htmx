@@ -56,8 +56,12 @@ const { address, city, zip, state } = location;
       </time>
       <br />
       <br />
-      <div class="user-info">
+      <div class="location">
         <address>
+          <strong class="name">
+            <a href={`/locations/${location.id}`}>{location.name}</a>
+          </strong>
+          <br />
           {address}
           <br />
           {city}, {state}
@@ -85,6 +89,8 @@ const { address, city, zip, state } = location;
         </svg>
         <span> Edit </span>
       </a>
+      <br />
+      <a href={`/attendance/check-in/${id}`} class="btn">Check-In</a>
     </header>
     <hr />
     <div data-layout="content">

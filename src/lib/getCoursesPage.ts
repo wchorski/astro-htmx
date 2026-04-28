@@ -1,13 +1,30 @@
-
 import { db } from "@db/db";
 import { Course, Location } from "@db/schema";
-import { desc, count } from "drizzle-orm";
+import { desc, count, eq, and } from "drizzle-orm";
 
+interface Props {
+  page: number;
+  perPage?: number;
+  location_id?: string;
+}
 
-export async function getCoursesPage(page: number, perPage = 12) {
+export async function getCoursesPage({
+  page,
+  perPage = 12,
+  location_id,
+}: Props) {
+  const conditions = [];
+
+  if (location_id) {
+    conditions.push(eq(Course.location_id, location_id));
+  }
+
   if (page < 1) page = 1;
 
-  const totalResult = await db.select({ count: count(Course.id) }).from(Course);
+  const totalResult = await db
+    .select({ count: count(Course.id) })
+    .from(Course)
+    .where(and(...conditions));
 
   const totalCount = totalResult[0].count;
   const totalPages = Math.ceil(totalCount / perPage);
@@ -16,20 +33,18 @@ export async function getCoursesPage(page: number, perPage = 12) {
     return { redirect: true };
   }
 
-  // TODO where is the auth?
   const courses = await db
     .select()
     .from(Course)
+    .where(and(...conditions))
     .orderBy(desc(Course.timestamp))
     .limit(perPage)
     .offset((page - 1) * perPage);
 
   // TODO move this into one db call
-  const locations = await db
-    .select()
-    .from(Location)
-    // .limit(perPage)
-    // .offset((page - 1) * perPage);
+  const locations = await db.select().from(Location);
+  // .limit(perPage)
+  // .offset((page - 1) * perPage);
 
   return {
     courses,

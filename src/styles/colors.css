@@ -61,7 +61,7 @@
 }
 
 .sub-text {
-  color: var(--c-seperator);
+  color: var(--c-seperator-light);
 }
 
 /* TODO bad bad not good */

@@ -18,19 +18,20 @@ interface Props extends Omit<
 const {
   formId,
   errorId,
-  inputAttrs,
   name,
   label,
   value,
   fieldError,
   options,
   autofocus,
+  ...inputAttrs
 } = Astro.props;
 ---
 
 <label>
   <span class="text">{label ?? name}</span>
   <select {...inputAttrs} form={formId} name={name} autofocus={autofocus}>
+    <slot name="first-option"/>
     {
       options?.map((opt) => (
         <option

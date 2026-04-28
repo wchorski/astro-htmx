@@ -6,9 +6,23 @@ import BaseLayout from "@layouts/BaseLayout.astro";
 import { getCoursesPage } from "@lib/getCoursesPage";
 import PaginationNav from "@components/navigation/PaginationNav.astro";
 import TableToolbar from "@components/tables/TableToolbar.astro";
+import SelectField from "@components/form/SelectField.astro";
 
 const { WORDPRESS_ENDPOINT } = import.meta.env;
-const result = await getCoursesPage(1);
+
+const params = Astro.url.searchParams;
+const rawLocation = params.get("location_id");
+
+if (params.has("location_id") && rawLocation === "") {
+  return Astro.redirect(Astro.url.pathname);
+}
+
+const location_id = rawLocation ?? undefined;
+
+const result = await getCoursesPage({
+  page: 1,
+  location_id,
+});
 
 if ("redirect" in result) {
   return Astro.redirect("/attendance/admin/courses");
@@ -38,11 +52,31 @@ const { courses, locations, page, perPage, totalCount, totalPages } = result;
         </p>
       </div>
       <hr />
+
       <TableToolbar
         page={page}
         model="courses"
         placeholder={"Search by subject, description, or numerical date..."}
-      />
+      >
+        <form method="get">
+          <SelectField
+            label=""
+            title="filter by location"
+            name="location_id"
+            id="filter_by_location"
+            onchange="this.form.submit()"
+            options={locations.map((loc) => ({
+              value: loc.id,
+              label: loc.name,
+            }))}
+            value={location_id}
+            errorId={"field-error-filter-courses-location_id"}
+          >
+            <option value={""} slot="first-option">All locations</option>
+          </SelectField>
+        </form>
+      </TableToolbar>
+
       {
         locations.length === 0 ? (
           <p>

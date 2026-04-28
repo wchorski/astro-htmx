@@ -24,12 +24,13 @@ export default defineConfig({
   server: {
     host: true,
   },
-  redirects: {
-    "/attendance/courses/1": "/attendance/courses",
-    "/attendance/admin/courses/1": "/attendance/admin/courses",
-    "/attendance/admin/locations/1": "/attendance/admin/locations",
-    "/attendance/admin/users/1": "/attendance/admin/users",
-  },
+  //? caused problems with pagination + searchParams
+  // redirects: {
+  //   "/attendance/courses/1": "/attendance/courses",
+  //   "/attendance/admin/courses/1": "/attendance/admin/courses",
+  //   "/attendance/admin/locations/1": "/attendance/admin/locations",
+  //   "/attendance/admin/users/1": "/attendance/admin/users",
+  // },
   output: "server",
 
   adapter: node({

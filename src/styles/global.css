@@ -80,6 +80,7 @@ button,
   font-size: 1rem;
   transition: background 0.2s;
   text-decoration: none;
+  display: inline-block;
 }
 
 button:has(.icon),
