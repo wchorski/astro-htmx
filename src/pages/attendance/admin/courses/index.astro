@@ -7,6 +7,7 @@ import { getCoursesPage } from "@lib/getCoursesPage";
 import PaginationNav from "@components/navigation/PaginationNav.astro";
 import TableToolbar from "@components/tables/TableToolbar.astro";
 import SelectField from "@components/form/SelectField.astro";
+import FilterSelectForm from "@components/form/FilterSelectForm.astro";
 
 const { WORDPRESS_ENDPOINT } = import.meta.env;
 
@@ -58,23 +59,15 @@ const { courses, locations, page, perPage, totalCount, totalPages } = result;
         model="courses"
         placeholder={"Search by subject, description, or numerical date..."}
       >
-        <form method="get">
-          <SelectField
-            label=""
-            title="filter by location"
-            name="location_id"
-            id="filter_by_location"
-            onchange="this.form.submit()"
-            options={locations.map((loc) => ({
-              value: loc.id,
-              label: loc.name,
-            }))}
-            value={location_id}
-            errorId={"field-error-filter-courses-location_id"}
-          >
-            <option value={""} slot="first-option">All locations</option>
-          </SelectField>
-        </form>
+        <FilterSelectForm
+          name="location_id"
+          options={locations.map((loc) => ({
+            value: loc.id,
+            label: loc.name,
+          }))}
+          value={location_id}
+          model="locations"
+        />
       </TableToolbar>
 
       {

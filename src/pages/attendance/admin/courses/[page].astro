@@ -7,6 +7,7 @@ import AttendanceAdminNav from "@components/navigation/AttendanceAdminNav.astro"
 import ButtonCoursesImport from "@components/ButtonCoursesImport.astro";
 import TableToolbar from "@components/tables/TableToolbar.astro";
 import SelectField from "@components/form/SelectField.astro";
+import FilterSelectForm from "@components/form/FilterSelectForm.astro";
 const { WORDPRESS_ENDPOINT } = import.meta.env;
 const page = Number(Astro.params.page);
 
@@ -57,23 +58,15 @@ const { courses, locations, perPage, totalCount, totalPages } = result;
         model="courses"
         placeholder={"Search by subject, description, or numerical date..."}
       >
-        <form method="get" class="flex gap-2 items-center">
-          <SelectField
-            label=""
-            title="filter by location"
-            name="location_id"
-            id="filter_by_location"
-            onchange="this.form.submit()"
-            options={locations.map((loc) => ({
-              value: loc.id,
-              label: loc.name,
-            }))}
-            value={location_id}
-            errorId={"field-error-filter-courses-location_id"}
-          >
-            <option value="" slot="first-option">All locations</option>
-          </SelectField>
-        </form>
+        <FilterSelectForm
+          name="location_id"
+          options={locations.map((loc) => ({
+            value: loc.id,
+            label: loc.name,
+          }))}
+          value={location_id}
+          model="locations"
+        />
       </TableToolbar>
       {
         locations.length === 0 ? (

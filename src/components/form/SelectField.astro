@@ -1,4 +1,5 @@
 ---
+// components/form/SelectField
 import type { FieldOption, FieldSlot, SelectFieldType } from "@ty/FieldConfig";
 import type { HTMLAttributes } from "astro/types";
 
@@ -26,9 +27,10 @@ const {
   autofocus,
   ...inputAttrs
 } = Astro.props;
+console.log("SelectField Astro.slots.has('first-option'): ", Astro.slots.has("first-option"));
 ---
 
-<label>
+<label class="form-field">
   <span class="text">{label ?? name}</span>
   <select {...inputAttrs} form={formId} name={name} autofocus={autofocus}>
     <slot name="first-option"/>

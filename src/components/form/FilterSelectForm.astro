@@ -1,0 +1,50 @@
+---
+interface Props {
+  options: FieldOption[];
+  value: string | undefined;
+  model: string;
+  name: string;
+}
+import type { FieldOption } from "@ty/FieldConfig";
+import SelectField from "./SelectField.astro";
+
+const { options, value, model, name } = Astro.props;
+console.log(
+  "FilterSelectForm Astro.slots.has('first-option'): ",
+  Astro.slots.has("first-option"),
+);
+---
+
+<form method="get">
+  <SelectField
+    label=""
+    title={`filter by ${model}`}
+    `
+    name={name}
+    `
+    id={`filter_by_${name}`}
+    `
+    onchange="this.form.submit()"
+    options={options}
+    value={value}
+    errorId={`field-error-filter-${model}-${value}`}
+  >
+    {
+      Astro.slots.has("first-option") ? (
+        <slot name="first-option" />
+      ) : (
+        <option value="" slot="first-option" class="placeholder">
+          Filter by {model}
+        </option>
+      )
+    }
+
+    {
+      options.map((opt) => (
+        <option value={opt.value} selected={opt.value === value}>
+          {opt.label}
+        </option>
+      ))
+    }
+  </SelectField>
+</form>
