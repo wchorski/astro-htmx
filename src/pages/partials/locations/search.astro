@@ -1,28 +1,31 @@
 ---
 import { db } from "@db/db";
-import { or, ilike, like } from "drizzle-orm";
-import { User } from "@db/schema";
+import { or, ilike, like, eq, getTableColumns } from "drizzle-orm";
+import { Course, Credit, Location } from "@db/schema";
 import { crud, type CrudRegistryType } from "@lib/crudRegistry";
 import { BadRequestError, errorHandlingOnSubmit } from "@lib/errors";
-import type { UserSelect } from "@ty/Schema";
+import type { LocationSelect } from "@ty/Schema";
 import { handleResult } from "@lib/handleRenderResult";
 import FieldErrors from "@components/mgmt/FieldErrors.partial.astro";
 import FormSuccess from "@components/mgmt/FormSuccess.partial.astro";
 import TopLevelError from "@components/mgmt/TopLevelError.partial.astro";
-import { tableConfigs } from "@lib/tableConfigs";
+import { creditConfigRequired, tableConfigs } from "@lib/tableConfigs";
 import RowView from "@components/tables/RowView.astro";
 import { getUsersPage } from "@lib/getUsersPage";
 import { handleQueryResult } from "@lib/handleQueryResult";
+import { getCreditsPage } from "@lib/getCreditsPage";
+import { getLocationsPage } from "@lib/getLocationsPage";
 
-let users: UserSelect[] | null | undefined = null;
+let locations: LocationSelect[] | null | undefined = null;
 let error = null;
-const config = tableConfigs.users.required;
+const config = tableConfigs.locations.required
 const ctx = {
-  crud: "users" as CrudRegistryType,
+  crud: "locations" as CrudRegistryType,
   config,
-  endpoint: "/users",
+  endpoint: "/locations",
   headers: Object.keys(config),
 };
+
 
 if (Astro.request.method === "POST") {
   try {
@@ -38,24 +41,26 @@ if (Astro.request.method === "POST") {
 
     if (searchQuery) {
       const conditions = [
-        ilike(User.first_name, `%${searchQuery}%`),
-        ilike(User.last_name, `%${searchQuery}%`),
-        ilike(User.email, `%${searchQuery}%`),
+        ilike(Location.name, `%${searchQuery}%`),
+        ilike(Location.address, `%${searchQuery}%`),
+        ilike(Location.city, `%${searchQuery}%`),
+        ilike(Location.state, `%${searchQuery}%`),
+        ilike(Location.description, `%${searchQuery}%`),
       ];
 
       if (digitsOnly && digitsOnly.length >= 3) {
-        conditions.push(like(User.phone, `%${digitsOnly}%`));
+        conditions.push(like(Location.zip, `%${digitsOnly}%`));
       }
 
-      users = await db
+      locations = await db
         .select()
-        .from(User)
+        .from(Location)
         .where(or(...conditions))
         .limit(10);
     } else {
       // Empty search - return no results (or all users if you prefer)
-      const result = await getUsersPage({ page });
-      users = result.users;
+      const result = await getLocationsPage({ page });
+      locations = result.locations;
     }
   } catch (e) {
     const { err, status } = errorHandlingOnSubmit(e);
@@ -77,17 +82,17 @@ const partialType = Astro.request.headers.get("X-Partial-Type") as
   | undefined;
 if (!partialType) throw new BadRequestError("X-Partial-Type header not set");
 
-const result = handleQueryResult<UserSelect>({
+const result = handleQueryResult<LocationSelect>({
   error,
-  rows: users,
+  rows: locations,
   method: Astro.request.method,
   emptyMessage: `No matching data found`,
 });
 ---
 
 {
-  users && users.length > 0 ? (
-    users.map((entity) => <RowView row={entity} {...ctx} />)
+  locations && locations.length > 0 ? (
+    locations.map((entity) => <RowView row={entity} {...ctx} />)
   ) : (
     <tr>
       <td colspan="100%" class="callout">

@@ -162,37 +162,13 @@ const result = handleQueryResult<CreditSelect>({
 ---
 
 {
-  result.kind === "field-error" ? (
-    <FieldErrors
-      id={"create"}
-      headers={ctx.headers}
-      errors={result.errors}
-      model={ctx.crud}
-    />
-  ) : result.kind === "top-error" ? (
-    <TopLevelError
-      id={"create"}
-      headers={ctx.headers}
-      crud={ctx.crud}
-      message={result.message}
-    />
+  credits && credits.length > 0 ? (
+    credits.map((entity) => <RowView row={entity} {...ctx} />)
   ) : (
-    <>
-      {credits && credits.length > 0 ? (
-        credits.map((entity) => <RowView row={entity} {...ctx} />)
-      ) : (
-        <tr>
-          <td colspan="100%" class="callout">
-            no {ctx.crud} found
-          </td>
-        </tr>
-      )}
-      <TopLevelError
-        crud={ctx.crud}
-        id={"create"}
-        headers={ctx.headers}
-        message=""
-      />
-    </>
+    <tr>
+      <td colspan="100%" class="callout">
+        no {ctx.crud} found
+      </td>
+    </tr>
   )
 }

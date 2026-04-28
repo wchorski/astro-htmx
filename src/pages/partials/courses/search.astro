@@ -57,7 +57,7 @@ if (Astro.request.method === "POST") {
         .limit(10);
     } else {
       // Empty search - return no results (or all courses if you prefer)
-      const result = await getCoursesPage(page);
+      const result = await getCoursesPage({ page });
       courses = result.courses;
     }
   } catch (e) {
@@ -89,37 +89,13 @@ const result = handleQueryResult<CourseSelect>({
 ---
 
 {
-  result.kind === "field-error" ? (
-    <FieldErrors
-      id={"create"}
-      headers={ctx.headers}
-      errors={result.errors}
-      model={ctx.crud}
-    />
-  ) : result.kind === "top-error" ? (
-    <TopLevelError
-      id={"create"}
-      headers={ctx.headers}
-      crud={ctx.crud}
-      message={result.message}
-    />
+  courses && courses.length > 0 ? (
+    courses.map((entity) => <RowView row={entity} {...ctx} />)
   ) : (
-    <>
-      {courses && courses.length > 0 ? (
-        courses.map((entity) => <RowView row={entity} {...ctx} />)
-      ) : (
-        <tr>
-          <td colspan="100%" class="callout">
-            no {ctx.crud} found
-          </td>
-        </tr>
-      )}
-      <TopLevelError
-        crud={ctx.crud}
-        id={"create"}
-        headers={ctx.headers}
-        message=""
-      />
-    </>
+    <tr>
+      <td colspan="100%" class="callout">
+        no {ctx.crud} found
+      </td>
+    </tr>
   )
 }
