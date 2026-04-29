@@ -64,35 +64,32 @@ docker compose up --remove-orphans
 ```
 
 #todo
+- [ ] db exporter data to .json file
 - [x] table sorting for each column (asc, desc, default)
 - [ ] restructure top level errors to include `fieldName` so it can target and style the problem field if it exists
 - [ ] show "no changes" and disable `update` button on single-page forms. also set button to disabled upon first press
 - [ ] how to seed fresh database automatically (with docker container like `migrate`)
 - [ ] TRANSFER what learned from partials/course-credits/... to partials/users/...
 - [ ] use css grid to keep all field-errors in same height (and keep input fields from getting pushed up)
-- [ ] fix all db `config.ts` fields to use snakecase
-- [ ] how to handle `createMany` `createOne` `readMany` `readOne`?
-- [ ] for RowEdit instead of replacing the targeted RowView, how about just hide it and insert the RowEdit. the cancel button should just remove the RowEdit re-reveal the hidden row. No need to pass old values back and forth
-- [ ] delete button (with are you sure) for editable table
+- [x] fix all db `db.ts` fields to use snakecase
+- [x] delete button (with are you sure) for editable table
 - [ ] For production with auth enabled, generate a token and configure sqld with --auth-jwt-key-file or the SQLD_AUTH_JWT_KEY env var.
-- [ ] crudRegistry.courseCredits.create if member exists with (id, phone, email), then check all input fields to see if they match. if yes, then add existing member with new Credit
-- [ ] create mini member search form in tfooter of courseCredits table. 
+- [x] search field for each main admin model page
 - [ ] ask how to bypass Cloudflare blocking. WP import is getting 403
 - [ ] css style construction theme (road signs, asphalt, road paint, concrete, gerders, tire tracks, scafolding)
-- [ ] composable and editable table Component!!!!
-- [ ] admin table for `courses` and a "fetch events" button that get Wordpress data
+- [x] composable and editable table Component!!!!
+- [x] admin table for `courses` and a "fetch events" button that get Wordpress data
 - [x] `/attendance/admin/courses/id/[id].astro/admin` make an editable table for admin use
-- [ ] pull from db all `Course` and display them on page
-    - [ ] label with subject and date of class (with clickble link)
-    - [ ] `/courses/[id].astro` reveals attendence form.
-    - [ ] user submits member data (creates their member profile and checks them as attended) 
-- [ ] how do i save db data into an csv and save it to sharepoint?
+- [x] pull from db all `Course` and display them on page
+    - [x] label with subject and date of class (with clickble link)
+    - [x] `/courses/[id].astro` reveals attendence form.
+    - [x] user submits member data (creates their member profile and checks them as attended) 
+- [x] how do i save db data into an csv and save it to sharepoint?
 - [ ] look into using the MS SDK 
-- [ ] `member-search-form.astro` (should I limit search to courseId? As to only allow users who have registered to complete their credit?)
 ```js
 import { Client } from "@microsoft/microsoft-graph-client";
 ```
-- [ ] genrate persistant MS token
+- [x] genrate persistant MS token
 Bottom Line
 Graph Explorer tokens are for testing only. For production or persistent use:
 - [ ] move `timestamp` files to real database like sqlite

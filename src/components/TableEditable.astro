@@ -108,7 +108,7 @@ function label(key: string) {
     const tbody = table?.querySelector("tbody");
     if (!th || !table || !tbody) return;
 
-    const key = btn.dataset.sortKey!;
+    // const key = btn.dataset.sortKey!;
     const type = th.dataset.type ?? "string";
 
     // Reset all other headers
@@ -191,11 +191,11 @@ function label(key: string) {
     }
   }
   th[aria-sort="ascending"] .sort-indicator::after {
-    content: "↑";
+    content: "↑-";
   }
 
   th[aria-sort="descending"] .sort-indicator::after {
-    content: "↓";
+    content: "-↓";
   }
 
   th[aria-sort="none"] .sort-indicator::after {
