@@ -39,8 +39,16 @@ function label(key: string) {
       <tr>
         {
           headers.map((h) => (
-            <th data-key={h} data-type={config[h]?.type}>
-              {label(h)}
+            <th data-key={h} data-type={config[h]?.type} aria-sort="none">
+              <span>{label(h)}</span>
+              <button
+                type="button"
+                class="sort-btn"
+                data-sort-key={h}
+                aria-label={`Sort by ${label(h)}`}
+              >
+                <span class="sort-indicator" aria-hidden="true" />
+              </button>
             </th>
           ))
         }
@@ -72,24 +80,128 @@ function label(key: string) {
   </table>
 </div>
 <script>
-  // Handle form submissions and update data-status
-  document.body.addEventListener("htmx:afterSwap", (event) => {
-    // TODO match other htmx event listeneres to this one
-    // event is inferred as Htmx.HtmxAfterSwapEvent
-    const row = event.detail.target;
-    if (!row || row.tagName !== "TR") return;
+  (() => {
+    const table = document.querySelector("table[data-crud]");
+    if (!table) return;
 
-    const hasEditForm = row.querySelector(".edit-form");
-    row.setAttribute("data-status", hasEditForm ? "editing" : "viewing");
+    const tbody = table.querySelector("tbody");
+    if (!tbody) return;
+
+    // Cache original order once
+    if (!tbody.dataset.originalOrder) {
+      [...tbody.rows].forEach((row, i) => {
+        row.dataset.originalIndex = String(i);
+      });
+      tbody.dataset.originalOrder = "true";
+    }
+  })();
+
+  document.addEventListener("click", (e) => {
+    const target = e.target;
+    if (!(target instanceof Element)) return;
+
+    const btn = target.closest<HTMLButtonElement>(".sort-btn");
+    if (!btn) return;
+
+    const th = btn.closest("th");
+    const table = th?.closest("table");
+    const tbody = table?.querySelector("tbody");
+    if (!th || !table || !tbody) return;
+
+    const key = btn.dataset.sortKey!;
+    const type = th.dataset.type ?? "string";
+
+    // Reset all other headers
+    table.querySelectorAll("th[aria-sort]").forEach((other) => {
+      if (other !== th) other.setAttribute("aria-sort", "none");
+    });
+
+    // Cycle state
+    const current = th.getAttribute("aria-sort") ?? "none";
+    const next =
+      current === "none"
+        ? "ascending"
+        : current === "ascending"
+          ? "descending"
+          : "none";
+
+    th.setAttribute("aria-sort", next);
+
+    const rows = [...tbody.querySelectorAll("tr")];
+
+    if (next === "none") {
+      // Restore original order
+      rows
+        .sort(
+          (a, b) =>
+            Number(a.dataset.originalIndex) - Number(b.dataset.originalIndex),
+        )
+        .forEach((r) => tbody.appendChild(r));
+      return;
+    }
+
+    const colIndex = [...th.parentElement!.children].indexOf(th);
+
+    rows
+      .sort((a, b) => {
+        const aCell = a.children[colIndex]?.textContent?.trim() ?? "";
+        const bCell = b.children[colIndex]?.textContent?.trim() ?? "";
+
+        let cmp = 0;
+
+        if (type === "number") {
+          cmp = Number(aCell) - Number(bCell);
+        } else if (type === "date") {
+          cmp = new Date(aCell).getTime() - new Date(bCell).getTime();
+        } else {
+          cmp = aCell.localeCompare(bCell, undefined, {
+            numeric: true,
+            sensitivity: "base",
+          });
+        }
+
+        return next === "ascending" ? cmp : -cmp;
+      })
+      .forEach((r) => tbody.appendChild(r));
   });
 </script>
 
 <style>
-  .window-actions {
-    position: absolute;
-    top: 0;
-    right: 0;
+  .sort-btn {
+    all: unset;
+    display: inline-flex;
+    gap: 0.25rem;
+    align-items: center;
+    cursor: pointer;
+    &:hover {
+      background-color: transparent;
+      & .sort-indicator {
+        opacity: 0.8;
+      }
+    }
   }
+
+  th[aria-sort="none"] .sort-indicator {
+    opacity: 0.2;
+  }
+  th[aria-sort="ascending"],
+  th[aria-sort="descending"] {
+    & .sort-indicator {
+      opacity: 0.6;
+    }
+  }
+  th[aria-sort="ascending"] .sort-indicator::after {
+    content: "↑";
+  }
+
+  th[aria-sort="descending"] .sort-indicator::after {
+    content: "↓";
+  }
+
+  th[aria-sort="none"] .sort-indicator::after {
+    content: "↑↓";
+  }
+
   .table-scroll {
     width: 100%;
     /* TODO WHY DOES THIS ALSO make Y scroll????? */
