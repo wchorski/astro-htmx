@@ -1,0 +1,61 @@
+---
+import SpinningGlobeIcon from "@components/candy/SpinningGlobeIcon.astro";
+import BaseLayout from "@layouts/BaseLayout.astro";
+---
+
+<BaseLayout>
+  <h1>Points of Interest</h1>
+  <hr />
+  <section
+    hx-get="/partials/poi"
+    hx-trigger="load"
+    hx-target-error="#loader"
+    hx-swap="innerHTML"
+    hx-indicator="#loader"
+    aria-busy="true"
+  >
+    <!-- Loader -->
+    <div id="loader">
+      <SpinningGlobeIcon size={3} />
+      <p>Finding a point of interest…</p>
+    </div>
+  </section>
+
+  <button
+    hx-get="/partials/poi"
+    hx-target="section"
+    hx-indicator="#loader"
+    hx-swap="innerHTML"
+  >
+    Find another
+  </button>
+</BaseLayout>
+
+<style>
+  #loader {
+    display: grid;
+    place-items: center;
+    min-height: 40vh;
+    gap: 1rem;
+    font-size: 1.1rem;
+  }
+
+  .htmx-request #loader {
+    display: grid;
+  }
+
+  .spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid #ccc;
+    border-top-color: #333;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+</style>

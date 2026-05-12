@@ -1,0 +1,85 @@
+---
+interface Props {
+  wiki: any;
+  place: any;
+}
+const { wiki, place } = Astro.props;
+---
+
+<article>
+  {
+    wiki.image && (
+      <figure>
+        <img src={wiki.image} alt={wiki.name} loading="lazy" width="600" />
+      </figure>
+    )
+  }
+  <div class="content">
+    <header>
+      <h2>{wiki.name}</h2>
+      <small>
+        {place.city ? `${place.city}, ` : ""}
+        {place.country}
+      </small>
+    </header>
+
+    <p class="description card">{wiki.description}</p>
+
+    <p>
+      <a href={wiki.wikipediaUrl} target="_blank" rel="noreferrer">
+        View on Wikipedia
+      </a>
+    </p>
+  </div>
+</article>
+<style>
+  article {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: var(--space-m);
+    & h2 {
+      font-size: 42px;
+      margin-block: 0;
+    }
+    & .content {
+      align-items: center;
+      justify-content: space-evenly;
+
+      & header {
+        display: flex;
+        align-items: end;
+        gap: var(--space-m);
+      }
+    }
+
+    & figure {
+      margin: 0;
+      & img {
+        height: clamp(10rem, 60vh, 100rem);
+        width: 100%;
+        object-fit: contain;
+      }
+    }
+
+    & .description {
+      position: relative;
+      /* max-width: 30ch; */
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 30;
+      line-clamp: 30;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: inline-block;
+
+      /* &::after {
+        content: "…";
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        padding-left: 0.25em;
+        
+      } */
+    }
+  }
+</style>
