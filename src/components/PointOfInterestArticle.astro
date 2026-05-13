@@ -1,35 +1,47 @@
 ---
+import type { PointOfInterest } from "@lib/getPOI";
+
 interface Props {
-  wiki: any;
-  place: any;
+  poi: PointOfInterest;
 }
-const { wiki, place } = Astro.props;
+const { poi } = Astro.props;
+const { category, title, image, description, url, isDisambiguation } = poi;
 ---
 
 <article>
   {
-    wiki.image && (
+    image && (
       <figure>
-        <img src={wiki.image} alt={wiki.name} loading="lazy" width="600" />
+        <img
+          src={image}
+          alt={`featured image of ${title}`}
+          loading="lazy"
+          width="600"
+        />
       </figure>
     )
   }
   <div class="content">
     <header>
-      <h2>{wiki.name}</h2>
-      <small>
+      <h2>{title}</h2>
+      <!-- <small>
         {place.city ? `${place.city}, ` : ""}
         {place.country}
-      </small>
+      </small> -->
     </header>
 
-    <p class="description card">{wiki.description}</p>
+    <p class="description card">{description}</p>
 
-    <p>
-      <a href={wiki.wikipediaUrl} target="_blank" rel="noreferrer">
-        View on Wikipedia
-      </a>
-    </p>
+    {
+      url ? (
+        <p>
+          <a href={url} target="_blank" rel="noreferrer">
+            {" "}
+            View on Wikipedia{" "}
+          </a>
+        </p>
+      ) : null
+    }
   </div>
 </article>
 <style>
@@ -58,6 +70,7 @@ const { wiki, place } = Astro.props;
         height: clamp(10rem, 60vh, 100rem);
         width: 100%;
         object-fit: contain;
+        background: rgb(26, 26, 26);
       }
     }
 

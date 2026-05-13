@@ -36,6 +36,12 @@ export default defineConfig({
   adapter: node({
     mode: "standalone",
   }),
+
+  vite: {
+    define: {
+      CESIUM_BASE_URL: '"/cesium"',
+    },
+  },
   // env: {}
   // integrations: [db()]
 });

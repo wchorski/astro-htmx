@@ -1,11 +1,13 @@
 ---
 import PointOfInterestArticle from "@components/PointOfInterestArticle.astro";
-import { resolvePOIWithWikipedia } from "@lib/getPOI";
+import { getRandomWikipediaPoiFromCategories } from "@lib/getPOI";
 let result = null;
 let error = null;
 // 🔁 your existing resolver logic
 try {
-  result = await resolvePOIWithWikipedia();
+  // result = await resolvePOIWithWikipedia();
+  result = await getRandomWikipediaPoiFromCategories();
+
   // result = {
   //   place: {
   //     name: "Source of Nile",
@@ -37,7 +39,7 @@ try {
   // };
 } catch (e) {
   error = e;
-  // console.error(e);
+  console.error(e);
 }
 
 if (!result) {
@@ -47,7 +49,7 @@ if (!result) {
   );
 }
 
-const { place, wiki } = result;
+// const { place, wiki } = result;
 ---
 
 {
@@ -56,6 +58,7 @@ const { place, wiki } = result;
       Failed to find a point of interest.
     </p>
   ) : (
-    <PointOfInterestArticle {...result} />
+    <PointOfInterestArticle poi={result} />
+    
   )
 }

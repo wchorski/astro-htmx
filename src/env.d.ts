@@ -19,6 +19,7 @@ interface ImportMetaEnv {
   readonly NODE_ENV?: "production" | "development";
   readonly DATABASE_ID_SECRET?: string;
   readonly GEO_APIFY_KEY?: string;
+  readonly CESIUM_ION_KEY?: string;
 }
 
 interface ImportMeta {
