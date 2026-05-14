@@ -1,0 +1,255 @@
+---
+import fs from "node:fs/promises";
+import path from "node:path";
+import BaseLayout from "@layouts/BaseLayout.astro";
+import { XMLParser } from "fast-xml-parser";
+import { load } from "cheerio";
+import NewsArticle from "@components/NewsArticle.astro";
+import { rssXMLParser } from "@lib/rssXMLParser";
+// https://www.techrepublic.com/rssfeeds/articles/
+const parser = new XMLParser({
+  ignoreAttributes: false,
+  // attributeNamePrefix: "@_",
+});
+
+const BASE_DIR = path.resolve("public/data");
+const filenamePrefix = "engadget-articles";
+const hoursThreshold = 72 * 60 * 60 * 1000; // 72 hours
+let xml = null;
+let article = null;
+let error = null;
+
+try {
+  const date = await fs.readFile(
+    path.join(BASE_DIR, `${filenamePrefix}-last-pull-timestamp.txt`),
+    "utf-8",
+  );
+
+  const savedDate = new Date(date);
+  const now = new Date();
+
+  const timeDifference = now.getTime() - savedDate.getTime();
+
+  if (timeDifference >= hoursThreshold) {
+    console.log(
+      "fetching fresh data | timeDifference is older than hoursThreshold",
+    );
+
+    const res = await fetch("https://www.engadget.com/rss.xml");
+    xml = await res.text();
+    // console.log({ xml });
+    await fs.writeFile(
+      path.join(BASE_DIR, `${filenamePrefix}.xml`),
+      xml,
+      "utf-8",
+    );
+
+    await fs.writeFile(
+      path.join(BASE_DIR, `${filenamePrefix}-last-pull-timestamp.txt`),
+      now.toISOString(),
+      "utf-8",
+    );
+  } else {
+    console.log(
+      "fetching cached data | timeDifference is younger than hoursThreshold",
+    );
+    xml = await fs.readFile(
+      path.join(BASE_DIR, `${filenamePrefix}.xml`),
+      "utf-8",
+    );
+  }
+} catch (e) {
+  console.log(e);
+  error = e;
+}
+//? HELPERS
+function extractImage(html = "") {
+  const match = html.match(/<img[^>]+src="([^"]+)"/i);
+  return match?.[1] ?? null;
+}
+
+function extractOgImage(html: string, baseUrl: string): string | null {
+  const $ = load(html);
+
+  const og =
+    $('meta[property="og:image"]').attr("content") ||
+    $('meta[name="twitter:image"]').attr("content") ||
+    $('link[rel="image_src"]').attr("href");
+
+  if (!og) return null;
+
+  return new URL(og, baseUrl).toString();
+}
+
+async function fetchHtml(url: string): Promise<string> {
+  const res = await fetch(url, {
+    headers: {
+      // ✅ Real browser UA (do NOT invent one)
+      "User-Agent":
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 14_4_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+
+      // ✅ This one is often required
+      Accept:
+        "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+
+      // ✅ TechRepublic checks this sometimes
+      "Accept-Language": "en-US,en;q=0.9",
+
+      // ✅ Prevent fetch hint flagging
+      "Sec-Fetch-Site": "none",
+      "Sec-Fetch-Mode": "navigate",
+      "Sec-Fetch-Dest": "document",
+
+      // ✅ Helps vs simple bot filters
+      "Upgrade-Insecure-Requests": "1",
+    },
+    redirect: "follow",
+  });
+
+  if (!res.ok) {
+    throw new Error(`Failed to fetch article: ${res.status}`);
+  }
+
+  return res.text();
+}
+
+function isNotAd(entry) {
+  const words = ["Discount", "Coupon", "Coupons", "Promo", "Deals", "Review"];
+  return !words.some((word) => entry.title.includes(word));
+}
+
+if (xml) {
+  const feed = parser.parse(xml);
+  // console.log(JSON.stringify(feed, null, 2));
+  // Atom feeds may return a single object or array depending on size
+  const entriesWithAds = Array.isArray(feed.rss.channel.item)
+    ? feed.rss.channel.item
+    : [feed.rss.channel.item];
+
+  const entries = entriesWithAds.filter(isNotAd);
+
+  // console.log(JSON.stringify(entries,null,2));
+  const randomEntry = entries[Math.floor(Math.random() * entries.length)];
+  // console.log({ randomEntry });
+
+  // const xmlImgSrc =
+  //   randomEntry.summary?.img?.["@_src"] ||
+  //   extractImage(randomEntry.summary?.["#text"]);
+
+  // const postHTML = await fetchHtml(randomEntry.link);
+  // const ogImgSrc = extractOgImage(postHTML, randomEntry.link);
+  // console.log({ ogImgSrc });
+
+  article = rssXMLParser(randomEntry);
+} else {
+  console.log("NO XML FOUND");
+}
+---
+
+<BaseLayout>
+  <main>
+    <h1>Tech News Variety</h1>
+    {article ? <NewsArticle article={article} /> : <p>article not found</p>}
+  </main>
+</BaseLayout>
+
+<style is:global>
+  body{
+    padding: 1rem !important;
+    font-size: 2rem;
+  }
+  body {
+    --sz: 20px;
+    --c0: #ffffff00;
+    --c1: hsl(204, 8%, 12%);
+    --c2: hsl(210, 17%, 14%);
+    --c3: hsl(264, 12%, 18%);
+    --ts: 50%/calc(var(--sz) * 13.25) calc(var(--sz) * 11.7);
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    overflow: hidden;
+    background:
+      repeating-conic-gradient(
+          #3b354730 0.000001%,
+          var(--c0) 0.00005%,
+          var(--c0) 0.00035%,
+          var(--c0) 0.00005%
+        )
+        var(--ts),
+      repeating-conic-gradient(
+          #35638b59 0.00002%,
+          var(--c0) 0.00008%,
+          var(--c0) 0.0008%,
+          var(--c0) 0.00008%
+        )
+        var(--ts),
+      repeating-linear-gradient(90deg, var(--c0) 0 24.33%, var(--c3) 0 25%)
+        var(--ts),
+      linear-gradient(
+          210deg,
+          var(--c0) 0 80%,
+          var(--c3) calc(80% + 1px) 80.5%,
+          var(--c0) calc(80.5% + 1px) 100%
+        )
+        var(--ts),
+      conic-gradient(
+          from -90deg at 49.75% 100%,
+          var(--c1) 0 30deg,
+          var(--c0) 0 150deg,
+          var(--c2) 0 60deg
+        )
+        var(--ts),
+      conic-gradient(
+          from -180deg at 24.5% 50.5%,
+          var(--c1) 0 119deg,
+          var(--c0) 0 100%
+        )
+        var(--ts),
+      conic-gradient(
+          from 120deg at 74.5% 50%,
+          var(--c3) 0 120deg,
+          var(--c0) 0 100%
+        )
+        var(--ts),
+      conic-gradient(
+          from 180deg at 49.5% 34%,
+          var(--c2) 0 60deg,
+          var(--c0) 0 100%
+        )
+        var(--ts),
+      conic-gradient(
+          from -120deg at 50% 34%,
+          var(--c3) 0 60deg,
+          var(--c0) 0 100%
+        )
+        var(--ts),
+      conic-gradient(
+          from 0deg at 74.5% 17.5%,
+          var(--c2) 0 60deg,
+          var(--c3) 0 121deg,
+          var(--c0) 0 100%
+        )
+        var(--ts),
+      linear-gradient(
+          150deg,
+          var(--c0) 0 40%,
+          var(--c3) calc(40% + 1px) 40.5%,
+          var(--c0) calc(40.5% + 1px) 100%
+        )
+        var(--ts),
+      linear-gradient(90deg, var(--c0) 0 50%, var(--c2) 0 75%, var(--c0) 0 100%)
+        var(--ts),
+      repeating-linear-gradient(90deg, var(--c1) 0 24.33%, var(--c3) 0 25%)
+        var(--ts);
+    animation: bg-scroll 10s linear infinite;
+  }
+  @keyframes bg-scroll {
+    0% {
+      background-position: 0% 0%;
+    }
+    100% {
+      background-position: 100% 100%;
+    }
+  }
+</style>

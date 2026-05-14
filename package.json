@@ -25,12 +25,14 @@
     "@js-temporal/polyfill": "^0.5.1",
     "astro": "^6.0.7",
     "cesium": "^1.141.0",
+    "cheerio": "^1.2.0",
     "drizzle-orm": "^0.45.2",
     "fast-xml-parser": "^5.3.3",
     "htmx-ext-response-targets": "^2.0.4",
     "htmx.org": "^2.0.8",
     "pg": "^8.20.0",
-    "postgres": "^3.4.8"
+    "postgres": "^3.4.8",
+    "qrcode": "^1.5.4"
   },
   "devDependencies": {
     "@duckdb/node-api": "1.5.2-r.1",

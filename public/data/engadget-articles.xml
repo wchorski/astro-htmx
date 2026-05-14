@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0"
+    xmlns:content="http://purl.org/rss/1.0/modules/content/"
+    xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+    xmlns:dc="http://purl.org/dc/elements/1.1/"
+    xmlns:atom="http://www.w3.org/2005/Atom"
+    xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+    xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+            xmlns:media="http://search.yahoo.com/mrss/"
+        
+    >
+    <channel>
+        <title>Engadget - Technology News &amp; Expert Reviews</title>
+        <atom:link href="https://www.engadget.com/feed/" rel="self" type="application/rss+xml" />
+        <link>https://www.engadget.com/</link>
+        <description>Breaking news from the worlds of technology and entertainment, and expert reviews of the latest consumer tech products.</description>
+        <lastBuildDate>Thu, 14 May 2026 18:42:40 +0000</lastBuildDate>
+        <language>en-US</language>
+        <sy:updatePeriod>hourly</sy:updatePeriod>
+        <sy:updateFrequency>1</sy:updateFrequency>
+                                <item>
+                    <title><![CDATA[Microsoft's unreleased cloud controller has been spotted in the wild and it's teeny]]></title>
+                    <link>https://www.engadget.com/2173164/microsofts-unreleased-cloud-controller-has-been-spotted-in-the-wild-and-its-teeny/</link>
+                    <pubDate>Thu, 14 May 2026 18:42:40 +0000</pubDate>
+                                            <author>staff@engadget.com (Lawrence Bonk)</author>
+                                                            		<category><![CDATA[Xbox]]></category>
+                    <guid>https://www.engadget.com/2173164/microsofts-unreleased-cloud-controller-has-been-spotted-in-the-wild-and-its-teeny/</guid>
+                                            <description><![CDATA[It reportedly uses Wi-Fi to directly connect to the Xbox Cloud Gaming service, for lower latency.]]></description>
+
+                                                                                    <content:encoded><![CDATA[It reportedly uses Wi-Fi to directly connect to the Xbox Cloud Gaming service, for lower latency.<p><img src="https://www.engadget.com/img/gallery/microsofts-unreleased-cloud-controller-has-been-spotted-in-the-wild-and-its-teeny/intro-1778784098.jpg" /></p>]]></content:encoded>
+                                                                                                                    <media:thumbnail url="https://www.engadget.com/img/gallery/microsofts-unreleased-cloud-controller-has-been-spotted-in-the-wild-and-its-teeny/l-intro-1778784098.jpg"/>
+                        <enclosure url="https://www.engadget.com/img/gallery/microsofts-unreleased-cloud-controller-has-been-spotted-in-the-wild-and-its-teeny/l-intro-1778784098.jpg" type="image/jpg" length="185840"/>
+                                    </item>
+                                    <item>
+                    <title><![CDATA[Spotify and its hosting platforms are adopting Apple's tech for video podcasts]]></title>
+                    <link>https://www.engadget.com/2173148/spotify-and-its-hosting-platforms-are-adopting-apples-tech-for-video-podcasts/</link>
+                    <pubDate>Thu, 14 May 2026 18:25:32 +0000</pubDate>
+                                            <author>staff@engadget.com (Ian Carlos Campbell)</author>
+                                                            		<category><![CDATA[News]]></category>
+                    <guid>https://www.engadget.com/2173148/spotify-and-its-hosting-platforms-are-adopting-apples-tech-for-video-podcasts/</guid>
+                                            <description><![CDATA[HTTP Live Streaming support will let Apple Podcasts play Spotify-hosted video podcasts.]]></description>
+
+                                                                                    <content:encoded><![CDATA[HTTP Live Streaming support will let Apple Podcasts play Spotify-hosted video podcasts.<p><img src="https://www.engadget.com/img/gallery/spotify-and-its-hosting-platforms-are-adopting-apples-tech-for-video-podcasts/intro-1778783067.jpg" /></p>]]></content:encoded>
+                                                                                                                    <media:thumbnail url="https://www.engadget.com/img/gallery/spotify-and-its-hosting-platforms-are-adopting-apples-tech-for-video-podcasts/l-intro-1778783067.jpg"/>
+                        <enclosure url="https://www.engadget.com/img/gallery/spotify-and-its-hosting-platforms-are-adopting-apples-tech-for-video-podcasts/l-intro-1778783067.jpg" type="image/jpg" length="109717"/>
+                                    </item>
+                                    <item>
+                    <title><![CDATA[Noble Audio to launch FoKus Apollo Pro headset for $699]]></title>
+                    <link>https://www.engadget.com/2173124/noble-audio-to-launch-fokus-apollo-pro-headset-for-dollar699/</link>
+                    <pubDate>Thu, 14 May 2026 18:13:01 +0000</pubDate>
+                                            <author>staff@engadget.com (Anna Washenko)</author>
+                                                            		<category><![CDATA[News]]></category>
+                    <guid>https://www.engadget.com/2173124/noble-audio-to-launch-fokus-apollo-pro-headset-for-dollar699/</guid>
+                                            <description><![CDATA[An extra $50 will get you even nicer materials on the already high-end headphones.]]></description>
+
+                                                                                    <content:encoded><![CDATA[An extra $50 will get you even nicer materials on the already high-end headphones.<p><img src="https://www.engadget.com/img/gallery/noble-audio-to-launch-fokus-apollo-pro-headset-for-699/intro-1778782181.jpg" /></p>]]></content:encoded>
+                                                                                                                    <media:thumbnail url="https://www.engadget.com/img/gallery/noble-audio-to-launch-fokus-apollo-pro-headset-for-699/l-intro-1778782181.jpg"/>
+                        <enclosure url="https://www.engadget.com/img/gallery/noble-audio-to-launch-fokus-apollo-pro-headset-for-699/l-intro-1778782181.jpg" type="image/jpg" length="75541"/>
+                                    </item>
+                                    <item>
+                    <title><![CDATA[The Esports World Cup will reportedly move to Paris from Riyadh]]></title>
+                    <link>https://www.engadget.com/2173107/the-esports-world-cup-will-reportedly-move-to-paris-from-riyadh/</link>
+                    <pubDate>Thu, 14 May 2026 18:05:14 +0000</pubDate>
+                                            <author>staff@engadget.com (Jessica Conditt)</author>
+                                                            		<category><![CDATA[News]]></category>
+                    <guid>https://www.engadget.com/2173107/the-esports-world-cup-will-reportedly-move-to-paris-from-riyadh/</guid>
+                                            <description><![CDATA[Uncertainty in the Middle East is apparently forcing the location change.]]></description>
+
+                                                                                    <content:encoded><![CDATA[Uncertainty in the Middle East is apparently forcing the location change.<p><img src="https://www.engadget.com/img/gallery/the-esports-world-cup-will-reportedly-move-to-paris-from-riyadh/intro-1778781860.jpg" /></p>]]></content:encoded>
+                                                                                                                    <media:thumbnail url="https://www.engadget.com/img/gallery/the-esports-world-cup-will-reportedly-move-to-paris-from-riyadh/l-intro-1778781860.jpg"/>
+                        <enclosure url="https://www.engadget.com/img/gallery/the-esports-world-cup-will-reportedly-move-to-paris-from-riyadh/l-intro-1778781860.jpg" type="image/jpg" length="308344"/>
+                                    </item>
+                                    <item>
+                    <title><![CDATA[Americans really don't want AI data centers close to their homes]]></title>
+                    <link>https://www.engadget.com/2173078/americans-really-dont-want-ai-data-centers-close-to-their-homes/</link>
+                    <pubDate>Thu, 14 May 2026 17:49:14 +0000</pubDate>
+                                            <author>staff@engadget.com (Kris Holt)</author>
+                                                            		<category><![CDATA[AI]]></category>
+                    <guid>https://www.engadget.com/2173078/americans-really-dont-want-ai-data-centers-close-to-their-homes/</guid>
+                                            <description><![CDATA[Maybe NIMBYs are right for once.]]></description>
+
+                                                                                    <content:encoded><![CDATA[Maybe NIMBYs are right for once.<p><img src="https://www.engadget.com/img/gallery/americans-really-dont-want-ai-data-centers-close-to-their-homes/intro-1778780895.jpg" /></p>]]></content:encoded>
+                                                                                                                    <media:thumbnail url="https://www.engadget.com/img/gallery/americans-really-dont-want-ai-data-centers-close-to-their-homes/l-intro-1778780895.jpg"/>
+                        <enclosure url="https://www.engadget.com/img/gallery/americans-really-dont-want-ai-data-centers-close-to-their-homes/l-intro-1778780895.jpg" type="image/jpg" length="652012"/>
+                                    </item>
+                                    <item>
+                    <title><![CDATA[The ChatGPT desktop app for Mac just got hit with a security breach]]></title>
+                    <link>https://www.engadget.com/2173054/the-chatgpt-desktop-app-for-mac-just-got-hit-with-a-security-breach/</link>
+                    <pubDate>Thu, 14 May 2026 17:20:58 +0000</pubDate>
+                                            <author>staff@engadget.com (Lawrence Bonk)</author>
+                                                            		<category><![CDATA[AI]]></category>
+                    <guid>https://www.engadget.com/2173054/the-chatgpt-desktop-app-for-mac-just-got-hit-with-a-security-breach/</guid>
+                                            <description><![CDATA[OpenAI found no evidence that user data was accessed.]]></description>
+
+                                                                                    <content:encoded><![CDATA[OpenAI found no evidence that user data was accessed.<p><img src="https://www.engadget.com/img/gallery/the-chatgpt-desktop-app-for-mac-just-got-hit-with-a-security-breach/intro-1778779179.jpg" /></p>]]></content:encoded>
+                                                                                                                    <media:thumbnail url="https://www.engadget.com/img/gallery/the-chatgpt-desktop-app-for-mac-just-got-hit-with-a-security-breach/l-intro-1778779179.jpg"/>
+                        <enclosure url="https://www.engadget.com/img/gallery/the-chatgpt-desktop-app-for-mac-just-got-hit-with-a-security-breach/l-intro-1778779179.jpg" type="image/jpg" length="185836"/>
+                                    </item>
+                                    <item>
+                    <title><![CDATA[New Google accounts may only get 5GB free storage — unless you link a phone number]]></title>
+                    <link>https://www.engadget.com/2173013/new-google-accounts-may-only-get-5gb-free-storage-unless-you-link-a-phone-number/</link>
+                    <pubDate>Thu, 14 May 2026 16:48:12 +0000</pubDate>
+                                            <author>staff@engadget.com (Will Shanklin)</author>
+                                                            		<category><![CDATA[Google]]></category>
+                    <guid>https://www.engadget.com/2173013/new-google-accounts-may-only-get-5gb-free-storage-unless-you-link-a-phone-number/</guid>
+                                            <description><![CDATA[Google describes it as a regional test.]]></description>
+
+                                                                                    <content:encoded><![CDATA[Google describes it as a regional test.<p><img src="https://www.engadget.com/img/gallery/new-google-accounts-may-only-get-5gb-free-storage-unless-you-link-a-phone-number/intro-1778777204.jpg" /></p>]]></content:encoded>
+                                                                                                                    <media:thumbnail url="https://www.engadget.com/img/gallery/new-google-accounts-may-only-get-5gb-free-storage-unless-you-link-a-phone-number/l-intro-1778777204.jpg"/>
+                        <enclosure url="https://www.engadget.com/img/gallery/new-google-accounts-may-only-get-5gb-free-storage-unless-you-link-a-phone-number/l-intro-1778777204.jpg" type="image/jpg" length="100252"/>
+                                    </item>
+                                    <item>
+                    <title><![CDATA[AMD will bring its next-generation FSR 4.1 upscaling tech to older GPUs]]></title>
+                    <link>https://www.engadget.com/2173003/amd-will-bring-its-next-generation-fsr-41-upscaling-tech-to-older-gpus/</link>
+                    <pubDate>Thu, 14 May 2026 16:44:10 +0000</pubDate>
+                                            <author>staff@engadget.com (Matt Tate)</author>
+                                                            		<category><![CDATA[Computing]]></category>
+                    <guid>https://www.engadget.com/2173003/amd-will-bring-its-next-generation-fsr-41-upscaling-tech-to-older-gpus/</guid>
+                                            <description><![CDATA[RNDA 3 players can start using it in over 300 games this July.]]></description>
+
+                                                                                    <content:encoded><![CDATA[RNDA 3 players can start using it in over 300 games this July.<p><img src="https://www.engadget.com/img/gallery/amd-will-bring-its-next-generation-fsr-4-1-upscaling-tech-to-older-gpus/intro-1778776958.jpg" /></p>]]></content:encoded>
+                                                                                                                    <media:thumbnail url="https://www.engadget.com/img/gallery/amd-will-bring-its-next-generation-fsr-4-1-upscaling-tech-to-older-gpus/l-intro-1778776958.jpg"/>
+                        <enclosure url="https://www.engadget.com/img/gallery/amd-will-bring-its-next-generation-fsr-4-1-upscaling-tech-to-older-gpus/l-intro-1778776958.jpg" type="image/jpg" length="135209"/>
+                                    </item>
+                                    <item>
+                    <title><![CDATA[The original versions of Metro 2033 and Metro: Last Light land on GOG]]></title>
+                    <link>https://www.engadget.com/2172946/original-versions-of-metro-2033-and-metro-last-light-land-on-gog/</link>
+                    <pubDate>Thu, 14 May 2026 15:47:41 +0000</pubDate>
+                                            <author>staff@engadget.com (Kris Holt)</author>
+                                                            		<category><![CDATA[PC Gaming]]></category>
+                    <guid>https://www.engadget.com/2172946/original-versions-of-metro-2033-and-metro-last-light-land-on-gog/</guid>
+                                            <description><![CDATA[These are the latest editions to the platform's game preservation program.]]></description>
+
+                                                                                    <content:encoded><![CDATA[These are the latest editions to the platform's game preservation program.<p><img src="https://www.engadget.com/img/gallery/the-original-versions-of-metro-2033-and-metro-last-light-land-on-gog/intro-1778773589.jpg" /></p>]]></content:encoded>
+                                                                                                                    <media:thumbnail url="https://www.engadget.com/img/gallery/the-original-versions-of-metro-2033-and-metro-last-light-land-on-gog/l-intro-1778773589.jpg"/>
+                        <enclosure url="https://www.engadget.com/img/gallery/the-original-versions-of-metro-2033-and-metro-last-light-land-on-gog/l-intro-1778773589.jpg" type="image/jpg" length="425021"/>
+                                    </item>
+                                    <item>
+                    <title><![CDATA[UK antitrust regulator is officially investigating Microsoft Office]]></title>
+                    <link>https://www.engadget.com/2172943/uk-antitrust-regulator-is-officially-investigating-microsoft-office/</link>
+                    <pubDate>Thu, 14 May 2026 15:45:19 +0000</pubDate>
+                                            <author>staff@engadget.com (Lawrence Bonk)</author>
+                                                            		<category><![CDATA[Microsoft]]></category>
+                    <guid>https://www.engadget.com/2172943/uk-antitrust-regulator-is-officially-investigating-microsoft-office/</guid>
+                                            <description><![CDATA[It&#39;s examining whether or not the bundling of Word, Excel, Teams and Copilot is uncompetitive.]]></description>
+
+                                                                                    <content:encoded><![CDATA[It&#39;s examining whether or not the bundling of Word, Excel, Teams and Copilot is uncompetitive.<p><img src="https://www.engadget.com/img/gallery/uk-antitrust-regulator-is-officially-investigating-microsoft-office/intro-1778773438.jpg" /></p>]]></content:encoded>
+                                                                                                                    <media:thumbnail url="https://www.engadget.com/img/gallery/uk-antitrust-regulator-is-officially-investigating-microsoft-office/l-intro-1778773438.jpg"/>
+                        <enclosure url="https://www.engadget.com/img/gallery/uk-antitrust-regulator-is-officially-investigating-microsoft-office/l-intro-1778773438.jpg" type="image/jpg" length="208256"/>
+                                    </item>
+                                    <item>
+                    <title><![CDATA[AT&T, T-Mobile, and Verizon join forces to eliminate mobile coverage dead zones]]></title>
+                    <link>https://www.engadget.com/2172897/att-tmobile-and-verizon-join-forces-to-eliminate-mobile-coverage-dead-zones/</link>
+                    <pubDate>Thu, 14 May 2026 15:08:20 +0000</pubDate>
+                                            <author>staff@engadget.com (Matt Tate)</author>
+                                                            		<category><![CDATA[Mobile]]></category>
+		<category><![CDATA[Big Tech]]></category>
+                    <guid>https://www.engadget.com/2172897/att-tmobile-and-verizon-join-forces-to-eliminate-mobile-coverage-dead-zones/</guid>
+                                            <description><![CDATA[The rival carriers will pool resources to improve satellite capacity and boost connectivity in underserved areas.]]></description>
+
+                                                                                    <content:encoded><![CDATA[The rival carriers will pool resources to improve satellite capacity and boost connectivity in underserved areas.<p><img src="https://www.engadget.com/img/gallery/att-tmobile-and-verizon-join-forces-to-eliminate-mobile-coverage-dead-zones/intro-1778771664.jpg" /></p>]]></content:encoded>
+                                                                                                                    <media:thumbnail url="https://www.engadget.com/img/gallery/att-tmobile-and-verizon-join-forces-to-eliminate-mobile-coverage-dead-zones/l-intro-1778771664.jpg"/>
+                        <enclosure url="https://www.engadget.com/img/gallery/att-tmobile-and-verizon-join-forces-to-eliminate-mobile-coverage-dead-zones/l-intro-1778771664.jpg" type="image/jpg" length="158654"/>
+                                    </item>
+                                    <item>
+                    <title><![CDATA[Don't Touch the Snail is an anti-cozy game that takes permadeath to the next level]]></title>
+                    <link>https://www.engadget.com/2162157/dont-touch-the-snail-is-an-anti-cozy-game-that-takes-permadeath-to-the-next-level/</link>
+                    <pubDate>Thu, 14 May 2026 14:00:00 +0000</pubDate>
+                                            <author>staff@engadget.com (Lawrence Bonk)</author>
+                                                            		<category><![CDATA[PC Gaming]]></category>
+                    <guid>https://www.engadget.com/2162157/dont-touch-the-snail-is-an-anti-cozy-game-that-takes-permadeath-to-the-next-level/</guid>
+                                            <description><![CDATA[Once you die, you can never play again.]]></description>
+
+                                                                                    <content:encoded><![CDATA[Once you die, you can never play again.<p><img src="https://www.engadget.com/img/gallery/dont-touch-the-snail-is-an-anti-cozy-game-that-takes-permadeath-to-the-next-level/intro-1777659858.jpg" /></p>]]></content:encoded>
+                                                                                                                    <media:thumbnail url="https://www.engadget.com/img/gallery/dont-touch-the-snail-is-an-anti-cozy-game-that-takes-permadeath-to-the-next-level/l-intro-1777659858.jpg"/>
+                        <enclosure url="https://www.engadget.com/img/gallery/dont-touch-the-snail-is-an-anti-cozy-game-that-takes-permadeath-to-the-next-level/l-intro-1777659858.jpg" type="image/jpg" length="173004"/>
+                                    </item>
+                                    <item>
+                    <title><![CDATA[Ultrahuman Ring Pro review: The future of smart rings looks a lot like its present]]></title>
+                    <link>https://www.engadget.com/2172740/ultrahuman-ring-pro-review/</link>
+                    <pubDate>Thu, 14 May 2026 14:00:00 +0000</pubDate>
+                                            <author>staff@engadget.com (Daniel Cooper)</author>
+                                                            		<category><![CDATA[Wearables]]></category>
+                    <guid>https://www.engadget.com/2172740/ultrahuman-ring-pro-review/</guid>
+                                            <description><![CDATA[The major innovations on the Ultrahuman Ring Pro are in its charging case.]]></description>
+
+                                                                                    <content:encoded><![CDATA[The major innovations on the Ultrahuman Ring Pro are in its charging case.<p><img src="https://www.engadget.com/img/gallery/ultrahuman-ring-pro-review-the-future-of-smart-rings-looks-a-lot-like-its-present/intro-1778688702.jpg" /></p>]]></content:encoded>
+                                                                                                                    <media:thumbnail url="https://www.engadget.com/img/gallery/ultrahuman-ring-pro-review-the-future-of-smart-rings-looks-a-lot-like-its-present/l-intro-1778688702.jpg"/>
+                        <enclosure url="https://www.engadget.com/img/gallery/ultrahuman-ring-pro-review-the-future-of-smart-rings-looks-a-lot-like-its-present/l-intro-1778688702.jpg" type="image/jpg" length="145591"/>
+                                    </item>
+                                    <item>
+                    <title><![CDATA[We're going to be watching the Legend of Zelda movie sooner than expected]]></title>
+                    <link>https://www.engadget.com/2172782/were-going-to-be-watching-the-legend-of-zelda-movie-sooner-than-expected/</link>
+                    <pubDate>Thu, 14 May 2026 13:08:21 +0000</pubDate>
+                                            <author>staff@engadget.com (Matt Tate)</author>
+                                                            		<category><![CDATA[Nintendo]]></category>
+		<category><![CDATA[TV & Movies]]></category>
+                    <guid>https://www.engadget.com/2172782/were-going-to-be-watching-the-legend-of-zelda-movie-sooner-than-expected/</guid>
+                                            <description><![CDATA[The Legend of Zelda is now landing in theaters on April 30.]]></description>
+
+                                                                                    <content:encoded><![CDATA[The Legend of Zelda is now landing in theaters on April 30.<p><img src="https://www.engadget.com/img/gallery/were-going-to-be-watching-the-legend-of-zelda-movie-sooner-than-we-expected/intro-1778764009.jpg" /></p>]]></content:encoded>
+                                                                                                                    <media:thumbnail url="https://www.engadget.com/img/gallery/were-going-to-be-watching-the-legend-of-zelda-movie-sooner-than-we-expected/l-intro-1778764009.jpg"/>
+                        <enclosure url="https://www.engadget.com/img/gallery/were-going-to-be-watching-the-legend-of-zelda-movie-sooner-than-we-expected/l-intro-1778764009.jpg" type="image/jpg" length="449504"/>
+                                    </item>
+                                    <item>
+                    <title><![CDATA[Dell's new 14S and 16S are the replacement for its old Plus models]]></title>
+                    <link>https://www.engadget.com/2172725/dell-14s-16-s-2026/</link>
+                    <pubDate>Thu, 14 May 2026 13:00:00 +0000</pubDate>
+                                            <author>staff@engadget.com (Mariella Moon)</author>
+                                                            		<category><![CDATA[Laptops]]></category>
+                    <guid>https://www.engadget.com/2172725/dell-14s-16-s-2026/</guid>
+                                            <description><![CDATA[The new models are now available, with prices starting at $1,270.]]></description>
+
+                                                                                    <content:encoded><![CDATA[The new models are now available, with prices starting at $1,270.<p><img src="https://www.engadget.com/img/gallery/dells-new-14s-and-16s-are-the-replacement-for-its-old-plus-models/intro-1778759698.jpg" /></p>]]></content:encoded>
+                                                                                                                    <media:thumbnail url="https://www.engadget.com/img/gallery/dells-new-14s-and-16s-are-the-replacement-for-its-old-plus-models/l-intro-1778759698.jpg"/>
+                        <enclosure url="https://www.engadget.com/img/gallery/dells-new-14s-and-16s-are-the-replacement-for-its-old-plus-models/l-intro-1778759698.jpg" type="image/jpg" length="166266"/>
+                                    </item>
+                                    <item>
+                    <title><![CDATA[Alienware's first affordable gaming laptop is arriving at the perfect time]]></title>
+                    <link>https://www.engadget.com/2171251/alienwares-first-affordable-gaming-laptop-is-arriving-at-the-perfect-time/</link>
+                    <pubDate>Thu, 14 May 2026 13:00:00 +0000</pubDate>
+                                            <author>staff@engadget.com (Sam Rutherford)</author>
+                                                            		<category><![CDATA[Laptops]]></category>
+                    <guid>https://www.engadget.com/2171251/alienwares-first-affordable-gaming-laptop-is-arriving-at-the-perfect-time/</guid>
+                                            <description><![CDATA[The entry-level Alienware 15 starts at $1,299 with an AMD CPU or $1,349 for an Intel config.]]></description>
+
+                                                                                    <content:encoded><![CDATA[The entry-level Alienware 15 starts at $1,299 with an AMD CPU or $1,349 for an Intel config.<p><img src="https://www.engadget.com/img/gallery/alienwares-first-affordable-gaming-laptop-is-arriving-at-the-perfect-time/intro-1778613722.jpg" /></p>]]></content:encoded>
+                                                                                                                    <media:thumbnail url="https://www.engadget.com/img/gallery/alienwares-first-affordable-gaming-laptop-is-arriving-at-the-perfect-time/l-intro-1778613722.jpg"/>
+                        <enclosure url="https://www.engadget.com/img/gallery/alienwares-first-affordable-gaming-laptop-is-arriving-at-the-perfect-time/l-intro-1778613722.jpg" type="image/jpg" length="438929"/>
+                                    </item>
+                                    <item>
+                    <title><![CDATA[Motorola Razr Fold review: A worthy rival to Google and Samsung]]></title>
+                    <link>https://www.engadget.com/2172439/motorola-razr-fold-review/</link>
+                    <pubDate>Thu, 14 May 2026 13:00:00 +0000</pubDate>
+                                            <author>staff@engadget.com (Sam Rutherford)</author>
+                                                            		<category><![CDATA[Smartphones]]></category>
+                    <guid>https://www.engadget.com/2172439/motorola-razr-fold-review/</guid>
+                                            <description><![CDATA[It even has native stylus support, which Samsung dropped on the Galaxy Z Fold 7.]]></description>
+
+                                                                                    <content:encoded><![CDATA[It even has native stylus support, which Samsung dropped on the Galaxy Z Fold 7.<p><img src="https://www.engadget.com/img/gallery/motorola-razr-fold-review-a-worthy-rival-to-google-and-samsung/intro-1778706735.jpg" /></p>]]></content:encoded>
+                                                                                                                    <media:thumbnail url="https://www.engadget.com/img/gallery/motorola-razr-fold-review-a-worthy-rival-to-google-and-samsung/l-intro-1778706735.jpg"/>
+                        <enclosure url="https://www.engadget.com/img/gallery/motorola-razr-fold-review-a-worthy-rival-to-google-and-samsung/l-intro-1778706735.jpg" type="image/jpg" length="413396"/>
+                                    </item>
+                                    <item>
+                    <title><![CDATA[Windows Update will soon revert problematic drivers automatically]]></title>
+                    <link>https://www.engadget.com/2172752/windows-update-will-soon-revert-problematic-drivers-automatically/</link>
+                    <pubDate>Thu, 14 May 2026 12:29:16 +0000</pubDate>
+                                            <author>staff@engadget.com (Steve Dent)</author>
+                                                            		<category><![CDATA[Microsoft]]></category>
+                    <guid>https://www.engadget.com/2172752/windows-update-will-soon-revert-problematic-drivers-automatically/</guid>
+                                            <description><![CDATA[The company is also trying to prevent driver problems before they happen with a new initiative.]]></description>
+
+                                                                                    <content:encoded><![CDATA[The company is also trying to prevent driver problems before they happen with a new initiative.<p><img src="https://www.engadget.com/img/gallery/windows-update-will-soon-revert-problematic-drivers-automatically/intro-1778761686.jpg" /></p>]]></content:encoded>
+                                                                                                                    <media:thumbnail url="https://www.engadget.com/img/gallery/windows-update-will-soon-revert-problematic-drivers-automatically/l-intro-1778761686.jpg"/>
+                        <enclosure url="https://www.engadget.com/img/gallery/windows-update-will-soon-revert-problematic-drivers-automatically/l-intro-1778761686.jpg" type="image/jpg" length="259293"/>
+                                    </item>
+                                    <item>
+                    <title><![CDATA[Tech companies lobbied away stricter rules on gas-powered data centers]]></title>
+                    <link>https://www.engadget.com/2172704/tech-companies-lobbied-against-stricter-environmental-rules/</link>
+                    <pubDate>Thu, 14 May 2026 10:49:14 +0000</pubDate>
+                                            <author>staff@engadget.com (Steve Dent)</author>
+                                                            		<category><![CDATA[Big Tech]]></category>
+                    <guid>https://www.engadget.com/2172704/tech-companies-lobbied-against-stricter-environmental-rules/</guid>
+                                            <description><![CDATA[A corporate climate watchdog has dropped a rule proposal around clean energy certificates.]]></description>
+
+                                                                                    <content:encoded><![CDATA[A corporate climate watchdog has dropped a rule proposal around clean energy certificates.<p><img src="https://www.engadget.com/img/gallery/tech-companies-lobbied-away-stricter-rules-on-gas-powered-data-centers/intro-1778755650.jpg" /></p>]]></content:encoded>
+                                                                                                                    <media:thumbnail url="https://www.engadget.com/img/gallery/tech-companies-lobbied-away-stricter-rules-on-gas-powered-data-centers/l-intro-1778755650.jpg"/>
+                        <enclosure url="https://www.engadget.com/img/gallery/tech-companies-lobbied-away-stricter-rules-on-gas-powered-data-centers/l-intro-1778755650.jpg" type="image/jpg" length="634625"/>
+                                    </item>
+                                    <item>
+                    <title><![CDATA[US reportedly allows 10 Chinese companies to buy NVIDIA's coveted H200 AI chips]]></title>
+                    <link>https://www.engadget.com/2172686/us-reportedly-allows-10-chinese-companies-to-buy-nvidia-h200-chips/</link>
+                    <pubDate>Thu, 14 May 2026 10:12:50 +0000</pubDate>
+                                            <author>staff@engadget.com (Mariella Moon)</author>
+                                                            		<category><![CDATA[Big Tech]]></category>
+                    <guid>https://www.engadget.com/2172686/us-reportedly-allows-10-chinese-companies-to-buy-nvidia-h200-chips/</guid>
+                                            <description><![CDATA[But Reuters says NVIDIA has yet to make any deliveries. ]]></description>
+
+                                                                                    <content:encoded><![CDATA[But Reuters says NVIDIA has yet to make any deliveries. <p><img src="https://www.engadget.com/img/gallery/us-reportedly-gives-10-chinese-companies-the-clearance-to-buy-nvidia-h200-chips/intro-1778753352.jpg" /></p>]]></content:encoded>
+                                                                                                                    <media:thumbnail url="https://www.engadget.com/img/gallery/us-reportedly-gives-10-chinese-companies-the-clearance-to-buy-nvidia-h200-chips/l-intro-1778753352.jpg"/>
+                        <enclosure url="https://www.engadget.com/img/gallery/us-reportedly-gives-10-chinese-companies-the-clearance-to-buy-nvidia-h200-chips/l-intro-1778753352.jpg" type="image/jpg" length="124064"/>
+                                    </item>
+                        </channel>
+
+</rss>

@@ -1,0 +1,95 @@
+---
+import QRCode from "qrcode";
+import type { NormalizedNewsArticle } from "@lib/rssXMLParser";
+
+interface Props {
+  article: NormalizedNewsArticle;
+}
+const { article } = Astro.props;
+const {
+  media,
+  id,
+  title,
+  excerpt,
+  updated,
+  author,
+  category,
+  origin,
+  content,
+  link,
+} = article;
+
+const svg = await QRCode.toString(link, { type: "svg" });
+---
+
+<article>
+  <header>
+    <figure>
+      {
+        media ? (
+          <img
+            src={media.url}
+            height={media.height}
+            width={media.width}
+            alt={`news article feature image for ${title}`}
+          />
+        ) : null
+      }
+    </figure>
+    <div class="qr" set:html={svg} />
+    <a class="source" href={link}>{link}</a>
+  </header>
+
+  <div data-layout="content" class="card">
+    <h2>{title}</h2>
+    <dl class="kv meta">
+      <dt>Author:</dt>
+      <dd>{author}</dd>
+      <dt>Category:</dt>
+      <dd>{category}</dd>
+      <dt>Origin:</dt>
+      <dd>{origin}</dd>
+    </dl>
+    <p class="description">
+      {excerpt}
+    </p>
+  </div>
+</article>
+
+<style>
+  article {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: var(--space-m, 1rem);
+
+    & .qr {
+      width: 200px;
+    }
+
+    & a.source {
+      font-size: 1rem;
+    }
+
+    & figure {
+      margin: 0;
+    }
+    & img {
+      width: 100%;
+      object-fit: contain;
+      height: auto;
+    }
+
+    & h2 {
+      font-size: 2rem;
+    }
+
+    /* & div[data-layout="content"] {
+      display: grid;
+      place-items: center;
+    } */
+
+    & .meta {
+      font-size: 0.6rem;
+    }
+  }
+</style>

@@ -1,0 +1,570 @@
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>TechRepublic</title>
+	<atom:link href="https://www.techrepublic.com/rssfeeds/articles/" rel="self" type="application/rss+xml" />
+	<link>https://www.techrepublic.com/</link>
+	<description>News, Tips, and Advice for Technology Professionals</description>
+	<lastBuildDate>Wed, 13 May 2026 17:52:44 +0000</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	
+	<item>
+		<title>Microsoft’s Patch Tuesday Update Targets 120 Security Flaws</title>
+		<link>https://www.techrepublic.com/article/news-microsoft-may-patch-tuesday-120-flaws/</link>
+		
+		<dc:creator><![CDATA[Joseph Ofonagoro]]></dc:creator>
+		<pubDate>Wed, 13 May 2026 17:52:44 +0000</pubDate>
+				<category><![CDATA[Cybersecurity]]></category>
+		<category><![CDATA[International]]></category>
+		<category><![CDATA[Microsoft]]></category>
+		<category><![CDATA[News]]></category>
+		<category><![CDATA[Security]]></category>
+		<category><![CDATA[Software]]></category>
+		<category><![CDATA[cybersecurity]]></category>
+		<category><![CDATA[patch tuesday]]></category>
+		<category><![CDATA[remote code execution]]></category>
+		<category><![CDATA[vulnerabilities]]></category>
+		<category><![CDATA[windows 10]]></category>
+		<category><![CDATA[Windows 11]]></category>
+		<category><![CDATA[zero day]]></category>
+		<guid isPermaLink="false">https://www.techrepublic.com/?p=4358995</guid>
+
+					<description><![CDATA[<p>Microsoft’s May Patch Tuesday fixes 120 flaws, including 31 remote code execution bugs, with no zero-days reported at release.</p>
+<p>The post <a href="https://www.techrepublic.com/article/news-microsoft-may-patch-tuesday-120-flaws/">Microsoft’s Patch Tuesday Update Targets 120 Security Flaws</a> appeared first on <a href="https://www.techrepublic.com">TechRepublic</a>.</p>
+]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>Google Introduces Googlebook, a Gemini-First Laptop Platform</title>
+		<link>https://www.techrepublic.com/article/news-googlebook-gemini-ai-laptops/</link>
+		
+		<dc:creator><![CDATA[Aminu Abdullahi]]></dc:creator>
+		<pubDate>Wed, 13 May 2026 17:47:16 +0000</pubDate>
+				<category><![CDATA[Artificial Intelligence]]></category>
+		<category><![CDATA[Chatbots]]></category>
+		<category><![CDATA[Google]]></category>
+		<category><![CDATA[Hardware]]></category>
+		<category><![CDATA[Innovation]]></category>
+		<category><![CDATA[News]]></category>
+		<category><![CDATA[Operating System]]></category>
+		<category><![CDATA[Tech Industry]]></category>
+		<category><![CDATA[android]]></category>
+		<category><![CDATA[artificial intelligence]]></category>
+		<category><![CDATA[Chromebook]]></category>
+		<category><![CDATA[chromeos]]></category>
+		<category><![CDATA[gemini]]></category>
+		<category><![CDATA[googlebook]]></category>
+		<category><![CDATA[laptops]]></category>
+		<guid isPermaLink="false">https://www.techrepublic.com/?p=4358991</guid>
+
+					<description><![CDATA[<p>Googlebook brings Gemini Intelligence, Magic Pointer, Android app support, phone integration, and premium hardware to Google’s new laptop platform.</p>
+<p>The post <a href="https://www.techrepublic.com/article/news-googlebook-gemini-ai-laptops/">Google Introduces Googlebook, a Gemini-First Laptop Platform</a> appeared first on <a href="https://www.techrepublic.com">TechRepublic</a>.</p>
+]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>Google Launches New Android Security Features to Fight Scams, Theft</title>
+		<link>https://www.techrepublic.com/article/news-google-android-security-scam-calls-theft-spyware/</link>
+		
+		<dc:creator><![CDATA[Aminu Abdullahi]]></dc:creator>
+		<pubDate>Wed, 13 May 2026 17:40:18 +0000</pubDate>
+				<category><![CDATA[Android]]></category>
+		<category><![CDATA[Cybersecurity]]></category>
+		<category><![CDATA[Google]]></category>
+		<category><![CDATA[International]]></category>
+		<category><![CDATA[Mobile]]></category>
+		<category><![CDATA[News]]></category>
+		<category><![CDATA[Security]]></category>
+		<category><![CDATA[Smartphones]]></category>
+		<category><![CDATA[android]]></category>
+		<category><![CDATA[android 17]]></category>
+		<category><![CDATA[android security]]></category>
+		<category><![CDATA[cybersecurity]]></category>
+		<category><![CDATA[mobile security]]></category>
+		<category><![CDATA[scam calls]]></category>
+		<category><![CDATA[spyware]]></category>
+		<guid isPermaLink="false">https://www.techrepublic.com/?p=4358985</guid>
+
+					<description><![CDATA[<p>Google detailed Android security updates for 2026, including verified bank calls, stronger theft protection, OTP hiding, and spyware forensics.</p>
+<p>The post <a href="https://www.techrepublic.com/article/news-google-android-security-scam-calls-theft-spyware/">Google Launches New Android Security Features to Fight Scams, Theft</a> appeared first on <a href="https://www.techrepublic.com">TechRepublic</a>.</p>
+]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>TIOBE Index for May 2026: R Ascends as Statistical Tools Consolidate</title>
+		<link>https://www.techrepublic.com/article/news-tiobe-may-2026-r-hits-8/</link>
+		
+		<dc:creator><![CDATA[Liz Ticong]]></dc:creator>
+		<pubDate>Wed, 13 May 2026 17:07:25 +0000</pubDate>
+				<category><![CDATA[Developer]]></category>
+		<category><![CDATA[Google]]></category>
+		<category><![CDATA[International]]></category>
+		<category><![CDATA[Microsoft]]></category>
+		<category><![CDATA[News]]></category>
+		<category><![CDATA[Software]]></category>
+		<category><![CDATA[c++]]></category>
+		<category><![CDATA[dart]]></category>
+		<category><![CDATA[delphi]]></category>
+		<category><![CDATA[developer]]></category>
+		<category><![CDATA[f#]]></category>
+		<category><![CDATA[flutter]]></category>
+		<category><![CDATA[fortran]]></category>
+		<category><![CDATA[go]]></category>
+		<category><![CDATA[java]]></category>
+		<category><![CDATA[object pascal]]></category>
+		<category><![CDATA[programming languages]]></category>
+		<category><![CDATA[Python]]></category>
+		<category><![CDATA[R]]></category>
+		<category><![CDATA[rust]]></category>
+		<category><![CDATA[tiobe software]]></category>
+		<category><![CDATA[typescript]]></category>
+		<guid isPermaLink="false">https://www.techrepublic.com/?p=4358972</guid>
+
+					<description><![CDATA[<p>May 2026 TIOBE Index keeps Python #1 as Java edges past C++. R climbs to #8, and Paul Jansen says statistical tools are consolidating around Python and R.</p>
+<p>The post <a href="https://www.techrepublic.com/article/news-tiobe-may-2026-r-hits-8/">TIOBE Index for May 2026: R Ascends as Statistical Tools Consolidate</a> appeared first on <a href="https://www.techrepublic.com">TechRepublic</a>.</p>
+]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>Hackers Claim 11M Files Stolen From Foxconn, Supplier to Apple and Nvidia</title>
+		<link>https://www.techrepublic.com/article/news-foxconn-ransomware-11m-files-apac/</link>
+		
+		<dc:creator><![CDATA[Liz Ticong]]></dc:creator>
+		<pubDate>Wed, 13 May 2026 14:21:51 +0000</pubDate>
+				<category><![CDATA[APAC]]></category>
+		<category><![CDATA[Apple]]></category>
+		<category><![CDATA[Cybersecurity]]></category>
+		<category><![CDATA[Google]]></category>
+		<category><![CDATA[News]]></category>
+		<category><![CDATA[Security]]></category>
+		<category><![CDATA[cyberattack]]></category>
+		<category><![CDATA[data breach]]></category>
+		<category><![CDATA[foxconn]]></category>
+		<category><![CDATA[nitrogen ransomware]]></category>
+		<category><![CDATA[nvidia]]></category>
+		<category><![CDATA[ransomware]]></category>
+		<category><![CDATA[supply chain security]]></category>
+		<guid isPermaLink="false">https://www.techrepublic.com/?p=4358957</guid>
+
+					<description><![CDATA[<p>Foxconn confirmed a North American cyberattack after Nitrogen claimed it had stolen 11M files tied to major tech customer projects.</p>
+<p>The post <a href="https://www.techrepublic.com/article/news-foxconn-ransomware-11m-files-apac/">Hackers Claim 11M Files Stolen From Foxconn, Supplier to Apple and Nvidia</a> appeared first on <a href="https://www.techrepublic.com">TechRepublic</a>.</p>
+]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>Canvas Breach Hackers Reach Deal After Claiming 275M Records Stolen</title>
+		<link>https://www.techrepublic.com/article/news-canvas-breach-hackers-deal-275m-records-stolen/</link>
+		
+		<dc:creator><![CDATA[Kezia Jungco]]></dc:creator>
+		<pubDate>Wed, 13 May 2026 13:54:29 +0000</pubDate>
+				<category><![CDATA[Cybersecurity]]></category>
+		<category><![CDATA[Data Management]]></category>
+		<category><![CDATA[International]]></category>
+		<category><![CDATA[News]]></category>
+		<category><![CDATA[Security]]></category>
+		<category><![CDATA[canvas]]></category>
+		<category><![CDATA[CISA]]></category>
+		<category><![CDATA[cybersecurity]]></category>
+		<category><![CDATA[data breach]]></category>
+		<category><![CDATA[Edtech]]></category>
+		<category><![CDATA[education security]]></category>
+		<category><![CDATA[instructure]]></category>
+		<category><![CDATA[ransomware]]></category>
+		<category><![CDATA[shinyhunters]]></category>
+		<category><![CDATA[student data]]></category>
+		<guid isPermaLink="false">https://www.techrepublic.com/?p=4358949</guid>
+
+					<description><![CDATA[<p>Instructure reached a deal with the Canvas hackers after they claimed to have stolen data tied to nearly 9,000 schools and 275 million people.</p>
+<p>The post <a href="https://www.techrepublic.com/article/news-canvas-breach-hackers-deal-275m-records-stolen/">Canvas Breach Hackers Reach Deal After Claiming 275M Records Stolen</a> appeared first on <a href="https://www.techrepublic.com">TechRepublic</a>.</p>
+]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>Enhance Your Expertise Anytime with Unlimited Online Courses — Now $19.97</title>
+		<link>https://www.techrepublic.com/article/stackskills-unlimited-lifetime-access/</link>
+		
+		<dc:creator><![CDATA[TechRepublic Academy]]></dc:creator>
+		<pubDate>Wed, 13 May 2026 13:30:24 +0000</pubDate>
+				<category><![CDATA[Tech & Work]]></category>
+		<category><![CDATA[TR Academy]]></category>
+		<category><![CDATA[ai]]></category>
+		<category><![CDATA[big data]]></category>
+		<category><![CDATA[blockchain]]></category>
+		<category><![CDATA[copywriting]]></category>
+		<category><![CDATA[cybersecurity]]></category>
+		<category><![CDATA[digital marketing]]></category>
+		<category><![CDATA[game design]]></category>
+		<category><![CDATA[hacking]]></category>
+		<category><![CDATA[online learning]]></category>
+		<category><![CDATA[stackskills membership]]></category>
+		<guid isPermaLink="false">https://www.techrepublic.com/?p=4197641</guid>
+
+					<description><![CDATA[<p>Topics include growth hacking, game design, blockchain, AI, digital marketing, cybersecurity, copywriting, and big data.</p>
+<p>The post <a href="https://www.techrepublic.com/article/stackskills-unlimited-lifetime-access/">Enhance Your Expertise Anytime with Unlimited Online Courses — Now $19.97</a> appeared first on <a href="https://www.techrepublic.com">TechRepublic</a>.</p>
+]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>UK and Europe Land 33% of New Startups Founded by DeepMind Alumni</title>
+		<link>https://www.techrepublic.com/article/deepmind-alumni-startups-uk-europe-data/</link>
+		
+		<dc:creator><![CDATA[Simon Chandler]]></dc:creator>
+		<pubDate>Wed, 13 May 2026 12:00:02 +0000</pubDate>
+				<category><![CDATA[Artificial Intelligence]]></category>
+		<category><![CDATA[EMEA]]></category>
+		<category><![CDATA[ai startups]]></category>
+		<category><![CDATA[DeepMind alumni]]></category>
+		<category><![CDATA[European innovation]]></category>
+		<category><![CDATA[google deepmind]]></category>
+		<category><![CDATA[UK tech sector]]></category>
+		<guid isPermaLink="false">https://www.techrepublic.com/?p=4358697</guid>
+
+					<description><![CDATA[<p>New from Evertrace reveals 112 DeepMind alumni have launched startups since Q2 2025. Explore how the "DeepMind Mafia" is fueling a $5B+ tech boom across the UK and Europe.</p>
+<p>The post <a href="https://www.techrepublic.com/article/deepmind-alumni-startups-uk-europe-data/">UK and Europe Land 33% of New Startups Founded by DeepMind Alumni</a> appeared first on <a href="https://www.techrepublic.com">TechRepublic</a>.</p>
+]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>Find Your Career Path With This AI Psychometric Platform, $20</title>
+		<link>https://www.techrepublic.com/article/iq-career-lab-lifetime-subscription/</link>
+		
+		<dc:creator><![CDATA[TechRepublic Academy]]></dc:creator>
+		<pubDate>Wed, 13 May 2026 11:39:30 +0000</pubDate>
+				<category><![CDATA[AI]]></category>
+		<category><![CDATA[TR Academy]]></category>
+		<category><![CDATA[ai]]></category>
+		<category><![CDATA[Career assessment tools]]></category>
+		<category><![CDATA[iq career lab]]></category>
+		<guid isPermaLink="false">https://www.techrepublic.com/?p=4358933</guid>
+
+					<description><![CDATA[<p>IQ Career Lab uses validated psychometric testing to match your cognitive strengths to real job listings now.</p>
+<p>The post <a href="https://www.techrepublic.com/article/iq-career-lab-lifetime-subscription/">Find Your Career Path With This AI Psychometric Platform, $20</a> appeared first on <a href="https://www.techrepublic.com">TechRepublic</a>.</p>
+]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>WWDC 2026 Preview: Apple Readies Siri Overhaul, AI Updates, and More</title>
+		<link>https://www.techrepublic.com/article/news-apple-wwdc-2026-ios-27-siri-ai-preview/</link>
+		
+		<dc:creator><![CDATA[Aminu Abdullahi]]></dc:creator>
+		<pubDate>Tue, 12 May 2026 19:10:38 +0000</pubDate>
+				<category><![CDATA[Apple]]></category>
+		<category><![CDATA[Artificial Intelligence]]></category>
+		<category><![CDATA[Hardware]]></category>
+		<category><![CDATA[Innovation]]></category>
+		<category><![CDATA[International]]></category>
+		<category><![CDATA[Mobile]]></category>
+		<category><![CDATA[News]]></category>
+		<category><![CDATA[Smartphones]]></category>
+		<category><![CDATA[Tech Industry]]></category>
+		<category><![CDATA[Wearable Tech]]></category>
+		<category><![CDATA[apple intelligence]]></category>
+		<category><![CDATA[artificial intelligence]]></category>
+		<category><![CDATA[ios 27]]></category>
+		<category><![CDATA[macOS 27]]></category>
+		<category><![CDATA[siri]]></category>
+		<category><![CDATA[wwdc]]></category>
+		<category><![CDATA[wwdc 2026]]></category>
+		<guid isPermaLink="false">https://www.techrepublic.com/?p=4358906</guid>
+
+					<description><![CDATA[<p>Apple’s WWDC 2026 is expected to preview iOS 27, a smarter Siri, broader AI model options, and macOS 27 design refinements.</p>
+<p>The post <a href="https://www.techrepublic.com/article/news-apple-wwdc-2026-ios-27-siri-ai-preview/">WWDC 2026 Preview: Apple Readies Siri Overhaul, AI Updates, and More</a> appeared first on <a href="https://www.techrepublic.com">TechRepublic</a>.</p>
+]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>Over 1 Million Baby Monitors, Security Cameras Exposed Through Meari Flaws</title>
+		<link>https://www.techrepublic.com/article/news-meari-iot-baby-monitor-camera-vulnerabilities/</link>
+		
+		<dc:creator><![CDATA[Ken Underhill]]></dc:creator>
+		<pubDate>Tue, 12 May 2026 18:47:19 +0000</pubDate>
+				<category><![CDATA[Amazon]]></category>
+		<category><![CDATA[Cybersecurity]]></category>
+		<category><![CDATA[Hardware]]></category>
+		<category><![CDATA[News]]></category>
+		<category><![CDATA[Security]]></category>
+		<category><![CDATA[baby monitors]]></category>
+		<category><![CDATA[cloudedge]]></category>
+		<category><![CDATA[cybersecurity]]></category>
+		<category><![CDATA[iot security]]></category>
+		<category><![CDATA[meari technology]]></category>
+		<category><![CDATA[security cameras]]></category>
+		<category><![CDATA[smart home security]]></category>
+		<category><![CDATA[vulnerabilities]]></category>
+		<guid isPermaLink="false">https://www.techrepublic.com/?p=4358903</guid>
+
+					<description><![CDATA[<p>Meari IoT flaws reportedly exposed baby monitor images, camera activity, and device data across more than 1 million connected devices.</p>
+<p>The post <a href="https://www.techrepublic.com/article/news-meari-iot-baby-monitor-camera-vulnerabilities/">Over 1 Million Baby Monitors, Security Cameras Exposed Through Meari Flaws</a> appeared first on <a href="https://www.techrepublic.com">TechRepublic</a>.</p>
+]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>Samsung Galaxy Watch Glucose Tracking: What Works Now and What Doesn’t</title>
+		<link>https://www.techrepublic.com/article/news-samsung-galaxy-watch-blood-sugar-tracking/</link>
+		
+		<dc:creator><![CDATA[Liz Ticong]]></dc:creator>
+		<pubDate>Tue, 12 May 2026 18:36:29 +0000</pubDate>
+				<category><![CDATA[Android]]></category>
+		<category><![CDATA[Hardware]]></category>
+		<category><![CDATA[Innovation]]></category>
+		<category><![CDATA[News]]></category>
+		<category><![CDATA[Samsung]]></category>
+		<category><![CDATA[Wearable Tech]]></category>
+		<category><![CDATA[blood sugar tracking]]></category>
+		<category><![CDATA[cgm]]></category>
+		<category><![CDATA[continuous glucose monitor]]></category>
+		<category><![CDATA[digital health]]></category>
+		<category><![CDATA[editors picks]]></category>
+		<category><![CDATA[glucose monitoring]]></category>
+		<category><![CDATA[samsung galaxy watch]]></category>
+		<category><![CDATA[samsung health]]></category>
+		<category><![CDATA[wear os]]></category>
+		<guid isPermaLink="false">https://www.techrepublic.com/?p=4358899</guid>
+
+					<description><![CDATA[<p>Samsung Galaxy Watch can show compatible CGM glucose data today while Samsung works on future non-invasive blood sugar tracking features.</p>
+<p>The post <a href="https://www.techrepublic.com/article/news-samsung-galaxy-watch-blood-sugar-tracking/">Samsung Galaxy Watch Glucose Tracking: What Works Now and What Doesn’t</a> appeared first on <a href="https://www.techrepublic.com">TechRepublic</a>.</p>
+]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>6 Best ChatGPT Photo Editing Trends in 2026 (With Prompts to Try)</title>
+		<link>https://www.techrepublic.com/article/news-chatgpt-photo-editing-trends-2026/</link>
+		
+		<dc:creator><![CDATA[Aminu Abdullahi]]></dc:creator>
+		<pubDate>Tue, 12 May 2026 18:30:35 +0000</pubDate>
+				<category><![CDATA[Artificial Intelligence]]></category>
+		<category><![CDATA[Chatbots]]></category>
+		<category><![CDATA[ChatGPT]]></category>
+		<category><![CDATA[Innovation]]></category>
+		<category><![CDATA[International]]></category>
+		<category><![CDATA[News]]></category>
+		<category><![CDATA[OpenAI]]></category>
+		<category><![CDATA[Tech & Work]]></category>
+		<category><![CDATA[Tech Industry]]></category>
+		<category><![CDATA[ai image prompts]]></category>
+		<category><![CDATA[ai photo editing]]></category>
+		<category><![CDATA[ai-art]]></category>
+		<category><![CDATA[chatgpt]]></category>
+		<category><![CDATA[featured]]></category>
+		<category><![CDATA[generative ai]]></category>
+		<category><![CDATA[photo editing trends]]></category>
+		<category><![CDATA[social media trends]]></category>
+		<category><![CDATA[viral ai trends]]></category>
+		<guid isPermaLink="false">https://www.techrepublic.com/?p=4358892</guid>
+
+					<description><![CDATA[<p>Explore the biggest ChatGPT photo editing trends of 2026, from caricatures and toy-style portraits to nostalgic film edits and AI collages.</p>
+<p>The post <a href="https://www.techrepublic.com/article/news-chatgpt-photo-editing-trends-2026/">6 Best ChatGPT Photo Editing Trends in 2026 (With Prompts to Try)</a> appeared first on <a href="https://www.techrepublic.com">TechRepublic</a>.</p>
+]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>iOS 26.5 Updates RCS Messaging, Apple Maps, and iPhone Wallpapers</title>
+		<link>https://www.techrepublic.com/article/news-apple-ios-26-5-encrypted-rcs-maps-update/</link>
+		
+		<dc:creator><![CDATA[Joseph Ofonagoro]]></dc:creator>
+		<pubDate>Tue, 12 May 2026 16:51:41 +0000</pubDate>
+				<category><![CDATA[Apple]]></category>
+		<category><![CDATA[Developer]]></category>
+		<category><![CDATA[Innovation]]></category>
+		<category><![CDATA[Mobile]]></category>
+		<category><![CDATA[News]]></category>
+		<category><![CDATA[Operating System]]></category>
+		<category><![CDATA[Smartphones]]></category>
+		<category><![CDATA[apple maps]]></category>
+		<category><![CDATA[ios 26]]></category>
+		<category><![CDATA[ipad]]></category>
+		<category><![CDATA[ipadOS 26]]></category>
+		<category><![CDATA[iphone]]></category>
+		<category><![CDATA[rcs]]></category>
+		<category><![CDATA[siri]]></category>
+		<guid isPermaLink="false">https://www.techrepublic.com/?p=4358858</guid>
+
+					<description><![CDATA[<p>Apple’s iOS 26.5 update adds encrypted RCS, new wallpapers, Maps suggestions, and security updates for older devices.</p>
+<p>The post <a href="https://www.techrepublic.com/article/news-apple-ios-26-5-encrypted-rcs-maps-update/">iOS 26.5 Updates RCS Messaging, Apple Maps, and iPhone Wallpapers</a> appeared first on <a href="https://www.techrepublic.com">TechRepublic</a>.</p>
+]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>Get Lifetime Access to Microsoft Office 2021 for Just $30</title>
+		<link>https://www.techrepublic.com/article/windows-mac-users-get-lifetime-access-to-microsoft-office-2021/</link>
+		
+		<dc:creator><![CDATA[TechRepublic Academy]]></dc:creator>
+		<pubDate>Tue, 12 May 2026 13:30:28 +0000</pubDate>
+				<category><![CDATA[Apple]]></category>
+		<category><![CDATA[Microsoft]]></category>
+		<category><![CDATA[Software]]></category>
+		<category><![CDATA[TR Academy]]></category>
+		<category><![CDATA[Mac]]></category>
+		<category><![CDATA[microsoft excel]]></category>
+		<category><![CDATA[Microsoft Office]]></category>
+		<category><![CDATA[microsoft onenote]]></category>
+		<category><![CDATA[microsoft outlook]]></category>
+		<category><![CDATA[microsoft powerpoint]]></category>
+		<category><![CDATA[Microsoft Teams]]></category>
+		<category><![CDATA[microsoft word]]></category>
+		<guid isPermaLink="false">https://www.techrepublic.com/?p=3942593</guid>
+
+					<description><![CDATA[<p>Whether you're starting a new business venture and need Microsoft Office's help or you just want to get better organized in your personal life, it's a good time to take advantage of this deal.</p>
+<p>The post <a href="https://www.techrepublic.com/article/windows-mac-users-get-lifetime-access-to-microsoft-office-2021/">Get Lifetime Access to Microsoft Office 2021 for Just $30</a> appeared first on <a href="https://www.techrepublic.com">TechRepublic</a>.</p>
+]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>This Samsung 4TB Portable SSD Moves Files at 2,000 MB/s For $1K</title>
+		<link>https://www.techrepublic.com/article/samsung-t9-4tb-portable-ssd/</link>
+		
+		<dc:creator><![CDATA[TechRepublic Academy]]></dc:creator>
+		<pubDate>Tue, 12 May 2026 13:00:52 +0000</pubDate>
+				<category><![CDATA[Electronics and gadgets]]></category>
+		<category><![CDATA[TR Academy]]></category>
+		<category><![CDATA[portable ssd]]></category>
+		<category><![CDATA[portable storage]]></category>
+		<category><![CDATA[samsung]]></category>
+		<category><![CDATA[samsung t9]]></category>
+		<guid isPermaLink="false">https://www.techrepublic.com/?p=4358801</guid>
+
+					<description><![CDATA[<p>The Samsung T9 delivers read and write speeds of up to 2,000 MB/s, making large file transfers feel instant.</p>
+<p>The post <a href="https://www.techrepublic.com/article/samsung-t9-4tb-portable-ssd/">This Samsung 4TB Portable SSD Moves Files at 2,000 MB/s For $1K</a> appeared first on <a href="https://www.techrepublic.com">TechRepublic</a>.</p>
+]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>Google Says Hackers Used AI to Build Zero-Day Exploit</title>
+		<link>https://www.techrepublic.com/article/news-google-hackers-ai-zero-day-exploit/</link>
+		
+		<dc:creator><![CDATA[Kezia Jungco]]></dc:creator>
+		<pubDate>Tue, 12 May 2026 12:56:06 +0000</pubDate>
+				<category><![CDATA[Artificial Intelligence]]></category>
+		<category><![CDATA[Cloud Security]]></category>
+		<category><![CDATA[Cybersecurity]]></category>
+		<category><![CDATA[Enterprise Software]]></category>
+		<category><![CDATA[Google]]></category>
+		<category><![CDATA[News]]></category>
+		<category><![CDATA[Security]]></category>
+		<category><![CDATA[2fa]]></category>
+		<category><![CDATA[ai]]></category>
+		<category><![CDATA[cybersecurity]]></category>
+		<category><![CDATA[enterprise security]]></category>
+		<category><![CDATA[exploit]]></category>
+		<category><![CDATA[gemini]]></category>
+		<category><![CDATA[threat intelligence]]></category>
+		<category><![CDATA[vulnerability]]></category>
+		<category><![CDATA[zero day]]></category>
+		<guid isPermaLink="false">https://www.techrepublic.com/?p=4358844</guid>
+
+					<description><![CDATA[<p>Google says hackers used AI to help build a zero-day exploit targeting 2FA, raising concerns about AI-assisted hacking.</p>
+<p>The post <a href="https://www.techrepublic.com/article/news-google-hackers-ai-zero-day-exploit/">Google Says Hackers Used AI to Build Zero-Day Exploit</a> appeared first on <a href="https://www.techrepublic.com">TechRepublic</a>.</p>
+]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>Powering Progress: The Economics of The Dell AI Factory</title>
+		<link>https://www.techrepublic.com/article/powering-progress-the-economics-of-the-dell-ai-factory/</link>
+		
+		<dc:creator><![CDATA[TechRepublic Staff]]></dc:creator>
+		<pubDate>Tue, 12 May 2026 10:38:09 +0000</pubDate>
+				<category><![CDATA[AI]]></category>
+		<category><![CDATA[ai infrastructure]]></category>
+		<category><![CDATA[Artificial Intelligence]]></category>
+		<category><![CDATA[Dell]]></category>
+		<category><![CDATA[Enterprise Software]]></category>
+		<category><![CDATA[Enterprise Technology]]></category>
+		<category><![CDATA[Uncategorized]]></category>
+		<guid isPermaLink="false">https://www.techrepublic.com/?p=4358831</guid>
+
+					<description><![CDATA[<p>Hear how Dell, NVIDIA, and ESG frame the business value of a full-stack AI approach, from faster time to value and stronger ROI to better control over data, security, and deployment complexity.</p>
+<p>The post <a href="https://www.techrepublic.com/article/powering-progress-the-economics-of-the-dell-ai-factory/">Powering Progress: The Economics of The Dell AI Factory</a> appeared first on <a href="https://www.techrepublic.com">TechRepublic</a>.</p>
+]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>Why AI Agents Are A Top Priority</title>
+		<link>https://www.techrepublic.com/article/why-ai-agents-are-a-top-priority/</link>
+		
+		<dc:creator><![CDATA[TechRepublic Staff]]></dc:creator>
+		<pubDate>Tue, 12 May 2026 10:33:35 +0000</pubDate>
+				<category><![CDATA[AI]]></category>
+		<category><![CDATA[ai infrastructure]]></category>
+		<category><![CDATA[Artificial Intelligence]]></category>
+		<category><![CDATA[Dell]]></category>
+		<category><![CDATA[Enterprise Software]]></category>
+		<category><![CDATA[Enterprise Technology]]></category>
+		<guid isPermaLink="false">https://www.techrepublic.com/?p=4358828</guid>
+
+					<description><![CDATA[<p>See what new research reveals about how organizations are budgeting for AI agents, where adoption is accelerating, and why security, oversight, and the right implementation partner are shaping deployment decisions.</p>
+<p>The post <a href="https://www.techrepublic.com/article/why-ai-agents-are-a-top-priority/">Why AI Agents Are A Top Priority</a> appeared first on <a href="https://www.techrepublic.com">TechRepublic</a>.</p>
+]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>How AI Is Supporting Nurses</title>
+		<link>https://www.techrepublic.com/article/how-ai-is-supporting-nurses/</link>
+		
+		<dc:creator><![CDATA[TechRepublic Staff]]></dc:creator>
+		<pubDate>Tue, 12 May 2026 10:30:45 +0000</pubDate>
+				<category><![CDATA[AI]]></category>
+		<category><![CDATA[ai infrastructure]]></category>
+		<category><![CDATA[Artificial Intelligence]]></category>
+		<category><![CDATA[Dell]]></category>
+		<category><![CDATA[Enterprise Software]]></category>
+		<category><![CDATA[Enterprise Technology]]></category>
+		<guid isPermaLink="false">https://www.techrepublic.com/?p=4358826</guid>
+
+					<description><![CDATA[<p>Learn how AI can help healthcare teams reduce documentation burden, improve patient safety, and give nurses more time to focus on direct patient care.</p>
+<p>The post <a href="https://www.techrepublic.com/article/how-ai-is-supporting-nurses/">How AI Is Supporting Nurses</a> appeared first on <a href="https://www.techrepublic.com">TechRepublic</a>.</p>
+]]></description>
+		
+		
+		
+			</item>
+	</channel>
+</rss>
