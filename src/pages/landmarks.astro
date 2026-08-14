@@ -1,0 +1,56 @@
+---
+import BaseLayout from "@layouts/BaseLayout.astro";
+import json from "../../public/data/landmarks.json";
+import { Landmark } from "@lib/parseHTML";
+
+const landmarks: Landmark[] = json;
+
+const randomInt = (min: number, max: number) =>
+  Math.floor(Math.random() * (max - min + 1)) + min;
+
+const randomLandmark = landmarks[randomInt(0, landmarks.length)];
+const { name, address, description, image } = randomLandmark;
+---
+
+<BaseLayout>
+  <main>
+    <h1 class="display-none">Landmarks</h1>
+    <!-- <pre>
+        {JSON.stringify(randomLandmark, null, 2)}
+    </pre> -->
+
+    <article class="grid col_1_2 gap-m">
+      <div class="card">
+        <h2>{name}</h2>
+        <address>{address}</address>
+        <p>{description}</p>
+      </div>
+      <div>
+        <figure>
+          <img src={image} alt="landmark image" width="100" height="100" />
+        </figure>
+      </div>
+    </article>
+  </main>
+</BaseLayout>
+
+<style>
+.card {
+    color: black;
+}
+  .grid {
+    place-items: center;
+  }
+  figure {
+    margin: 0;
+  }
+  img {
+    width: 100%;
+    object-fit: contain;
+    height: 50vh;
+  }
+  body {
+    background-color: black !important;
+    color: white;
+  }
+</style>

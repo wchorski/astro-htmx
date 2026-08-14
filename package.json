@@ -25,6 +25,7 @@
     "@js-temporal/polyfill": "^0.5.1",
     "astro": "^6.0.7",
     "cesium": "^1.141.0",
+    "chart.js": "^4.5.1",
     "cheerio": "^1.2.0",
     "drizzle-orm": "^0.45.2",
     "fast-xml-parser": "^5.3.3",

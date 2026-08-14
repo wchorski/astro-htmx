@@ -1,0 +1,18 @@
+---
+// pages/pollings/:id
+import BaseLayout from "@layouts/BaseLayout.astro";
+
+const id = Astro.url.searchParams.get('id');
+
+const events = new EventSource("/api/results/live");
+
+events.onmessage = (e) => {
+  updateChart(JSON.parse(e.data));
+};
+
+---
+
+<BaseLayout >
+    <h1>Poll: {id}</h1>
+</BaseLayout>
+

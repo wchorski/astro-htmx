@@ -248,3 +248,15 @@ dl.kv {
     content: " ✘";
   }
 }
+
+.grid {
+  display: grid;
+}
+
+.col_1_2 {
+  grid-template-columns: 1fr 2fr;
+}
+
+.display-none {
+  display: none;
+}
