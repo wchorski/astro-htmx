@@ -3,3 +3,8 @@ allowBuilds:
   esbuild: true
   protobufjs: true
   sharp: true
+onlyBuiltDependencies:
+  - '@parcel/watcher'
+  - esbuild
+  - protobufjs
+  - sharp
