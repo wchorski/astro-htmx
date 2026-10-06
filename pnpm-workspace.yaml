@@ -1,5 +1,7 @@
 allowBuilds:
   '@parcel/watcher': true
+  '@prisma/client': set this to true or false
+  better-sqlite3: set this to true or false
   esbuild: true
   protobufjs: true
   sharp: true

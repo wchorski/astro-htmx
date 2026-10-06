@@ -1,32 +1,71 @@
-import { Role, Location, User, Course, Credit } from "@db/schema";
+import type { MOMENTS_STORE } from "@client/indexedDB";
+import {
+  BookingAssignment,
+  Role,
+  Location,
+  User,
+  Event,
+  Ticket,
+  Booking,
+  bookingStatusEnum,
+  assignmentsRoleEnum,
+  BookingContractorWithRole,
+  Timeline,
+  Account,
+  Organization,
+} from "@db/schema";
+
+export const models = {
+  locations: Location,
+  users: User,
+  roles: Role,
+  bookings: Booking,
+  events: Event,
+  tickets: Ticket,
+  booking_contractors: BookingContractorWithRole,
+} as const;
+
+export type ModelName = (typeof models)[keyof typeof models]["_"]["name"];
 
 export type RoleInsert = typeof Role.$inferInsert;
 export type RoleSelect = typeof Role.$inferSelect;
-export type CreditInsert = typeof Credit.$inferInsert;
-export type CreditSelect = typeof Credit.$inferSelect;
+export type TicketInsert = typeof Ticket.$inferInsert;
+export type TicketSelect = typeof Ticket.$inferSelect;
 export type UserInsert = typeof User.$inferInsert;
 export type UserSelect = typeof User.$inferSelect;
-export type CourseInsert = typeof Course.$inferInsert;
-export type CourseSelect = typeof Course.$inferSelect;
+export type EventInsert = typeof Event.$inferInsert;
+export type EventSelect = typeof Event.$inferSelect;
 export type LocationInsert = typeof Location.$inferInsert;
 export type LocationSelect = typeof Location.$inferSelect;
+export type BookingInsert = typeof Booking.$inferInsert;
+export type BookingSelect = typeof Booking.$inferSelect;
+export type BookingAssignmentInsert = typeof BookingAssignment.$inferInsert;
+export type BookingAssignmentSelect = typeof BookingAssignment.$inferSelect;
+export type TimelineInsert = typeof Timeline.$inferSelect;
+export type TimelineSelect = typeof Timeline.$inferSelect;
+export type OrganizationInsert = typeof Organization.$inferSelect;
+export type OrganizationSelect = typeof Organization.$inferSelect;
+export type MemberInsert = typeof Member.$inferSelect;
+export type MemberSelect = typeof Member.$inferSelect;
+export type AccountInsert = typeof Account.$inferSelect;
+export type AccountSelect = typeof Account.$inferSelect;
 export type UserCreditSelect = {
-  credit: CreditSelect;
+  ticket: TicketSelect;
   user: UserSelect;
 };
 export type AnyEntitySelect =
   | RoleSelect
-  | CreditSelect
+  | TicketSelect
   | UserSelect
-  | CourseSelect
+  | EventSelect
   | LocationSelect;
 
 export const schemaEntityMap = {
   roles: true,
   locations: true,
   users: true,
-  courses: true,
-  credits: true,
+  events: true,
+  tickets: true,
 } as const;
 
 export type SchemaEntity = keyof typeof schemaEntityMap;
@@ -50,3 +89,168 @@ export type UserCreditFlat = {
   state: string;
   zip: string;
 };
+
+export type BookingStatus = (typeof bookingStatusEnum.enumValues)[number];
+export type AssignmentRoles = (typeof assignmentsRoleEnum.enumValues)[number];
+
+export type MomentStep = {
+  id: number;
+  moment_id: number;
+  timeline_uuid: string;
+  tbd: boolean;
+  text: string;
+  note: string;
+  position: string;
+};
+
+export type Timeline = {
+  id: string;
+  booking_uuid: string | null,
+  summary: string | null;
+  date: Date;
+  date_civil: string;
+  timezone: string | null;
+  start: number;
+  end: number;
+  date_modified: Date;
+  date_created: Date;
+  rev: number;
+  notes: string | null;
+  secret_notes: string | null;
+};
+
+export type TimelineState = Timeline & TimelineData;
+
+export type TimelineData = {
+  moments: TimelineMoment[];
+  steps: MomentStep[];
+  groups: TimelineGroup[];
+  skills: TimelineSkill[];
+};
+
+export type TimelineTemplate = Omit<Timeline, id> & {
+  moments: Omit<TimelineMoment, id>[];
+  steps: Omit<MomentStep, id>[];
+  groups: Omit<TimelineGroup, id>[];
+  skills: Omit<TimelineSkill, id>[];
+};
+
+export type TimelineMoment = {
+  id: number;
+  desc: string;
+  note: string;
+  start: number; // minutes (can exceed 1440)
+  end: number; // minutes (can exceed 1440)
+  tbd?: boolean;
+  group_id: number;
+  skill_id: number;
+  timeline_uuid: string;
+  // step_id: number
+};
+export type TimelineMomentInput = {
+  id: string;
+  desc: string;
+  group_id: string;
+  skill_id: string;
+  note: string;
+  start: string; // minutes (can exceed 1440)
+  end: string; // minutes (can exceed 1440)
+  tbd?: boolean;
+};
+export type TimelineGroup = {
+  id: number;
+  name: string;
+  timeline_uuid: string;
+};
+
+export type TimelineSkill = {
+  name: string;
+  id: number;
+  timeline_uuid: string;
+  icon?: string;
+  color?: string;
+};
+
+import {
+  MOMENTS_STORE,
+  GROUPS_STORE,
+  SKILLS_STORE,
+  STEPS_STORE,
+} from "@client/indexedDB";
+export type BtnAction = "delete" | "insert" | "create" | "drag";
+export type BtnDirection = "above" | "below";
+export type BtnType = "blocks" | "groups" | "skills" | "todos";
+export type TimelineBtnAction = "commit" | "import" | "export" | "print";
+
+export type TemplateGroupClone = Omit<TimelineGroup, "id"> & {
+  source_id: number;
+};
+
+export type TemplateSkillClone = Omit<TimelineSkill, "id"> & {
+  source_id: number;
+};
+
+export type TemplateMomentClone = Omit<
+  TimelineMoment,
+  "id" | "group_id" | "skill_id"
+> & {
+  source_id: number;
+  source_group_id: number;
+  source_skill_id: number;
+};
+
+export type TemplateStepClone = Omit<TimelineStep, "id" | "moment_id"> & {
+  source_id: number;
+  source_moment_id: number;
+};
+
+export type InsertableGroup = Omit<TimelineGroup, "id"> & {
+  source_id: number;
+};
+
+export type InsertableSkill = Omit<TimelineSkill, "id"> & {
+  source_id: number;
+};
+
+export type InsertableMoment = Omit<TimelineMoment, "id" | "group_id" | "skill_id"> & {
+  source_id: number;
+  source_group_id: number;
+  source_skill_id: number;
+};
+
+export type InsertableStep = Omit<MomentStep, "id" | "moment_id"> & {
+  source_id: number;
+  source_moment_id: number;
+};
+
+export type InsertableTimelineGraph = Omit<
+  TimelineState,
+  "groups" | "skills" | "moments" | "steps"
+> & {
+  groups: InsertableGroup[];
+  skills: InsertableSkill[];
+  moments: InsertableMoment[];
+  steps: InsertableStep[];
+};
+
+export type MomentStepDB = {
+  id: number;
+  moment_id: number;
+  timeline_uuid: string;
+  text: string;
+  note: string;
+  position: string;
+  tbd: boolean;
+};
+
+export type MomentStepImport = Omit<MomentStepDB, "id" | "moment_id"> & {
+  source_id: number;
+  source_moment_id: number;
+};
+
+export type GoogleCalendarData = {
+  event_id?: string;
+  calendar_id?: string;
+  synced_at?: string;
+  // ...whatever fields you actually store
+} | null;

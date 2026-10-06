@@ -2,7 +2,10 @@
 ```shell
 ## spin up development postgres container
 cp .env.example .env.development
-npm run db:dev:create
+npm run db:create
+## If any schema changes have been made
+pnpm db:generate
+
 npm run db:push
 npm run db:seed:truncate
 ```
