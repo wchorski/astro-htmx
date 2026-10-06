@@ -1,10 +1,10 @@
 // /api/credits/export/:id
 import { getMsToken } from "@lib/auth/msAuthentication";
 import { formatPhonePrettyManual } from "@lib/formatters";
-import type { CreditInsert, UserInsert } from "@ty/Schema.d.ts";
+import type { TicketInsert, UserInsert } from "@ty/Schema.d.ts";
 import type { APIRoute } from "astro";
 import { db } from "@db/db";
-import { Course, Credit, User } from "@db/schema";
+import { Event, Ticket, User } from "@db/schema";
 import { eq } from "drizzle-orm";
 const {
   MS_SHAREPOINT_KYU_DRIVE_ID,
@@ -34,13 +34,13 @@ export const PUT: APIRoute = async ({ params, request, redirect }) => {
     const rows = await db
       .select({
         user: User,
-        course: Course,
-        credit: Credit,
+        course: Event,
+        credit: Ticket,
       })
-      .from(Course)
-      .innerJoin(Credit, eq(Credit.course_id, Course.id))
-      .innerJoin(User, eq(User.id, Credit.user_id))
-      .where(eq(Course.id, Number(course_id)));
+      .from(Event)
+      .innerJoin(Ticket, eq(Ticket.course_id, Event.id))
+      .innerJoin(User, eq(User.id, Ticket.user_id))
+      .where(eq(Event.id, Number(course_id)));
 
     // reformat
     const courseData = {
@@ -162,9 +162,9 @@ export const PUT: APIRoute = async ({ params, request, redirect }) => {
 //   user: typeof User.$inferInsert;
 // };
 
-type CreditWithMember = Omit<CreditInsert, "id" | "date"> & {
-  creditId: CreditInsert["id"];
-  dateCreated: CreditInsert["timestamp"];
+type CreditWithMember = Omit<TicketInsert, "id" | "date"> & {
+  creditId: TicketInsert["id"];
+  dateCreated: TicketInsert["timestamp"];
   user: Omit<UserInsert, "id"> & {
     user_id: UserInsert["id"];
     phone: string; // because you force "" as fallback

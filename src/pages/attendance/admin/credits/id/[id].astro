@@ -3,7 +3,7 @@ interface Params {
   course_id: string;
 }
 import { db } from "@db/db";
-import { Course, Credit, User } from "@db/schema";
+import { Event, Ticket, User } from "@db/schema";
 import { eq } from "drizzle-orm";
 import BaseLayout from "@layouts/BaseLayout.astro";
 import CourseCreditsEditableTable from "@components/CourseCreditsEditableTable.astro";
@@ -12,18 +12,18 @@ const { id } = Astro.params;
 if (!id) throw new Error("no id found. throw 404");
 const [foundCourse] = await db
   .select()
-  .from(Course)
-  .where(eq(Course.id, id))
+  .from(Event)
+  .where(eq(Event.id, id))
   .limit(1);
 
 const courseCredits = await db
   .select({
-    credit: Credit,
+    credit: Ticket,
     user: User,
   })
-  .from(Credit)
-  .innerJoin(User, eq(Credit.user_id, User.id))
-  .where(eq(Credit.course_id, id));
+  .from(Ticket)
+  .innerJoin(User, eq(Ticket.user_id, User.id))
+  .where(eq(Ticket.course_id, id));
 
 if (!foundCourse) return Astro.redirect("/404");
 const { subject, timestamp, description } = foundCourse;

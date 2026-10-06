@@ -3,7 +3,7 @@ interface Params {
   id: string;
 }
 import { db } from "@db/db";
-import { Course, Location } from "@db/schema";
+import { Event, Location } from "@db/schema";
 import { eq } from "drizzle-orm";
 import BaseLayout from "@layouts/BaseLayout.astro";
 import InputField from "@components/form/InputField.astro";
@@ -26,7 +26,7 @@ import SubmitButton from "@components/form/SubmitButton.astro";
 
 const { id } = Astro.params;
 if (!id) throw new Error("no id found. throw 404");
-const [row] = await db.select().from(Course).where(eq(Course.id, id)).limit(1);
+const [row] = await db.select().from(Event).where(eq(Event.id, id)).limit(1);
 
 if (!row) return Astro.redirect("/404");
 

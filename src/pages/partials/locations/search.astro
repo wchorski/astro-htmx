@@ -1,7 +1,7 @@
 ---
 import { db } from "@db/db";
 import { or, ilike, like, eq, getTableColumns } from "drizzle-orm";
-import { Course, Credit, Location } from "@db/schema";
+import { Event, Ticket, Location } from "@db/schema";
 import { crud, type CrudRegistryType } from "@lib/crudRegistry";
 import { BadRequestError, errorHandlingOnSubmit } from "@lib/errors";
 import type { LocationSelect } from "@ty/Schema";

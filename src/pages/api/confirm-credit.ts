@@ -1,7 +1,7 @@
 // src/pages/api/confirm-credit.ts
 import type { APIRoute } from "astro";
 import { db } from "@db/db";
-import { User, Credit, Course } from "@db/schema";
+import { User, Ticket, Event } from "@db/schema";
 import { eq } from "drizzle-orm";
 import { z } from "astro/zod";
 import { normalizePhoneToE164Manual } from "@lib/formatters";
@@ -66,8 +66,8 @@ export const POST: APIRoute = async ({ request, redirect }) => {
     const courseExists = await db
       // TODO i could combine query for course + credits here
       .select()
-      .from(Course)
-      .where(eq(Course.id, course_id))
+      .from(Event)
+      .where(eq(Event.id, course_id))
       .limit(1);
 
     if (!courseExists) {
@@ -78,8 +78,8 @@ export const POST: APIRoute = async ({ request, redirect }) => {
 
     const courseCredits = await db
       .select()
-      .from(Credit)
-      .where(eq(Credit.course_id, course_id));
+      .from(Ticket)
+      .where(eq(Ticket.course_id, course_id));
 
     const phoneSanatized: string | null = normalizePhoneToE164Manual(phone);
     if (!phoneSanatized) {
@@ -125,7 +125,7 @@ export const POST: APIRoute = async ({ request, redirect }) => {
         })
         .returning();
 
-      await db.insert(Credit).values({
+      await db.insert(Ticket).values({
         user_id: newMember.id,
         courseId: course_id,
         timestamp: new Date(),
@@ -146,7 +146,7 @@ export const POST: APIRoute = async ({ request, redirect }) => {
           { status: 411 },
         );
 
-      await db.insert(Credit).values({
+      await db.insert(Ticket).values({
         user_id: memberExists.id,
         courseId: course_id,
         timestamp: new Date(),

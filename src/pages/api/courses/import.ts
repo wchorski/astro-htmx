@@ -1,11 +1,11 @@
 import type { WordpressEvent } from "@ty/WordpressEvent";
 import type { APIRoute } from "astro";
 import { db } from "@db/db";
-import { Course, Location } from "@db/schema";
+import { Event, Location } from "@db/schema";
 
 // import eventJson from "../../../../private/l150-events.json";
 import { removeHTMLfromString } from "@lib/sanatizers";
-import type { CourseInsert } from "@ty/Schema";
+import type { EventInsert } from "@ty/Schema";
 
 const { WORDPRESS_ENDPOINT, WP_USERNAME, WP_APP_PASSWORD, SERVER_TIMEZONE } =
   import.meta.env;
@@ -48,7 +48,7 @@ export const GET: APIRoute = async ({ url }) => {
   // console.log("🐸 BYPASSING API FETCH BECAUSE CLOUDFLARE 403 ERROR");
   // events = eventJson;
 
-  const seedCoursesFormat: CourseInsert[] = [];
+  const seedCoursesFormat: EventInsert[] = [];
 
   try {
     // ✅ Fetch locations once
@@ -74,7 +74,7 @@ export const GET: APIRoute = async ({ url }) => {
       // ✅ Real Date (instant) derived from local+zone
       const realDate = localDateTimeToUtcDate(date_civil, loc.timezone);
 
-      const newCourse: CourseInsert = {
+      const newCourse: EventInsert = {
         // id: wpPost.id,
         wp_post_id: wpPost.id,
         subject: wpPost.title,
@@ -87,8 +87,8 @@ export const GET: APIRoute = async ({ url }) => {
       // @ts-ignore
       seedCoursesFormat.push({ ...newCourse, timestamp: realDate.toISOString() });
 
-      await db.insert(Course).values(newCourse).onConflictDoUpdate({
-        target: Course.id,
+      await db.insert(Event).values(newCourse).onConflictDoUpdate({
+        target: Event.id,
         set: newCourse,
       });
     }

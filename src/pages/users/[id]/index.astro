@@ -3,7 +3,7 @@ interface Params {
   id: string;
 }
 import { db } from "@db/db";
-import { User, Credit, Course, Location } from "@db/schema";
+import { User, Ticket, Event, Location } from "@db/schema";
 import { eq } from "drizzle-orm";
 import BaseLayout from "@layouts/BaseLayout.astro";
 import AttendanceAdminNav from "@components/navigation/AttendanceAdminNav.astro";
@@ -32,14 +32,14 @@ const {
 
 const ownedCredits = await db
   .select({
-    credit: Credit,
-    course: Course,
+    credit: Ticket,
+    course: Event,
     location: Location,
   })
-  .from(Credit)
-  .innerJoin(Course, eq(Credit.course_id, Course.id))
-  .innerJoin(Location, eq(Course.location_id, Location.id))
-  .where(eq(Credit.user_id, id));
+  .from(Ticket)
+  .innerJoin(Event, eq(Ticket.course_id, Event.id))
+  .innerJoin(Location, eq(Event.location_id, Location.id))
+  .where(eq(Ticket.user_id, id));
 
 const tableRows = ownedCredits.map(({ credit, course, location }) => ({
   id: credit.id,

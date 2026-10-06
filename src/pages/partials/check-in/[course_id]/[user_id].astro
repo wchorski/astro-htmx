@@ -1,6 +1,6 @@
 ---
 import { db } from "@db/db";
-import { User, Credit } from "@db/schema";
+import { User, Ticket } from "@db/schema";
 import { eq, and } from "drizzle-orm";
 import { normalizePhoneToE164Manual } from "@lib/formatters";
 import { config, z } from "astro/zod";
@@ -11,7 +11,7 @@ import {
   errorHandlingOnSubmit,
   NotFoundError,
 } from "@lib/errors";
-import type { CreditSelect, UserSelect } from "@ty/Schema";
+import type { TicketSelect, UserSelect } from "@ty/Schema";
 import { handleResult } from "@lib/handleRenderResult";
 import CreditsForm from "@components/CreditsForm.astro";
 import FieldErrors from "@components/mgmt/FieldErrors.partial.astro";
@@ -83,7 +83,7 @@ if (Astro.request.method === "POST") {
     user = foundUser;
 
     const [creditSaved] = await db
-      .insert(Credit)
+      .insert(Ticket)
       .values({
         user_id,
         course_id,
@@ -91,7 +91,7 @@ if (Astro.request.method === "POST") {
         attended: true,
       })
       .onConflictDoUpdate({
-        target: [Credit.user_id, Credit.course_id],
+        target: [Ticket.user_id, Ticket.course_id],
         set: {
           timestamp: new Date(),
           attended: true,
@@ -110,7 +110,7 @@ if (Astro.request.method === "POST") {
   }
 }
 
-const result = handleResult<CreditSelect>({
+const result = handleResult<TicketSelect>({
   error,
   entity: credit,
   method: Astro.request.method as HttpMethod,

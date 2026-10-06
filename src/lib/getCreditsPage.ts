@@ -1,5 +1,5 @@
 import { db } from "@db/db";
-import { User, Credit } from "@db/schema";
+import { User, Ticket } from "@db/schema";
 import { count } from "drizzle-orm";
 import { crud } from "./crudRegistry";
 import { TEST_ADMIN_SESSION } from "./auth/session";
@@ -24,7 +24,7 @@ export async function getCreditsPage(page: number, perPage = 12) {
 
   const credits = await db
     .select()
-    .from(Credit)
+    .from(Ticket)
     .limit(perPage)
     .offset((page - 1) * perPage);
 

@@ -1,10 +1,10 @@
 ---
 import { db } from "@db/db";
 import { or, ilike, like, eq, getTableColumns } from "drizzle-orm";
-import { Course, Credit, User } from "@db/schema";
+import { Event, Ticket, User } from "@db/schema";
 import { crud, type CrudRegistryType } from "@lib/crudRegistry";
 import { BadRequestError, errorHandlingOnSubmit } from "@lib/errors";
-import type { CreditSelect } from "@ty/Schema";
+import type { TicketSelect } from "@ty/Schema";
 import { handleResult } from "@lib/handleRenderResult";
 import FieldErrors from "@components/mgmt/FieldErrors.partial.astro";
 import FormSuccess from "@components/mgmt/FormSuccess.partial.astro";
@@ -16,9 +16,9 @@ import { handleQueryResult } from "@lib/handleQueryResult";
 import { getCreditsPage } from "@lib/getCreditsPage";
 
 const users = await db.select().from(User);
-const courses = await db.select().from(Course);
+const courses = await db.select().from(Event);
 
-let credits: CreditSelect[] | null | undefined = null;
+let credits: TicketSelect[] | null | undefined = null;
 let error = null;
 const config = creditConfigRequired(users, courses);
 const ctx = {
@@ -61,9 +61,9 @@ export function buildCreditWhereClause(rawSearch: string) {
   // If it looks like a UUID, search ONLY by exact id matches
   if (isUuid(q)) {
     return or(
-      eq(Credit.id, q as any),
-      eq(Credit.user_id, q as any),
-      eq(Credit.course_id, q as any),
+      eq(Ticket.id, q as any),
+      eq(Ticket.user_id, q as any),
+      eq(Ticket.course_id, q as any),
     );
   }
 
@@ -78,7 +78,7 @@ export function buildCreditWhereClause(rawSearch: string) {
   }
 
   if (kind === "course") {
-    return ilike(Course.subject, likeQ); // rename if your field differs
+    return ilike(Event.subject, likeQ); // rename if your field differs
   }
 
   if (kind === "id") {
@@ -92,7 +92,7 @@ export function buildCreditWhereClause(rawSearch: string) {
     ilike(User.first_name, likeQ),
     ilike(User.last_name, likeQ),
     ilike(User.email, likeQ),
-    ilike(Course.subject, likeQ),
+    ilike(Event.subject, likeQ),
   );
 }
 
@@ -119,10 +119,10 @@ if (Astro.request.method === "POST") {
       const whereClause = buildCreditWhereClause(searchQuery ?? "");
 
       const baseQuery = db
-        .select(getTableColumns(Credit)) // ✅ credits only
-        .from(Credit)
-        .leftJoin(User, eq(Credit.user_id, User.id)) // join only for WHERE filters
-        .leftJoin(Course, eq(Credit.course_id, Course.id)) // join only for WHERE filters
+        .select(getTableColumns(Ticket)) // ✅ credits only
+        .from(Ticket)
+        .leftJoin(User, eq(Ticket.user_id, User.id)) // join only for WHERE filters
+        .leftJoin(Event, eq(Ticket.course_id, Event.id)) // join only for WHERE filters
         .limit(10);
 
       credits = whereClause
@@ -153,7 +153,7 @@ const partialType = Astro.request.headers.get("X-Partial-Type") as
   | undefined;
 if (!partialType) throw new BadRequestError("X-Partial-Type header not set");
 
-const result = handleQueryResult<CreditSelect>({
+const result = handleQueryResult<TicketSelect>({
   error,
   rows: credits,
   method: Astro.request.method,

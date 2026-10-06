@@ -3,7 +3,7 @@ interface Params {
   id: string;
 }
 import { db } from "@db/db";
-import { Course, Credit, Location, User } from "@db/schema";
+import { Event, Ticket, Location, User } from "@db/schema";
 import { eq } from "drizzle-orm";
 import BaseLayout from "@layouts/BaseLayout.astro";
 import InputField from "@components/form/InputField.astro";
@@ -30,7 +30,7 @@ import SubmitButton from "@components/form/SubmitButton.astro";
 
 const { id } = Astro.params;
 if (!id) throw new Error("no id found. throw 404");
-const [row] = await db.select().from(Credit).where(eq(Credit.id, id)).limit(1);
+const [row] = await db.select().from(Ticket).where(eq(Ticket.id, id)).limit(1);
 
 if (!row) return Astro.redirect("/404");
 
@@ -42,7 +42,7 @@ const { DATALIST_CITIES, DATALIST_STATES, DATALIST_TIMEZONES } = import.meta
 // const {} = row;
 // TODO limiting users and courses here as to prevent massive db pulls
 const users = await db.select().from(User).limit(5000);
-const courses = await db.select().from(Course).limit(5000);
+const courses = await db.select().from(Event).limit(5000);
 const config = creditConfigRequired(users, courses);
 
 const headers = Object.keys(config) as (keyof typeof row & string)[];

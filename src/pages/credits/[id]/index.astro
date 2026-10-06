@@ -3,7 +3,7 @@ interface Params {
   id: string;
 }
 import { db } from "@db/db";
-import { User, Credit, Course, Location } from "@db/schema";
+import { User, Ticket, Event, Location } from "@db/schema";
 import { eq } from "drizzle-orm";
 import BaseLayout from "@layouts/BaseLayout.astro";
 import AttendanceAdminNav from "@components/navigation/AttendanceAdminNav.astro";
@@ -16,8 +16,8 @@ const { id } = Astro.params;
 if (!id) return Astro.redirect("/404");
 const [credit] = await db
   .select()
-  .from(Credit)
-  .where(eq(Credit.id, id))
+  .from(Ticket)
+  .where(eq(Ticket.id, id))
   .limit(1);
 
 if (!credit) return Astro.redirect("/404");
@@ -25,13 +25,13 @@ if (!credit) return Astro.redirect("/404");
 const [courseJoin] = await db
   .select({
     user: User,
-    course: Course,
+    course: Event,
     location: Location,
   })
-  .from(Course)
-  .innerJoin(Location, eq(Course.location_id, Location.id))
+  .from(Event)
+  .innerJoin(Location, eq(Event.location_id, Location.id))
   .innerJoin(User, eq(User.id, credit.user_id))
-  .where(eq(Course.id, credit.course_id))
+  .where(eq(Event.id, credit.course_id))
   .limit(1);
 
 const { timestamp, attended } = credit;

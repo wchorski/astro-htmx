@@ -1,5 +1,5 @@
 import { db } from "@db/db";
-import { Course, Location } from "@db/schema";
+import { Event, Location } from "@db/schema";
 import { desc, count, eq, and } from "drizzle-orm";
 
 interface Props {
@@ -16,14 +16,14 @@ export async function getCoursesPage({
   const conditions = [];
 
   if (location_id) {
-    conditions.push(eq(Course.location_id, location_id));
+    conditions.push(eq(Event.location_id, location_id));
   }
 
   if (page < 1) page = 1;
 
   const totalResult = await db
-    .select({ count: count(Course.id) })
-    .from(Course)
+    .select({ count: count(Event.id) })
+    .from(Event)
     .where(and(...conditions));
 
   const totalCount = totalResult[0].count;
@@ -35,9 +35,9 @@ export async function getCoursesPage({
 
   const courses = await db
     .select()
-    .from(Course)
+    .from(Event)
     .where(and(...conditions))
-    .orderBy(desc(Course.timestamp))
+    .orderBy(desc(Event.timestamp))
     .limit(perPage)
     .offset((page - 1) * perPage);
 

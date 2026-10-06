@@ -3,7 +3,7 @@ interface Params {
   id: string;
 }
 import { db } from "@db/db";
-import { User, Credit, Course, Location } from "@db/schema";
+import { User, Ticket, Event, Location } from "@db/schema";
 import { eq } from "drizzle-orm";
 import BaseLayout from "@layouts/BaseLayout.astro";
 import AttendanceAdminNav from "@components/navigation/AttendanceAdminNav.astro";
@@ -37,8 +37,8 @@ const { name, address, city, state, zip, timezone, description } = location;
 
 const courses = await db
   .select()
-  .from(Course)
-  .where(eq(Course.location_id, location.id));
+  .from(Event)
+  .where(eq(Event.location_id, location.id));
 
 // const tableRows = courses.map((course) => ({
 //   id: course.id,

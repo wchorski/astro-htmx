@@ -1,10 +1,10 @@
 ---
 import { db } from "@db/db";
 import { or, ilike, like } from "drizzle-orm";
-import { Course, Location } from "@db/schema";
+import { Event, Location } from "@db/schema";
 import { crud, type CrudRegistryType } from "@lib/crudRegistry";
 import { BadRequestError, errorHandlingOnSubmit } from "@lib/errors";
-import type { CourseSelect } from "@ty/Schema";
+import type { EventSelect } from "@ty/Schema";
 import { handleResult } from "@lib/handleRenderResult";
 import FieldErrors from "@components/mgmt/FieldErrors.partial.astro";
 import FormSuccess from "@components/mgmt/FormSuccess.partial.astro";
@@ -17,7 +17,7 @@ import { handleQueryResult } from "@lib/handleQueryResult";
 
 const locations = await db.select().from(Location);
 
-let courses: CourseSelect[] | null | undefined = null;
+let courses: EventSelect[] | null | undefined = null;
 let error = null;
 const config = courseConfigRequired(locations);
 const ctx = {
@@ -41,9 +41,9 @@ if (Astro.request.method === "POST") {
 
     if (searchQuery) {
       const conditions = [
-        ilike(Course.subject, `%${searchQuery}%`),
-        ilike(Course.description, `%${searchQuery}%`),
-        ilike(Course.date_civil, `%${searchQuery}%`),
+        ilike(Event.subject, `%${searchQuery}%`),
+        ilike(Event.description, `%${searchQuery}%`),
+        ilike(Event.date_civil, `%${searchQuery}%`),
       ];
 
       //   if (digitsOnly && digitsOnly.length >= 3) {
@@ -52,7 +52,7 @@ if (Astro.request.method === "POST") {
 
       courses = await db
         .select()
-        .from(Course)
+        .from(Event)
         .where(or(...conditions))
         .limit(10);
     } else {
@@ -80,7 +80,7 @@ const partialType = Astro.request.headers.get("X-Partial-Type") as
   | undefined;
 if (!partialType) throw new BadRequestError("X-Partial-Type header not set");
 
-const result = handleQueryResult<CourseSelect>({
+const result = handleQueryResult<EventSelect>({
   error,
   rows: courses,
   method: Astro.request.method,

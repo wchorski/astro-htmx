@@ -2,7 +2,7 @@
 import type { TableContext, TableRow } from "@ty/Table";
 
 import { db } from "@db/db";
-import { Course, Credit, Location, User } from "@db/schema";
+import { Event, Ticket, Location, User } from "@db/schema";
 import { eq } from "drizzle-orm";
 import {
   ConflictError,
@@ -197,7 +197,7 @@ export const crud = {
             : null;
 
         const [result] = await db
-          .insert(Course)
+          .insert(Event)
           .values({
             ...validated,
             timestamp: realDate,
@@ -214,8 +214,8 @@ export const crud = {
         const validId = validate.id.parse(id);
         const [row] = await db
           .select()
-          .from(Course)
-          .where(eq(Course.id, validId))
+          .from(Event)
+          .where(eq(Event.id, validId))
           .limit(1);
         if (!row) throw new NotFoundError(`Course ${id} not found`);
         return row;
@@ -225,7 +225,7 @@ export const crud = {
     },
     readMany: async (session) => {
       try {
-        const courses = await db.select().from(Course);
+        const courses = await db.select().from(Event);
         // .limit(perPage)
         // .offset((page - 1) * perPage);
         return courses;
@@ -261,13 +261,13 @@ export const crud = {
               ).id
             : null;
         const [result] = await db
-          .update(Course)
+          .update(Event)
           .set({
             ...validated,
             timestamp: realDate,
             wp_post_id: wp_post_id ?? validated.wp_post_id,
           })
-          .where(eq(Course.id, validated.id))
+          .where(eq(Event.id, validated.id))
           .returning();
         if (!result) throw new NotFoundError(`Course ${row.id} not found`);
 
@@ -280,8 +280,8 @@ export const crud = {
       try {
         const validId = validate.id.parse(id);
         const [deleted] = await db
-          .delete(Course)
-          .where(eq(Course.id, validId))
+          .delete(Event)
+          .where(eq(Event.id, validId))
           .returning();
         if (!deleted) throw new NotFoundError(`Course ${id} not found`);
         return deleted;
@@ -297,7 +297,7 @@ export const crud = {
         const validated = validate.creditCreate.parse(row);
 
         const [result] = await db
-          .insert(Credit)
+          .insert(Ticket)
           .values({
             ...validated,
             timestamp: new Date(),
@@ -313,8 +313,8 @@ export const crud = {
         const validId = validate.id.parse(id);
         const [row] = await db
           .select()
-          .from(Credit)
-          .where(eq(Credit.id, validId))
+          .from(Ticket)
+          .where(eq(Ticket.id, validId))
           .limit(1);
         if (!row) throw new NotFoundError(`Credit ${id} not found`);
         return row;
@@ -324,7 +324,7 @@ export const crud = {
     },
     readMany: async (session) => {
       try {
-        const credits = await db.select().from(Credit);
+        const credits = await db.select().from(Ticket);
         // .limit(perPage)
         // .offset((page - 1) * perPage);
         return credits;
@@ -337,9 +337,9 @@ export const crud = {
         const validated = validate.creditUpdate.parse(row);
 
         const [result] = await db
-          .update(Credit)
+          .update(Ticket)
           .set(validated)
-          .where(eq(Credit.id, validated.id))
+          .where(eq(Ticket.id, validated.id))
           .returning();
         if (!result) throw new NotFoundError(`Credit ${row.id} not found`);
         return result;
@@ -352,8 +352,8 @@ export const crud = {
       try {
         const validId = validate.id.parse(id);
         const [deleted] = await db
-          .delete(Credit)
-          .where(eq(Credit.id, validId))
+          .delete(Ticket)
+          .where(eq(Ticket.id, validId))
           .returning();
         if (!deleted) throw new NotFoundError(`Credit ${id} not found`);
         return deleted;
@@ -477,7 +477,7 @@ export const crud = {
 
           // --- Create credit linked to resolved user_id ---
           const [credit] = await tx
-            .insert(Credit)
+            .insert(Ticket)
             .values({
               attended: validated.attended,
               course_id: validated.courseId,
@@ -505,9 +505,9 @@ export const crud = {
 
         const [row] = await db
           .select()
-          .from(Credit)
-          .innerJoin(User, eq(Credit.user_id, User.id))
-          .where(eq(Credit.id, validId))
+          .from(Ticket)
+          .innerJoin(User, eq(Ticket.user_id, User.id))
+          .where(eq(Ticket.id, validId))
           .limit(1);
         if (!row) throw new NotFoundError(`Credit ${id} not found`);
         return {
@@ -534,9 +534,9 @@ export const crud = {
         // two updates but in a transaction so they succeed or fail together
         const result = await db.transaction(async (tx) => {
           const [credit] = await tx
-            .update(Credit)
+            .update(Ticket)
             .set({ attended })
-            .where(eq(Credit.id, id))
+            .where(eq(Ticket.id, id))
             .returning();
           if (!credit) throw new NotFoundError(`Credit ${id} not found`);
 
@@ -560,8 +560,8 @@ export const crud = {
       try {
         const validId = validate.id.parse(id);
         const [deleted] = await db
-          .delete(Credit)
-          .where(eq(Credit.id, validId))
+          .delete(Ticket)
+          .where(eq(Ticket.id, validId))
           .returning();
         if (!deleted) throw new NotFoundError(`Credit ${id} not found`);
 
